@@ -51,7 +51,7 @@ final class TodayModel {
             entries = events.filter { today.contains($0.timestamp, calendar: calendar) }.reversed()
             lastNight = LastNightReport.resolve(at: now, today: todaySummary, previous: previous, calendar: calendar)
             week = WeekOverview.days(ending: today, events: events, calendar: calendar)
-            isDaytime = today.daytimeInterval(calendar: calendar).includes(now)
+            isDaytime = today.isDaytime(now, calendar: calendar)
             hasLoaded = true
         } catch {
             problem = "Couldn't load today just now."

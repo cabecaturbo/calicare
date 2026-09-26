@@ -41,6 +41,11 @@ public struct CareDay: Hashable, Sendable, Comparable, CustomStringConvertible {
         DateInterval(start: at(hour: Self.morningHour, calendar), end: at(hour: Self.nightStartHour, calendar))
     }
 
+    /// Whether a moment falls in this day's daytime (7 AM up to 7 PM).
+    public func isDaytime(_ date: Date, calendar: Calendar = .autoupdatingCurrent) -> Bool {
+        daytimeInterval(calendar: calendar).includes(date)
+    }
+
     /// Noon on this date, for labels like the weekday.
     public func noon(calendar: Calendar = .autoupdatingCurrent) -> Date {
         at(hour: 12, calendar)

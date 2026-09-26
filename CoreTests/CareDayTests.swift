@@ -48,3 +48,13 @@ struct CareDayTests {
         #expect(sept26.adding(days: -1, calendar: calendar) == CareDay(year: 2026, month: 9, day: 25))
     }
 }
+
+struct CareDayDaytimeTests {
+    @Test func daytimeIsSevenToSeven() {
+        let day = CareDay(year: 2026, month: 9, day: 26)
+        #expect(day.isDaytime(TestTime.date(26, 7), calendar: TestTime.calendar))
+        #expect(day.isDaytime(TestTime.date(26, 18, 59), calendar: TestTime.calendar))
+        #expect(!day.isDaytime(TestTime.date(26, 19), calendar: TestTime.calendar))
+        #expect(!day.isDaytime(TestTime.date(26, 6, 59), calendar: TestTime.calendar))
+    }
+}

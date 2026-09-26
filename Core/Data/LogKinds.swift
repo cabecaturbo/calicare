@@ -43,6 +43,11 @@ public enum Mood: String, Codable, Sendable, CaseIterable {
 /// Which routine a `routineDone` log was for.
 public enum RoutineTime: String, Codable, Sendable, CaseIterable {
     case morning, evening
+
+    /// The routine a one-tap "Routine done" most likely means: morning before 2 PM, evening after.
+    public static func likely(at date: Date, calendar: Calendar = .autoupdatingCurrent) -> RoutineTime {
+        calendar.component(.hour, from: date) < 14 ? .morning : .evening
+    }
 }
 
 /// Where a log came from.

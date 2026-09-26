@@ -62,6 +62,29 @@ public struct Palette: Sendable, Equatable {
     }
 }
 
+extension Palette {
+    /// A point on the sage scale: lighter is calmer.
+    public func color(for level: CareLevel) -> Color {
+        switch level {
+        case .low: severityLow
+        case .medium: severityMedium
+        case .high: severityHigh
+        }
+    }
+}
+
+extension ChildColor {
+    /// Same in day and night; dots get a thin outline so sand shows on cream.
+    public var color: Color {
+        switch self {
+        case .sage: Color(hex: 0x4F6F57)
+        case .clay: Color(hex: 0x8A5A3C)
+        case .moss: Color(hex: 0x8FA995)
+        case .sand: Color(hex: 0xF0E6D6)
+        }
+    }
+}
+
 public enum NightMode {
     public static let startHour = 20
     public static let endHour = 7
@@ -145,4 +168,7 @@ public enum TouchTarget {
     public static let minimum: CGFloat = 44
     /// Bigger one-hand buttons at night.
     public static let night: CGFloat = 60
+    /// The main log buttons on Today: large by day, larger at night.
+    public static let logButtonDay: CGFloat = 72
+    public static let logButtonNight: CGFloat = 92
 }

@@ -137,4 +137,15 @@ Done when: a new user goes from install to first widget log in under a
 minute, and the build succeeds.
 ```
 
+As built:
+- Onboarding shows until finished once; quitting after adding a child resumes at
+  quick-logging setup. The debug sample child is gone (onboarding adds the child).
+- "Last night" follows the widgets: in the daytime it's the night that ended this
+  morning; in the evening it switches to "Tonight so far" once tonight has a log.
+- 7-day strip: night dot = the rating if given, else itchy wake-ups (1 / 2–3 / 4+).
+  Skin square = itches + 3 per flare (0–2 / 3–5 / 6+). No logs = empty outline.
+- In-app "Routine done" guesses morning before 2 PM, evening after.
+- Edit changes time, kind, and note; delete is a soft delete. Both mark needsSync.
+- Quick-logging steps are also in Settings; Recent logs stays at the bottom of Settings.
+
 After Phase 1: use it with our own family for a few days, note what felt good or annoying, then write Phase 2 prompts around what was actually built.

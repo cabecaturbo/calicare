@@ -41,6 +41,11 @@ public struct CareDay: Hashable, Sendable, Comparable, CustomStringConvertible {
         DateInterval(start: at(hour: Self.morningHour, calendar), end: at(hour: Self.nightStartHour, calendar))
     }
 
+    /// Noon on this date, for labels like the weekday.
+    public func noon(calendar: Calendar = .autoupdatingCurrent) -> Date {
+        at(hour: 12, calendar)
+    }
+
     public func adding(days: Int, calendar: Calendar = .autoupdatingCurrent) -> CareDay {
         let noon = at(hour: 12, calendar)
         return CareDay.containing(calendar.date(byAdding: .day, value: days, to: noon) ?? noon, calendar: calendar)

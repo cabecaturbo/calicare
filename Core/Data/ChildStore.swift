@@ -1,6 +1,11 @@
 import Foundation
 import SwiftData
 
+public enum ChildStoreError: Error, Equatable, Sendable {
+    /// A child needs a name.
+    case emptyName
+}
+
 /// Adds, lists, and removes children.
 public actor ChildStore: ModelActor {
     public nonisolated let modelContainer: ModelContainer
@@ -13,9 +18,12 @@ public actor ChildStore: ModelActor {
         self.now = now
     }
 
+    /// Adds a child. The name is trimmed and can't be empty.
     @discardableResult
     public func addChild(name: String, birthDate: Date? = nil, colorTag: String) async throws -> ChildInfo {
-        let child = Child(name: name, birthDate: birthDate, colorTag: colorTag, now: now())
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { throw ChildStoreError.emptyName }
+        let child = Child(name: trimmed, birthDate: birthDate, colorTag: colorTag, now: now())
         modelContext.insert(child)
         try modelContext.save()
         return ChildInfo(child)

@@ -7,6 +7,8 @@ public enum LogStoreError: Error, Equatable, Sendable {
     /// A note log needs text.
     case emptyNote
     case childNotFound
+    /// The log doesn't exist or was already deleted.
+    case logNotFound
 }
 
 /// Reads and writes logs. Every write is saved right away, because widgets
@@ -40,8 +42,7 @@ public actor LogStore: ModelActor {
         at timestamp: Date? = nil
     ) async throws -> LogEntry {
         guard type.accepts(value) else { throw LogStoreError.invalidValue }
-        let trimmedNote = note?.trimmingCharacters(in: .whitespacesAndNewlines)
-        let cleanNote = trimmedNote?.isEmpty == false ? trimmedNote : nil
+        let cleanNote = Self.clean(note)
         if type == .note, cleanNote == nil { throw LogStoreError.emptyNote }
         guard let child = try fetchChild(childID) else { throw LogStoreError.childNotFound }
 
@@ -93,9 +94,13 @@ public actor LogStore: ModelActor {
 
     /// Live logs for one child on one care day (7 PM the evening before to 7 PM), oldest first.
     public func events(for day: CareDay, child childID: UUID) async throws -> [LogEntry] {
-        let range = day.interval(calendar: calendar)
-        let start = range.start
-        let end = range.end
+        try await events(from: day, through: day, child: childID)
+    }
+
+    /// Live logs for one child from the start of `first` to the end of `last`, oldest first.
+    public func events(from first: CareDay, through last: CareDay, child childID: UUID) async throws -> [LogEntry] {
+        let start = first.interval(calendar: calendar).start
+        let end = last.interval(calendar: calendar).end
         let optionalChildID: UUID? = childID
         let descriptor = FetchDescriptor<LogEvent>(
             predicate: #Predicate { event in
@@ -107,6 +112,37 @@ public actor LogStore: ModelActor {
             sortBy: [SortDescriptor(\.timestamp)]
         )
         return try modelContext.fetch(descriptor).compactMap { LogEntry($0) }
+    }
+
+    /// Changes a log's value, note, and time. The type, child, and source stay.
+    @discardableResult
+    public func update(_ id: UUID, value: LogValue?, note: String?, timestamp: Date) async throws -> LogEntry {
+        guard let event = try fetchLiveEvent(id), let type = event.type else { throw LogStoreError.logNotFound }
+        guard type.accepts(value) else { throw LogStoreError.invalidValue }
+        let cleanNote = Self.clean(note)
+        if type == .note, cleanNote == nil { throw LogStoreError.emptyNote }
+
+        event.valueRaw = value?.rawValue
+        event.note = cleanNote
+        event.timestamp = timestamp
+        event.updatedAt = now()
+        event.needsSync = true
+        try modelContext.save()
+        guard let entry = LogEntry(event) else { throw LogStoreError.logNotFound }
+        return entry
+    }
+
+    /// Soft-deletes one log. Returns what was deleted, or nil if it was already gone.
+    @discardableResult
+    public func delete(_ id: UUID) async throws -> LogEntry? {
+        guard let event = try fetchLiveEvent(id) else { return nil }
+        let entry = LogEntry(event)
+        let current = now()
+        event.deletedAt = current
+        event.updatedAt = current
+        event.needsSync = true
+        try modelContext.save()
+        return entry
     }
 
     /// Summary of the current care day. From 7 PM this already means tonight and tomorrow.
@@ -146,6 +182,20 @@ public actor LogStore: ModelActor {
         )
         descriptor.fetchLimit = limit
         return try modelContext.fetch(descriptor).compactMap { LogEntry($0) }
+    }
+
+    private func fetchLiveEvent(_ id: UUID) throws -> LogEvent? {
+        var descriptor = FetchDescriptor<LogEvent>(
+            predicate: #Predicate { $0.id == id && $0.deletedAt == nil }
+        )
+        descriptor.fetchLimit = 1
+        return try modelContext.fetch(descriptor).first
+    }
+
+    /// Trimmed, or nil when empty.
+    private static func clean(_ note: String?) -> String? {
+        let trimmed = note?.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed?.isEmpty == false ? trimmed : nil
     }
 
     private func fetchChild(_ id: UUID) throws -> Child? {

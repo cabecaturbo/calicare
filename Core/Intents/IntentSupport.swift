@@ -1,6 +1,5 @@
 import AppIntents
 import Foundation
-import WidgetKit
 
 /// Shared steps for the logging intents.
 enum IntentSupport {
@@ -17,15 +16,11 @@ enum IntentSupport {
         return "\(text)"
     }
 
-    /// After any log or undo: refresh widgets, and reschedule reminders so a
-    /// night rating skips that morning's check-in (and an undo brings it back).
     static func afterChange() async {
-        await reloadWidgets()
-        try? await ReminderScheduler.live().refresh()
+        await LogChanges.didChange()
     }
 
-    @MainActor
-    static func reloadWidgets() {
-        WidgetCenter.shared.reloadAllTimelines()
+    static func reloadWidgets() async {
+        await LogChanges.reloadWidgets()
     }
 }

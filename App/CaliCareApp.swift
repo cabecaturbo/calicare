@@ -13,10 +13,9 @@ struct CaliCareApp: App {
 
     var body: some Scene {
         WindowGroup {
-            TodayView()
+            RootView()
                 .nightAwarePalette()
                 .environment(reminders)
-                .task { await seedForDebug() }
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
@@ -29,11 +28,5 @@ struct CaliCareApp: App {
     private func refreshReminders() async {
         await reminders.reload()
         try? await ReminderScheduler.live().refresh()
-    }
-
-    private func seedForDebug() async {
-        #if DEBUG
-        await DebugSeed.addSampleChildIfNeeded()
-        #endif
     }
 }

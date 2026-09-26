@@ -1,7 +1,7 @@
 import Core
 import SwiftUI
 
-/// Settings: reminders, plus a behind-the-scenes check of what was logged.
+/// Settings: reminders, quick logging setup, and (tucked at the bottom) a check of what was logged.
 struct SettingsView: View {
     @Environment(\.palette) private var palette
     @Environment(\.dismiss) private var dismiss
@@ -11,6 +11,19 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 ReminderSettingsSection()
+
+                Section {
+                    NavigationLink("Widget, Siri, and Action Button") {
+                        QuickLoggingGuideView()
+                    }
+                    .font(Typography.body)
+                    .frame(minHeight: TouchTarget.minimum)
+                } header: {
+                    Text("Quick logging")
+                } footer: {
+                    Text("Log without opening the app.")
+                }
+                .listRowBackground(palette.card)
 
                 Section {
                     NavigationLink("Recent logs") {

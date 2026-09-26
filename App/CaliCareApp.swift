@@ -11,6 +11,13 @@ struct CaliCareApp: App {
         WindowGroup {
             TodayView()
                 .nightAwarePalette()
+                .task { await seedForDebug() }
         }
+    }
+
+    private func seedForDebug() async {
+        #if DEBUG
+        await DebugSeed.addSampleChildIfNeeded()
+        #endif
     }
 }

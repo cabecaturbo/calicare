@@ -37,7 +37,18 @@ final class TestClock: Sendable {
     }
 
     func advance(minutes: Int) {
-        current.withLock { $0 = $0.addingTimeInterval(TimeInterval(minutes * 60)) }
+        advance(seconds: minutes * 60)
+    }
+
+    func advance(seconds: Int) {
+        current.withLock { $0 = $0.addingTimeInterval(TimeInterval(seconds)) }
+    }
+}
+
+extension CurrentChildSetting {
+    /// A setting backed by its own throwaway defaults suite.
+    static func isolated() -> CurrentChildSetting {
+        CurrentChildSetting(defaults: UserDefaults(suiteName: "test.\(UUID().uuidString)")!)
     }
 }
 

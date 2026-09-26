@@ -71,17 +71,19 @@ public actor LogStore: ModelActor {
     }
 
     /// Soft-deletes the most recently created log, for any child.
-    /// Returns what was undone, or nil if there's nothing to undo.
+    /// With a `window`, only undoes it if it was created at most that long ago;
+    /// older logs are never reached. Returns what was undone, or nil.
     @discardableResult
-    public func undoLast() async throws -> LogEntry? {
+    public func undoLast(within window: TimeInterval? = nil) async throws -> LogEntry? {
         var descriptor = FetchDescriptor<LogEvent>(
             predicate: #Predicate { $0.deletedAt == nil },
             sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
         )
         descriptor.fetchLimit = 1
         guard let event = try modelContext.fetch(descriptor).first else { return nil }
-        let entry = LogEntry(event)
         let current = now()
+        if let window, current.timeIntervalSince(event.createdAt) > window { return nil }
+        let entry = LogEntry(event)
         event.deletedAt = current
         event.updatedAt = current
         event.needsSync = true

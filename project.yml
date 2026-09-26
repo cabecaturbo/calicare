@@ -35,6 +35,10 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         ITSAppUsesNonExemptEncryption: false
+        # Lets Siri match "Cali Care" (two words) to the app name.
+        INAlternativeAppNames:
+          - INAlternativeAppName: Cali Care
+            INAlternativeAppNamePronunciationHint: Cali Care
     entitlements:
       path: App/App.entitlements
       properties:

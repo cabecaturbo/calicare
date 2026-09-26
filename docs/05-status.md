@@ -3,7 +3,7 @@
 Where CaliCare stands at the end of Phase 1, for the local Claude Code session to pick up from.
 
 ## Where things are
-- **Branch:** `claude/inspiring-lamport-rmzneg` (no `main` yet, no PR). All work so far is here.
+- **Branches:** `main` holds the finished Phase 1. New work goes on its own branch and merges back through a PR, with CI. `claude/inspiring-lamport-rmzneg` is the Phase 1 working branch.
 - **Phase 1 (one-tap logging) is built:** Prompts 1–6 from `docs/04-build-plan.md`.
 - **Verified on the Mac (Xcode, iPhone 17 simulator):** clean build with no warnings, all 125 tests pass, and the app launches into onboarding.
 - **CI:** `.github/workflows/ios.yml` runs on every push to this branch. It generates the project, builds, runs the tests, and fails on any warning in our sources.
@@ -40,7 +40,7 @@ Where CaliCare stands at the end of Phase 1, for the local Claude Code session t
 
 ## Open items
 - **No app icon:** `ASSETCATALOG_COMPILER_APPICON_NAME` is empty in `project.yml`. One is needed before TestFlight.
-- **Merge target:** there's no `main` branch yet. Decide when to merge this branch.
+- **GitHub default branch:** switch it to `main` once `gh` is signed in (`gh repo edit --default-branch main`).
 
 ## Manual tests to do (the simulator can't cover these)
 Test device: iPhone 15 Pro (has an Action Button).
@@ -55,7 +55,7 @@ Test device: iPhone 15 Pro (has an Action Button).
 
 ## Apple tooling setup (once, on the Mac)
 1. **Sign in to Xcode:** Xcode → Settings → Accounts → add your Apple ID, and check that CursorKittens LLC appears.
-2. **Install `asc`:** run `brew install asc` and `asc install-skills`. Once the API key exists, store the `.p8` in `~/.appstoreconnect/` (never in the repo), then run `asc auth login … --network` and `asc auth status --validate`.
+2. **`asc` (installed, skills installed, not signed in):** once the API key exists, store the `.p8` in `~/.appstoreconnect/` (never in the repo), then run `asc auth login … --network` and `asc auth status --validate`.
 3. **Optional:** `claude mcp add XcodeBuildMCP -- npx -y xcodebuildmcp@latest` lets Claude drive the simulator.
 4. **Allowlist (done):** `.claude/settings.json` allowing xcodegen, xcodebuild build/test, `xcrun simctl`, read-only `asc`, and git status/diff/log. Anything that uploads, submits, or pushes still asks.
 5. **Rules (done):** the "Apple tooling" section in CLAUDE.md:
@@ -64,7 +64,9 @@ Test device: iPhone 15 Pro (has an Action Button).
    - Never commit keys, certificates, or profiles.
    - Always ask before creating the app record, uploading, or submitting.
 
-Supabase and Vercel CLIs are installed and logged in on the Mac. Don't run `supabase init`/`link` or `vercel link` until Phase 2 and Phase 7.
+CLIs on the Mac (all installed with Homebrew): `asc`, `supabase`, `vercel`, and `gh`.
+- **Signed in:** none yet. Run `gh auth login` then `gh auth setup-git` (git push needs this), `supabase login`, and `vercel login`.
+- **Hold off:** don't run `supabase init`/`link` until Phase 2, or `vercel link` until Phase 7. Either would add scaffolding early.
 
 ## Next steps
 1. Use the app with the family for a few days and note what felt good or annoying (per the build plan).

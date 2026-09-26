@@ -17,7 +17,15 @@
       "Bash(git diff *)",
       "Bash(git diff)",
       "Bash(git log *)",
-      "Bash(git log)"
+      "Bash(git log)",
+      "Bash(gh auth status)",
+      "Bash(gh run list *)",
+      "Bash(gh run view *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr list *)",
+      "Bash(supabase projects list)",
+      "Bash(vercel whoami)",
+      "Bash(asc auth doctor)"
     ],
     "ask": [
       "Bash(git push *)",

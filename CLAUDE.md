@@ -50,8 +50,15 @@ care plan and track progress with as little effort as possible.
 - Keep files small and focused.
 - Tell me any manual step I must do in Xcode or on my device.
 
+## Apple tooling
+- Use `-allowProvisioningUpdates` for device builds and archives.
+- Use `asc` for App Store Connect.
+- Never commit keys (.p8), certificates, or provisioning profiles. The App
+  Store Connect key lives in ~/.appstoreconnect/, never in the repo.
+- Always ask before creating the app record, uploading, or submitting.
+
 ## Project docs
 
-- Project docs live in `/docs`: project instructions, product brief, research notes, design system, build plan, and status (`05-status.md`: where things stand; keep it current).
+- Project docs live in `/docs`: project instructions, product brief, research notes, design system, build plan, status (`05-status.md`: where things stand; keep it current), and decisions (`06-decisions.md`: add an entry when a choice is made).
 - Before each task, read the docs that apply to it.
 - CLAUDE.md is the source of truth for rules, identifiers, and design tokens. If a doc disagrees, follow CLAUDE.md and point out the conflict.

@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xcodegen generate)",
+      "Bash(xcodegen generate *)",
+      "Bash(xcodebuild * build)",
+      "Bash(xcodebuild * clean build)",
+      "Bash(xcodebuild * test)",
+      "Bash(xcodebuild -showBuildSettings *)",
+      "Bash(xcodebuild * -showBuildSettings)",
+      "Bash(xcrun simctl *)",
+      "Bash(asc auth status *)",
+      "Bash(asc * list *)",
+      "Bash(asc * get *)",
+      "Bash(git status *)",
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git diff)",
+      "Bash(git log *)",
+      "Bash(git log)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git push)",
+      "Bash(xcodebuild * archive *)",
+      "Bash(xcodebuild * -exportArchive *)",
+      "Bash(asc * upload *)",
+      "Bash(asc * submit *)",
+      "Bash(asc * create *)"
+    ]
+  }
+}

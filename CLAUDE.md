@@ -44,7 +44,7 @@ care plan and track progress with as little effort as possible.
 
 ## Workflow
 - After every change, build with:
-  xcodebuild -scheme App -destination 'platform=iOS Simulator,name=iPhone 16' build
+  xcodebuild -scheme App -destination 'platform=iOS Simulator,name=iPhone 17' build
   Fix all errors and warnings before saying you're done.
 - Write unit tests for Core logic (models, scheduling, stats).
 - Keep files small and focused.

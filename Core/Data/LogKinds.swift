@@ -21,7 +21,7 @@ public enum LogType: String, Codable, Sendable, CaseIterable {
     /// True when `value` is the right kind for this type (or absent when none is expected).
     public func accepts(_ value: LogValue?) -> Bool {
         switch (self, value) {
-        case (.nightRating, .night?), (.bowelMovement, .bowel?), (.mood, .mood?): true
+        case (.nightRating, .night?), (.bowelMovement, .bowel?), (.mood, .mood?), (.routineDone, .routine?): true
         case (_, nil): !requiresValue
         default: false
         }
@@ -40,6 +40,11 @@ public enum Mood: String, Codable, Sendable, CaseIterable {
     case great, okay, cranky
 }
 
+/// Which routine a `routineDone` log was for.
+public enum RoutineTime: String, Codable, Sendable, CaseIterable {
+    case morning, evening
+}
+
 /// Where a log came from.
 public enum EntrySource: String, Codable, Sendable, CaseIterable {
     case widget, intent, notification, app, watch
@@ -50,12 +55,14 @@ public enum LogValue: Hashable, Sendable {
     case night(NightRating)
     case bowel(BowelMovement)
     case mood(Mood)
+    case routine(RoutineTime)
 
     public var rawValue: String {
         switch self {
         case .night(let rating): rating.rawValue
         case .bowel(let movement): movement.rawValue
         case .mood(let mood): mood.rawValue
+        case .routine(let time): time.rawValue
         }
     }
 
@@ -71,7 +78,10 @@ public enum LogValue: Hashable, Sendable {
         case .mood:
             guard let mood = Mood(rawValue: raw) else { return nil }
             self = .mood(mood)
-        case .itchEpisode, .flare, .routineDone, .note:
+        case .routineDone:
+            guard let time = RoutineTime(rawValue: raw) else { return nil }
+            self = .routine(time)
+        case .itchEpisode, .flare, .note:
             return nil
         }
     }

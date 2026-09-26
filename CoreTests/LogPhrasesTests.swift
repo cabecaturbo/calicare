@@ -32,6 +32,8 @@ struct LogPhrasesTests {
         (.bowelMovement, .bowel(.hard), "hard bowel movement"),
         (.bowelMovement, .bowel(BowelMovement.none), "no bowel movement"),
         (.mood, .mood(.cranky), "cranky mood"),
+        (.routineDone, .routine(.morning), "morning routine"),
+        (.routineDone, .routine(.evening), "evening routine"),
     ]
 
     static let unvalued: [(LogType, String)] = [

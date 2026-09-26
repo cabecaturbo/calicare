@@ -34,6 +34,7 @@ public struct LogPhrases: Sendable {
         case (.bowelMovement, _): "bowel movement"
         case (.mood, .mood(let mood)?): "\(mood.rawValue) mood"
         case (.mood, _): "mood"
+        case (.routineDone, .routine(let time)?): "\(time.rawValue) routine"
         case (.routineDone, _): "routine"
         case (.note, _): "note"
         }

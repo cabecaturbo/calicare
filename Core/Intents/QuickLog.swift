@@ -59,16 +59,18 @@ public struct QuickLog: Sendable {
     }
 
     /// Logs for `childID`, or the current child when nil, and returns what was saved.
+    /// `at` defaults to now.
     @discardableResult
     public func record(
         _ type: LogType,
         value: LogValue? = nil,
         childID: UUID? = nil,
-        source: EntrySource
+        source: EntrySource,
+        at timestamp: Date? = nil
     ) async throws -> Saved {
         let child = try await resolveChild(childID)
         do {
-            let entry = try await logs.log(type, value: value, child: child.id, source: source)
+            let entry = try await logs.log(type, value: value, child: child.id, source: source, at: timestamp)
             return Saved(entry: entry, child: child)
         } catch LogStoreError.childNotFound {
             throw QuickLogError.childNotFound

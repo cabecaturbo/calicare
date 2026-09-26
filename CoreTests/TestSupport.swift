@@ -105,3 +105,64 @@ struct StoredEvent {
         entrySource = event.entrySource
     }
 }
+
+extension ReminderSettingsStore {
+    /// A store backed by its own throwaway defaults suite.
+    static func isolated() -> ReminderSettingsStore {
+        ReminderSettingsStore(defaults: UserDefaults(suiteName: "test.\(UUID().uuidString)")!)
+    }
+}
+
+/// An in-memory stand-in for the notification center.
+final class FakeNotificationCenter: NotificationScheduling {
+    private struct State {
+        var authorized: Bool
+        var pending: [String: PlannedReminder] = [:]
+        var removedDelivered: [String] = []
+    }
+
+    private let state: Mutex<State>
+
+    init(authorized: Bool = true) {
+        state = Mutex(State(authorized: authorized))
+    }
+
+    /// Pending reminders, sorted by identifier.
+    var pending: [PlannedReminder] {
+        state.withLock { $0.pending.values.sorted { $0.id < $1.id } }
+    }
+
+    var removedDelivered: [String] {
+        state.withLock { $0.removedDelivered }
+    }
+
+    func isAuthorized() async -> Bool {
+        state.withLock { $0.authorized }
+    }
+
+    func pendingIDs() async -> [String] {
+        state.withLock { Array($0.pending.keys) }
+    }
+
+    func add(_ reminder: PlannedReminder) async throws {
+        state.withLock { $0.pending[reminder.id] = reminder }
+    }
+
+    func removePending(_ ids: [String]) async {
+        state.withLock { current in
+            for id in ids { current.pending[id] = nil }
+        }
+    }
+
+    func removeDelivered(_ ids: [String]) async {
+        state.withLock { $0.removedDelivered += ids }
+    }
+}
+
+extension PlannedReminder {
+    /// When a one-off reminder fires, read in the test calendar.
+    var fireDate: Date? {
+        guard case .once(let parts) = trigger else { return nil }
+        return TestTime.calendar.date(from: parts)
+    }
+}

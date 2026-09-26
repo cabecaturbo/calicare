@@ -56,7 +56,7 @@ public struct WidgetLogIntent: AppIntent {
             title: LogPhrases().title(for: saved.entry),
             loggedAt: saved.entry.timestamp
         )
-        await IntentSupport.reloadWidgets()
+        await IntentSupport.afterChange()
         return .result()
     }
 }

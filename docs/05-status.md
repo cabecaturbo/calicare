@@ -35,7 +35,7 @@ Where CaliCare stands at the end of Phase 1, for the local Claude Code session t
 - **Routine logs:** `routineDone` logs carry a morning or evening value; widget logs have none.
 
 ## Waiting on
-- **Signing check:** the API key is done. The first build to the iPhone 15 Pro will show whether your role can create signing certificates.
+- **Nothing blocking.** Development signing works: the iPhone 15 Pro is registered (`FPL7F2F9K3`) and CaliCare is installed on it.
 - **After that:** do the Apple tooling setup (see below), then TestFlight.
 
 ## Open items
@@ -53,7 +53,7 @@ Test device: iPhone 15 Pro (has an Action Button).
 - **Accessibility:** VoiceOver labels and large Dynamic Type sizes.
 
 ## Apple tooling setup (once, on the Mac)
-1. **Sign in to Xcode:** Xcode → Settings → Accounts → add your Apple ID, and check that CursorKittens LLC appears.
+1. **Sign in to Xcode (done):** Xcode → Settings → Accounts → add your Apple ID, and check that CursorKittens LLC appears.
 2. **`asc` (done):** signed in as profile `CursorKittens` (team key `XR2WW8YLM4`, App Manager; the `.p8` is in `~/.appstoreconnect/`). CaliCare has no App Store Connect record or registered bundle ID yet.
 3. **Optional:** `claude mcp add XcodeBuildMCP -- npx -y xcodebuildmcp@latest` lets Claude drive the simulator.
 4. **Allowlist (done):** `.claude/settings.json` allowing xcodegen, xcodebuild build/test, `xcrun simctl`, read-only `asc`, and git status/diff/log. Anything that uploads, submits, or pushes still asks.

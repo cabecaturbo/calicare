@@ -52,6 +52,6 @@ care plan and track progress with as little effort as possible.
 
 ## Project docs
 
-- Project docs live in `/docs`: project instructions, product brief, research notes, design system, build plan.
+- Project docs live in `/docs`: project instructions, product brief, research notes, design system, build plan, and status (`05-status.md`: where things stand; keep it current).
 - Before each task, read the docs that apply to it.
 - CLAUDE.md is the source of truth for rules, identifiers, and design tokens. If a doc disagrees, follow CLAUDE.md and point out the conflict.

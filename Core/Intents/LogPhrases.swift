@@ -39,6 +39,12 @@ public struct LogPhrases: Sendable {
         }
     }
 
+    /// The name as a standalone label, e.g. "Itchy wake-up".
+    public func title(for entry: LogEntry) -> String {
+        let text = name(for: entry)
+        return text.prefix(1).uppercased() + text.dropFirst()
+    }
+
     /// "2:14 AM", with a plain space so it reads and speaks cleanly.
     public func time(_ date: Date) -> String {
         var style = Date.FormatStyle(date: .omitted, time: .shortened)

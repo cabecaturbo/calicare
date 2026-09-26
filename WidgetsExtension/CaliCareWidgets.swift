@@ -10,7 +10,9 @@ struct CaliCareWidgets: WidgetBundle {
     }
 
     var body: some Widget {
-        PlaceholderWidget()
+        ItchWidget()
+        QuickLogWidget()
+        LastNightWidget()
         LogItchControl()
     }
 }

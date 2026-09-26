@@ -7,7 +7,10 @@ public struct DaySummary: Hashable, Sendable {
     public let nightItchEpisodes: Int
     public let daytimeItchEpisodes: Int
     public let flares: Int
+    /// Kinds that were given, in order. Logs without a kind aren't listed here.
     public let bowelMovements: [BowelMovement]
+    /// Bowel movements that happened, with or without a kind (an explicit "none" isn't one).
+    public let bowelMovementCount: Int
     public let mood: Mood?
     public let routinesDone: Int
     public let notes: Int
@@ -35,6 +38,9 @@ public struct DaySummary: Hashable, Sendable {
             if case .bowel(let movement)? = entry.value { return movement }
             return nil
         }
+        self.bowelMovementCount = inDay.filter {
+            $0.type == .bowelMovement && $0.value != .bowel(BowelMovement.none)
+        }.count
         self.mood = inDay.compactMap { entry -> Mood? in
             if case .mood(let mood)? = entry.value { return mood }
             return nil

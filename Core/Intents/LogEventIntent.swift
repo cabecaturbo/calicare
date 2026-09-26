@@ -53,8 +53,7 @@ public struct LogEventIntent: AppIntent {
             guard let night else { throw $night.needsValueError("How was the night?") }
             return .night(night)
         case .bowelMovement:
-            guard let bowel else { throw $bowel.needsValueError("How was it?") }
-            return .bowel(bowel)
+            return bowel.map { .bowel($0) }
         case .mood:
             guard let mood else { throw $mood.needsValueError("How's their mood?") }
             return .mood(mood)

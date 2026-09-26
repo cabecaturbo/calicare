@@ -45,13 +45,31 @@ public struct QuickLog: Sendable {
         QuickLog(container: try CaliCareModelContainer.shared())
     }
 
+    /// What was saved, and for whom.
+    public struct Saved: Sendable {
+        public let entry: LogEntry
+        public let child: ChildInfo
+    }
+
     /// Logs for `childID`, or the current child when nil. Returns the confirmation.
     @discardableResult
     public func log(_ type: LogType, value: LogValue? = nil, childID: UUID? = nil) async throws -> String {
+        let saved = try await record(type, value: value, childID: childID, source: .intent)
+        return phrases.logged(saved.entry, childName: saved.child.name)
+    }
+
+    /// Logs for `childID`, or the current child when nil, and returns what was saved.
+    @discardableResult
+    public func record(
+        _ type: LogType,
+        value: LogValue? = nil,
+        childID: UUID? = nil,
+        source: EntrySource
+    ) async throws -> Saved {
         let child = try await resolveChild(childID)
         do {
-            let entry = try await logs.log(type, value: value, child: child.id, source: .intent)
-            return phrases.logged(entry, childName: child.name)
+            let entry = try await logs.log(type, value: value, child: child.id, source: source)
+            return Saved(entry: entry, child: child)
         } catch LogStoreError.childNotFound {
             throw QuickLogError.childNotFound
         }

@@ -4,6 +4,7 @@ import SwiftUI
 /// Placeholder Today screen. Real logging and summaries come in later prompts.
 struct TodayView: View {
     @Environment(\.palette) private var palette
+    @State private var showingSettings = false
 
     var body: some View {
         ScrollView {
@@ -33,17 +34,32 @@ struct TodayView: View {
             .padding(.vertical, Spacing.xl)
         }
         .background(palette.background.ignoresSafeArea())
+        .sheet(isPresented: $showingSettings) {
+            SettingsView()
+        }
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: Spacing.xxs) {
-            Text(Date.now, format: .dateTime.weekday(.wide).month(.wide).day())
-                .font(Typography.caption)
-                .foregroundStyle(palette.muted)
-            Text("Today")
-                .font(Typography.largeTitle)
-                .foregroundStyle(palette.ink)
-                .accessibilityAddTraits(.isHeader)
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: Spacing.xxs) {
+                Text(Date.now, format: .dateTime.weekday(.wide).month(.wide).day())
+                    .font(Typography.caption)
+                    .foregroundStyle(palette.muted)
+                Text("Today")
+                    .font(Typography.largeTitle)
+                    .foregroundStyle(palette.ink)
+                    .accessibilityAddTraits(.isHeader)
+            }
+            Spacer()
+            Button {
+                showingSettings = true
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.title3)
+                    .foregroundStyle(palette.sageDark)
+                    .frame(width: TouchTarget.minimum, height: TouchTarget.minimum)
+            }
+            .accessibilityLabel("Settings")
         }
     }
 

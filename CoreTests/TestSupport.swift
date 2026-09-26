@@ -45,6 +45,13 @@ final class TestClock: Sendable {
     }
 }
 
+extension WidgetFeedbackStore {
+    /// A store backed by its own throwaway defaults suite.
+    static func isolated() -> WidgetFeedbackStore {
+        WidgetFeedbackStore(defaults: UserDefaults(suiteName: "test.\(UUID().uuidString)")!)
+    }
+}
+
 extension CurrentChildSetting {
     /// A setting backed by its own throwaway defaults suite.
     static func isolated() -> CurrentChildSetting {

@@ -116,6 +116,38 @@ public actor LogStore: ModelActor {
         return DaySummary(day: today, events: entries, calendar: calendar)
     }
 
+    /// The newest live log of one type for one child, by when it happened.
+    public func latest(_ type: LogType, child childID: UUID) async throws -> LogEntry? {
+        let raw = type.rawValue
+        let optionalChildID: UUID? = childID
+        var descriptor = FetchDescriptor<LogEvent>(
+            predicate: #Predicate { event in
+                event.deletedAt == nil && event.typeRaw == raw && event.child?.id == optionalChildID
+            },
+            sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
+        )
+        descriptor.fetchLimit = 1
+        return try modelContext.fetch(descriptor).first.flatMap { LogEntry($0) }
+    }
+
+    /// Whether a log exists and hasn't been undone or deleted.
+    public func isLive(_ id: UUID) async throws -> Bool {
+        let descriptor = FetchDescriptor<LogEvent>(
+            predicate: #Predicate { $0.id == id && $0.deletedAt == nil }
+        )
+        return try modelContext.fetchCount(descriptor) > 0
+    }
+
+    /// The most recently created live logs, for any child, newest first.
+    public func recent(limit: Int = 50) async throws -> [LogEntry] {
+        var descriptor = FetchDescriptor<LogEvent>(
+            predicate: #Predicate { $0.deletedAt == nil },
+            sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+        )
+        descriptor.fetchLimit = limit
+        return try modelContext.fetch(descriptor).compactMap { LogEntry($0) }
+    }
+
     private func fetchChild(_ id: UUID) throws -> Child? {
         var descriptor = FetchDescriptor<Child>(
             predicate: #Predicate { $0.id == id && $0.deletedAt == nil }

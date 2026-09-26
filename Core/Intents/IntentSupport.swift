@@ -18,7 +18,7 @@ enum IntentSupport {
     }
 
     @MainActor
-    private static func reloadWidgets() {
+    static func reloadWidgets() {
         WidgetCenter.shared.reloadAllTimelines()
     }
 }

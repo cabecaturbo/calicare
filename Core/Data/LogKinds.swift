@@ -12,8 +12,9 @@ public enum LogType: String, Codable, Sendable, CaseIterable {
     /// Whether a log of this type must carry a value.
     public var requiresValue: Bool {
         switch self {
-        case .nightRating, .bowelMovement, .mood: true
-        case .itchEpisode, .flare, .routineDone, .note: false
+        case .nightRating, .mood: true
+        // A one-tap widget log records that it happened; the kind is optional.
+        case .bowelMovement, .itchEpisode, .flare, .routineDone, .note: false
         }
     }
 

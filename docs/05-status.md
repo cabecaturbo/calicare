@@ -35,12 +35,11 @@ Where CaliCare stands at the end of Phase 1, for the local Claude Code session t
 - **Routine logs:** `routineDone` logs carry a morning or evening value; widget logs have none.
 
 ## Waiting on
-- **Your partner:** your role on the CursorKittens LLC account (Admin, or App Manager with Certificates access), and an App Store Connect API key.
+- **Signing check:** the API key is done. The first build to the iPhone 15 Pro will show whether your role can create signing certificates.
 - **After that:** do the Apple tooling setup (see below), then TestFlight.
 
 ## Open items
 - **No app icon:** `ASSETCATALOG_COMPILER_APPICON_NAME` is empty in `project.yml`. One is needed before TestFlight.
-- **GitHub default branch:** switch it to `main` once `gh` is signed in (`gh repo edit --default-branch main`).
 
 ## Manual tests to do (the simulator can't cover these)
 Test device: iPhone 15 Pro (has an Action Button).
@@ -55,7 +54,7 @@ Test device: iPhone 15 Pro (has an Action Button).
 
 ## Apple tooling setup (once, on the Mac)
 1. **Sign in to Xcode:** Xcode → Settings → Accounts → add your Apple ID, and check that CursorKittens LLC appears.
-2. **`asc` (installed, skills installed, not signed in):** once the API key exists, store the `.p8` in `~/.appstoreconnect/` (never in the repo), then run `asc auth login … --network` and `asc auth status --validate`.
+2. **`asc` (done):** signed in as profile `CursorKittens` (team key `XR2WW8YLM4`, App Manager; the `.p8` is in `~/.appstoreconnect/`). CaliCare has no App Store Connect record or registered bundle ID yet.
 3. **Optional:** `claude mcp add XcodeBuildMCP -- npx -y xcodebuildmcp@latest` lets Claude drive the simulator.
 4. **Allowlist (done):** `.claude/settings.json` allowing xcodegen, xcodebuild build/test, `xcrun simctl`, read-only `asc`, and git status/diff/log. Anything that uploads, submits, or pushes still asks.
 5. **Rules (done):** the "Apple tooling" section in CLAUDE.md:
@@ -65,7 +64,7 @@ Test device: iPhone 15 Pro (has an Action Button).
    - Always ask before creating the app record, uploading, or submitting.
 
 CLIs on the Mac (all installed with Homebrew): `asc`, `supabase`, `vercel`, and `gh`.
-- **Signed in:** none yet. Run `gh auth login` then `gh auth setup-git` (git push needs this), `supabase login`, and `vercel login`.
+- **Signed in:** `gh` (as cabecaturbo) and `asc`. Still to do: `supabase login` and `vercel login` (not needed until Phase 2).
 - **Hold off:** don't run `supabase init`/`link` until Phase 2, or `vercel link` until Phase 7. Either would add scaffolding early.
 
 ## Next steps

@@ -1,0 +1,72 @@
+name: iOS
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show Xcode
+        run: xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate project
+        run: xcodegen generate
+
+      - name: Pick simulator
+        id: sim
+        run: |
+          # Prefer the iPhone 17 named in CLAUDE.md; fall back to any available iPhone.
+          if xcrun simctl list devices available | grep -q "iPhone 17 ("; then
+            name="iPhone 17"
+          else
+            name=$(xcrun simctl list devices available | grep -oE "iPhone [^(]+" | head -1 | sed 's/ *$//')
+          fi
+          echo "Using simulator: $name"
+          echo "destination=platform=iOS Simulator,name=$name" >> "$GITHUB_OUTPUT"
+
+      - name: Build
+        run: |
+          set -o pipefail
+          xcodebuild -scheme App -destination "${{ steps.sim.outputs.destination }}" \
+            CODE_SIGNING_ALLOWED=NO build 2>&1 | tee build.log
+
+      - name: Test
+        run: |
+          set -o pipefail
+          xcodebuild -scheme App -destination "${{ steps.sim.outputs.destination }}" \
+            CODE_SIGNING_ALLOWED=NO test 2>&1 | tee test.log
+
+      - name: Fail on warnings in our sources
+        if: always()
+        run: |
+          pattern="^${GITHUB_WORKSPACE}/(App|Core|CoreTests|WidgetsExtension)/.*: warning:"
+          if cat build.log test.log 2>/dev/null | grep -E "$pattern" | sort -u | tee warnings.txt | grep -q .; then
+            echo "::error::Warnings found in project sources"
+            exit 1
+          fi
+          echo "No warnings in project sources."
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-logs
+          path: |
+            build.log
+            test.log
+            warnings.txt
+          if-no-files-found: ignore

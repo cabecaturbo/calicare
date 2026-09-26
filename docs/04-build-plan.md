@@ -72,6 +72,13 @@ Also:
 Done when: tests pass and the build succeeds.
 ```
 
+As built (the prompt actually run was more specific than the one above):
+- LogEvent also has `entrySource` (widget, intent, notification, app, watch), and
+  `log` takes `source:`.
+- A care day runs 7 PM to 7 PM in the device time zone, so a night belongs to the
+  morning it ends. From 7 PM on, "today" means tonight plus tomorrow.
+- Uses a VersionedSchema (`SchemaV1`) plus a migration plan from day one.
+
 ### Prompt 3: App Intents
 ```
 Create App Intents in Core so logging works without opening the app.

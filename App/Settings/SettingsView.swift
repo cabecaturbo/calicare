@@ -1,47 +1,30 @@
 import Core
 import SwiftUI
 
-/// Settings: reminders, quick logging setup, and (tucked at the bottom) a check of what was logged.
+/// Settings, as a large sheet over every tab. Grouped as UX.md section 7:
+/// children, family, reminders, quick logging, account, about. Groups for
+/// things that aren't built yet (exporting your data) are simply absent.
 struct SettingsView: View {
     @Environment(\.palette) private var palette
     @Environment(\.dismiss) private var dismiss
     @Environment(ReminderController.self) private var reminders
+    @Environment(TodayModel.self) private var model
+    @State private var addingChild = false
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: Spacing.section) {
-                    AccountSection()
-                    ReminderSettingsSection()
-
-                    LedgerSection("Quick logging", footnote: "Log without opening the app.") {
-                        NavigationLink {
-                            QuickLoggingGuideView()
-                        } label: {
-                            NavigationRow(title: "Widgets, Siri, and Action Button")
-                        }
-                        .buttonStyle(.ledger)
-                    }
-
-                    LedgerSection(
-                        "Behind the scenes",
-                        footnote: "See what widgets, Siri, Control Center, and notifications saved."
-                    ) {
-                        NavigationLink {
-                            RecentLogsView()
-                        } label: {
-                            NavigationRow(title: "Recent logs")
-                        }
-                        .buttonStyle(.ledger)
-                    }
-
-                    #if DEBUG
-                    TryNotificationSection()
-                    #endif
-                }
-                .padding(.vertical, Spacing.x4)
+            List {
+                childrenSection
+                FamilySection()
+                ReminderSettingsSection()
+                quickLoggingSection
+                AccountSettingsSection()
+                aboutSection
+                #if DEBUG
+                debugSection
+                #endif
             }
-            .paperBackground()
+            .settingsListStyle(palette)
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -52,12 +35,95 @@ struct SettingsView: View {
         }
         .tint(palette.indigo)
         .task { await reminders.reload() }
+        .sheet(isPresented: $addingChild, onDismiss: { Task { await model.load() } }) {
+            AddChildSheet()
+                .nightAwarePalette()
+        }
         .sheet(isPresented: toggleOffer) {
             ReminderOfferSheet(
                 onTurnOn: { Task { await reminders.acceptOffer() } },
                 onNotNow: { reminders.declineOffer() }
             )
         }
+    }
+
+    private var childrenSection: some View {
+        SettingsSection("Children") {
+            ForEach(model.children) { child in
+                HStack(spacing: Spacing.x3) {
+                    if model.children.count > 1 {
+                        ChildDot(color: ChildColor(tag: child.colorTag), size: 12)
+                    }
+                    SettingsLabel(child.name)
+                }
+            }
+            Button { addingChild = true } label: {
+                SettingsLabel("Add a child")
+            }
+        }
+    }
+
+    private var quickLoggingSection: some View {
+        SettingsSection("Quick logging", footnote: "Log without opening the app.") {
+            NavigationLink {
+                GuidePage("Home Screen widget") { WidgetSetupGuide(childName: model.child?.name) }
+            } label: {
+                SettingsLabel("Home Screen widget")
+            }
+            NavigationLink {
+                GuidePage("Lock Screen widget") { LockScreenSetupGuide() }
+            } label: {
+                SettingsLabel("Lock Screen widget")
+            }
+            // Action Button and Control Center return once their steps are recorded on a real iPhone.
+            NavigationLink {
+                GuidePage("Siri") { SiriSetupGuide() }
+            } label: {
+                SettingsLabel("Siri")
+            }
+        }
+    }
+
+    private var aboutSection: some View {
+        SettingsSection("About") {
+            Text("Cali Care organizes the plan your provider gave you. Not medical advice.")
+                .textStyle(.body)
+                .foregroundStyle(palette.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            LabeledContent {
+                Text(Self.version)
+                    .textStyle(.meta)
+                    .foregroundStyle(palette.graphite)
+            } label: {
+                SettingsLabel("Version")
+            }
+        }
+    }
+
+    #if DEBUG
+    private var debugSection: some View {
+        Group {
+            SettingsSection(
+                "Debug",
+                footnote: "Debug builds only. See what widgets, Siri, Control Center, and notifications saved."
+            ) {
+                NavigationLink {
+                    RecentLogsView()
+                } label: {
+                    SettingsLabel("Recent logs")
+                }
+            }
+            TryNotificationSection()
+        }
+    }
+    #endif
+
+    /// "1.0 (12)"
+    private static var version: String {
+        let info = Bundle.main.infoDictionary
+        let short = info?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = info?["CFBundleVersion"] as? String ?? "1"
+        return "\(short) (\(build))"
     }
 
     /// Shown when a reminder is switched on before notifications were ever allowed.

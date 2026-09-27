@@ -134,3 +134,15 @@ UX.md
 
 Other
 - **Decisions go to `docs/06-decisions.md`.** `docs/prompts/README.md` pointed to a `05-decisions-log.md` that doesn't exist.
+
+## U1: App shell (September 27, 2026)
+
+- **One shared `TodayModel` for all three tabs.** The shell owns it, so the child switcher, the quick log bar, the log sheet, and Plan all log through the same path and show the same "Logged · Undo" line. The line shows only on the visible tab, so it's announced once.
+- **Quick log bar:** `tabViewBottomAccessory(isEnabled:)` on iOS 26.1 and later (the `isEnabled` form is 26.1+, and it's what keeps the bar off Today). iOS 18–26.0 get a paper bar inset above the tab bar with a primary "Itchy" and a secondary "Log…".
+- **"Log…" opens a sheet with Today's Log rows** (`LogButtons`); a tap logs and closes it.
+- **Plan before U2:** a Routine section with Morning and Evening rows; a tap logs `routineDone` for that routine, and the row shows "Done 7:40 AM". No reminders on Plan, no care-plan row until Phase 4.
+- **Progress for now** is the old Weekly card screen (week picker, card, share) plus the doctor report push, following the current child. Today's "Share this week" row is gone; tapping the week strip opens Progress.
+- **Settings is a native grouped `List` on paper.** Children, Family (sign in, household), Reminders, Quick logging, Account (signed in only), About, then Debug in debug builds only (Recent logs, Try a notification). "Your data" is absent until export exists. About has the "Not medical advice" line and the version; privacy, support email, and "how the app works" wait until they exist.
+- **Quick logging guides in Settings:** Home Screen widget, Lock Screen widget, and Siri. Action Button and Control Center are hidden until their steps are recorded on a real iPhone.
+- **New `section` type style** (SF Pro 600, 15/20, subheadline) from DESIGN.md §4, for List headers. The rest of the type table (sizes, the 500 title) is still the old six styles; that's U3–U5 work.
+- **The child switcher in the navigation bar** has its shared glass background hidden on iOS 26+, so it reads as a name, not a button.

@@ -132,7 +132,7 @@ extension Color {
 
 // MARK: - Type
 
-/// The six type styles. Nothing else is allowed. Newsreader (bundled, OFL) for
+/// The seven type styles. Nothing else is allowed. Newsreader (bundled, OFL) for
 /// anything read as a sentence or heading; SF Pro for controls and meta.
 /// Call `FontRegistry.registerAll()` once per process before use.
 public enum TypeStyle: CaseIterable, Sendable {
@@ -142,6 +142,8 @@ public enum TypeStyle: CaseIterable, Sendable {
     case title
     /// The one summary sentence.
     case lede
+    /// Section headers ("Reminders"), sentence case, in graphite.
+    case section
     /// Sentences, notes, care plan text.
     case body
     /// Buttons, row labels, tabs.
@@ -154,6 +156,7 @@ public enum TypeStyle: CaseIterable, Sendable {
         case .display: .custom(Self.displayCut, size: 32, relativeTo: .largeTitle)
         case .title: .custom(Self.displayCut, size: 24, relativeTo: .title2)
         case .lede: .custom(Self.textCut, size: 20, relativeTo: .title3)
+        case .section: .system(.subheadline, weight: .semibold)
         case .body: .custom(Self.textCut, size: 17, relativeTo: .body)
         case .control: .system(.body, weight: .medium)
         case .meta: .system(.footnote)
@@ -166,6 +169,7 @@ public enum TypeStyle: CaseIterable, Sendable {
         case .display: 32
         case .title: 24
         case .lede: 20
+        case .section: 15
         case .body, .control: 17
         case .meta: 13
         }
@@ -176,6 +180,7 @@ public enum TypeStyle: CaseIterable, Sendable {
         case .display: 38
         case .title: 30
         case .lede: 28
+        case .section: 20
         case .body: 25
         case .control: 22
         case .meta: 18
@@ -187,6 +192,7 @@ public enum TypeStyle: CaseIterable, Sendable {
         case .display: .largeTitle
         case .title: .title2
         case .lede: .title3
+        case .section: .subheadline
         case .body, .control: .body
         case .meta: .footnote
         }

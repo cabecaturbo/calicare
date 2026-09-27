@@ -6,7 +6,7 @@ extension View {
         modifier(NightAwarePaletteModifier())
     }
 
-    /// One of the six type styles, with its line height. Scales with Dynamic Type.
+    /// One of the seven type styles, with its line height. Scales with Dynamic Type.
     public func textStyle(_ style: TypeStyle) -> some View {
         modifier(TextStyleModifier(style: style))
     }

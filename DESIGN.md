@@ -4,6 +4,16 @@ This file replaces docs/03-design-system.md and the design section of
 CLAUDE.md. If anything conflicts, this file wins. Read it before touching
 any UI. Every screen, widget, card, and notification must follow it.
 
+## 0. Foundation: Apple's Human Interface Guidelines
+Our base design system is Apple's Human Interface Guidelines (HIG). This
+file is our brand layer on top of it. Where this file is silent, follow
+the HIG. Where they conflict on legibility, accessibility, or platform
+behavior, the HIG wins. Read the relevant HIG page before building a
+component: Typography, Color, Layout, Accessibility, Tab bars, Lists and
+tables, Sheets, Charts, Onboarding, Widgets, Notifications.
+Use Apple's system components and behaviors; restyle them with our
+tokens, don't replace them.
+
 ## 1. The idea in one line
 A beautifully made notebook from a good shop: paper, ink, and indigo.
 Think Kinfolk's restraint and Anthropologie's warmth. Not a health app,
@@ -96,47 +106,66 @@ symptoms (itch, sleep, spread), never by how skin looks.
 ## 4. Type
 Two families only.
 
-- Newsreader (serif, OFL, bundled): anything a person reads as a
-  sentence or a heading. Use its optical sizes: Display cut at 28pt and
-  up, Text cut below. Weights 400 and 500 only. Never bold.
-- SF Pro (system font): controls, labels, times, numbers in lists. It's
-  native, has perfect Dynamic Type, and keeps UI crisp.
+- Newsreader (serif, OFL, bundled, with optical sizes): editorial text
+  only. The child's name, screen titles, the lede sentence, report
+  headlines, and longer reading (notes, care plan text, report prose).
+  Fallback if Newsreader ever causes trouble: New York, Apple's own
+  serif, which ships with iOS and supports Dynamic Type natively.
+- SF Pro (system font): everything you tap or scan. Row labels, values,
+  buttons, section headers, times, numbers in lists.
 
-If budget allows later, Newsreader can be swapped for a commercial serif
-with an app embedding license (GT Alpina or Canela are the right
-family). Only DesignSystem.swift should change.
+Hierarchy comes from size, weight, and contrast working together (Apple
+HIG: adjust weight, size, and color to emphasize what matters). Our
+earlier rule "headings are regular weight" made titles too close to body
+text on a phone screen, which is part of why screens felt flat and
+random. Fixed below.
 
-Type scale. Six styles; nothing else is allowed.
-| Style | Font | Size/Line | Dynamic Type base | Use |
-|---|---|---|---|---|
-| display | Newsreader Display 400 | 32/38 | largeTitle | Child's name on Today, report headline. Once per screen at most. |
-| title | Newsreader Display 400 | 24/30 | title2 | Screen and section titles |
-| lede | Newsreader Text 400 | 20/28 | title3 | The one summary sentence ("A rough night, 3 itchy wake-ups.") |
-| body | Newsreader Text 400 | 17/25 | body | Sentences, notes, care plan text |
-| control | SF Pro 500 | 17/22 | body | Buttons, row labels, tabs |
-| meta | SF Pro 400 | 13/18 | footnote | Times, "by Dad," captions |
-Big numbers in reports use display with monospaced (tabular) digits.
+Type scale. Seven styles; nothing else is allowed.
+| Style | Font | Weight | Size/Line | Dynamic Type base | Use |
+|---|---|---|---|---|---|
+| display | Newsreader Display | 400 | 34/40 | largeTitle | Child's name on Today, report headline. Once per screen. |
+| title | Newsreader Display | 500 | 26/32 | title | Screen titles (Plan, Progress), sheet titles |
+| lede | Newsreader Text | 400 | 20/28 | title3 | The one summary sentence |
+| section | SF Pro | 600 | 15/20 | subheadline | Section headers ("Last night", "Log"), sentence case, graphite |
+| row | SF Pro | 400 | 17/22 | body | Row labels and values, button labels (600 on primary buttons) |
+| reading | Newsreader Text | 400 | 17/25 | body | Notes, care plan text, report prose |
+| meta | SF Pro | 400 | 13/18 | footnote | Times, "by Dad", captions |
+Big numbers in reports: display size, SF Pro 500 with monospaced digits.
 
-Rules
-- Left-aligned, always. Centered text only inside a button.
+Weight rules
+- Three weights in the whole app: 400, 500 (serif titles), 600 (section
+  headers, primary buttons). Never Light, Thin, or Ultralight (Apple
+  HIG: light weights are hard to read, especially small). Never Bold
+  or heavier.
+- Emphasis inside a sentence uses 500, never color.
+
+Size rules
+- Each step up in importance is clearly bigger: display is 2x row, title
+  is 1.5x row. If two things look the same size, one of them is wrong.
+
+Contrast rules (three levels only)
+- Primary text: ink. Secondary text: graphite. There is no lighter text
+  color: anything lighter than graphite fails 4.5:1 on paper. Lighter
+  tones are for hairlines and disabled icons only, never words.
+
+Other rules
+- Left-aligned always; centered only inside buttons.
 - Sentence case everywhere. No all caps.
-- Headings are regular weight; hierarchy comes from size and space, not
-  boldness.
-- Every style is built with `relativeTo:` so Dynamic Type scales it. Test
-  at the largest accessibility size: nothing clips or truncates.
+- Every style uses relativeTo: so Dynamic Type scales it, and the
+  hierarchy must still read at the largest accessibility size.
 
 ## 5. Layout: the ledger
 One layout primitive, repeated until it becomes the look: the ledger row.
 
 Ledger row
-- Full width, on paper. Label on the left (control or body), value or
-  action on the right (meta or control). 0.5pt hairline below.
+- Full width, on paper. Label on the left (row style), value or
+  action on the right (row in graphite, or meta). 0.5pt hairline below.
 - Minimum height 56pt (72pt at night).
 - Tap state: the row fills with oat (nightSurface at night), like ink
   soaking into paper. No scale bounce.
 
 Screens are built from: a title, the lede sentence, then ledger sections
-separated by 40pt of space. That's it. Surfaces (oat sheets) are used only
+(each with a section header) separated by 40pt of space. That's it. Surfaces (oat sheets) are used only
 for things that sit above the page, like the log confirmation or a sheet.
 
 Spacing: 4pt base. Screen margins 24pt. Between rows 0 (the hairline does
@@ -183,7 +212,7 @@ permissions, Shortcuts automations) must be shown, not described.
 The VisualSteps component
 - One step per screen, swipeable. Each step shows an iPhone frame with
   the exact screen the parent will see, with the spot to tap marked by a
-  soft indigo ring. Under it, one short sentence in body style:
+  soft indigo ring. Under it, one short sentence in row style:
   "Touch and hold an empty spot on your Home Screen."
 - Steps are real screenshots or short looping screen recordings (3–6
   seconds, no sound), never drawings of a phone.

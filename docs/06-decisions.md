@@ -106,3 +106,12 @@ Decisions that aren't obvious from the code, newest at the bottom. Add a dated e
 - **The card's entry point:** a "Share this week" row under the week strip on Today opens the Weekly card screen.
 - **3.3 The Messages bubble carries its card.** `WeeklyCard` is a small encodable copy of what the card shows; it travels in the message link (`calicare://week?card=…`). Tapping a bubble draws the full card from the link itself: offline, with no database, even on a phone outside the household. The bubble (600 × 360) shows the week, three stats, and "Tap to see full week."
 - **The iMessage icon** is the same ink "c", in every size in Apple's template. Only the universal and App Store sizes carry `platform: ios`, or the asset compiler warns.
+- **3.4 Doctor PDF:**
+  - **Content:** `DoctorReport` (Core) holds counts, a day-by-day series, notes, and every log.
+  - **Layout:** `DoctorReportPDF` draws US Letter pages with SwiftUI and Swift Charts into a PDF, so text stays selectable.
+  - **Wording:** neutral and clinical ("Counts of what a parent logged"), with no conclusions.
+  - **Pages:** white, since they get printed. Ink text, with indigo only in the charts.
+  - **Footer:** pinned to the bottom of every page, so no content can push it off.
+  - **Rows per page:** 22 log or day rows, and up to 9 notes (3 lines each). The table cuts long notes short, and the full text is on the Notes pages.
+  - **Default range:** since the last visit if known (nothing records visits until Phase 4's provider tracker), otherwise the last 4 weeks ending today.
+  - **Where it lives:** the Weekly card screen → "Doctor report". Share PDF, or "Email to provider" when Mail is set up.

@@ -39,3 +39,9 @@ Leave (it breaks DESIGN.md or our tone):
 - Streak language and any scoring of the parent.
 - Heavy bold sans headlines. Ours are Newsreader: the same size and
   confidence, but editorial.
+
+## Consistency brief, September 27, 2026
+A brief from a separate brainstorm session tightened the canvas into one
+system: tokens, five type sizes, 12pt corners, one header, one log
+control, one summary card, night versions of every tab. Its rules are now
+in DESIGN.md and UX.md; the reasoning is in docs/06-decisions.md.

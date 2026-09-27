@@ -49,16 +49,17 @@ Three tabs. Nothing else is top-level.
 | Plan | Follow the care plan: routine, supplements, food, baths | list.bullet.clipboard |
 | Progress | See whether things are getting better, and share it | chart.line.uptrend.xyaxis |
 
-On every tab
-- Header: child's name (tap to switch child or add one) on the left,
-  Settings button on the right. Settings opens as a sheet.
-- On Today the child's name is in display type. On Plan and Progress it
-  is a small switcher in the navigation bar (row style, 600), not a big
-  title. Display type appears only on Today.
-- Plan and Progress also show a quick log bar above the tab bar: one big
-  "Itchy" button and "Log…" (opens the full log sheet). Use
-  tabViewBottomAccessory on iOS 26+, a bottom safe-area inset bar on
-  older iOS. Today doesn't need it; its Log section is the same thing.
+On every tab (DESIGN.md §5)
+- AppHeader: the child switcher ("Cal ▾", label size) on the left, the
+  Settings gear on the right (Settings opens as a sheet). Below it the
+  screen title in display, matching the tab name: "Today", "Plan",
+  "Progress". Optional caption (Today: the date).
+- One log control, docked right of the tab bar on every tab: "Itchy"
+  (one tap) and "More" (Flare, Bowel movement, Note). Same options day
+  and night. It replaces Today's old Log section and the quick log bar.
+  In the app: the tab bar accessory on iOS 26.1+, an inset bar before.
+- Every tab has a night version (8 PM – 7 AM): the same layout in the
+  night palette.
 
 Navigation
 - Push: entry detail, a day in Progress, a supplement's detail.
@@ -93,67 +94,67 @@ never from how skin looks in color. No scores we invented get fancy names.
 Job: log in one tap and see how last night and today are going.
 
 Day layout (7 AM – 8 PM), top to bottom:
-1. Header: child name (display) with chevron, date in meta, Settings.
-2. Last night: the lede sentence ("A rough night. 3 itchy wake-ups, up at
-   2:14 and 4:40."). If not rated: "How was last night?" with Good, Okay,
-   Rough as ledger choices; one tap logs it.
-3. Skin today (after 4 PM, until answered): the four choices as ledger
-   rows. Once answered, it collapses to one line: "Skin today: flaring."
-4. Log: ledger rows Itchy, Flare, Bowel movement, Mood, Note (Photo in
-   Phase 6). Right side: today's count or last time in meta.
-   - Itchy logs instantly.
-   - Flare logs instantly; the confirmation line adds "Add where," which
-     opens a simple body outline to tap areas (optional, never required).
-   - Bowel movement and Mood open a small sheet; one tap on an option logs.
-   - Note opens a sheet with a text field.
-5. Routine: today's steps with checks. If none: one row, "Set up your
-   routine" → Plan. Until routine steps exist in the data model (U2),
-   Routine shows two rows, Morning and Evening.
-6. Today so far: timeline (time on the left, event, "by Dad" when more
-   than one caregiver). Swipe to delete, tap to edit.
-7. This week: 7-night dot strip in one row. Tap → Progress.
+1. AppHeader: "Today", the date as caption.
+2. Skin today, until answered: "How was Cal's skin today?" (title) and
+   four card buttons (Calm, A little itchy, Flaring, Very rough). This is
+   the primary element; nothing else on the screen is louder. Once
+   answered it collapses to one line under the summary card: "Skin
+   today: A little itchy · Change".
+3. Summary card "Last night": "A good night", "One itchy wake-up, at
+   2:14 AM", sun drawing. If the night isn't rated, the card asks "How
+   was last night?" with Good, Okay, Rough.
+4. Today so far: the timeline (event, time; "by Dad" with more than one
+   caregiver). Swipe to delete, tap to edit.
+5. Logging is the docked log control. Flare logs instantly; the
+   confirmation line adds "Add where" (body outline, optional). Bowel
+   movement opens a small sheet; Note opens a text sheet.
 
-Night layout (8 PM – 7 AM), a different layout, not just colors:
-1. Child name only.
-2. Log rows first and bigger (72pt): Itchy, Flare, Note.
-3. Tonight so far.
-Everything else is hidden.
+Night layout (8 PM – 7 AM):
+1. AppHeader: "Today", no caption.
+2. Summary card "So far tonight": "Two wake-ups", the times, moon drawing.
+3. A large full-width "Itchy" button (title size, about 96pt, accent
+   fill). The docked log control shows only "More" on this screen.
+4. Tonight so far.
+Nothing else.
 
-First run: a one-line hint above Log: "Tap Itchy whenever it happens.
-That's all it takes." Gone after the first log.
+First run: a one-line hint under the header: "Tap Itchy whenever it
+happens. That's all it takes." Gone after the first log.
 
 ## 5. Plan
 Job: follow the care plan without thinking about it.
 
-Before a plan is imported:
-1. Routine: morning and evening steps the parent entered. "Edit routine"
-   at the end. Until routine steps exist (U2), two rows: Morning and
-   Evening.
-2. Care plan: appears only once import is built (Phase 4). Then it's one
-   row: "Add your care plan. Import a PDF or photo from your provider."
+1. AppHeader: "Plan", caption "The routine you set, morning and evening".
+2. Summary card "Up next": "Evening · 3 left", moon drawing (sun in the
+   morning). Then that routine's steps as check rows. A step from the
+   provider's plan shows its name and dose, with "From Dr. [name]'s
+   plan" as a caption.
+3. The other routine (e.g. Morning, "Done 7:40 AM"), then "Edit routine".
+4. From your provider: one "Provider's plan" row (provider, date) that
+   opens the full plan. It appears once a plan has been imported
+   (Phase 4); until then the section is absent.
 
-After import (Phase 4+), sections in this order, each hidden if empty:
-Today's steps, Supplements (active, what starts next and when), Food
-(Phase 5), Provider (next visit, messages left), About this plan
-(provider, date, the original file, blanks your provider left).
+After import (Phase 4+), more sections in this order, each hidden if
+empty: Supplements (active, what starts next and when), Food (Phase 5),
+Provider (next visit, messages left).
 
 ## 6. Progress
 Job: show whether things are getting better, and share it.
 
-1. Range: Week, Month, Since last visit (shown once a visit date exists;
-   doctors think in visits).
-2. Summary: the headline sentence and at most one "worth watching" line.
-   Compared with this child's own history only.
-3. Nights: dots on the indigo scale.
-4. Skin by day: indigo bars from Skin today.
-5. Itchy wake-ups: bar chart per night (Swift Charts, indigo, minimal
-   gridlines, tabular figures).
-6. Photos (Phase 6): the on-device photo timeline.
-7. Days: ledger rows (date, one-line summary). Tap → that day's timeline.
-8. Share: Weekly card, Doctor report, Caregiver card. Tap → preview sheet
-   with Share.
+1. AppHeader: "Progress".
+2. Segmented control: Week / Month / Since visit (Since visit once a
+   visit date exists; doctors think in visits).
+3. Summary card: the headline ("Calmer than last week") with at most one
+   "worth watching" line as its caption. Flower drawing. Compared with
+   this child's own history only.
+4. This week: one aligned grid, a column per day: the skin bar on top,
+   the night dot below, the day letter underneath (today in accent). A
+   small legend: calm → very rough, dashed outline = not answered.
+5. Share with provider: one secondary button (doctor report; the weekly
+   card for family is in its share sheet).
+6. Later: itchy wake-ups chart, Photos (Phase 6), day rows (tap → that
+   day's timeline).
 
-Fewer than 3 days of logs: charts are replaced by one sentence: "After a
+Fewer than 3 days of logs: the grid is replaced by one sentence: "After a
 few days of logging, you'll see how things are going here." Share stays.
 
 ## 7. Settings (sheet)
@@ -174,24 +175,28 @@ Debug list: debug builds only.
 
 ## 8. Onboarding (full screen, no account)
 Install to first log in under 60 seconds when optional steps are skipped.
-Thin progress line at the top.
-1. Welcome: wordmark, one sentence ("Log your child's eczema in one tap,
-   and keep their care plan in one place."), and one trust line in meta:
-   "No ads. Photos never leave your phone. Not medical advice."
-   Continue.
-2. Your child: first name (required), birthday (optional).
-3. Reminders: morning "How was last night?" and evening "How was their
-   skin today?" toggles with times. Turning one on shows a short priming
-   line, then the system permission prompt. Skip is a clear secondary
-   button.
-4. Log from anywhere: VisualSteps for the Home Screen widget; "Show me
-   the Action Button too" is optional. Skip is always visible. No other
-   guides here (Lock Screen, Siri, Control Center live in Settings >
-   Quick logging). A step without a real recording is hidden.
-5. Land on Today with the first-run hint.
+One idea per screen: a large visual (a hand-drawn drawing or a phone
+showing the real thing), a heading in title, body in sans, one primary
+button. Steps 2–5 have a back button and a progress bar in equal steps
+(25 / 50 / 75 / 100%).
+1. Welcome: wordmark, a sunrise drawing, the headline in display ("Your
+   child's skin, kept in one calm place."), one sentence, "Add your
+   child", and the trust line "No ads. Photos never leave your phone."
+   ("Not medical advice" lives in Settings > About.)
+2. Your child: "Who are we looking after?", a real text field labelled
+   "First name" (autofocus, display size). Birthday later.
+3. The one scale: "How was Cal's skin today?" with the four answers
+   rising as bars; "Lighter is calmer", "One tap".
+4. Log from anywhere: a phone Home Screen where a tap on the Itchy widget
+   logs it. "Show me how" opens VisualSteps; "Skip for now". (Action
+   Button guide is optional, in Settings.)
+5. Evening check-in: a locked phone at 6:30 PM with the four answers on
+   the notification. "Turn on reminders" turns on the evening skin
+   check-in (with a short priming line, then the system prompt); "Not
+   now". Then land on Today.
 No sign-in step, no account, paywall, or survey in onboarding.
 
-Reminders live in two places only: onboarding step 3 and Settings >
+Reminders live in two places only: onboarding step 5 and Settings >
 Reminders. No reminders sheet or prompt after the first log.
 
 ## 9. Legitimacy checklist

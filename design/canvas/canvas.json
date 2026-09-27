@@ -1,0 +1,204 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "AppHeader.dc.html": {
+      "h": 156,
+      "title": "AppHeader",
+      "w": 390,
+      "x": 0,
+      "y": 1270
+    },
+    "LogControl.dc.html": {
+      "h": 260,
+      "title": "LogControl",
+      "w": 200,
+      "x": 1178,
+      "y": 1270
+    },
+    "LogControlOpen.dc.html": {
+      "h": 260,
+      "title": "LogControl \u00b7 More open",
+      "w": 200,
+      "x": 1458,
+      "y": 1270
+    },
+    "Main.dc.html": {
+      "h": 844,
+      "title": "1 Welcome",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "OnbCheckin.dc.html": {
+      "h": 844,
+      "title": "5 Evening check-in",
+      "w": 390,
+      "x": 1880,
+      "y": 0
+    },
+    "OnbName.dc.html": {
+      "h": 844,
+      "title": "2 Your child",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "OnbScale.dc.html": {
+      "h": 844,
+      "title": "3 The one scale",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "OnbWidget.dc.html": {
+      "h": 844,
+      "title": "4 Log from anywhere",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "Plan.dc.html": {
+      "h": 844,
+      "title": "Plan",
+      "w": 390,
+      "x": 1410,
+      "y": 1900
+    },
+    "PlanNight.dc.html": {
+      "h": 844,
+      "title": "Plan \u00b7 night",
+      "w": 390,
+      "x": 1410,
+      "y": 3100
+    },
+    "Progress.dc.html": {
+      "h": 844,
+      "title": "Progress",
+      "w": 390,
+      "x": 1880,
+      "y": 1900
+    },
+    "ProgressNight.dc.html": {
+      "h": 844,
+      "title": "Progress \u00b7 night",
+      "w": 390,
+      "x": 1880,
+      "y": 3100
+    },
+    "SummaryCard.dc.html": {
+      "h": 128,
+      "title": "SummaryCard",
+      "w": 342,
+      "x": 470,
+      "y": 1270
+    },
+    "TabBar.dc.html": {
+      "h": 62,
+      "title": "TabBar",
+      "w": 230,
+      "x": 892,
+      "y": 1270
+    },
+    "Today.dc.html": {
+      "h": 844,
+      "title": "Today",
+      "w": 390,
+      "x": 0,
+      "y": 1900
+    },
+    "TodayNight.dc.html": {
+      "h": 844,
+      "title": "Today \u00b7 night",
+      "w": 390,
+      "x": 0,
+      "y": 3100
+    },
+    "OnbProgress.dc.html": {
+      "x": 1738,
+      "y": 1270,
+      "w": 342,
+      "h": 44,
+      "title": "OnbProgress"
+    },
+    "TodayChoosing.dc.html": {
+      "x": 470,
+      "y": 1900,
+      "w": 390,
+      "h": 844,
+      "title": "Today \u00b7 tapping an answer"
+    },
+    "TodayAnswered.dc.html": {
+      "x": 940,
+      "y": 1900,
+      "w": 390,
+      "h": 844,
+      "title": "Today \u00b7 answered"
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-09-27T20:40:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "comp": {
+      "kind": "title1",
+      "maxW": 2080,
+      "text": "Shared components: build once, use everywhere",
+      "w": 240,
+      "x": 0,
+      "y": 1000
+    },
+    "night": {
+      "kind": "title1",
+      "maxW": 2270,
+      "text": "Tabs \u00b7 night",
+      "w": 240,
+      "x": 0,
+      "y": 2850
+    },
+    "onb": {
+      "kind": "title1",
+      "maxW": 2270,
+      "text": "Onboarding: one idea per page, a phone showing it",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "tabs": {
+      "kind": "title1",
+      "maxW": 2270,
+      "text": "Tabs \u00b7 day",
+      "w": 240,
+      "x": 0,
+      "y": 1650
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "OnbName.dc.html",
+    "OnbScale.dc.html",
+    "OnbWidget.dc.html",
+    "OnbCheckin.dc.html",
+    "AppHeader.dc.html",
+    "SummaryCard.dc.html",
+    "TabBar.dc.html",
+    "LogControl.dc.html",
+    "LogControlOpen.dc.html",
+    "Today.dc.html",
+    "Plan.dc.html",
+    "Progress.dc.html",
+    "TodayNight.dc.html",
+    "PlanNight.dc.html",
+    "ProgressNight.dc.html",
+    "OnbProgress.dc.html",
+    "TodayChoosing.dc.html",
+    "TodayAnswered.dc.html"
+  ],
+  "pages": [],
+  "title": "Cali Care screen directions"
+}

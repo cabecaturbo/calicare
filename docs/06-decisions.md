@@ -164,3 +164,23 @@ Other
 - **Evening skin check-in:** off by default at 6:30 PM, like the other reminders. 14 one-off notifications (`calicare.skin.<day>`), skipped and cleared once that day is answered. Buttons Calm / A little itchy / Flaring / Very rough log in the background; a tap the next morning is filed at the check-in's time. Settings lists it second: morning check-in, skin check-in, routines.
 - **Saved reminder settings decode field by field,** so settings from before the skin check-in keep their values instead of resetting.
 - **Siri:** a fifth App Shortcut, "Log skin in Cali Care" or "Log skin today in Cali Care"; Siri asks which answer. A phrase with the answer in it ("Log flaring skin…") was dropped: the answer type lives in Core, and Siri's phrase training couldn't resolve it (a device-build warning). `LogEventIntent` also offers Skin today in Shortcuts.
+
+## Consistency pass: one set of rules (September 27, 2026)
+
+From a design brief the owner brought from a separate brainstorm, applied to the design canvas (https://claude.ai/artifact/DgxTwrnEfu9GHkfp44HwD6; source copied to `design/canvas/`). The owner chose to let the brief's rules replace DESIGN.md where they differ. The app build follows the canvas next.
+
+- **One tokens file.** Every color, type style, spacing step, radius, and animation comes from `tokens.css` (the app's equivalent is `DesignSystem.swift`). The rebuilt screens have no hard-coded hex colors, font sizes, or radii.
+- **Palette trimmed.** Day bg/surface/ink/muted/line/accent/onAccent, and the same names at night. Ochre and the middle indigo step (#8C9BB8) are gone; "worth watching" is a muted caption in the summary card.
+- **One four-step scale for skin and nights.** Nights map good → calm, okay → a little itchy, rough → very rough. Every mark has a 1px muted border.
+- **Night ramp flips so rougher still stands out.** The day ramp on the dark background made calm the brightest mark, so Progress at night read backwards (owner's review). At night calm is a low-contrast dark slate and very rough the brightest (#2A3142, #3C4760, #8497BD, #B7C5E0).
+- **Five type sizes:** display 34, title 24, body 17, label 15, caption 13 (plus 12pt tab labels). Serif only for headlines and hero words; all body copy is sans, onboarding included.
+- **12pt corners** on buttons, cards, inputs, and choices; pills only for the tab bar, log control, and segmented control.
+- **Cards and dividers, no heavy rules.** A summary card (eyebrow, serif title, caption, optional drawing) is the one hero per screen; lists use 0.5pt dividers.
+- **AppHeader on every tab:** child switcher and gear on top, the tab name as the display title. This replaces "child's name in display on Today only".
+- **One log control on every tab,** docked right of the tab bar: "Itchy" plus "More" (Flare, Bowel movement, Note). It replaces Today's Log section and the quick log bar. "Itchy" in the pill is deliberately quieter than the active tab. On Today at night only, a large full-width Itchy button (title size, 96pt, accent) returns the 2 AM priority and the pill shows only "More".
+- **Skin check-in on Today** is four card buttons with a selected state, the primary element until answered, then one line "Skin today: A little itchy · Change".
+- **Plan:** summary card "Evening · 3 left" (text, no progress dots: showing both was redundant), provider medicine with dose and "From Dr. [name]'s plan", and a "Provider's plan" row (in the app, once a plan is imported).
+- **Progress:** Week / Month / Since visit; headline "Calmer than last week" (shortened so it never wraps with an orphan); one aligned week grid (skin bar, night dot, day letter) with a legend; "Share with provider" as the secondary button.
+- **Onboarding:** Welcome → Name → Scale → Widget → Check-in, with a back button and an equal-step progress bar on steps 2–5, a real "First name" field, and "Not medical advice" moved from Welcome to Settings > About.
+- **Hand-drawn ink illustrations are allowed** (sun, moon, flower; no leaves). They draw in once and stop; only onboarding keeps a gentle wobble; Reduce Motion shows them complete with no animation. This replaces "no illustrations until a human illustrator".
+- **Checks run on the canvas:** all text pairs are at least 4.5:1 in both themes (lowest 5.8 day, 6.2 night); the "More" button (was 40pt wide) and the segmented control (was 36pt tall) were raised to 44pt.

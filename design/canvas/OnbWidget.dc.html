@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Log from anywhere</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+@keyframes ring{0%,30%{opacity:0;transform:scale(.6)}38%{opacity:1;transform:scale(1)}50%{opacity:0;transform:scale(1.25)}100%{opacity:0}}
+@keyframes press{0%,34%{transform:scale(1)}38%{transform:scale(.96)}44%,100%{transform:scale(1)}}
+@keyframes before{0%,40%{opacity:1}46%,92%{opacity:0}100%{opacity:1}}
+@keyframes after{0%,40%{opacity:0}46%,92%{opacity:1}100%{opacity:0}}
+.ring{animation:ring 4s ease-out 1s infinite;opacity:0}
+.press{animation:press 4s ease-out 1s infinite}
+.before{animation:before 4s linear 1s infinite}
+.after{animation:after 4s linear 1s infinite;opacity:0}
+@media (prefers-reduced-motion: reduce){.ring,.press,.before{animation:none}.after{animation:none;opacity:0}}
+</style>
+</helmet>
+<div class="day" style="width:390px;height:844px;box-sizing:border-box;padding:52px var(--gutter) 40px;background:var(--bg);color:var(--ink);font-family:var(--sans);display:flex;flex-direction:column">
+<dc-import name="OnbProgress" step="{{step}}" back="OnbScale.dc.html" hint-size="342px,44px"></dc-import>
+<div class="rise" style="margin:var(--s5) auto 0;width:220px;height:420px;box-sizing:border-box;padding:10px;border-radius:var(--mock-r-device);background:var(--mock-bezel)" role="img" aria-label="A phone Home Screen. Tapping the Cali Care widget logs itching, and the widget then says Logged.">
+<div style="width:100%;height:100%;border-radius:var(--mock-r-screen);background:var(--mock-home);overflow:hidden;box-sizing:border-box;padding:40px 16px 16px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-content:start">
+<div class="press" style="grid-column:span 2;grid-row:span 2;position:relative;aspect-ratio:1;border-radius:var(--r);background:var(--bg);box-sizing:border-box;padding:10px;display:flex;flex-direction:column;justify-content:space-between">
+<div style="position:relative;height:32px"><span class="before mock-word" style="position:absolute;inset:0">Itchy</span><span class="after mock-word" style="position:absolute;inset:0;color:var(--accent)">Logged</span></div>
+<div style="position:relative;height:13px" class="mock-xs"><span class="before muted" style="position:absolute;inset:0">Last 11:40 PM</span><span class="after muted" style="position:absolute;inset:0">2:14 AM · Undo</span></div>
+<span class="ring" style="position:absolute;left:50%;top:50%;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:var(--r-pill);border:2px solid var(--accent)"></span>
+</div>
+<sc-for list="{{apps}}" as="a" hint-placeholder-count="8"><div style="aspect-ratio:1;border-radius:var(--r);background:var(--mock-app)"></div></sc-for>
+</div>
+</div>
+<div style="margin-top:var(--s5);display:flex;flex-direction:column;gap:var(--s2)">
+<h1 class="t-title" style="margin:0">Log at 2 AM without opening anything</h1>
+<p class="t-body muted" style="margin:0">Put the Itchy widget on your Home Screen. One tap logs it; the app never opens.</p>
+</div>
+<div style="flex-grow:1"></div>
+<div style="display:flex;flex-direction:column;gap:var(--s1)">
+<a href="OnbCheckin.dc.html" class="btn-primary t-label">Show me how</a>
+<a href="OnbCheckin.dc.html" class="btn-text t-body">Skip for now</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return { step: 3, apps: [1, 2, 3, 4, 5, 6, 7, 8] }; }
+}
+</script>
+</body>
+</html>

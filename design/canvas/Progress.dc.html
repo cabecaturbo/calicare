@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Progress</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{themeClass}}" style="position:relative;width:390px;height:844px;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--sans)">
+<div style="height:844px;overflow-y:auto;box-sizing:border-box;padding-bottom:120px">
+<dc-import name="AppHeader" heading="Progress" caption="" theme="{{theme}}" hint-size="390px,156px"></dc-import>
+
+<div style="padding:var(--s3) var(--gutter) 0">
+<div role="radiogroup" aria-label="Range" style="height:var(--tap);border-radius:var(--r-pill);background:var(--surface);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:2px;box-sizing:border-box">
+<button type="button" role="radio" aria-checked="true" class="t-caption" style="border:0;border-radius:var(--r-pill);background:var(--bg);font-weight:600">Week</button>
+<button type="button" role="radio" aria-checked="false" class="t-caption" style="border:0;background:none">Month</button>
+<button type="button" role="radio" aria-checked="false" class="t-caption" style="border:0;background:none">Since visit</button>
+</div>
+</div>
+
+<div style="padding:var(--s5) var(--gutter) 0">
+<dc-import name="SummaryCard" eyebrow="Sep 21 – 27" heading="Calmer than last week" caption="Worth watching: two flares on Tuesday" art="flower" compact="{{yes}}" theme="{{theme}}" hint-size="342px,128px"></dc-import>
+</div>
+
+<section style="padding:var(--s6) var(--gutter) 0">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><h2 class="t-label" style="margin:0">This week</h2><span class="t-caption muted">4 good nights of 7</span></div>
+<div role="img" aria-label="{{gridLabel}}" style="margin-top:var(--s4);display:grid;grid-template-columns:44px repeat(7,minmax(0,1fr));column-gap:var(--s2);row-gap:var(--s2);align-items:end">
+<span class="t-caption muted" style="align-self:end">Skin</span>
+<sc-for list="{{days}}" as="d" hint-placeholder-count="7">
+<span style="height:72px;display:flex;align-items:flex-end;justify-content:center"><span class="swatch {{d.skin}}" style="width:18px;height:{{d.h}}"></span></span>
+</sc-for>
+<span class="t-caption muted" style="align-self:center">Night</span>
+<sc-for list="{{days}}" as="d" hint-placeholder-count="7">
+<span style="height:24px;display:flex;align-items:center;justify-content:center"><span class="swatch {{d.night}}" style="width:14px;height:14px;border-radius:var(--r-pill)"></span></span>
+</sc-for>
+<span></span>
+<sc-for list="{{days}}" as="d" hint-placeholder-count="7">
+<sc-if value="{{d.today}}" hint-placeholder-val="{{false}}"><span class="t-caption" style="text-align:center;color:var(--accent);font-weight:600">{{d.letter}}</span></sc-if>
+<sc-if value="{{d.past}}" hint-placeholder-val="{{true}}"><span class="t-caption muted" style="text-align:center">{{d.letter}}</span></sc-if>
+</sc-for>
+</div>
+<div aria-hidden="true" class="t-caption muted" style="margin-top:var(--s4);display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap">
+<span>Calm</span>
+<span class="swatch sw-calm" style="width:12px;height:12px"></span><span class="swatch sw-little-itchy" style="width:12px;height:12px"></span><span class="swatch sw-flaring" style="width:12px;height:12px"></span><span class="swatch sw-very-rough" style="width:12px;height:12px"></span>
+<span>Very rough</span>
+<span style="margin-left:var(--s3);display:flex;align-items:center;gap:var(--s1)"><span class="swatch empty" style="width:12px;height:12px"></span>Not answered</span>
+</div>
+</section>
+
+<div style="padding:var(--s6) var(--gutter) 0">
+<button type="button" class="btn-secondary t-label" style="width:100%">Share with provider</button>
+</div>
+</div>
+
+<div style="position:absolute;left:var(--gutter);bottom:28px"><dc-import name="TabBar" active="progress" theme="{{theme}}" width="{{tabWidth}}" hint-size="218px,62px"></dc-import></div>
+<div style="position:absolute;right:var(--gutter);bottom:28px"><dc-import name="LogControl" theme="{{theme}}" size="{{logSize}}" hint-size="200px,260px"></dc-import></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["day","night"],"default":"day"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const night = this.props.theme === 'night';
+return {
+theme: night ? 'night' : 'day',
+themeClass: night ? 'night' : 'day',
+logSize: night ? 'large' : 'regular',
+tabWidth: 218,
+yes: true,
+gridLabel: 'This week. Skin: Monday a little itchy, Tuesday flaring, Wednesday a little itchy, Thursday not answered, Friday calm, Saturday calm, today not answered yet. Nights: okay, rough, okay, good, good, good, good.',
+days: [
+['M','sw-little-itchy','38px','sw-little-itchy'],
+['T','sw-flaring','58px','sw-very-rough'],
+['W','sw-little-itchy','38px','sw-little-itchy'],
+['T','empty','18px','sw-calm'],
+['F','sw-calm','18px','sw-calm'],
+['S','sw-calm','18px','sw-calm'],
+['S','empty','18px','sw-calm']
+].map((d, i) => ({ letter: d[0], skin: d[1], h: d[2], night: d[3], today: i === 6, past: i !== 6 }))
+};
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Your child</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0} #child-name:focus{outline:none;border-bottom-color:var(--accent)}</style>
+</helmet>
+<div class="day" style="width:390px;height:844px;box-sizing:border-box;padding:52px var(--gutter) 40px;background:var(--bg);color:var(--ink);font-family:var(--sans);display:flex;flex-direction:column">
+<dc-import name="OnbProgress" step="{{step}}" back="Main.dc.html" hint-size="342px,44px"></dc-import>
+<div style="margin-top:var(--s6);display:flex;flex-direction:column;gap:var(--s2)">
+<h1 class="t-title" style="margin:0">Who are we looking after?</h1>
+<p class="t-body muted" style="margin:0">Their first name is enough. You can add a birthday later.</p>
+</div>
+<div style="margin-top:var(--s6);display:flex;flex-direction:column;gap:var(--s2)">
+<label for="child-name" class="t-label">First name</label>
+<input id="child-name" class="t-display" type="text" autocomplete="given-name" autocapitalize="words" autofocus="{{yes}}" value="{{name}}" onChange="{{typed}}" placeholder="Name" style="height:56px;border:0;border-bottom:1px solid var(--ink);border-radius:var(--r-none);background:transparent;padding:0;color:var(--ink)">
+<p class="t-caption muted" style="margin:0">Stays on this phone unless you choose to share with family.</p>
+</div>
+<div style="flex-grow:1"></div>
+<a href="OnbScale.dc.html" class="btn-primary t-label">Continue</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+constructor(props) { super(props); this.state = { name: 'Cal' }; }
+renderVals() {
+return {
+step: 1,
+yes: true,
+name: this.state.name,
+typed: (e) => this.setState({ name: e.target.value })
+};
+}
+}
+</script>
+</body>
+</html>

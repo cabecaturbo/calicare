@@ -59,168 +59,150 @@ Before marking any UI task done, check the screen against this list and
 say which items you checked.
 
 ## 3. Color
-Rule of proportion: about 70% paper, 20% ink, 10% indigo and ochre.
+Tokens live in one place (the canvas's `tokens.css`; in the app,
+`DesignSystem.swift`). Nothing else hard-codes a color.
 
-Day palette
+Day
 | Token | Hex | Use |
 |---|---|---|
-| paper | #F6F1E8 | Main background everywhere |
-| oat | #ECE4D6 | Secondary surface: sheets, selected rows, callouts |
-| ink | #1E1B18 | Text, primary buttons, hairlines at full strength |
-| graphite | #5C554D | Secondary text, captions, timestamps |
-| hairline | #D8CFC0 | 0.5pt rules between rows and sections |
-| indigo | #34466A | The one accent: selected states, links, charts |
-| ochre | #8A6320 | "Worth watching" text only, used rarely |
+| bg | #F6F1E8 | Page background |
+| surface | #ECE4D6 | Summary cards, segmented control track, selected choice |
+| ink | #1E1B18 | Text |
+| muted | #5C554D | Secondary text, captions, swatch borders |
+| line | #D8CFC0 | 0.5pt dividers inside lists |
+| accent | #34466A | The one accent: primary buttons, active tab, selection, links |
+| onAccent | #F6F1E8 | Text on accent |
 
-Severity and data scale (indigo density, light = calm, deep = hard day)
-| Step | Hex |
+Night (automatic 8 PM – 7 AM; every tab, so nothing is bright at 2 AM)
+| Token | Hex |
 |---|---|
-| 1 calm | #E3E7EE |
-| 2 | #C2CBDB |
-| 3 | #8C9BB8 |
-| 4 | #56698F |
-| 5 hard | #2E3E5E |
+| bg | #14161C |
+| surface | #1E2129 |
+| ink | #EAE3D6 |
+| muted | #A8A093 |
+| line | #2C303A |
+| accent | #9FB0D0 |
+| onAccent | #14161C |
 
-Drawing the scale (dots and bars)
-- Every dot and bar on the indigo scale gets a 0.75pt graphite outline
-  (nightSecondary at night). Steps 1–3 are under 3:1 on paper, so the
-  outline is what makes them visible.
-- Color is never the only signal: bar height also encodes the level
-  (step 1 shortest, step 5 tallest).
-- Calm = step 1.
-- A day with no skinToday answer is an empty outline: no fill, same
-  0.75pt graphite outline.
+There is no ochre and no other accent. "Worth watching" is a muted
+caption inside the summary card.
+
+One scale for skin answers and for nights
+| Answer | Day | Night |
+|---|---|---|
+| calm | #E3E7EE | #2A3142 |
+| a little itchy | #C2CBDB | #3C4760 |
+| flaring | #56698F | #8497BD |
+| very rough | #2E3E5E | #B7C5E0 |
+Nights use the same four: good = calm, okay = a little itchy, rough =
+very rough.
+
+Drawing the scale
+- The rule in both themes: rougher always stands out more. By day,
+  deeper is rougher; at night, brighter is rougher.
+- Every swatch, bar, and dot has a 1px muted border, so calm never
+  vanishes into the background.
+- Color is never the only signal: bar height also encodes the answer.
+- A day with no skin answer is an empty dashed outline ("not answered").
 - Never infer skin from itches or flares. Skin by day comes only from
   the skinToday answer.
 
-Night palette (automatic 8 PM – 7 AM)
-| Token | Hex | Use |
-|---|---|---|
-| night | #14161C | Background |
-| nightSurface | #1E2129 | Sheets, selected rows |
-| nightText | #EAE3D6 | Main text (warm, never pure white) |
-| nightSecondary | #A8A093 | Secondary text |
-| nightHairline | #2C303A | Rules |
-| nightIndigo | #9FB0D0 | Accent |
-Night severity scale (brighter = harder): #2A3142, #3C4760, #5A6B8E,
-#8497BD, #B7C5E0.
-
-Checked contrast ratios (keep them passing):
-ink/paper 15.2, graphite/paper 6.5, graphite/oat 5.8, ochre/paper 4.8,
-indigo/paper 8.4, nightText/night 14.2, nightSecondary/night 7.0,
-nightIndigo/night 8.3. Add a unit test that computes WCAG contrast for
-every text/background token pair and fails under 4.5.
+Contrast (checked; keep passing): every text token on bg and surface is
+at least 4.5:1 in both themes (lowest: day muted on surface 5.8, night
+muted on surface 6.2). Keep the unit test that computes WCAG contrast
+for every text/background pair.
 
 Why indigo: calm, works on every skin tone, can't be confused with skin
 or blood, and is not a plant color. Severity is always measured by
 symptoms (itch, sleep, spread), never by how skin looks.
 
 ## 4. Type
-Two families only.
+Two families. Five sizes, plus tab labels. Nothing else.
 
-- Newsreader (serif, OFL, bundled, with optical sizes): editorial text
-  only. Bundle weights 400 and 500; the 500 weight is required for
-  the title style. The child's name, screen titles, the lede sentence, report
-  headlines, and longer reading (notes, care plan text, report prose).
-  Fallback if Newsreader ever causes trouble: New York, Apple's own
-  serif, which ships with iOS and supports Dynamic Type natively.
-- SF Pro (system font): everything you tap or scan. Row labels, values,
-  buttons, section headers, times, numbers in lists.
-
-Hierarchy comes from size, weight, and contrast working together (Apple
-HIG: adjust weight, size, and color to emphasize what matters). Our
-earlier rule "headings are regular weight" made titles too close to body
-text on a phone screen, which is part of why screens felt flat and
-random. Fixed below.
-
-Type scale. Seven styles; nothing else is allowed.
 | Style | Font | Weight | Size/Line | Dynamic Type base | Use |
 |---|---|---|---|---|---|
-| display | Newsreader Display | 400 | 34/40 | largeTitle | Child's name on Today, report headline. Once per screen. |
-| title | Newsreader Display | 500 | 26/32 | title | Screen titles (Plan, Progress), sheet titles |
-| lede | Newsreader Text | 400 | 20/28 | title3 | The one summary sentence |
-| section | SF Pro | 600 | 15/20 | subheadline | Section headers ("Last night", "Log"), sentence case, graphite |
-| row | SF Pro | 400 | 17/22 | body | Row labels and values, button labels (600 on primary buttons) |
-| reading | Newsreader Text | 400 | 17/25 | body | Notes, care plan text, report prose |
-| meta | SF Pro | 400 | 13/18 | footnote | Times, "by Dad", captions |
-Big numbers in reports: display size, SF Pro 500 with monospaced digits.
+| display | Newsreader | 500 | 34/40 | largeTitle | The screen title ("Today", "Plan", "Progress"); the Welcome headline |
+| title | Newsreader | 500 | 24/30 | title2 | Summary card titles, the skin question, onboarding headings, big hero words |
+| body | SF Pro | 400 | 17/24 | body | All body copy and row labels, including onboarding |
+| label | SF Pro | 600 | 15/20 | subheadline | Section labels, the child switcher, primary button text |
+| caption | SF Pro | 400 | 13/18 | footnote | Times, eyebrows, footnotes, legends |
+Tab labels: SF Pro 12/16, the only exception (minimum 12).
 
-Weight rules
-- Three weights in the whole app: 400, 500 (serif titles), 600 (section
-  headers, primary buttons). Never Light, Thin, or Ultralight (Apple
-  HIG: light weights are hard to read, especially small). Never Bold
-  or heavier.
-- Emphasis inside a sentence uses 500, never color.
+- The serif is for headlines and hero words only. Never for body copy.
+- Weights: 400, 500 (serif), 600 (labels). Never Light or Bold.
+- Contrast: ink for primary text, muted for secondary. Nothing lighter.
+  Disabled controls use the standard iOS disabled appearance.
+- Left-aligned, sentence case, no all caps. Every style scales with
+  Dynamic Type, and the hierarchy must still read at the largest size.
+- Newsreader ships with weights 400 and 500. Fallback: New York.
 
-Size rules
-- Each step up in importance is clearly bigger: display is 2x row, title
-  is 1.5x row. If two things look the same size, one of them is wrong.
+## 5. Layout
+Every tab is built the same way, top to bottom:
+1. **AppHeader:** the child switcher ("Cal ▾", label) on the left, the
+   settings gear on the right; below it the screen title in display,
+   matching the tab name; an optional caption.
+2. **The one thing now:** a summary card (or, on Today until it's
+   answered, the skin check-in).
+3. **Everything else:** sections with a label, rows separated by 0.5pt
+   dividers.
+4. **Bottom bar:** the tab bar, and the log control to its right.
 
-Contrast rules (three levels only)
-- Primary text: ink. Secondary text: graphite. Active text is never
-  lighter than graphite: anything lighter fails 4.5:1 on paper.
-  Lighter tones are for hairlines only.
-- Disabled controls use the standard iOS disabled appearance
-  (.disabled()); don't invent a custom disabled color.
+Spacing: 4 / 8 / 12 / 16 / 24 / 32. Page gutters 24. Between sections
+32. Content scrolls with bottom padding equal to the bottom bar plus the
+safe area, so nothing sits under it.
 
-Other rules
-- Left-aligned always; centered only inside buttons.
-- Sentence case everywhere. No all caps.
-- Every style uses relativeTo: so Dynamic Type scales it, and the
-  hierarchy must still read at the largest accessibility size.
+Corners: 12pt on buttons, cards, inputs, and choices. Pill shape only for
+the tab bar, the log control, and the segmented control. Chart marks 3pt.
 
-## 5. Layout: the ledger
-One layout primitive, repeated until it becomes the look: the ledger row.
+Separators: filled surface cards for summaries; 0.5pt line dividers
+inside lists. No heavy rules above sections.
 
-Ledger row
-- Full width, on paper. Label on the left (row style), value or
-  action on the right (row in graphite, or meta). 0.5pt hairline below.
-- Minimum height 56pt (72pt at night).
-- Tap state: the row fills with oat (nightSurface at night), like ink
-  soaking into paper. No scale bounce.
+Summary card: surface fill, 12pt corners, caption eyebrow, serif title,
+muted caption, and an optional ink drawing on the right. Used for "Last
+night", "Up next", and the Progress headline. One per screen.
 
-Screens are built from: a title, the lede sentence, then ledger sections
-(each with a section header) separated by 40pt of space. That's it. Surfaces (oat sheets) are used only
-for things that sit above the page, like the log confirmation or a sheet.
+Log control: one control, the same place on every tab: a pill beside the
+tab bar with "Itchy" (one tap) and "More" (Flare, Bowel movement, Note).
+It stays quieter than the active tab and than an unanswered check-in.
+At night it is taller. On Today at night only, a large full-width
+"Itchy" button (title size, about 96pt, accent fill) sits right under the
+summary card, and the pill shows just "More".
 
-Spacing: 4pt base. Screen margins 24pt. Between rows 0 (the hairline does
-the work). Between sections 40pt. Title to lede 8pt. Lede to first
-section 32pt.
-
-Corners: 4pt on buttons and sheets, 2pt on images. Nothing is pill-shaped
-except the system segmented control.
-
-Segmented control: the system segmented control (Picker with
-.segmented style) is allowed, e.g. the Progress range picker (Week,
-Month, Since last visit). Tint it with our tokens; don't rebuild it.
+Skin check-in (Today, until answered): the question in title size and
+four card buttons (swatch + label, at least 44pt, selected = accent
+border on surface). Once answered it collapses to one line: "Skin
+today: A little itchy · Change".
 
 Buttons
-- Primary: ink fill, paper text, 4pt corners, full width, 56pt tall
-  (64pt at night). One per screen.
-- Secondary: no fill, ink text, 0.5pt ink outline.
-- Log buttons (the core action): large ledger rows, not tiles. The label
-  is a word a tired parent reads instantly: "Itchy," "Rough night,"
-  "Bowel movement," "Routine done."
+- Primary: accent fill, onAccent label, 12pt corners, full width, 56pt.
+  One per screen.
+- Secondary: 1pt ink outline, 12pt corners (e.g. "Share with provider").
+- Text buttons: accent text, at least 44pt tall.
 
-Texture: a very faint paper grain over paper and oat backgrounds (static
-noise image at 3–4% opacity, multiply). Never over text-heavy report
-cards that get shared, never in widgets.
+Segmented control: the system segmented control, tinted with tokens
+(Progress: Week / Month / Since visit), at least 44pt tall.
+
+Tap targets: at least 44 × 44pt everywhere.
+
+Texture: a very faint paper grain over bg and surface (static noise at
+3–4%, multiply). Never on shared report cards or widgets.
 
 System chrome: let iOS draw its own navigation and tab bars (Liquid Glass
-on iOS 26+). Don't restyle them and don't imitate glass inside content.
-Content stays matte paper.
+on iOS 26+), styled with the tokens. Content stays matte.
 
 ## 6. Icons, logo, and imagery
-- Icons: SF Symbols, regular weight only, ink or graphite, used only
+- Icons: SF Symbols, regular weight only, ink or muted, used only
   where a word alone is unclear. Never in colored containers.
 - Logo: a wordmark, "Cali Care," set in Newsreader Display 400. No symbol
   for now. The old leaf is deleted everywhere.
 - App icon: paper-colored ground with an ink lowercase "c" from
   Newsreader Display, optically centered. A human illustrator or
   letterer can replace it later.
-- Illustration: none until a human illustrator makes them (single-weight
-  ink line drawings). Never AI-generated images. Until then, typography
-  and whitespace carry every screen.
+- Illustration: hand-drawn single-weight ink line drawings (1.6pt,
+  round caps, ink color): a sun (day, Welcome), a moon (night, evening),
+  a flower (Progress). No leaves or sprouts. They sit on the right of a
+  summary card or large in onboarding. A human illustrator can redraw
+  them later; never AI-generated raster images.
 - Photos of children appear only in the on-device photo timeline.
 
 ## 7. Showing, not telling: visual steps
@@ -264,11 +246,12 @@ Current step flows to build (verify each on the current iOS first):
   Control → find Cali Care.
 
 ## 8. Motion and feedback
-- Logging: the row fills with oat over 200ms, a light haptic, and the
-  confirmation line slides up from the bottom: "Logged, 2:14 AM · Undo."
-  It disappears after 4 seconds.
+- Illustrations draw themselves in once (about 1 second) and then stop.
+  Only onboarding may keep a gentle hand-drawn wobble.
+- Logging: a light haptic and the confirmation line slides up: "Logged,
+  2:14 AM · Undo." It disappears after 4 seconds.
 - Transitions are short (200–300ms) and ease-out. No springs with bounce.
-- Reduce Motion on: crossfades only.
+- Reduce Motion on: no animation at all; drawings appear complete.
 
 ## 9. Voice (unchanged, restated)
 Plain, warm, short. Like a friend who's been through it. Honest about
@@ -283,8 +266,9 @@ a page from a small magazine.
   wordmark at the top.
 - Headline in display ("A calmer week"), the week's dates in meta.
 - Ledger rows for the stats, with numbers in display tabular figures.
-- Seven night dots and skin-by-day bars on the indigo scale.
-- One "worth watching" line in ochre text, no box around it.
+- Seven night dots and skin-by-day bars on the one scale, each with its
+  1px muted border.
+- One "worth watching" line in muted text, no box around it.
 - Footer in meta: "Cali Care · Not medical advice."
 
 ## 11. Widgets

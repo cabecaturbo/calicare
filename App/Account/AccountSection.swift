@@ -8,6 +8,7 @@ struct AccountSection: View {
     @Environment(\.palette) private var palette
     @State private var showingSheet = false
     @State private var confirmingSignOut = false
+    @State private var deleting = false
 
     var body: some View {
         if account.isAvailable {
@@ -38,10 +39,16 @@ struct AccountSection: View {
                     }
                     .buttonStyle(.ledger)
                     row("Sign out") { confirmingSignOut = true }
+                    row("Delete account") { deleting = true }
                 }
             }
             .sheet(isPresented: $showingSheet) {
                 AccountSheet()
+                    .environment(account)
+                    .nightAwarePalette()
+            }
+            .sheet(isPresented: $deleting) {
+                DeleteAccountSheet()
                     .environment(account)
                     .nightAwarePalette()
             }

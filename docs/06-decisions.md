@@ -82,3 +82,11 @@ Decisions that aren't obvious from the code, newest at the bottom. Add a dated e
 - **The first sync claims pre-account logs:** "You"/"Me" logs on the phone take the person's name before uploading, so other phones never show them as "by you".
 - **Bylines only when shared:** "by Dad" (or "by you") appears on the timeline and the small widget's last-itch line only when the household has more than one person. Sync records the member count (`householdSize`) in the App Group for widgets.
 - **Intent confirmations stay short,** with no "by" name.
+
+## Phase 2.6: Account deletion (September 26, 2026)
+
+- **Two parts:** the data goes through the database function `delete_my_account_data()` (the last-owner rule, 12 pgTAP tests), and the login goes through the `delete-account` Edge Function, which checks the caller's token, runs that function as them, then deletes their auth user with the service role.
+- **Last-owner rule:** if you're a household's last owner, the whole household goes (children, logs, members, invites), even if caregivers remain; they lose access. Otherwise only your membership goes. The screen says which, by name, before you confirm (`am_last_owner`).
+- **Phone data stays unless you choose otherwise.** "Also delete data on this phone" is off by default; turned on, children and logs are erased and the app returns to the welcome screen.
+- **No red.** Deleting uses the ink outline button and a confirmation that says what goes.
+- **Before App Store submission:** Apple asks apps with Sign in with Apple to revoke the person's Apple token when they delete their account. That needs a Sign in with Apple private key from the Apple Developer site, stored as a Supabase secret. Not done yet; it's listed in the status doc.

@@ -84,6 +84,36 @@ final class AccountController {
         state = .signedOut
     }
 
+    /// Deletes the account on the server (see supabase/functions/delete-account),
+    /// then signs out here. With `erasePhone`, children and logs leave this
+    /// phone too; otherwise they stay, like before signing in.
+    func deleteAccount(erasePhone: Bool) async -> Bool {
+        guard let client else { return false }
+        isWorking = true
+        defer { isWorking = false }
+        struct Deleted: Decodable { let deleted: Bool }
+        do {
+            let result: Deleted = try await client.functions.invoke(
+                "delete-account", options: FunctionInvokeOptions(method: .post)
+            )
+            guard result.deleted else { throw CancellationError() }
+        } catch {
+            problem = "Couldn't delete your account just now. Nothing was changed. Check your connection and try again."
+            return false
+        }
+        signingOut = true
+        try? await client.auth.signOut(scope: .local)
+        signingOut = false
+        AccountSettings().displayName = nil
+        state = .signedOut
+        problem = nil
+        if erasePhone, let container = try? CaliCareModelContainer.shared() {
+            try? LocalData.eraseAll(container: container)
+            await LogChanges.didChange()
+        }
+        return true
+    }
+
     private func apply(event: AuthChangeEvent, session: Session?) {
         switch event {
         case .signedOut where !signingOut:

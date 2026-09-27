@@ -17,7 +17,8 @@ See docs/prompts/README.md for the rules.
 ## Phase 2: Sync and caregivers (docs/prompts/phase-2-sync.md)
 - [x] 2.1 Supabase schema and RLS (skip if already done; verify first)
       Households, members, children, log_events with RLS; 19 pgTAP tests pass locally; applied to the real project. See supabase/README.md.
-- [ ] 2.2 🛑 Sign in with Apple (optional account)
+- [x] 2.2 🛑 Sign in with Apple (optional account)
+      Native Sign in with Apple via Supabase; Settings → Account and an optional last onboarding step. Owner confirmed sign in/out on the iPhone 15 Pro.
 - [ ] 2.3 Background sync engine
 - [ ] 2.4 Households and caregiver invites
 - [ ] 2.5 "Logged by" names

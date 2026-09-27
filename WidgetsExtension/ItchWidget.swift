@@ -26,42 +26,42 @@ struct ItchWidgetView: View {
         case .accessoryCircular:
             circular.containerBackground(Color.clear, for: .widget)
         default:
-            small.containerBackground(entry.palette.background, for: .widget)
+            small.containerBackground(entry.palette.paper, for: .widget)
         }
     }
 
+    /// One big word and the last-logged time. No icon.
     @ViewBuilder
     private var small: some View {
         let palette = entry.palette
         if let feedback = entry.feedback {
-            VStack(alignment: .leading, spacing: Spacing.s) {
+            VStack(alignment: .leading, spacing: Spacing.x1) {
                 LoggedLabel(feedback: feedback, palette: palette)
                 Spacer(minLength: 0)
                 UndoButton(palette: palette)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         } else if let child = entry.childEntity {
-            VStack(alignment: .leading, spacing: Spacing.xs) {
-                LogButton(action: .itchy, child: child, detail: nil, palette: palette, prominent: true)
-                Text(WidgetText.lastItch(entry.snapshot.lastItch, now: entry.date))
-                    .font(Typography.caption)
-                    .foregroundStyle(palette.muted)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-            }
+            LogButton(
+                action: .itchy, child: child,
+                detail: WidgetText.lastItch(entry.snapshot.lastItch, now: entry.date),
+                palette: palette, prominent: true
+            )
         } else {
             AddChildPrompt(palette: palette)
         }
     }
 
+    /// The Lock Screen draws its own tint, so this is just the word.
     @ViewBuilder
     private var circular: some View {
         if entry.feedback != nil {
             // Not a button, so a second tap can't undo by accident.
             ZStack {
                 AccessoryWidgetBackground()
-                Image(systemName: "checkmark")
-                    .font(.title2.weight(.semibold))
+                Text("Logged")
+                    .font(TypeStyle.meta.font.weight(.medium))
+                    .minimumScaleFactor(0.7)
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Logged")
@@ -69,12 +69,9 @@ struct ItchWidgetView: View {
             Button(intent: WidgetLogIntent(action: .itchy, child: child)) {
                 ZStack {
                     AccessoryWidgetBackground()
-                    VStack(spacing: 0) {
-                        Image(systemName: "hand.raised")
-                            .font(.title3.weight(.medium))
-                        Text("Itchy")
-                            .font(.caption2.weight(.semibold))
-                    }
+                    Text("Itchy")
+                        .font(TypeStyle.control.font)
+                        .minimumScaleFactor(0.7)
                 }
             }
             .buttonStyle(.plain)
@@ -82,7 +79,9 @@ struct ItchWidgetView: View {
         } else {
             ZStack {
                 AccessoryWidgetBackground()
-                Image(systemName: "hand.raised")
+                Text("Itchy")
+                    .font(TypeStyle.control.font)
+                    .minimumScaleFactor(0.7)
             }
             .accessibilityLabel("Add your child in CaliCare to start logging")
         }

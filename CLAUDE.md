@@ -10,9 +10,9 @@ care plan and track progress with as little effort as possible.
 - Every log is one tap. Works offline, at night, one-handed.
 - The app never recommends treatments. It organizes the plan the family's
   provider gave them. No medical claims. No diagnosis.
-- No streaks, no guilt, no red for "bad." Severity uses lightness of sage green.
+- No streaks, no guilt, no red for "bad." Severity uses indigo density (see DESIGN.md).
 - Children's photos never leave the device.
-- Beautiful and calm: warm cream background, generous spacing.
+- Beautiful and calm: paper, ink, and indigo, generous spacing (see DESIGN.md).
 
 ## Tech
 - Bundle ID: com.cursorkittens.calicare (widgets: .widgets, Core: .core).
@@ -29,13 +29,8 @@ care plan and track progress with as little effort as possible.
 - Secrets (API keys) never go in the app. AI calls go through Supabase
   Edge Functions.
 
-## Design tokens
-- Background #F8F3EA, card #FFFFFF, ink #2B2622, muted #6B6259
-- Accent sage #4F6F57, sage dark #3F5E47, clay #8A5A3C, sand #F0E6D6
-- Severity scale: #C9D6C9 (low), #8FA995 (medium), #3F5E47 (high)
-- Fonts: Fraunces (headings), DM Sans (body), bundled (open-license).
-- Night mode (8 PM – 7 AM): warm dark background #1E1B18, dimmed text.
-- Cards 18pt radius. Touch targets at least 44pt. Dynamic Type and VoiceOver.
+## Design
+- DESIGN.md (repo root) is the design system: tokens, type, layout, components, and the "what we refuse" list. It wins on anything visual.
 
 ## Copy rules
 - Plain, warm, short. "Worth watching," never "cause."

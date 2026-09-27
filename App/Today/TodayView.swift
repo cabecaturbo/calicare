@@ -5,6 +5,7 @@ import SwiftUI
 struct TodayView: View {
     @Environment(\.palette) private var palette
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(ReminderController.self) private var reminders
     @State private var model = TodayModel()
     @State private var showingSettings = false
@@ -13,32 +14,39 @@ struct TodayView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: Spacing.l) {
-                TodayHeader(
-                    children: model.children,
-                    child: model.child,
-                    onSelect: { id in Task { await model.select(id) } },
-                    onAddChild: { showingAddChild = true },
-                    onSettings: { showingSettings = true }
-                )
+            VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: Spacing.titleToLede) {
+                    TodayHeader(
+                        children: model.children,
+                        child: model.child,
+                        onSelect: { id in Task { await model.select(id) } },
+                        onAddChild: { showingAddChild = true },
+                        onSettings: { showingSettings = true }
+                    )
+                    if model.child != nil, let report = model.lastNight {
+                        LastNightLede(report: report)
+                    }
+                }
+                .padding(.horizontal, Spacing.margin)
 
                 if model.child != nil {
-                    if let report = model.lastNight {
-                        LastNightCard(report: report)
+                    VStack(alignment: .leading, spacing: Spacing.section) {
+                        LogButtons(isDaytime: model.isDaytime, entries: model.entries, lastNight: model.lastNight) { type, value in
+                            Task { await model.log(type, value: value) }
+                        }
+                        TodayTimeline(model: model, isDaytime: model.isDaytime) { editing = $0 }
+                        WeekStrip(days: model.week)
                     }
-                    LogButtons(isDaytime: model.isDaytime) { type, value in
-                        Task { await model.log(type, value: value) }
-                    }
-                    TodayTimeline(model: model, isDaytime: model.isDaytime) { editing = $0 }
-                    WeekStrip(days: model.week)
+                    .padding(.top, Spacing.ledeToSection)
                 } else if model.hasLoaded {
                     noChild
+                        .padding(.top, Spacing.ledeToSection)
                 }
             }
-            .padding(.horizontal, Spacing.l)
-            .padding(.vertical, Spacing.l)
+            .padding(.top, Spacing.x2)
+            .padding(.bottom, Spacing.section)
         }
-        .background(palette.background.ignoresSafeArea())
+        .paperBackground()
         .refreshable { await model.load() }
         .safeAreaInset(edge: .bottom) {
             if let confirmation = model.confirmation {
@@ -47,13 +55,13 @@ struct TodayView: View {
                 } onDismiss: {
                     model.confirmation = nil
                 }
-                .padding(.horizontal, Spacing.l)
-                .padding(.bottom, Spacing.xs)
-                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .padding(.horizontal, Spacing.x4)
+                .padding(.bottom, Spacing.x2)
+                .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: model.confirmation)
-        .sensoryFeedback(.success, trigger: model.confirmation?.id) { _, new in new != nil }
+        .animation(.easeOut(duration: 0.25), value: model.confirmation)
+        .sensoryFeedback(.impact(weight: .light), trigger: model.confirmation?.id) { _, new in new != nil }
         .sheet(isPresented: $showingSettings, onDismiss: reload) {
             SettingsView()
                 .environment(reminders)
@@ -73,10 +81,8 @@ struct TodayView: View {
                 onNotNow: { reminders.declineOffer() }
             )
         }
-        .alert("Something went wrong", isPresented: problemShowing) {
+        .alert(model.problem ?? "", isPresented: problemShowing) {
             Button("OK", role: .cancel) { model.problem = nil }
-        } message: {
-            Text(model.problem ?? "")
         }
         .task {
             await model.load()
@@ -97,22 +103,24 @@ struct TodayView: View {
                 }
             }
         }
-        .onChange(of: model.confirmation) { _, confirmation in
-            // Right after the first log is a sensible moment to offer reminders.
-            if confirmation != nil {
+        .onChange(of: model.confirmation) { old, new in
+            // Right after the first log is a sensible moment to offer reminders:
+            // once its confirmation has gone, so the offer never hides Undo.
+            if old != nil, new == nil {
                 Task { await offerRemindersIfNeeded() }
             }
         }
     }
 
     private var noChild: some View {
-        VStack(alignment: .leading, spacing: Spacing.m) {
+        VStack(alignment: .leading, spacing: Spacing.x4) {
             Text("Add your child to start logging.")
-                .font(Typography.body)
+                .textStyle(.body)
                 .foregroundStyle(palette.ink)
-            PrimaryButton(title: "Add a child") { showingAddChild = true }
+            Button("Add a child") { showingAddChild = true }
+                .buttonStyle(.primary)
         }
-        .cardStyle()
+        .padding(.horizontal, Spacing.margin)
     }
 
     private func reload() {

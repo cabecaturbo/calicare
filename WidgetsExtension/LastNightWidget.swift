@@ -22,14 +22,14 @@ struct LastNightWidgetView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
             Text("Last night")
-                .font(.caption.weight(.semibold))
+                .font(TypeStyle.meta.font)
                 .foregroundStyle(.secondary)
             Text(WidgetText.night(entry.snapshot.lastNight))
-                .font(.headline)
+                .font(TypeStyle.lede.font)
                 .widgetAccentable()
             if let name = entry.snapshot.child?.name {
                 Text(name)
-                    .font(.caption)
+                    .font(TypeStyle.meta.font)
                     .foregroundStyle(.secondary)
             }
         }

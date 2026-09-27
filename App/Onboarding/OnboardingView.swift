@@ -35,26 +35,26 @@ struct OnboardingView: View {
             }
             .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .opacity))
         }
-        .background(palette.background.ignoresSafeArea())
+        .paperBackground()
         .task { await loadChildName() }
     }
 
     private var progress: some View {
-        HStack(spacing: Spacing.xs) {
+        HStack(spacing: Spacing.x1) {
             ForEach(Step.allCases, id: \.self) { item in
-                Capsule()
-                    .fill(item.rawValue <= step.rawValue ? palette.accent : palette.severityLow)
-                    .frame(height: 4)
+                Rectangle()
+                    .fill(item.rawValue <= step.rawValue ? palette.indigo : palette.hairline)
+                    .frame(height: 2)
             }
         }
-        .padding(.horizontal, Spacing.l)
-        .padding(.top, Spacing.m)
+        .padding(.horizontal, Spacing.margin)
+        .padding(.top, Spacing.x4)
         .accessibilityElement()
         .accessibilityLabel("Step \(step.rawValue + 1) of \(Step.allCases.count)")
     }
 
     private func go(to next: Step) {
-        withAnimation(.easeInOut(duration: 0.3)) { step = next }
+        withAnimation(.easeOut(duration: 0.3)) { step = next }
     }
 
     private func saveChild() async {
@@ -79,29 +79,45 @@ struct OnboardingView: View {
     }
 }
 
-/// Screen 1: what the app does, in one warm sentence.
+/// Screen 1: the wordmark and what the app does, in one warm sentence.
 private struct WelcomeStep: View {
     @Environment(\.palette) private var palette
     let onContinue: () -> Void
 
     var body: some View {
         OnboardingPage {
-            Image(systemName: "leaf")
-                .font(.system(size: 44, weight: .light))
-                .foregroundStyle(palette.accent)
-                .accessibilityHidden(true)
-            Text("Welcome to CaliCare")
-                .font(Typography.largeTitle)
+            VStack(alignment: .leading, spacing: 0) {
+                Wordmark()
+                Text("A calm place to follow your child's care plan and log how their skin and nights are going, in one tap.")
+                    .textStyle(.lede)
+                    .foregroundStyle(palette.ink)
+                    .padding(.top, Spacing.ledeToSection)
+                Text("No account needed. Everything stays on this phone.")
+                    .textStyle(.body)
+                    .foregroundStyle(palette.graphite)
+                    .padding(.top, Spacing.x4)
+            }
+            .fixedSize(horizontal: false, vertical: true)
+            .padding(.horizontal, Spacing.margin)
+        } footer: {
+            Button("Add your child", action: onContinue)
+                .buttonStyle(.primary)
+        }
+    }
+}
+
+/// "Cali Care" set in Newsreader Display over a hairline ink rule. No symbol.
+struct Wordmark: View {
+    @Environment(\.palette) private var palette
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.x3) {
+            Text("Cali Care")
+                .textStyle(.display)
                 .foregroundStyle(palette.ink)
                 .accessibilityAddTraits(.isHeader)
-            Text("A calm place to follow your child's care plan and log how their skin and nights are going, in one tap.")
-                .font(Typography.title3)
-                .foregroundStyle(palette.ink)
-            Text("No account needed. Everything stays on this phone.")
-                .font(Typography.callout)
-                .foregroundStyle(palette.muted)
-        } footer: {
-            PrimaryButton(title: "Get started", action: onContinue)
+            palette.ink.frame(height: Rule.width)
+                .accessibilityHidden(true)
         }
     }
 }
@@ -115,90 +131,62 @@ private struct AddChildStep: View {
 
     var body: some View {
         OnboardingPage {
-            Text("Who are you caring for?")
-                .font(Typography.title)
-                .foregroundStyle(palette.ink)
-                .accessibilityAddTraits(.isHeader)
+            VStack(alignment: .leading, spacing: Spacing.titleToLede) {
+                Text("Who are you caring for?")
+                    .textStyle(.title)
+                    .foregroundStyle(palette.ink)
+                    .accessibilityAddTraits(.isHeader)
+                Text("A first name or nickname is enough.")
+                    .textStyle(.body)
+                    .foregroundStyle(palette.graphite)
+            }
+            .fixedSize(horizontal: false, vertical: true)
+            .padding(.horizontal, Spacing.margin)
+            .padding(.bottom, Spacing.ledeToSection)
+
             ChildDetailsForm(details: $details) {
                 if details.canSave { onContinue() }
             }
             if let error {
                 Text(error)
-                    .font(Typography.callout)
-                    .foregroundStyle(palette.clay)
+                    .textStyle(.body)
+                    .foregroundStyle(palette.ink)
+                    .padding(.horizontal, Spacing.margin)
+                    .padding(.top, Spacing.x4)
             }
         } footer: {
-            PrimaryButton(title: "Continue", action: onContinue)
+            Button("Continue", action: onContinue)
+                .buttonStyle(.primary)
                 .disabled(!details.canSave)
-                .opacity(details.canSave ? 1 : 0.5)
         }
     }
 }
 
-/// Scrolling content with a pinned button, so nothing clips at large text sizes.
+/// Scrolling content with pinned buttons, so nothing clips at large text sizes.
+/// Content runs full width; text blocks add the 24pt margin themselves so
+/// ledger rows can reach the edges.
 struct OnboardingPage<Content: View, Footer: View>: View {
-    @Environment(\.palette) private var palette
     @ViewBuilder let content: Content
     @ViewBuilder let footer: Footer
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: Spacing.l) {
+            VStack(alignment: .leading, spacing: 0) {
                 content
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, Spacing.l)
-            .padding(.top, Spacing.xl)
-            .padding(.bottom, Spacing.l)
+            .padding(.top, Spacing.section)
+            .padding(.bottom, Spacing.margin)
         }
         .scrollBounceBehavior(.basedOnSize)
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: Spacing.xs) {
+            VStack(spacing: Spacing.x2) {
                 footer
             }
-            .padding(.horizontal, Spacing.l)
-            .padding(.vertical, Spacing.m)
-            .background(palette.background)
+            .padding(.horizontal, Spacing.margin)
+            .padding(.top, Spacing.x3)
+            .padding(.bottom, Spacing.x2)
+            .paperBackground()
         }
-    }
-}
-
-/// Big filled sage button.
-struct PrimaryButton: View {
-    @Environment(\.palette) private var palette
-    let title: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(title)
-                .font(Typography.button)
-                .foregroundStyle(palette.onAccent)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, Spacing.m)
-                .padding(.vertical, Spacing.s)
-                .frame(maxWidth: .infinity, minHeight: TouchTarget.night)
-                .background(palette.accent, in: Capsule())
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-/// Quiet text button, e.g. "Skip".
-struct SecondaryButton: View {
-    @Environment(\.palette) private var palette
-    let title: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(title)
-                .font(Typography.button)
-                .foregroundStyle(palette.sageDark)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity, minHeight: TouchTarget.minimum)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
     }
 }

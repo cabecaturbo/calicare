@@ -11,28 +11,29 @@ struct TryNotificationSection: View {
     @State private var message: String?
 
     var body: some View {
-        Section {
+        LedgerSection("Try a notification", footnote: footnote) {
             ForEach(ReminderKind.allCases, id: \.self) { kind in
-                Button("\(ReminderCopy.settingsTitle(kind)) in 5 seconds") {
+                Button {
                     Task { await send(kind) }
+                } label: {
+                    LedgerRow {
+                        Text("\(ReminderCopy.settingsTitle(kind)) in 5 seconds")
+                            .textStyle(.control)
+                            .foregroundStyle(palette.ink)
+                    }
                 }
-                .font(Typography.body)
-                .frame(minHeight: TouchTarget.minimum)
+                .buttonStyle(.ledger)
                 .disabled(reminders.status != .authorized)
+                .opacity(reminders.status == .authorized ? 1 : 0.5)
             }
-            if let message {
-                Text(message)
-                    .font(Typography.caption)
-                    .foregroundStyle(palette.muted)
-            }
-        } header: {
-            Text("Try a notification")
-        } footer: {
-            Text(reminders.status == .authorized
-                ? "Then go to the Home Screen, long-press the notification, and tap a button."
-                : "Turn on a reminder first so notifications are allowed.")
         }
-        .listRowBackground(palette.card)
+    }
+
+    private var footnote: String {
+        if let message { return message }
+        return reminders.status == .authorized
+            ? "Then go to the Home Screen, long-press the notification, and tap a button."
+            : "Turn on a reminder first so notifications are allowed."
     }
 
     private func send(_ kind: ReminderKind) async {

@@ -1,3 +1,5 @@
+> **Replaced.** DESIGN.md in the repo root replaces this document (September 26, 2026). Kept for history; don't follow it.
+
 # Design System and Voice
 
 ## Feel

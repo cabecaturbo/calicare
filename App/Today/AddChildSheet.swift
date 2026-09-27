@@ -12,17 +12,18 @@ struct AddChildSheet: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: Spacing.l) {
+                VStack(alignment: .leading, spacing: Spacing.x4) {
                     ChildDetailsForm(details: $details) { Task { await save() } }
                     if let problem {
                         Text(problem)
-                            .font(Typography.callout)
-                            .foregroundStyle(palette.clay)
+                            .textStyle(.body)
+                            .foregroundStyle(palette.ink)
+                            .padding(.horizontal, Spacing.margin)
                     }
                 }
-                .padding(Spacing.l)
+                .padding(.top, Spacing.x4)
             }
-            .background(palette.background.ignoresSafeArea())
+            .paperBackground(.oat)
             .navigationTitle("Add a child")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -35,7 +36,7 @@ struct AddChildSheet: View {
                 }
             }
         }
-        .tint(palette.accent)
+        .tint(palette.indigo)
     }
 
     private func save() async {

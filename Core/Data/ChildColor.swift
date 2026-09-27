@@ -13,5 +13,13 @@ public enum ChildColor: String, Sendable, CaseIterable, Identifiable {
         self = tag.flatMap(ChildColor.init(rawValue:)) ?? .standard
     }
 
-    public var name: String { rawValue.capitalized }
+    /// Stored tags predate the notebook palette, so the spoken name follows the color shown.
+    public var name: String {
+        switch self {
+        case .sage: "Indigo"
+        case .clay: "Ochre"
+        case .moss: "Graphite"
+        case .sand: "Oat"
+        }
+    }
 }

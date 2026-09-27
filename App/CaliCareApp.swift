@@ -9,6 +9,9 @@ struct CaliCareApp: App {
 
     init() {
         FontRegistry.registerAll()
+        #if DEBUG
+        DesignReviewLaunch.apply()
+        #endif
     }
 
     var body: some Scene {

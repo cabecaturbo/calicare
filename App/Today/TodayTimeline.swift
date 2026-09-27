@@ -9,31 +9,23 @@ struct TodayTimeline: View {
     let onEdit: (LogEntry) -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.s) {
-            Text(isDaytime ? "Today" : "Tonight")
-                .font(Typography.title2)
-                .foregroundStyle(palette.ink)
-                .accessibilityAddTraits(.isHeader)
-
+        LedgerSection(
+            isDaytime ? "Today" : "Tonight",
+            footnote: model.entries.isEmpty ? nil : "Tap a log to change or delete it."
+        ) {
             if model.entries.isEmpty {
                 Text(isDaytime
-                    ? "Nothing logged yet today. Tap a button above whenever something happens."
+                    ? "Nothing logged yet today. Tap a row above whenever something happens."
                     : "Nothing logged yet tonight.")
-                    .font(Typography.body)
-                    .foregroundStyle(palette.muted)
+                    .textStyle(.body)
+                    .foregroundStyle(palette.graphite)
                     .fixedSize(horizontal: false, vertical: true)
-                    .cardStyle()
+                    .padding(.horizontal, Spacing.margin)
+                    .padding(.top, Spacing.x3)
             } else {
-                VStack(spacing: 0) {
-                    ForEach(model.entries) { entry in
-                        row(entry)
-                        if entry.id != model.entries.last?.id {
-                            Divider().overlay(palette.sand)
-                        }
-                    }
+                ForEach(model.entries) { entry in
+                    row(entry)
                 }
-                .padding(.vertical, Spacing.xxs)
-                .background(palette.card, in: RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
             }
         }
     }
@@ -45,39 +37,26 @@ struct TodayTimeline: View {
         return Button {
             onEdit(entry)
         } label: {
-            HStack(alignment: .center, spacing: Spacing.m) {
-                Image(systemName: entry.type.symbol)
-                    .font(.body.weight(.medium))
-                    .foregroundStyle(palette.accent)
-                    .frame(width: 28)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 2) {
+            LedgerRow {
+                VStack(alignment: .leading, spacing: Spacing.x1) {
                     Text(title)
-                        .font(Typography.bodyMedium)
+                        .textStyle(.control)
                         .foregroundStyle(palette.ink)
                     if let note = entry.note {
                         Text(note)
-                            .font(Typography.callout)
-                            .foregroundStyle(palette.muted)
+                            .textStyle(.body)
+                            .foregroundStyle(palette.graphite)
                             .lineLimit(3)
                     }
-                    Text([time, source].compactMap { $0 }.joined(separator: " · "))
-                        .font(Typography.caption)
-                        .foregroundStyle(palette.muted)
                 }
-                .fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: 0)
-                Image(systemName: "chevron.right")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(palette.muted)
-                    .accessibilityHidden(true)
+            } trailing: {
+                Text([time, source].compactMap { $0 }.joined(separator: " · "))
+                    .textStyle(.meta)
+                    .foregroundStyle(palette.graphite)
+                    .multilineTextAlignment(.trailing)
             }
-            .padding(.horizontal, Spacing.l)
-            .padding(.vertical, Spacing.s)
-            .frame(minHeight: TouchTarget.minimum + Spacing.s)
-            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.ledger)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel([title, time, entry.note, source].compactMap { $0 }.joined(separator: ", "))
         .accessibilityHint("Edit or delete")

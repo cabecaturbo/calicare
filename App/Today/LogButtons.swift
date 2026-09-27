@@ -1,11 +1,13 @@
 import Core
 import SwiftUI
 
-/// Large one-tap log buttons. One column and bigger at night or with large text.
+/// The core action: one-tap log rows, then last night's rating. Rows, not tiles;
+/// each label is a word a tired parent reads instantly.
 struct LogButtons: View {
     @Environment(\.palette) private var palette
-    @Environment(\.dynamicTypeSize) private var typeSize
     let isDaytime: Bool
+    let entries: [LogEntry]
+    let lastNight: LastNightReport?
     let onLog: (LogType, LogValue?) -> Void
 
     private struct Choice: Identifiable {
@@ -22,102 +24,74 @@ struct LogButtons: View {
         Choice(type: .routineDone, title: "Routine done", spoken: "Log routine done"),
     ]
 
-    private var singleColumn: Bool { palette.isNight || typeSize.isAccessibilitySize }
-    private var height: CGFloat { palette.isNight ? TouchTarget.logButtonNight : TouchTarget.logButtonDay }
-
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.m) {
-            let columns = Array(repeating: GridItem(.flexible(), spacing: Spacing.s), count: singleColumn ? 1 : 2)
-            LazyVGrid(columns: columns, spacing: Spacing.s) {
+        VStack(alignment: .leading, spacing: Spacing.section) {
+            LedgerSection("Log") {
                 ForEach(Self.choices) { choice in
-                    button(for: choice)
+                    logRow(choice)
                 }
             }
-            nightRating
+            LedgerSection(isDaytime ? "How was last night?" : "How's the night going?") {
+                ForEach(NightRating.allCases, id: \.self) { rating in
+                    ratingRow(rating)
+                }
+            }
         }
     }
 
-    private func button(for choice: Choice) -> some View {
-        let prominent = choice.type == .itchEpisode
+    private func logRow(_ choice: Choice) -> some View {
+        let count = entries.filter { $0.type == choice.type }.count
+        let countText = count > 0 ? "\(count) \(isDaytime ? "today" : "tonight")" : nil
         return Button {
             onLog(choice.type, value(for: choice.type))
         } label: {
-            Group {
-                if singleColumn {
-                    HStack(spacing: Spacing.m) {
-                        icon(choice.type)
-                        title(choice.title)
-                        Spacer(minLength: 0)
-                    }
-                    .padding(.horizontal, Spacing.l)
-                } else {
-                    VStack(spacing: Spacing.xs) {
-                        icon(choice.type)
-                        title(choice.title)
-                    }
-                    .padding(.horizontal, Spacing.s)
+            LedgerRow {
+                Text(choice.title)
+                    .textStyle(.control)
+                    .foregroundStyle(palette.ink)
+            } trailing: {
+                if let countText {
+                    Text(countText)
+                        .textStyle(.meta)
+                        .foregroundStyle(palette.graphite)
                 }
             }
-            .padding(.vertical, Spacing.s)
-            .frame(maxWidth: .infinity, minHeight: height)
-            .foregroundStyle(prominent ? palette.onAccent : palette.ink)
-            .background(
-                prominent ? palette.accent : palette.card,
-                in: RoundedRectangle(cornerRadius: Radius.card, style: .continuous)
-            )
-            .contentShape(RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.ledger)
         .accessibilityLabel(choice.spoken)
+        .accessibilityValue(countText ?? "")
     }
 
-    private func icon(_ type: LogType) -> some View {
-        Image(systemName: type.symbol)
-            .font(.title2.weight(.medium))
-            .accessibilityHidden(true)
+    private func ratingRow(_ rating: NightRating) -> some View {
+        let selected = isRated(rating)
+        return Button {
+            onLog(.nightRating, .night(rating))
+        } label: {
+            LedgerRow {
+                Text(rating.title)
+                    .textStyle(.control)
+                    .foregroundStyle(palette.ink)
+            } trailing: {
+                if selected {
+                    Image(systemName: "checkmark")
+                        .font(.body.weight(.regular))
+                        .foregroundStyle(palette.indigo)
+                        .accessibilityHidden(true)
+                }
+            }
+        }
+        .buttonStyle(.ledger(isSelected: selected))
+        .accessibilityLabel("Log a \(rating.rawValue) night")
+        .accessibilityAddTraits(selected ? .isSelected : [])
     }
 
-    private func title(_ text: String) -> some View {
-        Text(text)
-            .font(palette.isNight ? Typography.title3 : Typography.button)
-            .multilineTextAlignment(.center)
-            .fixedSize(horizontal: false, vertical: true)
+    /// Only marks the night these rows log to: this morning's by day, tonight's in the evening.
+    private func isRated(_ rating: NightRating) -> Bool {
+        guard let lastNight, isDaytime || lastNight.isTonight else { return false }
+        return lastNight.rating == rating
     }
 
     private func value(for type: LogType) -> LogValue? {
         type == .routineDone ? .routine(RoutineTime.likely(at: .now)) : nil
-    }
-
-    private var nightRating: some View {
-        VStack(alignment: .leading, spacing: Spacing.xs) {
-            Text(isDaytime ? "How was last night?" : "How's the night going?")
-                .font(Typography.headline)
-                .foregroundStyle(palette.ink)
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: Spacing.s) { ratingButtons }
-                VStack(spacing: Spacing.s) { ratingButtons }
-            }
-        }
-        .cardStyle()
-    }
-
-    @ViewBuilder
-    private var ratingButtons: some View {
-        ForEach(NightRating.allCases, id: \.self) { rating in
-            Button {
-                onLog(.nightRating, .night(rating))
-            } label: {
-                Text(rating.title)
-                    .font(Typography.button)
-                    .foregroundStyle(palette.sageDark)
-                    .lineLimit(1)
-                    .padding(.horizontal, Spacing.m)
-                    .frame(maxWidth: .infinity, minHeight: palette.isNight ? TouchTarget.night : TouchTarget.minimum)
-                    .background(palette.sand, in: Capsule())
-                    .contentShape(Capsule())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Log a \(rating.rawValue) night")
-        }
     }
 }

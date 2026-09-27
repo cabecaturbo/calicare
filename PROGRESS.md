@@ -34,8 +34,8 @@ See docs/prompts/README.md for the rules.
       WeeklyReport in Core: nights, wake-ups vs last week, routines, skin by day, bowel movements, mood, headline, one worth-watching line. 12 tests.
 - [x] 3.2 Weekly report card image and share sheet
       WeeklyCardView per DESIGN.md §10, rendered at 3x; Today → Share this week. Verified sharing to Messages and Mail on the iPhone.
-- [ ] 3.3 🛑 iMessage extension
-      Code done: Messages extension target, compact bubble, full card from the message link. Waiting on a device test in Messages.
+- [x] 3.3 🛑 iMessage extension
+      Messages extension with a compact bubble; the full card opens from the message link. Verified sending on the iPhone.
 - [ ] 3.4 Doctor PDF
 - [ ] 3.5 Caregiver card
 - [ ] 3.6 Scheduled sends via Shortcuts

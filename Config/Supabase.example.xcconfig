@@ -1,0 +1,5 @@
+// Copy to Config/Supabase.local.xcconfig (gitignored) and fill in.
+// Find both in the Supabase dashboard: Project Settings → API Keys.
+// Without the local file the app builds and works; accounts are just hidden.
+SUPABASE_HOST = your-project-ref.supabase.co
+SUPABASE_PUBLISHABLE_KEY = sb_publishable_...

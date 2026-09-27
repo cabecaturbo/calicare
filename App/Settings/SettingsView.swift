@@ -11,6 +11,7 @@ struct SettingsView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Spacing.section) {
+                    AccountSection()
                     ReminderSettingsSection()
 
                     LedgerSection("Quick logging", footnote: "Log without opening the app.") {

@@ -65,6 +65,12 @@ struct HouseholdService {
         return CreatedInvite(code: code, role: role, expiresAt: row.expires_at)
     }
 
+    /// True when deleting this account would take the whole household with it.
+    func amLastOwner() async throws -> Bool {
+        struct Params: Encodable { let target: UUID }
+        return try await client.rpc("am_last_owner", params: Params(target: household)).execute().value
+    }
+
     func members() async throws -> [HouseholdMember] {
         try await client.from("household_members")
             .select("id, user_id, role, display_name, updated_at")

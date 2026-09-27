@@ -46,6 +46,8 @@ Where CaliCare stands at the end of Phase 1, for the local Claude Code session t
 - **After that:** do the Apple tooling setup (see below), then TestFlight.
 
 ## Open items
+- **Apple token revocation on account deletion** (needed before App Store review): create a Sign in with Apple key on the Apple Developer site, store it as a Supabase secret, and have `delete-account` call Apple's revoke endpoint.
+- **Two-phone test** for 2.4 (join with a code) and 2.5 ("by Dad" names).
 - **No app icon:** `ASSETCATALOG_COMPILER_APPICON_NAME` is empty in `project.yml`. One is needed before TestFlight.
 
 ## Manual tests to do (the simulator can't cover these)

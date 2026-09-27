@@ -66,3 +66,41 @@ struct WeeklyCardTests {
         try? image.pngData()?.write(to: URL(fileURLWithPath: folder).appendingPathComponent("\(name).png"))
     }
 }
+
+@MainActor
+struct WeeklyCardLinkTests {
+    let calendar = TestTime.calendar
+    let cal = ChildInfo(id: UUID(), name: "Cal", birthDate: nil, colorTag: "sage", isActive: true)
+
+    func card(_ events: [LogEntry]) -> WeeklyCard {
+        let report = WeeklyReport(
+            child: cal, weekEnding: CareDay.containing(TestTime.date(26, 12), calendar: calendar),
+            events: events, calendar: calendar
+        )
+        return WeeklyCard(report: report, calendar: calendar)
+    }
+
+    @Test func aCardSurvivesTheMessagesLink() throws {
+        let events = (13...26).map {
+            LogEntry(childID: cal.id, type: .nightRating, value: .night($0 > 22 ? .rough : .good), timestamp: TestTime.date($0, 8))
+        }
+        let original = card(events)
+        let url = try #require(original.url)
+        #expect(url.absoluteString.count < 2_000, "small enough for a Messages link")
+        #expect(WeeklyCard(url: url) == original)
+        #expect(original.days.count == 7)
+    }
+
+    @Test func otherLinksAreIgnored() {
+        #expect(WeeklyCard(url: URL(string: "https://example.com/week?card=abc")!) == nil)
+        #expect(WeeklyCard(url: URL(string: "calicare://week?card=not-json")!) == nil)
+    }
+
+    @Test func rendersTheBubble() throws {
+        let image = try #require(WeeklyCardRenderer.bubbleImage(for: card([])))
+        #expect(image.size == WeeklyBubbleView.size)
+        if let folder = ProcessInfo.processInfo.environment["DESIGN_OUT"] {
+            try? image.pngData()?.write(to: URL(fileURLWithPath: folder).appendingPathComponent("weekly-bubble-empty.png"))
+        }
+    }
+}

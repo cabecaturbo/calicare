@@ -6,16 +6,16 @@ import SwiftUI
 public struct WeeklyCardView: View {
     public static let size = CGSize(width: 600, height: 750)
 
-    let report: WeeklyReport
-    let calendar: Calendar
+    let card: WeeklyCard
     private let palette = Palette.day
 
-    public init(report: WeeklyReport, calendar: Calendar = .autoupdatingCurrent) {
-        self.report = report
-        self.calendar = calendar
+    public init(card: WeeklyCard) {
+        self.card = card
     }
 
-    private var hasSummary: Bool { report.headline != .notEnoughLogs }
+    public init(report: WeeklyReport, calendar: Calendar = .autoupdatingCurrent) {
+        self.init(card: WeeklyCard(report: report, calendar: calendar))
+    }
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -26,30 +26,30 @@ public struct WeeklyCardView: View {
             palette.ink.frame(height: Rule.width)
                 .padding(.top, Spacing.x2)
 
-            Text(report.headline.text)
+            Text(card.headline)
                 .font(TypeStyle.display.font)
                 .foregroundStyle(palette.ink)
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
                 .padding(.top, Spacing.ledeToSection)
-            Text("\(report.child.name) · \(report.dateRange(calendar: calendar))")
+            Text("\(card.childName) · \(card.dateRange)")
                 .font(TypeStyle.meta.font)
                 .foregroundStyle(palette.graphite)
                 .padding(.top, Spacing.x1)
 
-            WeekChart(days: report.days, calendar: calendar, palette: palette)
+            WeekChart(days: card.days, palette: palette)
                 .padding(.top, Spacing.ledeToSection)
 
-            if hasSummary {
+            if card.hasSummary {
                 VStack(spacing: 0) {
                     palette.hairline.frame(height: Rule.width)
-                    row("Good nights", "\(report.goodNights)", detail: "of 7")
-                    row("Itchy wake-ups", "\(report.itchyWakeUps)",
-                        detail: report.itchyWakeUpsLastWeek.map { "\($0) last week" })
-                    row("Routines done", "\(report.routineDays)", detail: "of \(report.daysWithLogs) days")
-                    row("Bowel movements", "\(report.bowelMovements)", detail: nil)
-                    if let mood = report.usualMood {
-                        row("Usual mood", mood.rawValue.capitalized, detail: nil)
+                    row("Good nights", "\(card.goodNights)", detail: "of 7")
+                    row("Itchy wake-ups", "\(card.itchyWakeUps)",
+                        detail: card.itchyWakeUpsLastWeek.map { "\($0) last week" })
+                    row("Routines done", "\(card.routineDays)", detail: "of \(card.daysWithLogs) days")
+                    row("Bowel movements", "\(card.bowelMovements)", detail: nil)
+                    if let mood = card.usualMood {
+                        row("Usual mood", mood, detail: nil)
                     }
                 }
                 .padding(.top, Spacing.margin)
@@ -60,7 +60,7 @@ public struct WeeklyCardView: View {
                     .padding(.top, Spacing.margin)
             }
 
-            if let line = report.worthWatching {
+            if let line = card.worthWatching {
                 Text(line)
                     .font(TypeStyle.body.font)
                     .foregroundStyle(palette.ochre)
@@ -105,8 +105,7 @@ public struct WeeklyCardView: View {
 
 /// Seven night dots and seven skin bars on the indigo scale. Empty days are outlines.
 private struct WeekChart: View {
-    let days: [WeekDay]
-    let calendar: Calendar
+    let days: [WeeklyCard.Day]
     let palette: Palette
 
     var body: some View {
@@ -117,11 +116,11 @@ private struct WeekChart: View {
                 label(" ")
             }
             .frame(width: 72, alignment: .leading)
-            ForEach(days) { day in
+            ForEach(Array(days.enumerated()), id: \.offset) { _, day in
                 VStack(spacing: Spacing.x3) {
-                    mark(Circle(), level: day.night).frame(width: 18, height: 18)
-                    bar(day.skin).frame(height: 40, alignment: .bottom)
-                    label(day.day.noon(calendar: calendar).formatted(Date.FormatStyle(calendar: calendar).weekday(.narrow)))
+                    mark(Circle(), level: day.night.flatMap(CareLevel.init(rawValue:))).frame(width: 18, height: 18)
+                    bar(day.skin.flatMap(CareLevel.init(rawValue:))).frame(height: 40, alignment: .bottom)
+                    label(day.letter)
                 }
                 .frame(maxWidth: .infinity)
             }

@@ -32,6 +32,8 @@ App/Info.plist
 App/App.entitlements
 WidgetsExtension/Info.plist
 WidgetsExtension/WidgetsExtension.entitlements
+MessagesExtension/Info.plist
+MessagesExtension/MessagesExtension.entitlements
 
 # App Store Connect CLI local config (may hold key paths)
 .asc/

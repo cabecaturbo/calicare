@@ -35,6 +35,7 @@ See docs/prompts/README.md for the rules.
 - [x] 3.2 Weekly report card image and share sheet
       WeeklyCardView per DESIGN.md §10, rendered at 3x; Today → Share this week. Verified sharing to Messages and Mail on the iPhone.
 - [ ] 3.3 🛑 iMessage extension
+      Code done: Messages extension target, compact bubble, full card from the message link. Waiting on a device test in Messages.
 - [ ] 3.4 Doctor PDF
 - [ ] 3.5 Caregiver card
 - [ ] 3.6 Scheduled sends via Shortcuts

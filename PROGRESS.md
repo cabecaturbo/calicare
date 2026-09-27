@@ -26,7 +26,8 @@ See docs/prompts/README.md for the rules.
 - [ ] 2.5 "Logged by" names
       Code merged: logs save your name ("You" signed out); "by Dad" on the timeline and small widget when 2+ people share. Still to do: check names on two phones.
       Code merged: logs save your name ("You" signed out); "by Dad" on the timeline and small widget when 2+ people share. Still to do: check names on two phones.
-- [ ] 2.6 Account settings and account deletion
+- [x] 2.6 Account settings and account deletion
+      Delete account with the last-owner rule (Edge Function + SQL). Verified on the iPhone: nothing left in Supabase afterwards. Left over: Apple token revocation before App Store review.
 
 ## Phase 3: Report cards (docs/prompts/phase-3-reports.md)
 - [ ] 3.1 Weekly stats engine

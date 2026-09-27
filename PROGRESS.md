@@ -37,6 +37,7 @@ See docs/prompts/README.md for the rules.
 - [x] 3.3 🛑 iMessage extension
       Messages extension with a compact bubble; the full card opens from the message link. Verified sending on the iPhone.
 - [ ] 3.4 Doctor PDF
+      Code done: multi-page PDF with summary, charts, day by day, notes, full log; share and email. Waiting on a device check in Files and Mail.
 - [ ] 3.5 Caregiver card
 - [ ] 3.6 Scheduled sends via Shortcuts
 

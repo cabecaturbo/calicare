@@ -27,6 +27,18 @@ struct ReportsView: View {
                         .padding(.horizontal, Spacing.margin)
                         .padding(.top, Spacing.ledeToSection)
 
+                    if let child {
+                        LedgerSection("For a visit", footnote: "A PDF of every log over a few weeks, for a provider.") {
+                            NavigationLink {
+                                DoctorReportView(child: child)
+                            } label: {
+                                NavigationRow(title: "Doctor report")
+                            }
+                            .buttonStyle(.ledger)
+                        }
+                        .padding(.top, Spacing.section)
+                    }
+
                     VStack(alignment: .leading, spacing: Spacing.x2) {
                         if let file {
                             ShareLink(item: file) { Text("Share") }

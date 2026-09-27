@@ -133,6 +133,8 @@ struct EditLogSheet: View {
             return Mood.allCases.map { Option(title: $0.title, value: .mood($0)) }
         case .routineDone:
             return [notSet] + RoutineTime.allCases.map { Option(title: $0.title, value: .routine($0)) }
+        case .skinToday:
+            return SkinToday.allCases.map { Option(title: $0.title, value: .skin($0)) }
         case .itchEpisode, .flare, .note:
             return []
         }

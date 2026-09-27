@@ -65,3 +65,28 @@ public struct LogBowelMovementIntent: AppIntent {
         return .result(dialog: dialog)
     }
 }
+
+/// "Log skin in Cali Care": the daily skin answer from Siri or Shortcuts.
+/// Siri asks which answer if it wasn't said. Answering again the same day replaces it.
+public struct LogSkinTodayIntent: AppIntent {
+    public static let title: LocalizedStringResource = "Log Skin Today"
+    public static let description = IntentDescription("Logs how your child's skin was today (calm, a little itchy, flaring, or very rough) without opening CaliCare.")
+    public static let openAppWhenRun = false
+
+    @Parameter(title: "Skin today", requestValueDialog: "How was their skin today?")
+    public var answer: SkinToday
+
+    @Parameter(title: "Child")
+    public var child: ChildEntity?
+
+    public static var parameterSummary: some ParameterSummary {
+        Summary("Log skin today as \(\.$answer) for \(\.$child)")
+    }
+
+    public init() {}
+
+    public func perform() async throws -> some IntentResult & ProvidesDialog {
+        let dialog = try await IntentSupport.log(.skinToday, value: .skin(answer), child: child)
+        return .result(dialog: dialog)
+    }
+}

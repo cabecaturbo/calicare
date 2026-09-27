@@ -1,10 +1,7 @@
 import Foundation
 import SwiftData
 
-// Current model names always point at the latest schema version.
-public typealias Child = SchemaV1.Child
-public typealias LogEvent = SchemaV1.LogEvent
-
+/// The first shipped schema. Never edit it; SchemaV2 is current.
 public enum SchemaV1: VersionedSchema {
     public static var versionIdentifier: Schema.Version { Schema.Version(1, 0, 0) }
 

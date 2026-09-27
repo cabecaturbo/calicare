@@ -5,13 +5,15 @@ import SwiftData
 public struct SyncReport: Equatable, Sendable {
     public var pushedChildren = 0
     public var pushedLogs = 0
+    public var pushedRoutineSteps = 0
     /// Rows from the server that changed something on this phone.
     public var appliedChildren = 0
     public var appliedLogs = 0
+    public var appliedRoutineSteps = 0
 
     public init() {}
 
-    public var changedLocalData: Bool { appliedChildren + appliedLogs > 0 }
+    public var changedLocalData: Bool { appliedChildren + appliedLogs + appliedRoutineSteps > 0 }
 }
 
 /// Keeps this phone and the household's server copy in step.
@@ -100,6 +102,7 @@ public actor SyncEngine: ModelActor {
     /// the person's name, so other phones never show them as "by you".
     private func markEverythingForUpload(claimingAs displayName: String) throws {
         for child in try modelContext.fetch(FetchDescriptor<Child>()) { child.needsSync = true }
+        for step in try modelContext.fetch(FetchDescriptor<RoutineStep>()) { step.needsSync = true }
         for event in try modelContext.fetch(FetchDescriptor<LogEvent>()) {
             if LoggedBy.legacyNames.contains(event.loggedBy) {
                 event.loggedBy = displayName
@@ -113,13 +116,21 @@ public actor SyncEngine: ModelActor {
     // MARK: - Push
 
     private func push(to household: UUID, report: inout SyncReport) async throws {
-        // Children first: logs point at them.
+        // Children first: routine steps and logs point at them.
         let children = try modelContext.fetch(FetchDescriptor<Child>(predicate: #Predicate { $0.needsSync }))
         for batch in children.chunked(Self.batchSize) {
             let sent = batch.map { (id: $0.id, updatedAt: $0.updatedAt) }
             try await remote.upsert(children: batch.map { RemoteChild($0, household: household) })
             try clearFlags(Child.self, sent)
             report.pushedChildren += batch.count
+        }
+
+        let steps = try modelContext.fetch(FetchDescriptor<RoutineStep>(predicate: #Predicate { $0.needsSync }))
+        for batch in steps.chunked(Self.batchSize) {
+            let sent = batch.map { (id: $0.id, updatedAt: $0.updatedAt) }
+            try await remote.upsert(routineSteps: batch.map { RemoteRoutineStep($0, household: household) })
+            try clearFlags(RoutineStep.self, sent)
+            report.pushedRoutineSteps += batch.count
         }
 
         let logs = try modelContext.fetch(FetchDescriptor<LogEvent>(predicate: #Predicate { $0.needsSync }))
@@ -149,6 +160,9 @@ public actor SyncEngine: ModelActor {
 
         for remoteChild in changes.children {
             if try merge(remoteChild) { report.appliedChildren += 1 }
+        }
+        for remoteStep in changes.routineSteps {
+            if try merge(remoteStep) { report.appliedRoutineSteps += 1 }
         }
         for remoteLog in changes.logs {
             if try merge(remoteLog) { report.appliedLogs += 1 }
@@ -203,10 +217,34 @@ public actor SyncEngine: ModelActor {
         event.timestamp = remote.occurredAt
         event.loggedBy = remote.loggedBy
         event.entrySourceRaw = remote.entrySource
+        event.bodyAreaNames = remote.bodyAreas
+        event.routineStepID = remote.routineStepID
         event.createdAt = remote.createdAt
         event.updatedAt = remote.updatedAt
         event.deletedAt = remote.deletedAt
         event.needsSync = false
+        return true
+    }
+
+    private func merge(_ remote: RemoteRoutineStep) throws -> Bool {
+        let id = remote.id
+        let local = try modelContext.fetch(FetchDescriptor<RoutineStep>(predicate: #Predicate { $0.id == id })).first
+        if let local, local.updatedAt >= remote.updatedAt { return false }
+        let step = local ?? {
+            let new = RoutineStep(id: remote.id, childID: remote.childID, name: remote.name, time: .morning, order: remote.sortOrder)
+            modelContext.insert(new)
+            return new
+        }()
+        step.childID = remote.childID
+        step.name = remote.name
+        // Raw, so a time from a newer app version passes through untouched.
+        step.timeRaw = remote.time
+        step.order = remote.sortOrder
+        step.isActive = remote.isActive
+        step.createdAt = remote.createdAt
+        step.updatedAt = remote.updatedAt
+        step.deletedAt = remote.deletedAt
+        step.needsSync = false
         return true
     }
 }
@@ -229,7 +267,18 @@ extension RemoteLogEvent {
             id: event.id, householdID: household, childID: event.child?.id,
             type: event.typeRaw, value: event.valueRaw, note: event.note,
             occurredAt: event.timestamp, loggedBy: event.loggedBy, entrySource: event.entrySourceRaw,
+            bodyAreas: event.bodyAreaNames, routineStepID: event.routineStepID,
             createdAt: event.createdAt, updatedAt: event.updatedAt, deletedAt: event.deletedAt
+        )
+    }
+}
+
+extension RemoteRoutineStep {
+    init(_ step: RoutineStep, household: UUID) {
+        self.init(
+            id: step.id, householdID: household, childID: step.childID, name: step.name,
+            time: step.timeRaw, sortOrder: step.order, isActive: step.isActive,
+            createdAt: step.createdAt, updatedAt: step.updatedAt, deletedAt: step.deletedAt
         )
     }
 }
@@ -250,6 +299,12 @@ extension Child: SyncedModel {
 
 extension LogEvent: SyncedModel {
     static func descriptor(ids: [UUID]) -> FetchDescriptor<LogEvent> {
+        FetchDescriptor(predicate: #Predicate { ids.contains($0.id) })
+    }
+}
+
+extension RoutineStep: SyncedModel {
+    static func descriptor(ids: [UUID]) -> FetchDescriptor<RoutineStep> {
         FetchDescriptor(predicate: #Predicate { ids.contains($0.id) })
     }
 }

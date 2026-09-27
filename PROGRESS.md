@@ -46,10 +46,11 @@ One prompt per session, same rules as docs/prompts/README.md.
 - [x] U1 App shell: three tabs, headers, Settings sheet on every tab, quick
       log bar on Plan and Progress, navigation rules.
       Done: Today / Plan / Progress tabs, name switcher, Settings as a native List, quick log bar and log sheet; weekly card and doctor report moved to Progress. Screenshots in design-review/ux/u1/. Left over: Your data, About links, editing a child, Action Button and Control Center guides, the post-log reminders sheet (U4).
-- [ ] U2 Measures: add skinToday (daily), flare body areas, and routine
+- [x] U2 Measures: add skinToday (daily), flare body areas, and routine
       steps (name, morning or evening) to the data
       model with a schema migration and tests; evening skin check-in
       notification with four action buttons.
+      Done: skinToday (one per day, evening answers count for that day), flare body areas, routine steps, SchemaV2 migration, Supabase migration (applied) and sync, evening skin check-in, "Log skin" for Siri; all skin-by-day views read only skinToday. Left over: UI for skin on Today, body outline (U3), routine step editor (U5).
 - [ ] U3 Today: day and night layouts exactly as UX.md section 4, all states.
 - [ ] U4 Onboarding: exactly as UX.md section 8, with VisualSteps.
 - [ ] U5 Plan and Progress: as UX.md sections 5 and 6 with what exists today.

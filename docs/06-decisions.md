@@ -146,3 +146,21 @@ Other
 - **Quick logging guides in Settings:** Home Screen widget, Lock Screen widget, and Siri. Action Button and Control Center are hidden until their steps are recorded on a real iPhone.
 - **New `section` type style** (SF Pro 600, 15/20, subheadline) from DESIGN.md §4, for List headers. The rest of the type table (sizes, the 500 title) is still the old six styles; that's U3–U5 work.
 - **The child switcher in the navigation bar** has its shared glass background hidden on iOS 26+, so it reads as a name, not a button.
+
+## U2: New measures (September 27, 2026)
+
+- **The prompt was cut off at item 7** ("App Intent for skinToday so it works from Siri and…") with no "Done when". Item 7 was read as Siri and the Shortcuts app; done as clean build, all tests (Swift and pgTAP), migration tested, docs, commit.
+- **skinToday is a log type** (`skinToday`, value `calm` / `littleItchy` / `flaring` / `veryRough`), stored like a night rating, so the server needed no change for it. Steps on the indigo scale: 1, 2, 4, 5.
+- **One answer per child per day:** answering again soft-deletes that day's earlier answer and inserts the new one (instead of editing it), so Undo removes the newest answer and leaves the day unanswered. Both rows sync.
+- **Which day a skin answer is about:** care days run 7 PM to 7 PM, so an evening answer would land on tomorrow. An answer given at night (7 PM – 7 AM) counts for the day that just ended and is filed at 6:59 PM (`SkinDay`). The skin check-in's own day follows the same rule, so a check-in set for 8 PM still asks about that day.
+- **Skin by day comes only from skinToday.** The week strip, weekly card, weekly headline, and doctor report read the answer; unanswered days are "no data" (an outline; "not answered" in the PDF). Itches and flares never set skin. `WeekDay.hasLogs` now means "anything logged that day".
+- **Weekly headline:** skin answers are put on the night levels' 0…2 scale (`(step − 1) / 2`) and only count when both weeks have answers.
+- **Weekly card links:** skin travels as its indigo step under a new key `k`. Older Messages bubbles (key `s`, guessed skin) now show skin as empty rather than a guess.
+- **SchemaV2** (lightweight migration from V1): `LogEvent.bodyAreasRaw` (comma-separated `BodyArea` raw values), `LogEvent.routineStepID`, and a new `RoutineStep` model (child by id, name, morning/evening, order, active). New fields are optional so no defaults are needed.
+- **Body areas are a string, not `[String]`.** Array attributes are stored as transformables; it's the safer shape for migrations. Areas from a newer app version are kept (for sync) but not shown.
+- **Opening the store retries.** On the first launch after an update, the app and a widget can open the App Group store at the same moment; one finds it mid-migration ("store version hashes didn't migrate") and fails. Seen in the simulator after installing U2 over U1 data: a one-time "Couldn't load today" alert. `CaliCareModelContainer.shared()` now retries up to 4 times, 0.3 s apart; the upgrade then opens cleanly with all data.
+- **Routine steps link to children by id, and logs to steps by id with no foreign key on the server,** so upload order can never block a log. Push order is children → steps → logs.
+- **Server:** `log_events.body_areas text[]` (default empty, at most 20) and `routine_step_id uuid`; new `routine_steps` table with the usual indexes, `sync_stamp`, and member RLS (no hard deletes). Applied to the calicare project with `supabase db push`.
+- **Evening skin check-in:** off by default at 6:30 PM, like the other reminders. 14 one-off notifications (`calicare.skin.<day>`), skipped and cleared once that day is answered. Buttons Calm / A little itchy / Flaring / Very rough log in the background; a tap the next morning is filed at the check-in's time. Settings lists it second: morning check-in, skin check-in, routines.
+- **Saved reminder settings decode field by field,** so settings from before the skin check-in keep their values instead of resetting.
+- **Siri:** a fifth App Shortcut, "Log skin in Cali Care" (Siri asks which answer), plus "Log [answer] skin in Cali Care". `LogEventIntent` also offers Skin today in Shortcuts.

@@ -17,7 +17,8 @@ Where CaliCare stands at the end of Phase 1, for the local Claude Code session t
 
 ## UX rebuild (September 27, 2026)
 - **U1 app shell is built** (branch `ux/u1-app-shell`): Today, Plan, and Progress tabs; the child's name in display type on Today and as a small switcher in the navigation bar on Plan and Progress; Settings as a large sheet (native List) from every tab; the quick log bar on Plan and Progress. The weekly card and doctor report now live in Progress. Screenshots: `design-review/ux/u1/`.
-- **Next:** U2 (measures: skinToday, flare areas, routine steps).
+- **U2 measures are built** (branch `ux/u2-measures`): skinToday, flare body areas, and routine steps in the data model (SchemaV2, tested migration), on the server (migration applied to calicare), and in sync; the evening skin check-in notification; "Log skin in Cali Care". Skin by day now comes only from the daily answer.
+- **Next:** U3 (Today layouts, including the skin question and "Add where").
 
 ## What's built (by prompt)
 1. **Scaffold:** XcodeGen `project.yml` with App, WidgetsExtension, Core (framework), and CoreTests. Fraunces and DM Sans are bundled in Core with their OFL licenses. `DesignSystem.swift` holds the day and night palettes, type, spacing, and radii.

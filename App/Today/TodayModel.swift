@@ -59,6 +59,9 @@ final class TodayModel {
             householdSize = SyncSettings().householdSize
             hasLoaded = true
         } catch {
+            #if DEBUG
+            print("CaliCare load failed: \(error)")
+            #endif
             problem = "Couldn't load today just now."
             hasLoaded = true
         }

@@ -104,6 +104,11 @@ public struct Palette: Sendable, Equatable {
         case .high: severity(step: 5)
         }
     }
+
+    /// A skin answer at its own step: 1, 2, 4, or 5.
+    public func color(for skin: SkinToday) -> Color {
+        severity(step: skin.step)
+    }
 }
 
 extension ChildColor {

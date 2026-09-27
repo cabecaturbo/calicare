@@ -109,7 +109,8 @@ extension WeeklyReport {
         return best?.mood
     }
 
-    /// Calmer or harder by the average night and skin level on logged days.
+    /// Calmer or harder by the average night level and skin answer on logged days.
+    /// Skin counts only when both weeks have answers.
     /// Half a level of change either way counts; anything smaller is "about the same".
     static func compare(_ this: Week, with last: Week) -> Headline {
         var change = 0.0
@@ -146,9 +147,16 @@ struct Week {
     var roughNights: Int { logged.filter { $0.nightRating == .rough }.count }
     var flares: Int { logged.reduce(0) { $0 + $1.flares } }
     var averageNight: Double? { Self.average(days.compactMap(\.night)) }
-    var averageSkin: Double? { Self.average(days.compactMap(\.skin)) }
+    /// Skin answers on the night levels' 0…2 scale: indigo step 1 is 0, step 5 is 2.
+    var averageSkin: Double? {
+        Self.average(days.compactMap(\.skin).map { Double($0.step - 1) / 2 })
+    }
 
     static func average(_ levels: [CareLevel]) -> Double? {
-        levels.isEmpty ? nil : Double(levels.map(\.rawValue).reduce(0, +)) / Double(levels.count)
+        average(levels.map { Double($0.rawValue) })
+    }
+
+    static func average(_ values: [Double]) -> Double? {
+        values.isEmpty ? nil : values.reduce(0, +) / Double(values.count)
     }
 }

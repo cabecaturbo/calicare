@@ -42,9 +42,9 @@ struct WeekStrip: View {
                     Text(weekdayLetter(day))
                         .textStyle(.meta)
                         .foregroundStyle(isToday(day) ? palette.indigo : palette.graphite)
-                    LevelMark(level: day.night, shape: .circle)
+                    LevelMark(fill: day.night.map(palette.color(for:)), shape: .circle)
                         .frame(height: Self.markRow)
-                    LevelMark(level: day.skin, shape: .square)
+                    LevelMark(fill: day.skin.map(palette.color(for:)), shape: .square)
                         .frame(height: Self.markRow)
                 }
                 .frame(maxWidth: .infinity)
@@ -59,8 +59,8 @@ struct WeekStrip: View {
         VStack(alignment: .leading, spacing: Spacing.x4) {
             ForEach(days) { day in
                 HStack(alignment: .center, spacing: Spacing.x3) {
-                    LevelMark(level: day.night, shape: .circle)
-                    LevelMark(level: day.skin, shape: .square)
+                    LevelMark(fill: day.night.map(palette.color(for:)), shape: .circle)
+                    LevelMark(fill: day.skin.map(palette.color(for:)), shape: .square)
                     Text(description(day))
                         .textStyle(.body)
                         .foregroundStyle(palette.ink)
@@ -88,7 +88,7 @@ struct WeekStrip: View {
         day.day.noon().formatted(.dateTime.weekday(.narrow))
     }
 
-    /// "Tuesday: rough night, skin a bit itchy." or "Tuesday: nothing logged."
+    /// "Tuesday: rough night, skin a little itchy." or "Tuesday: nothing logged."
     private func description(_ day: WeekDay) -> String {
         let name = isToday(day) ? "Today" : day.day.noon().formatted(.dateTime.weekday(.wide))
         var parts: [String] = []
@@ -98,18 +98,18 @@ struct WeekStrip: View {
             parts.append(day.nightItches == 1 ? "1 itchy wake-up" : "\(day.nightItches) itchy wake-ups")
         }
         if let skin = day.skin {
-            parts.append("skin \(skin.skinWords)")
+            parts.append("skin \(skin.words)")
         }
         return parts.isEmpty ? "\(name): nothing logged." : "\(name): \(parts.joined(separator: ", "))."
     }
 }
 
-/// A filled indigo mark for a level, or a quiet outline when nothing was logged.
+/// A filled indigo mark, or a quiet outline when there's nothing (no log, or skin not answered).
 private struct LevelMark: View {
     enum MarkShape { case circle, square }
 
     @Environment(\.palette) private var palette
-    let level: CareLevel?
+    let fill: Color?
     let shape: MarkShape
     private let size: CGFloat = 16
 
@@ -128,8 +128,8 @@ private struct LevelMark: View {
 
     @ViewBuilder
     private func mark(_ outline: some InsettableShape) -> some View {
-        if let level {
-            outline.fill(palette.color(for: level))
+        if let fill {
+            outline.fill(fill)
         } else {
             outline.strokeBorder(palette.graphite.opacity(0.5), lineWidth: 1)
         }

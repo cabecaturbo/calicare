@@ -2,7 +2,7 @@ import AppIntents
 
 /// The log types offered in Siri and Shortcuts. Notes are left out: they need text.
 public enum LogEventKind: String, CaseIterable, AppEnum {
-    case nightRating, itchEpisode, flare, bowelMovement, mood, routineDone
+    case nightRating, itchEpisode, flare, bowelMovement, mood, routineDone, skinToday
 
     public static let typeDisplayRepresentation: TypeDisplayRepresentation = "Event"
     public static let caseDisplayRepresentations: [LogEventKind: DisplayRepresentation] = [
@@ -12,6 +12,7 @@ public enum LogEventKind: String, CaseIterable, AppEnum {
         .bowelMovement: "Bowel movement",
         .mood: "Mood",
         .routineDone: "Routine done",
+        .skinToday: "Skin today",
     ]
 
     public var logType: LogType {
@@ -22,6 +23,7 @@ public enum LogEventKind: String, CaseIterable, AppEnum {
         case .bowelMovement: .bowelMovement
         case .mood: .mood
         case .routineDone: .routineDone
+        case .skinToday: .skinToday
         }
     }
 }
@@ -42,6 +44,16 @@ extension BowelMovement: AppEnum {
         .hard: "Hard",
         .loose: "Loose",
         BowelMovement.none: "None",
+    ]
+}
+
+extension SkinToday: AppEnum {
+    public static let typeDisplayRepresentation: TypeDisplayRepresentation = "Skin today"
+    public static let caseDisplayRepresentations: [SkinToday: DisplayRepresentation] = [
+        .calm: "Calm",
+        .littleItchy: "A little itchy",
+        .flaring: "Flaring",
+        .veryRough: "Very rough",
     ]
 }
 

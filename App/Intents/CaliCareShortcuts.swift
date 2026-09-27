@@ -38,6 +38,16 @@ struct CaliCareShortcuts: AppShortcutsProvider {
             systemImageName: "toilet"
         )
         AppShortcut(
+            intent: LogSkinTodayIntent(),
+            phrases: [
+                "Log skin in \(.applicationName)",
+                "Log skin today in \(.applicationName)",
+                "Log \(\.$answer) skin in \(.applicationName)",
+            ],
+            shortTitle: "Skin Today",
+            systemImageName: "circle.lefthalf.filled"
+        )
+        AppShortcut(
             intent: UndoLastIntent(),
             phrases: [
                 "Undo the last log in \(.applicationName)",

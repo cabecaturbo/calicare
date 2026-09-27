@@ -41,9 +41,10 @@ public struct ReminderScheduler: Sendable {
         let current = now()
         let child = try await ChildStore(modelContainer: container, now: now).currentChild(setting: childSetting)
         let rated = try await ratedDays(child: child, now: current)
+        let skin = try await skinDays(child: child, now: current)
         let authorized = await center.isAuthorized()
         let planned = authorized
-            ? planner.plan(settings: settings, child: child, ratedDays: rated, now: current)
+            ? planner.plan(settings: settings, child: child, ratedDays: rated, skinDays: skin, now: current)
             : []
 
         let stale = await center.pendingIDs().filter { id in
@@ -56,7 +57,7 @@ public struct ReminderScheduler: Sendable {
             try await center.add(reminder)
         }
         // A check-in already on screen for a night that now has a rating isn't needed.
-        await center.removeDelivered(rated.map(ReminderIDs.checkIn(for:)))
+        await center.removeDelivered(rated.map(ReminderIDs.checkIn(for:)) + skin.map(ReminderIDs.skinCheckIn(for:)))
     }
 
     /// Brings the reminder back in 30 minutes.
@@ -77,6 +78,21 @@ public struct ReminderScheduler: Sendable {
             throw QuickLogError.noChild
         }
         try await center.add(planner.test(kind, child: child, now: now()))
+    }
+
+    /// Days (today's skin day and the next) that already have a skin answer.
+    private func skinDays(child: ChildInfo?, now current: Date) async throws -> Set<CareDay> {
+        guard let child else { return [] }
+        let logs = LogStore(modelContainer: container, calendar: calendar, now: now)
+        let today = SkinDay.day(for: current, calendar: calendar)
+        var answered: Set<CareDay> = []
+        for day in [today, today.adding(days: 1, calendar: calendar)] {
+            let events = try await logs.events(for: day, child: child.id)
+            if events.contains(where: { $0.type == .skinToday }) {
+                answered.insert(day)
+            }
+        }
+        return answered
     }
 
     /// Care days (today and tomorrow) that already have a night rating.

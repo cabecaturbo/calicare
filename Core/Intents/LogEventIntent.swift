@@ -18,6 +18,9 @@ public struct LogEventIntent: AppIntent {
     @Parameter(title: "Mood", requestValueDialog: "How's their mood?")
     public var mood: Mood?
 
+    @Parameter(title: "Skin today", requestValueDialog: "How was their skin today?")
+    public var skin: SkinToday?
+
     @Parameter(title: "Child")
     public var child: ChildEntity?
 
@@ -31,6 +34,9 @@ public struct LogEventIntent: AppIntent {
             }
             Case(.mood) {
                 Summary("Log \(\.$eventType) as \(\.$mood) for \(\.$child)")
+            }
+            Case(.skinToday) {
+                Summary("Log \(\.$eventType) as \(\.$skin) for \(\.$child)")
             }
             DefaultCase {
                 Summary("Log \(\.$eventType) for \(\.$child)")
@@ -57,6 +63,9 @@ public struct LogEventIntent: AppIntent {
         case .mood:
             guard let mood else { throw $mood.needsValueError("How's their mood?") }
             return .mood(mood)
+        case .skinToday:
+            guard let skin else { throw $skin.needsValueError("How was their skin today?") }
+            return .skin(skin)
         case .itchEpisode, .flare, .routineDone:
             return nil
         }

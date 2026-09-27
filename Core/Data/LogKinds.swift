@@ -8,11 +8,13 @@ public enum LogType: String, Codable, Sendable, CaseIterable {
     case mood
     case routineDone
     case note
+    /// The parent's one daily answer: how was the skin today? The only source of "skin by day".
+    case skinToday
 
     /// Whether a log of this type must carry a value.
     public var requiresValue: Bool {
         switch self {
-        case .nightRating, .mood: true
+        case .nightRating, .mood, .skinToday: true
         // A one-tap widget log records that it happened; the kind is optional.
         case .bowelMovement, .itchEpisode, .flare, .routineDone, .note: false
         }
@@ -21,7 +23,8 @@ public enum LogType: String, Codable, Sendable, CaseIterable {
     /// True when `value` is the right kind for this type (or absent when none is expected).
     public func accepts(_ value: LogValue?) -> Bool {
         switch (self, value) {
-        case (.nightRating, .night?), (.bowelMovement, .bowel?), (.mood, .mood?), (.routineDone, .routine?): true
+        case (.nightRating, .night?), (.bowelMovement, .bowel?), (.mood, .mood?), (.routineDone, .routine?),
+             (.skinToday, .skin?): true
         case (_, nil): !requiresValue
         default: false
         }
@@ -50,6 +53,50 @@ public enum RoutineTime: String, Codable, Sendable, CaseIterable {
     }
 }
 
+/// The daily skin answer, drawn on indigo steps 1, 2, 4, and 5 (light is calm).
+public enum SkinToday: String, Codable, Sendable, CaseIterable {
+    case calm, littleItchy, flaring, veryRough
+
+    /// Step on the five-step indigo scale.
+    public var step: Int {
+        switch self {
+        case .calm: 1
+        case .littleItchy: 2
+        case .flaring: 4
+        case .veryRough: 5
+        }
+    }
+
+    /// "a little itchy", for sentences.
+    public var words: String {
+        switch self {
+        case .calm: "calm"
+        case .littleItchy: "a little itchy"
+        case .flaring: "flaring"
+        case .veryRough: "very rough"
+        }
+    }
+
+    /// "A little itchy", for buttons.
+    public var title: String {
+        words.prefix(1).uppercased() + words.dropFirst()
+    }
+}
+
+/// Where a flare was. Optional, and never required to log one.
+public enum BodyArea: String, Codable, Sendable, CaseIterable {
+    case face, neck, hands, arms, elbowCreases, torso, back, diaperArea, legs, kneeCreases, feet
+
+    public var words: String {
+        switch self {
+        case .elbowCreases: "elbow creases"
+        case .diaperArea: "diaper area"
+        case .kneeCreases: "knee creases"
+        default: rawValue
+        }
+    }
+}
+
 /// Where a log came from.
 public enum EntrySource: String, Codable, Sendable, CaseIterable {
     case widget, intent, notification, app, watch
@@ -61,6 +108,7 @@ public enum LogValue: Hashable, Sendable {
     case bowel(BowelMovement)
     case mood(Mood)
     case routine(RoutineTime)
+    case skin(SkinToday)
 
     public var rawValue: String {
         switch self {
@@ -68,6 +116,7 @@ public enum LogValue: Hashable, Sendable {
         case .bowel(let movement): movement.rawValue
         case .mood(let mood): mood.rawValue
         case .routine(let time): time.rawValue
+        case .skin(let answer): answer.rawValue
         }
     }
 
@@ -86,6 +135,9 @@ public enum LogValue: Hashable, Sendable {
         case .routineDone:
             guard let time = RoutineTime(rawValue: raw) else { return nil }
             self = .routine(time)
+        case .skinToday:
+            guard let answer = SkinToday(rawValue: raw) else { return nil }
+            self = .skin(answer)
         case .itchEpisode, .flare, .note:
             return nil
         }

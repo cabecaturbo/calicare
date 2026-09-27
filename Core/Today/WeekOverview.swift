@@ -1,20 +1,11 @@
 import Foundation
 
-/// A point on the sage scale. Lighter is calmer. There is no "bad" level and no red.
+/// A night on the indigo scale. Lighter is calmer. There is no "bad" level and no red.
 public enum CareLevel: Int, Hashable, Sendable, Comparable, CaseIterable {
     case low, medium, high
 
     public static func < (lhs: CareLevel, rhs: CareLevel) -> Bool {
         lhs.rawValue < rhs.rawValue
-    }
-
-    /// Plain words for VoiceOver and captions.
-    public var skinWords: String {
-        switch self {
-        case .low: "calm"
-        case .medium: "a bit itchy"
-        case .high: "itchy"
-        }
     }
 }
 
@@ -24,21 +15,23 @@ public struct WeekDay: Hashable, Sendable, Identifiable {
     public let nightRating: NightRating?
     public let nightItches: Int
     public let night: CareLevel?
-    public let skin: CareLevel?
+    /// Only the parent's daily answer. Nil means not answered: no data, never
+    /// guessed from itches or flares.
+    public let skin: SkinToday?
+    /// Anything at all was logged that day.
+    public let hasLogs: Bool
 
     public var id: CareDay { day }
-    public var hasLogs: Bool { night != nil || skin != nil }
 
     /// Night: the parent's rating if given, otherwise how many itchy wake-ups.
-    /// Skin: itches through the day, with flares counting more.
+    /// Skin: the day's skinToday answer.
     public init(summary: DaySummary) {
         day = summary.day
         nightRating = summary.nightRating
         nightItches = summary.nightItchEpisodes
         night = Self.nightLevel(rating: summary.nightRating, itches: summary.nightItchEpisodes)
-        skin = summary.totalEvents == 0
-            ? nil
-            : Self.skinLevel(itches: summary.itchEpisodes, flares: summary.flares)
+        skin = summary.skinToday
+        hasLogs = summary.totalEvents > 0
     }
 
     static func nightLevel(rating: NightRating?, itches: Int) -> CareLevel? {
@@ -53,15 +46,6 @@ public struct WeekDay: Hashable, Sendable, Identifiable {
             case 2...3: return .medium
             default: return .high
             }
-        }
-    }
-
-    /// Each flare counts as three itchy spells.
-    static func skinLevel(itches: Int, flares: Int) -> CareLevel {
-        switch itches + 3 * flares {
-        case ...2: .low
-        case 3...5: .medium
-        default: .high
         }
     }
 }

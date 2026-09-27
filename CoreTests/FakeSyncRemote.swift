@@ -8,6 +8,7 @@ struct Offline: Error {}
 actor FakeSyncRemote: SyncRemote {
     private(set) var children: [UUID: RemoteChild] = [:]
     private(set) var logs: [UUID: RemoteLogEvent] = [:]
+    private(set) var routineSteps: [UUID: RemoteRoutineStep] = [:]
     private(set) var households: Set<UUID> = []
     private var memberHousehold: UUID?
     var members = 1
@@ -49,6 +50,21 @@ actor FakeSyncRemote: SyncRemote {
         }
     }
 
+    func upsert(routineSteps rows: [RemoteRoutineStep]) async throws {
+        try check()
+        for var row in rows where isNewer(row.updatedAt, than: routineSteps[row.id]?.updatedAt) {
+            row.serverUpdatedAt = tick()
+            routineSteps[row.id] = row
+        }
+    }
+
+    /// A step written by another phone.
+    func insert(step row: RemoteRoutineStep) {
+        var row = row
+        row.serverUpdatedAt = tick()
+        routineSteps[row.id] = row
+    }
+
     func setMembers(_ count: Int) { members = count }
 
     func memberCount(household: UUID) async throws -> Int {
@@ -61,7 +77,8 @@ actor FakeSyncRemote: SyncRemote {
         let after = since ?? .distantPast
         return RemoteChanges(
             children: children.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after },
-            logs: logs.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after }
+            logs: logs.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after },
+            routineSteps: routineSteps.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after }
         )
     }
 

@@ -36,19 +36,29 @@ struct WeekOverviewTests {
         #expect(days[3].night == nil)
     }
 
-    @Test func skinCountsItchesAndFlares() {
+    @Test func skinComesOnlyFromTheDailyAnswer() {
         let events = [
-            // A day with only a good night rating is calm.
-            entry(.nightRating, .night(.good), TestTime.date(26, 7)),
-            entry(.flare, nil, TestTime.date(25, 12)),
+            entry(.skinToday, .skin(.flaring), TestTime.date(26, 17)),
+            entry(.skinToday, .skin(.calm), TestTime.date(25, 18)),
+            // Itches and flares never set skin, however many.
             entry(.flare, nil, TestTime.date(24, 12)),
             entry(.flare, nil, TestTime.date(24, 13)),
+            entry(.itchEpisode, nil, TestTime.date(24, 14)),
+            entry(.nightRating, .night(.good), TestTime.date(23, 7)),
         ]
         let days = WeekOverview.days(ending: today, events: events, calendar: calendar)
-        #expect(days[6].skin == .low)
-        #expect(days[5].skin == .medium)
-        #expect(days[4].skin == .high)
+        #expect(days[6].skin == .flaring)
+        #expect(days[5].skin == .calm)
+        #expect(days[4].skin == nil)
+        #expect(days[4].hasLogs)
         #expect(days[3].skin == nil)
+        #expect(days[3].hasLogs)
+        #expect(days[2].skin == nil)
+        #expect(!days[2].hasLogs)
+    }
+
+    @Test func skinStepsFollowTheIndigoScale() {
+        #expect(SkinToday.allCases.map(\.step) == [1, 2, 4, 5])
     }
 
     @Test func levelsAreOrdered() {

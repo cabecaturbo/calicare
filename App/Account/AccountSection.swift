@@ -31,6 +31,12 @@ struct AccountSection: View {
                     }
                     .buttonStyle(.ledger)
                     .accessibilityHint("Change the name others see")
+                    NavigationLink {
+                        HouseholdView()
+                    } label: {
+                        NavigationRow(title: "Household")
+                    }
+                    .buttonStyle(.ledger)
                     row("Sign out") { confirmingSignOut = true }
                 }
             }

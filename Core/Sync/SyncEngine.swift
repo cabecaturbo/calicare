@@ -79,6 +79,22 @@ public actor SyncEngine: ModelActor {
         return household
     }
 
+    /// Switches this phone to another household after accepting an invite.
+    /// Everything already on the phone is queued to upload into it.
+    public func join(household: UUID, userID: UUID) throws {
+        try markEverythingForUpload()
+        settings.userID = userID
+        settings.householdID = household
+        settings.cursor = nil
+    }
+
+    /// Children and logs on this phone (not deleted), to ask before merging them into a household.
+    public func localRecordCount() throws -> (children: Int, logs: Int) {
+        let children = try modelContext.fetchCount(FetchDescriptor<Child>(predicate: #Predicate { $0.deletedAt == nil }))
+        let logs = try modelContext.fetchCount(FetchDescriptor<LogEvent>(predicate: #Predicate { $0.deletedAt == nil }))
+        return (children, logs)
+    }
+
     private func markEverythingForUpload() throws {
         for child in try modelContext.fetch(FetchDescriptor<Child>()) { child.needsSync = true }
         for event in try modelContext.fetch(FetchDescriptor<LogEvent>()) { event.needsSync = true }

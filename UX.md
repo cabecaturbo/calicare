@@ -52,6 +52,9 @@ Three tabs. Nothing else is top-level.
 On every tab
 - Header: child's name (tap to switch child or add one) on the left,
   Settings button on the right. Settings opens as a sheet.
+- On Today the child's name is in display type. On Plan and Progress it
+  is a small switcher in the navigation bar (row style, 600), not a big
+  title. Display type appears only on Today.
 - Plan and Progress also show a quick log bar above the tab bar: one big
   "Itchy" button and "Log…" (opens the full log sheet). Use
   tabViewBottomAccessory on iOS 26+, a bottom safe-area inset bar on
@@ -104,7 +107,8 @@ Day layout (7 AM – 8 PM), top to bottom:
    - Bowel movement and Mood open a small sheet; one tap on an option logs.
    - Note opens a sheet with a text field.
 5. Routine: today's steps with checks. If none: one row, "Set up your
-   routine" → Plan.
+   routine" → Plan. Until routine steps exist in the data model (U2),
+   Routine shows two rows, Morning and Evening.
 6. Today so far: timeline (time on the left, event, "by Dad" when more
    than one caregiver). Swipe to delete, tap to edit.
 7. This week: 7-night dot strip in one row. Tap → Progress.
@@ -123,9 +127,9 @@ Job: follow the care plan without thinking about it.
 
 Before a plan is imported:
 1. Routine: morning and evening steps the parent entered. "Edit routine"
-   at the end.
-2. Reminders: routine and check-in times with toggles.
-3. Care plan: appears only once import is built (Phase 4). Then it's one
+   at the end. Until routine steps exist (U2), two rows: Morning and
+   Evening.
+2. Care plan: appears only once import is built (Phase 4). Then it's one
    row: "Add your care plan. Import a PDF or photo from your provider."
 
 After import (Phase 4+), sections in this order, each hidden if empty:
@@ -158,7 +162,10 @@ Grouped List:
 2. Family: sign in, members, invite (Phase 2)
 3. Reminders: morning check-in, skin check-in, routine reminders
 4. Quick logging: Home Screen widget, Lock Screen widget, Action Button,
-   Siri, Control Center (each opens VisualSteps)
+   Siri, Control Center (each opens VisualSteps). This is the home for
+   every guide except onboarding's Home Screen widget. A guide or step
+   without a real screenshot or recording is hidden, never shown as a
+   placeholder.
 5. Your data: export everything (CSV and PDF), what's stored where
 6. Account: display name, sign out, delete account
 7. About: how the app works (what each measure means, in plain words),
@@ -178,9 +185,14 @@ Thin progress line at the top.
    line, then the system permission prompt. Skip is a clear secondary
    button.
 4. Log from anywhere: VisualSteps for the Home Screen widget; "Show me
-   the Action Button too" is optional. Skip is always visible.
+   the Action Button too" is optional. Skip is always visible. No other
+   guides here (Lock Screen, Siri, Control Center live in Settings >
+   Quick logging). A step without a real recording is hidden.
 5. Land on Today with the first-run hint.
-No account, paywall, or survey in onboarding.
+No sign-in step, no account, paywall, or survey in onboarding.
+
+Reminders live in two places only: onboarding step 3 and Settings >
+Reminders. No reminders sheet or prompt after the first log.
 
 ## 9. Legitimacy checklist
 - Reports say exactly what was measured and how ("Skin today is the
@@ -204,9 +216,10 @@ wins on looks; UX.md wins on structure.
 One prompt per session, same rules as docs/prompts/README.md.
 - U1. App shell: three tabs, headers, Settings sheet on every tab, quick
   log bar on Plan and Progress, navigation rules.
-- U2. Measures: add skinToday (daily) and flare body areas to the data
-  model with a schema migration and tests; evening skin check-in
-  notification with four action buttons.
+- U2. Measures: add skinToday (daily), flare body areas, and routine
+  steps (name, morning or evening) to the data model with a schema
+  migration and tests; evening skin check-in notification with four
+  action buttons.
 - U3. Today: day and night layouts exactly as section 4, all states.
 - U4. Onboarding: exactly as section 8, with VisualSteps.
 - U5. Plan and Progress: as sections 5 and 6 with what exists today.

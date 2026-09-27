@@ -18,7 +18,7 @@ PROGRESS.md in the repo root tracks which prompts are done.
 6. Done means: builds cleanly, tests pass, "Done when" is met.
 7. When done: commit with a clear message, check the box in PROGRESS.md,
    add a one-line note under it (what was built, anything left over),
-   and add any new decisions to docs/05-decisions-log.md.
+   and add any new decisions to docs/06-decisions.md.
 8. Then STOP. Never start the next prompt on your own.
 
 ## Standard kickoff (paste this after every /clear)

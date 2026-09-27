@@ -75,3 +75,10 @@ Decisions that aren't obvious from the code, newest at the bottom. Add a dated e
 - **The first sync claims pre-account logs:** "You"/"Me" logs on the phone take the person's name before uploading, so other phones never show them as "by you".
 - **Bylines only when shared:** "by Dad" (or "by you") appears on the timeline and the small widget's last-itch line only when the household has more than one person. Sync records the member count (`householdSize`) in the App Group for widgets.
 - **Intent confirmations stay short,** with no "by" name.
+
+## Phase 2.5: "Logged by" names (September 26, 2026)
+
+- **New logs save the signed-in person's display name, or "You".** Older logs said "Me"; both count as "mine".
+- **The first sync claims pre-account logs:** "You"/"Me" logs on the phone take the person's name before uploading, so other phones never show them as "by you".
+- **Bylines only when shared:** "by Dad" (or "by you") appears on the timeline and the small widget's last-itch line only when the household has more than one person. Sync records the member count (`householdSize`) in the App Group for widgets.
+- **Intent confirmations stay short,** with no "by" name.

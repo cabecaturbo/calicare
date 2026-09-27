@@ -284,8 +284,9 @@ Capturing the assets
 - Blur or remove any personal content in captures.
 
 ## 8. Motion and feedback
-- Illustrations draw themselves in once (about 1 second) and then stop.
-  Only onboarding may keep a gentle hand-drawn wobble.
+- Illustrations draw themselves in (about 1 second) every time their
+  screen appears or the app comes back to the front, then stop. They never
+  loop; only onboarding may keep a gentle hand-drawn wobble.
 - Logging: a light haptic and the confirmation line slides up: "Logged,
   2:14 AM · Undo." It disappears after 4 seconds.
 - Transitions are short (200–300ms) and ease-out. No springs with bounce.

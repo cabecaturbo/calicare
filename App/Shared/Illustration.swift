@@ -2,13 +2,15 @@ import Core
 import SwiftUI
 
 /// Hand-drawn ink line drawings (DESIGN.md §6): a sun, a moon, a flower.
-/// They draw themselves in once (about a second) and stop. With Reduce Motion
-/// they appear complete.
+/// They draw themselves in (about a second) every time the screen appears or
+/// the app comes back, then stop; they never loop. With Reduce Motion they
+/// appear complete.
 struct Illustration: View {
     enum Kind { case sun, moon, flower }
 
     @Environment(\.palette) private var palette
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.scenePhase) private var scenePhase
     let kind: Kind
     var size = CGSize(width: 84, height: 80)
     @State private var drawn: CGFloat = 0
@@ -24,7 +26,19 @@ struct Illustration: View {
         }
         .frame(width: size.width, height: size.height)
         .accessibilityHidden(true)
-        .onAppear { drawn = 1 }
+        .onAppear { replay() }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { replay() }
+        }
+    }
+
+    /// Wipes the drawing without animating, then draws it in again.
+    private func replay() {
+        guard !reduceMotion else { drawn = 1; return }
+        var reset = Transaction()
+        reset.disablesAnimations = true
+        withTransaction(reset) { drawn = 0 }
+        Task { @MainActor in drawn = 1 }
     }
 
     private var strokes: [InkPath] {

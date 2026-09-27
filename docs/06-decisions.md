@@ -218,3 +218,4 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - "Not answered" is a short muted dash with no bar, and the legend matches.
   - A 48-pt bg fade sits behind the bottom bar (the one allowed gradient). A "Plan · scrolled" board shows the Provider's plan row.
   - The check-in's selected check is a corner badge, so labels stay on one line.
+- **Drawings redraw on every visit (owner's request).** The hand-drawn sun, moon, and flower draw themselves in each time their screen appears (switching tabs, returning to the app), then stop. They still never loop, and Reduce Motion shows them complete.

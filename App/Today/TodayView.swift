@@ -8,6 +8,7 @@ struct TodayView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(ReminderController.self) private var reminders
     @Environment(AccountController.self) private var account
+    @Environment(SyncController.self) private var sync
     @State private var model = TodayModel()
     @State private var showingSettings = false
     @State private var showingAddChild = false
@@ -49,6 +50,7 @@ struct TodayView: View {
         }
         .paperBackground()
         .refreshable { await model.load() }
+        .onReceive(NotificationCenter.default.publisher(for: .caliCareRemoteDataChanged)) { _ in reload() }
         .safeAreaInset(edge: .bottom) {
             if let confirmation = model.confirmation {
                 LoggedBanner(confirmation: confirmation) {
@@ -67,6 +69,7 @@ struct TodayView: View {
             SettingsView()
                 .environment(reminders)
                 .environment(account)
+                .environment(sync)
                 .nightAwarePalette()
         }
         .sheet(isPresented: $showingAddChild, onDismiss: reload) {
@@ -156,6 +159,7 @@ struct TodayView: View {
     TodayView()
         .environment(ReminderController())
         .environment(AccountController(client: nil))
+        .environment(SyncController(account: AccountController(client: nil)))
         .environment(\.palette, .day)
         .onAppear { FontRegistry.registerAll() }
 }
@@ -164,6 +168,7 @@ struct TodayView: View {
     TodayView()
         .environment(ReminderController())
         .environment(AccountController(client: nil))
+        .environment(SyncController(account: AccountController(client: nil)))
         .environment(\.palette, .night)
         .onAppear { FontRegistry.registerAll() }
 }

@@ -4,6 +4,7 @@ import SwiftUI
 /// Settings → Account. Hidden when this build has no Supabase project.
 struct AccountSection: View {
     @Environment(AccountController.self) private var account
+    @Environment(SyncController.self) private var sync
     @Environment(\.palette) private var palette
     @State private var showingSheet = false
     @State private var confirmingSignOut = false
@@ -53,8 +54,17 @@ struct AccountSection: View {
         switch account.state {
         case .signedOut: "Optional. Everything works without an account."
         case .expired: "Your logs are all still on this phone."
-        case .signedIn: "Signing out keeps everything on this phone."
+        case .signedIn: "\(lastSynced) Signing out keeps everything on this phone."
         }
+    }
+
+    /// "Last synced 2:14 PM." or "Last synced Sep 25, 2:14 PM."
+    private var lastSynced: String {
+        guard let date = sync.lastSyncedAt else { return "Not synced yet." }
+        let when = Calendar.current.isDateInToday(date)
+            ? date.formatted(date: .omitted, time: .shortened)
+            : date.formatted(.dateTime.month(.abbreviated).day().hour().minute())
+        return "Last synced \(when)."
     }
 
     private func row(_ title: String, action: @escaping () -> Void) -> some View {

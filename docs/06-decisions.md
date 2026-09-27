@@ -49,3 +49,12 @@ Decisions that aren't obvious from the code, newest at the bottom. Add a dated e
 - **supabase-swift is linked to the App target only.** Widgets and intents don't talk to the network; they'll read the shared session from the keychain group `…com.cursorkittens.calicare.shared` if needed later.
 - **Display name** lives in the Supabase user's metadata (`display_name`) and, for widgets and intents, in App Group defaults. It moves to `household_members` when households arrive (2.3/2.4).
 - **Expired vs signed out:** an old access token never signs anyone out (it renews on its own). Only a session Supabase can't renew shows "Sign in again to keep sharing"; nothing on the phone changes either way.
+
+## Phase 2.3: Sync engine (September 26, 2026)
+
+- **`SyncEngine` lives in Core and talks to a `SyncRemote` protocol.** The app's `SupabaseSyncRemote` uses PostgREST; tests use an in-memory fake with the server's rules.
+- **Push, then pull.** Children go up before logs (logs point at them). A row's `needsSync` clears only if it wasn't edited again while uploading.
+- **Pull by `server_updated_at` with a 5-second overlap,** so a write that committed a moment late isn't missed. Merging is idempotent, so the overlap costs nothing.
+- **First sync on a phone** joins the account's household (or creates one) and queues everything already on the phone to upload into it. A phone signed into a *different* account uploads its data into that account's household; asking before merging comes with invites (2.4).
+- **When it runs:** on app open, 3 seconds after any local change (bursts become one sync), on sign-in, and via `BGAppRefreshTask` (about hourly, when iOS allows). Widgets and intents only set `needsSync`; the app does the syncing. Failures retry quietly (30 s doubling to 15 min). The only status shown is "Last synced" in Settings → Account.
+- **Sync needs a display name,** because creating a household adds the person as a named owner.

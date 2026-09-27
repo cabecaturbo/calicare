@@ -25,12 +25,20 @@ final class AccountController {
 
     /// Follows the stored session: sign-ins, renewals, and sign-outs.
     func start() {
+        loadStoredSession()
         guard let client, watching == nil else { return }
         watching = Task { [weak self] in
             for await (event, session) in client.auth.authStateChanges {
                 self?.apply(event: event, session: session)
             }
         }
+    }
+
+    /// Reads the saved session right away, e.g. when iOS wakes the app in the
+    /// background before any screen has loaded.
+    func loadStoredSession() {
+        guard let client, case .signedOut = state, let session = client.auth.currentSession else { return }
+        apply(event: .initialSession, session: session)
     }
 
     /// Hands Apple's identity token to Supabase.

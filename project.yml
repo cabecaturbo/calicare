@@ -53,6 +53,11 @@ targets:
         # Portrait-only iPhone app; without this, device builds warn.
         UIRequiresFullScreen: true
         ITSAppUsesNonExemptEncryption: false
+        # Background sync (prompt 2.3).
+        UIBackgroundModes:
+          - fetch
+        BGTaskSchedulerPermittedIdentifiers:
+          - com.cursorkittens.calicare.sync
         # Lets Siri match "Cali Care" (two words) to the app name.
         INAlternativeAppNames:
           - INAlternativeAppName: Cali Care

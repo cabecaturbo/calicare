@@ -46,13 +46,17 @@ public struct WidgetDataSource: Sendable {
             events: try await logs.events(for: previousDay, child: child.id),
             calendar: calendar
         )
+        let lastItch = try await logs.latest(.itchEpisode, child: child.id)
         return WidgetSnapshot(
             child: child,
             itchCount: today.itchEpisodes,
             bowelMovementCount: today.bowelMovementCount,
             routinesDone: today.routinesDone,
             lastNight: WidgetSnapshot.resolveLastNight(at: date, today: today, previous: previous, calendar: calendar),
-            lastItch: try await logs.latest(.itchEpisode, child: child.id)?.timestamp
+            lastItch: lastItch?.timestamp,
+            lastItchBy: lastItch.flatMap {
+                LoggedBy.byline($0.loggedBy, myName: AccountSettings().displayName, householdSize: SyncSettings().householdSize)
+            }
         )
     }
 

@@ -29,6 +29,12 @@ public struct SyncSettings: Sendable {
         nonmutating set { defaults.set(newValue, forKey: "sync.cursor") }
     }
 
+    /// People in the household, as of the last sync. 1 when not syncing.
+    public var householdSize: Int {
+        get { max(defaults.integer(forKey: "sync.householdSize"), 1) }
+        nonmutating set { defaults.set(newValue, forKey: "sync.householdSize") }
+    }
+
     public var lastSyncedAt: Date? {
         get { defaults.object(forKey: "sync.lastSyncedAt") as? Date }
         nonmutating set { defaults.set(newValue, forKey: "sync.lastSyncedAt") }
@@ -40,5 +46,6 @@ public struct SyncSettings: Sendable {
         householdID = nil
         cursor = nil
         lastSyncedAt = nil
+        householdSize = 1
     }
 }

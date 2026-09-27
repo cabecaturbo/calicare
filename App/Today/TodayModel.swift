@@ -23,6 +23,9 @@ final class TodayModel {
     /// False from 7 PM, when the care day is tonight's.
     private(set) var isDaytime = true
     private(set) var hasLoaded = false
+    /// For "by Dad" on the timeline.
+    private(set) var myName: String?
+    private(set) var householdSize = 1
     var confirmation: Confirmation?
     var problem: String?
 
@@ -52,6 +55,8 @@ final class TodayModel {
             lastNight = LastNightReport.resolve(at: now, today: todaySummary, previous: previous, calendar: calendar)
             week = WeekOverview.days(ending: today, events: events, calendar: calendar)
             isDaytime = today.isDaytime(now, calendar: calendar)
+            myName = AccountSettings().displayName
+            householdSize = SyncSettings().householdSize
             hasLoaded = true
         } catch {
             problem = "Couldn't load today just now."
@@ -113,6 +118,11 @@ final class TodayModel {
 
     func title(for entry: LogEntry) -> String {
         phrases.title(for: entry)
+    }
+
+    /// "by Dad", or nil when it's just one person.
+    func byline(for entry: LogEntry) -> String? {
+        LoggedBy.byline(entry.loggedBy, myName: myName, householdSize: householdSize)
     }
 
     func time(_ date: Date) -> String {

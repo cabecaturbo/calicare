@@ -34,6 +34,7 @@ struct TodayTimeline: View {
         let title = model.title(for: entry)
         let time = model.time(entry.timestamp)
         let source = entry.source.label
+        let byline = model.byline(for: entry)
         return Button {
             onEdit(entry)
         } label: {
@@ -50,7 +51,7 @@ struct TodayTimeline: View {
                     }
                 }
             } trailing: {
-                Text([time, source].compactMap { $0 }.joined(separator: " · "))
+                Text([time, source, byline].compactMap { $0 }.joined(separator: " · "))
                     .textStyle(.meta)
                     .foregroundStyle(palette.graphite)
                     .multilineTextAlignment(.trailing)
@@ -58,7 +59,7 @@ struct TodayTimeline: View {
         }
         .buttonStyle(.ledger)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel([title, time, entry.note, source].compactMap { $0 }.joined(separator: ", "))
+        .accessibilityLabel([title, time, entry.note, source, byline].compactMap { $0 }.joined(separator: ", "))
         .accessibilityHint("Edit or delete")
         .accessibilityAddTraits(.isButton)
     }

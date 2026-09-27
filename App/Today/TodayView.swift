@@ -7,6 +7,7 @@ struct TodayView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(ReminderController.self) private var reminders
+    @Environment(AccountController.self) private var account
     @State private var model = TodayModel()
     @State private var showingSettings = false
     @State private var showingAddChild = false
@@ -65,6 +66,7 @@ struct TodayView: View {
         .sheet(isPresented: $showingSettings, onDismiss: reload) {
             SettingsView()
                 .environment(reminders)
+                .environment(account)
                 .nightAwarePalette()
         }
         .sheet(isPresented: $showingAddChild, onDismiss: reload) {
@@ -153,6 +155,7 @@ struct TodayView: View {
 #Preview("Day") {
     TodayView()
         .environment(ReminderController())
+        .environment(AccountController(client: nil))
         .environment(\.palette, .day)
         .onAppear { FontRegistry.registerAll() }
 }
@@ -160,6 +163,7 @@ struct TodayView: View {
 #Preview("Night") {
     TodayView()
         .environment(ReminderController())
+        .environment(AccountController(client: nil))
         .environment(\.palette, .night)
         .onAppear { FontRegistry.registerAll() }
 }

@@ -6,6 +6,7 @@ struct CaliCareApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @Environment(\.scenePhase) private var scenePhase
     @State private var reminders = ReminderController()
+    @State private var account = AccountController()
 
     init() {
         FontRegistry.registerAll()
@@ -19,6 +20,8 @@ struct CaliCareApp: App {
             RootView()
                 .nightAwarePalette()
                 .environment(reminders)
+                .environment(account)
+                .task { account.start() }
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {

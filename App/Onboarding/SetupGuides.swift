@@ -99,3 +99,22 @@ private struct GuideHeading: View {
         .padding(.horizontal, Spacing.margin)
     }
 }
+
+/// The optional last step: sharing with a partner or caregiver.
+struct ShareSetupGuide: View {
+    @Environment(\.palette) private var palette
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.ledeToSection) {
+            GuideHeading(
+                title: "Share with your partner",
+                detail: "Sign in with Apple so a partner, grandparent, or sitter can log too, and everyone sees the same day."
+            )
+            Text("Optional. Without an account everything stays on this phone and works the same.")
+                .textStyle(.body)
+                .foregroundStyle(palette.graphite)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, Spacing.margin)
+        }
+    }
+}

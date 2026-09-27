@@ -30,3 +30,22 @@ Decisions that aren't obvious from the code, newest at the bottom. Add a dated e
 - **Paper grain:** a 128pt static noise tile at 3.5% opacity, multiplied onto paper and oat. Not used in widgets.
 - **Lock Screen steps on iOS 27:** Customize opens the Lock Screen editor directly, so DESIGN.md's "tap Lock Screen" step doesn't exist there. The flow is: touch and hold → Customize → Add Widgets → CaliCare → pick a widget → Done.
 - **Design review captures:** the `DesignReview` scheme's UI tests drive the simulator to capture VisualSteps assets and review screenshots. Debug builds accept `-designReviewNight YES|NO` to pin night or day (shared with widgets through the App Group).
+
+## Phase 2.1: Supabase schema (September 26, 2026)
+
+- **Project:** the existing **calicare** project in *cabecaturbo's Org* (US West / Oregon), not a new one.
+- **Sync reads `server_updated_at`, not `updated_at`.** Phone clocks can be wrong or arrive late from an offline phone, so the server stamps its own time on every write, and "changes since" uses that. `updated_at` (from the device) still decides conflicts: last write wins, enforced by a trigger that skips older updates. Both indexes exist.
+- **`LogEvent.timestamp` is `occurred_at`** in the database; `timestamp` is a Postgres type name.
+- **No check list on log `type` or `entry_source`**, so an older server never rejects a type added by a newer app. The app already ignores types it doesn't know.
+- **Households are created with `create_household(...)`**, which adds the caller as owner in the same step; direct inserts aren't allowed.
+- **Caregivers** can add and edit children and logs, and soft-delete logs (Undo), but can't remove a child, change roles, or remove other members. They can change their own display name and leave.
+- **Tests run on a local Supabase in Docker (Colima)**, never against the real project.
+
+## Phase 2.2: Sign in with Apple (September 26, 2026)
+
+- **Native Sign in with Apple only.** The app gets an identity token from Apple and hands it to Supabase (`signInWithIdToken`), so Supabase's Apple provider only needs the bundle ID. The Services ID and signing key in the prompt are only for signing in on a website; add them if the Vercel site ever needs sign-in.
+- **Apple provider turned on with `supabase config push`.** Local `config.toml` auth settings were first matched to the real project (email confirmations on, 8-digit codes, TOTP on, site URL) so the push changed only the Apple provider.
+- **Publishable key, not the legacy anon key,** in the gitignored `Config/Supabase.local.xcconfig`, read through `Config/App.xcconfig` with an optional include. Without the file the app builds and hides accounts, so CI and fresh clones still work.
+- **supabase-swift is linked to the App target only.** Widgets and intents don't talk to the network; they'll read the shared session from the keychain group `…com.cursorkittens.calicare.shared` if needed later.
+- **Display name** lives in the Supabase user's metadata (`display_name`) and, for widgets and intents, in App Group defaults. It moves to `household_members` when households arrive (2.3/2.4).
+- **Expired vs signed out:** an old access token never signs anyone out (it renews on its own). Only a session Supabase can't renew shows "Sign in again to keep sharing"; nothing on the phone changes either way.

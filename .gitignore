@@ -35,3 +35,6 @@ WidgetsExtension/WidgetsExtension.entitlements
 
 # App Store Connect CLI local config (may hold key paths)
 .asc/
+
+# Supabase URL and key for this Mac (see Config/Supabase.example.xcconfig)
+Config/Supabase.local.xcconfig

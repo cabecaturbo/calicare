@@ -42,7 +42,6 @@ struct CaliCareShortcuts: AppShortcutsProvider {
             phrases: [
                 "Log skin in \(.applicationName)",
                 "Log skin today in \(.applicationName)",
-                "Log \(\.$answer) skin in \(.applicationName)",
             ],
             shortTitle: "Skin Today",
             systemImageName: "circle.lefthalf.filled"

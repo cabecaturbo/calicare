@@ -30,7 +30,9 @@ care plan and track progress with as little effort as possible.
   Edge Functions.
 
 ## Design
-- DESIGN.md (repo root) is the design system: tokens, type, layout, components, and the "what we refuse" list. It wins on anything visual.
+- Read DESIGN.md and UX.md (repo root) before any UI work.
+- Apple's Human Interface Guidelines are the foundation underneath both.
+- DESIGN.md wins on how things look; UX.md wins on how the app is structured.
 
 ## Copy rules
 - Plain, warm, short. "Worth watching," never "cause."

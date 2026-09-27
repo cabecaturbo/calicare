@@ -1,4 +1,4 @@
-> **Replaced.** DESIGN.md in the repo root replaces this document (September 26, 2026). Kept for history; don't follow it.
+> Replaced by DESIGN.md.
 
 # Design System and Voice
 

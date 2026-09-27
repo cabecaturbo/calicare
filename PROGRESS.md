@@ -38,8 +38,28 @@ See docs/prompts/README.md for the rules.
       Messages extension with a compact bubble; the full card opens from the message link. Verified sending on the iPhone.
 - [ ] 3.4 Doctor PDF
       Code done: multi-page PDF with summary, charts, day by day, notes, full log; share and email. Waiting on a device check in Files and Mail.
+
+⏸ Phase 3 is paused here (Sep 27, 2026) for the UX rebuild below.
+
+## UX rebuild (UX.md section 12), before the rest of Phase 3
+One prompt per session, same rules as docs/prompts/README.md.
+- [ ] U1 App shell: three tabs, headers, Settings sheet on every tab, quick
+      log bar on Plan and Progress, navigation rules.
+- [ ] U2 Measures: add skinToday (daily) and flare body areas to the data
+      model with a schema migration and tests; evening skin check-in
+      notification with four action buttons.
+- [ ] U3 Today: day and night layouts exactly as UX.md section 4, all states.
+- [ ] U4 Onboarding: exactly as UX.md section 8, with VisualSteps.
+- [ ] U5 Plan and Progress: as UX.md sections 5 and 6 with what exists today.
+      Progress becomes the home for Phase 3's reports.
+- [ ] U6 Review pass: screenshot every screen in every state into
+      /design-review/ux/, check against UX.md and DESIGN.md, fix gaps.
+
+## Phase 3, continued (after the UX rebuild)
 - [ ] 3.5 Caregiver card
+      Note: reports live in the Progress tab (UX.md section 6) and follow DESIGN.md section 10. Skin by day comes from the skinToday measure.
 - [ ] 3.6 Scheduled sends via Shortcuts
+      Note: reports live in the Progress tab (UX.md section 6) and follow DESIGN.md section 10. Skin by day comes from the skinToday measure.
 
 ## Phase 4: Care plans (docs/prompts/phase-4-care-plans.md)
 - [ ] 4.1 Care plan data model

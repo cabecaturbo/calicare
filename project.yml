@@ -34,6 +34,8 @@ targets:
           UIColorName: LaunchBackground
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
+        # Portrait-only iPhone app; without this, device builds warn.
+        UIRequiresFullScreen: true
         ITSAppUsesNonExemptEncryption: false
         # Lets Siri match "Cali Care" (two words) to the app name.
         INAlternativeAppNames:

@@ -51,12 +51,33 @@ One prompt per session, same rules as docs/prompts/README.md.
       model with a schema migration and tests; evening skin check-in
       notification with four action buttons.
       Done: skinToday (one per day, evening answers count for that day), flare body areas, routine steps, SchemaV2 migration, Supabase migration (applied) and sync, evening skin check-in, "Log skin" for Siri; all skin-by-day views read only skinToday. Left over: UI for skin on Today, body outline (U3), routine step editor (U5).
-- [ ] U3 Today: day and night layouts exactly as UX.md section 4, all states.
+- [x] U3 Today: day and night layouts exactly as UX.md section 4, all states.
+      Done in the canvas design: the shared header, the skin check-in as four cards (then one line with Change), the Last night card, Today so far, the night layout with a large Itchy, and the docked log control (Itchy, More: Flare, Bowel movement, Note).
+      Still missing from UX.md §4:
+      - "Add where" after a flare (the body outline).
+      - Rating last night from Today (the card asking Good / Okay / Rough when it isn't rated).
+      - Asking the skin question only after 4 PM (it shows all day now).
+      - The first-run hint "Tap Itchy whenever it happens" (only an empty-state line now).
+      - Swipe to delete in Today so far (tap to edit works).
+      - Mood in More, and small sheets for Bowel movement and Mood (Bowel movement logs instantly now).
 - [ ] U4 Onboarding: exactly as UX.md section 8, with VisualSteps.
+      Not started in the app. Designed on the canvas, and the setup guides' real iOS 27 screenshots are in design/screenshots/guide.
 - [ ] U5 Plan and Progress: as UX.md sections 5 and 6 with what exists today.
       Progress becomes the home for Phase 3's reports.
+      Partly done: Plan (Up next card, both routines) and Progress (headline card, week grid, Share with provider) are in the canvas design.
+      Still missing:
+      - A routine step editor (Plan shows Morning and Evening rows until steps can be added).
+      - Month and Since last visit ranges in Progress.
+      - The Settings redesign.
+      - Your data export (CSV and PDF).
+      - The About section (how the app works, privacy, Not medical advice, support).
 - [ ] U6 Review pass: screenshot every screen in every state into
       /design-review/ux/, check against UX.md and DESIGN.md, fix gaps.
+      Not started.
+
+## Before App Store
+- [ ] Apple token revocation on account deletion: a Sign in with Apple key from the Apple Developer site, stored as a Supabase secret, called by the delete-account Edge Function.
+- [ ] Two-phone test: join with an invite code (2.4) and "by Dad" names (2.5) across two phones.
 
 ## Phase 3, continued (after the UX rebuild)
 - [ ] 3.5 Caregiver card

@@ -44,7 +44,7 @@ struct ItchWidgetView: View {
         } else if let child = entry.childEntity {
             LogButton(
                 action: .itchy, child: child,
-                detail: WidgetText.lastItch(entry.snapshot.lastItch, now: entry.date),
+                detail: WidgetText.lastItch(entry.snapshot.lastItch, by: entry.snapshot.lastItchBy, now: entry.date),
                 palette: palette, prominent: true
             )
         } else {

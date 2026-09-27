@@ -122,16 +122,18 @@ extension WidgetAction {
 }
 
 enum WidgetText {
-    /// "Last itch 2:14 AM", "Last itch Tue 2:14 AM", or a calm empty state.
-    static func lastItch(_ date: Date?, now: Date, calendar: Calendar = .autoupdatingCurrent) -> String {
+    /// "Last itch 2:14 AM", "Last itch Tue 2:14 AM by Dad", or a calm empty state.
+    static func lastItch(_ date: Date?, by byline: String? = nil, now: Date, calendar: Calendar = .autoupdatingCurrent) -> String {
         guard let date else { return "No itches logged yet" }
+        let when: String
         if calendar.isDate(date, inSameDayAs: now) {
-            return "Last itch \(date.formatted(date: .omitted, time: .shortened))"
+            when = date.formatted(date: .omitted, time: .shortened)
+        } else if now.timeIntervalSince(date) < 6 * 24 * 3600 {
+            when = date.formatted(.dateTime.weekday(.abbreviated).hour().minute())
+        } else {
+            when = date.formatted(.dateTime.month(.abbreviated).day())
         }
-        if now.timeIntervalSince(date) < 6 * 24 * 3600 {
-            return "Last itch \(date.formatted(.dateTime.weekday(.abbreviated).hour().minute()))"
-        }
-        return "Last itch \(date.formatted(.dateTime.month(.abbreviated).day()))"
+        return ["Last itch \(when)", byline].compactMap { $0 }.joined(separator: " ")
     }
 
     static func night(_ rating: NightRating?) -> String {

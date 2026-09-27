@@ -9,6 +9,8 @@ public struct WidgetSnapshot: Hashable, Sendable {
     public let routinesDone: Int
     public let lastNight: NightRating?
     public let lastItch: Date?
+    /// "by Dad" when more than one person shares the household.
+    public let lastItchBy: String?
 
     public init(
         child: ChildInfo?,
@@ -16,7 +18,8 @@ public struct WidgetSnapshot: Hashable, Sendable {
         bowelMovementCount: Int = 0,
         routinesDone: Int = 0,
         lastNight: NightRating? = nil,
-        lastItch: Date? = nil
+        lastItch: Date? = nil,
+        lastItchBy: String? = nil
     ) {
         self.child = child
         self.itchCount = itchCount
@@ -24,6 +27,7 @@ public struct WidgetSnapshot: Hashable, Sendable {
         self.routinesDone = routinesDone
         self.lastNight = lastNight
         self.lastItch = lastItch
+        self.lastItchBy = lastItchBy
     }
 
     /// Nothing to show yet: no child.

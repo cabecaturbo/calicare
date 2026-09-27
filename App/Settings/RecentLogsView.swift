@@ -67,6 +67,6 @@ struct RecentLogRow: Identifiable {
         title = phrases.title(for: entry)
         let when = entry.timestamp.formatted(date: .abbreviated, time: .shortened)
         let source = entry.source.rawValue.capitalized
-        details = "\(childName ?? "Removed child") · \(when) · \(source)"
+        details = "\(childName ?? "Removed child") · \(when) · \(source) · \(entry.loggedBy)"
     }
 }

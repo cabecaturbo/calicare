@@ -53,6 +53,7 @@ public actor SyncEngine: ModelActor {
         var report = SyncReport()
         try await push(to: household, report: &report)
         try await pull(from: household, report: &report)
+        settings.householdSize = try await remote.memberCount(household: household)
         settings.lastSyncedAt = now()
         return report
     }
@@ -72,7 +73,7 @@ public actor SyncEngine: ModelActor {
             household = UUID()
             try await remote.createHousehold(id: household, name: "", memberID: UUID(), displayName: displayName)
         }
-        try markEverythingForUpload()
+        try markEverythingForUpload(claimingAs: displayName)
         settings.userID = userID
         settings.householdID = household
         settings.cursor = nil
@@ -81,8 +82,8 @@ public actor SyncEngine: ModelActor {
 
     /// Switches this phone to another household after accepting an invite.
     /// Everything already on the phone is queued to upload into it.
-    public func join(household: UUID, userID: UUID) throws {
-        try markEverythingForUpload()
+    public func join(household: UUID, userID: UUID, displayName: String) throws {
+        try markEverythingForUpload(claimingAs: displayName)
         settings.userID = userID
         settings.householdID = household
         settings.cursor = nil
@@ -95,9 +96,17 @@ public actor SyncEngine: ModelActor {
         return (children, logs)
     }
 
-    private func markEverythingForUpload() throws {
+    /// Queues everything to upload. Logs made before signing in ("You") take
+    /// the person's name, so other phones never show them as "by you".
+    private func markEverythingForUpload(claimingAs displayName: String) throws {
         for child in try modelContext.fetch(FetchDescriptor<Child>()) { child.needsSync = true }
-        for event in try modelContext.fetch(FetchDescriptor<LogEvent>()) { event.needsSync = true }
+        for event in try modelContext.fetch(FetchDescriptor<LogEvent>()) {
+            if LoggedBy.legacyNames.contains(event.loggedBy) {
+                event.loggedBy = displayName
+                event.updatedAt = max(event.updatedAt, now())
+            }
+            event.needsSync = true
+        }
         try modelContext.save()
     }
 

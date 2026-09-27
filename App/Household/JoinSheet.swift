@@ -126,7 +126,7 @@ struct JoinSheet: View {
         defer { working = false }
         do {
             let household = try await HouseholdJoin.accept(code, displayName: name, client: client)
-            try await makeEngine().join(household: household, userID: info.userID)
+            try await makeEngine().join(household: household, userID: info.userID, displayName: name)
             problem = nil
             joined = true
             await sync.syncNow()

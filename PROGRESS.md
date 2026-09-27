@@ -24,6 +24,7 @@ See docs/prompts/README.md for the rules.
 - [ ] 2.4 Households and caregiver invites
       Code merged: invite and join by code, members list, 16 SQL tests. Still to do: the two-phone test (a second account joins and sees the same logs).
 - [ ] 2.5 "Logged by" names
+      Code merged: logs save your name ("You" signed out); "by Dad" on the timeline and small widget when 2+ people share. Still to do: check names on two phones.
 - [ ] 2.6 Account settings and account deletion
 
 ## Phase 3: Report cards (docs/prompts/phase-3-reports.md)

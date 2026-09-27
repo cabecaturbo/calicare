@@ -49,7 +49,7 @@ struct JoinHouseholdTests {
         #expect(try await engine.localRecordCount() == (1, 1))
 
         let joined = UUID()
-        try await engine.join(household: joined, userID: user)
+        try await engine.join(household: joined, userID: user, displayName: "Dad")
         #expect(settings.householdID == joined)
         #expect(settings.cursor == nil)
 

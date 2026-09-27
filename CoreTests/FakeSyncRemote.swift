@@ -10,6 +10,7 @@ actor FakeSyncRemote: SyncRemote {
     private(set) var logs: [UUID: RemoteLogEvent] = [:]
     private(set) var households: Set<UUID> = []
     private var memberHousehold: UUID?
+    var members = 1
     private var serverClock = Date(timeIntervalSince1970: 2_000_000_000)
     var isOffline = false
 
@@ -46,6 +47,13 @@ actor FakeSyncRemote: SyncRemote {
             row.serverUpdatedAt = tick()
             logs[row.id] = row
         }
+    }
+
+    func setMembers(_ count: Int) { members = count }
+
+    func memberCount(household: UUID) async throws -> Int {
+        try check()
+        return members
     }
 
     func changes(household: UUID, since: Date?) async throws -> RemoteChanges {

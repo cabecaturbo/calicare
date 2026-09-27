@@ -38,7 +38,7 @@ public actor LogStore: ModelActor {
         child childID: UUID,
         source: EntrySource,
         note: String? = nil,
-        loggedBy: String = "Me",
+        loggedBy: String = LoggedBy.current(),
         at timestamp: Date? = nil
     ) async throws -> LogEntry {
         guard type.accepts(value) else { throw LogStoreError.invalidValue }

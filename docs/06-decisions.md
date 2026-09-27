@@ -68,3 +68,10 @@ Decisions that aren't obvious from the code, newest at the bottom. Add a dated e
 - **A phone follows the household joined most recently.** The old membership stays on the server; leaving it is a separate step.
 - **Leaving signs you out on that phone,** so its sync can't quietly create a new household and re-upload the old one's logs. The last owner can't leave while others remain.
 - **Guards now check `current_user`, not `auth.role()`,** so trusted functions like `accept_invite` can change a rejoining member's role while app requests still can't.
+
+## Phase 2.5: "Logged by" names (September 26, 2026)
+
+- **New logs save the signed-in person's display name, or "You".** Older logs said "Me"; both count as "mine".
+- **The first sync claims pre-account logs:** "You"/"Me" logs on the phone take the person's name before uploading, so other phones never show them as "by you".
+- **Bylines only when shared:** "by Dad" (or "by you") appears on the timeline and the small widget's last-itch line only when the household has more than one person. Sync records the member count (`householdSize`) in the App Group for widgets.
+- **Intent confirmations stay short,** with no "by" name.

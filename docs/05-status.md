@@ -72,7 +72,7 @@ Test device: iPhone 15 Pro (has an Action Button).
 
 CLIs on the Mac (all installed with Homebrew): `asc`, `supabase`, `vercel`, and `gh`.
 - **Signed in:** `gh` (as cabecaturbo) and `asc`. Still to do: `supabase login` and `vercel login` (not needed until Phase 2).
-- **Supabase (Phase 2 started):** `supabase/` is set up and linked to the **calicare** project in *cabecaturbo's Org* (ref `sbzuoqxgtbpobnrqqmhw`, US West / Oregon, Postgres 17). No schema from this repo yet. Don't run `vercel link` until Phase 7.
+- **Supabase (Phase 2 started):** `supabase/` is set up and linked to the **calicare** project in *cabecaturbo's Org* (ref `sbzuoqxgtbpobnrqqmhw`, US West / Oregon, Postgres 17). The 2.1 schema (households, members, children, log events, RLS) is applied; see `supabase/README.md`. Don't run `vercel link` until Phase 7.
 
 ## Next steps
 1. Use the app with the family for a few days and note what felt good or annoying (per the build plan).

@@ -10,11 +10,13 @@ See docs/prompts/README.md for the rules.
 - [x] 1.4 Interactive widgets
 - [x] 1.5 Notification buttons
 - [x] 1.6 Onboarding and Today screen
-- [ ] 1.7 🛑 MANUAL: family test for a few days. Human writes notes in
+- [x] 1.7 🛑 MANUAL: family test for a few days. Human writes notes in
       docs/family-test-notes.md, then checks this box.
+      Skipped by the owner on Sep 26, 2026 to start Phase 2; no family-test-notes.md yet.
 
 ## Phase 2: Sync and caregivers (docs/prompts/phase-2-sync.md)
-- [ ] 2.1 Supabase schema and RLS (skip if already done; verify first)
+- [x] 2.1 Supabase schema and RLS (skip if already done; verify first)
+      Households, members, children, log_events with RLS; 19 pgTAP tests pass locally; applied to the real project. See supabase/README.md.
 - [ ] 2.2 🛑 Sign in with Apple (optional account)
 - [ ] 2.3 Background sync engine
 - [ ] 2.4 Households and caregiver invites

@@ -59,6 +59,9 @@ final class TodayModel {
             householdSize = SyncSettings().householdSize
             hasLoaded = true
         } catch {
+            #if DEBUG
+            print("CaliCare load failed: \(error)")
+            #endif
             problem = "Couldn't load today just now."
             hasLoaded = true
         }
@@ -73,6 +76,24 @@ final class TodayModel {
             await afterChange()
         } catch {
             problem = "Couldn't save that. Please try again."
+        }
+    }
+
+    /// Saves a note for the current child. Returns false (with `problem` set) if it wasn't saved.
+    func logNote(_ text: String) async -> Bool {
+        guard let child else { return false }
+        do {
+            let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+            let entry = try await store.log(.note, child: child.id, source: .app, note: text)
+            confirmation = Confirmation(entry: entry, text: phrases.logged(entry, childName: child.name))
+            await afterChange()
+            return true
+        } catch LogStoreError.emptyNote {
+            problem = "A note needs a few words."
+            return false
+        } catch {
+            problem = "Couldn't save that. Please try again."
+            return false
         }
     }
 

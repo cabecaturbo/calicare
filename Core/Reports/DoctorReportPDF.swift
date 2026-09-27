@@ -126,7 +126,7 @@ private struct SummaryPage: View {
         VStack(alignment: .leading, spacing: 0) {
             PageTitle(
                 title: "Care log for \(report.child.name)",
-                detail: "\(report.dateRange). Counts of what a parent logged in CaliCare."
+                detail: "\(report.dateRange). Counts of what a parent logged in CaliCare. Skin is the parent's daily answer: calm, a little itchy, flaring, or very rough."
             )
             VStack(spacing: 0) {
                 stat("Days with logs", "\(report.daysWithLogs) of \(report.days.count)")
@@ -196,7 +196,7 @@ private struct DaysPage: View {
             TableRow(cells: ["Day", "Night", "Skin", "Bowel movements"], widths: [120, 110, 110, nil], header: true)
             ForEach(days, id: \.day) { day in
                 TableRow(
-                    cells: [day.label, Self.words(day.night), Self.words(day.skin),
+                    cells: [day.label, Self.words(day.night), day.skin?.words ?? "not answered",
                             day.bowelMovements.isEmpty ? "" : day.bowelMovements.joined(separator: ", ")],
                     widths: [120, 110, 110, nil]
                 )

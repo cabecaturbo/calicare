@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Log control</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{themeClass}}" style="position:relative;width:200px;height:260px;color:var(--ink);font-family:var(--sans);pointer-events:none">
+<sc-if value="{{open}}" hint-placeholder-val="{{false}}">
+<div role="menu" aria-label="More to log" class="card" style="position:absolute;right:0;bottom:{{menuBottom}};width:200px;box-sizing:border-box;padding:var(--s1) var(--s4);border:var(--hairline) solid var(--line);pointer-events:auto">
+<button type="button" role="menuitem" class="row t-body">Flare</button>
+<button type="button" role="menuitem" class="row t-body">Bowel movement</button>
+<button type="button" role="menuitem" class="row t-body">Note</button>
+</div>
+</sc-if>
+<div style="position:absolute;right:0;bottom:0;height:{{pillHeight}};display:flex;align-items:stretch;border-radius:var(--r-pill);background:var(--bar-bg);border:var(--hairline) solid var(--line);padding:6px;box-sizing:border-box;gap:2px;pointer-events:auto">
+<sc-if value="{{showItchy}}" hint-placeholder-val="{{true}}">
+<button type="button" class="t-caption" aria-label="Log itching" style="width:54px;border:0;border-radius:var(--r-pill);background:var(--surface);color:var(--ink);font-weight:600">Itchy</button>
+</sc-if>
+<button type="button" aria-label="More to log" aria-haspopup="menu" aria-expanded="{{expanded}}" style="width:var(--tap);border:0;border-radius:var(--r-pill);background:none;display:flex;align-items:center;justify-content:center;color:var(--ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["day","night"],"default":"day"},"open":{"editor":"boolean","default":false},"size":{"editor":"enum","options":["regular","large"],"default":"regular"},"itchy":{"editor":"boolean","default":true},"$preview":{"width":200,"height":260}}'>
+class Component extends DCLogic {
+renderVals() {
+const large = this.props.size === 'large';
+const open = this.props.open === true || this.props.open === 'true';
+const pill = large ? 72 : 62;
+const showItchy = !(this.props.itchy === false || this.props.itchy === 'false');
+return {
+showItchy,
+themeClass: this.props.theme === 'night' ? 'night' : 'day',
+open,
+expanded: open ? 'true' : 'false',
+pillHeight: pill + 'px',
+menuBottom: (pill + 8) + 'px'
+};
+}
+}
+</script>
+</body>
+</html>

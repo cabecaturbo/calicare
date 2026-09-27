@@ -17,11 +17,16 @@ is a bonus (Phase 2).
 | `households` | — | A family. Created with `create_household(...)`, which also adds the caller as owner. |
 | `household_members` | — | `user_id`, `role` (`owner` or `caregiver`), `display_name` ("Mom", "Grandma"). |
 | `children` | `Child` | `name`, `birth_date`, `color_tag`, `is_active`. |
-| `log_events` | `LogEvent` | `child_id` (optional), `type`, `value`, `note`, `occurred_at`, `logged_by`, `entry_source`. |
+| `log_events` | `LogEvent` | `child_id` (optional), `type`, `value`, `note`, `occurred_at`, `logged_by`, `entry_source`, `body_areas` (flares), `routine_step_id` (no foreign key). |
+| `routine_steps` | `RoutineStep` | `child_id`, `name`, `time` (`morning` or `evening`), `sort_order`, `is_active`. |
 
 App field → column: `LogEvent.timestamp` → `occurred_at`, `typeRaw` →
 `type`, `valueRaw` → `value`, `entrySourceRaw` → `entry_source`,
-`loggedBy` → `logged_by`, `Child.birthDate` → `birth_date`. `needsSync` stays
+`loggedBy` → `logged_by`, `bodyAreasRaw` → `body_areas` (nil ↔ empty),
+`routineStepID` → `routine_step_id`, `RoutineStep.timeRaw` → `time`,
+`RoutineStep.order` → `sort_order`, `Child.birthDate` → `birth_date`.
+The daily skin answer is a log: type `skinToday`, value `calm`,
+`littleItchy`, `flaring`, or `veryRough`. `needsSync` stays
 on the phone; it isn't a column.
 
 Every table has `id` (a UUID made on the device), `created_at`,
@@ -55,6 +60,7 @@ indexed.
 | Read the household, members, children, logs | Yes | Yes | No |
 | Add and edit logs, soft-delete logs (Undo) | Yes | Yes | No |
 | Add and edit children | Yes | Yes | No |
+| Add, edit, and soft-delete routine steps | Yes | Yes | No |
 | Remove a child | Yes | **No** | No |
 | Change roles, remove other members | Yes | **No** | No |
 | Change own display name, leave | Yes | Yes | No |

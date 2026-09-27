@@ -37,6 +37,8 @@ public struct LogPhrases: Sendable {
         case (.routineDone, .routine(let time)?): "\(time.rawValue) routine"
         case (.routineDone, _): "routine"
         case (.note, _): "note"
+        case (.skinToday, .skin(let answer)?): "skin today: \(answer.words)"
+        case (.skinToday, _): "skin today"
         }
     }
 

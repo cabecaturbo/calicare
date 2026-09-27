@@ -95,14 +95,19 @@ public struct Palette: Sendable, Equatable {
         Color(hex: severityScale[min(max(step, 1), severityScale.count) - 1])
     }
 
-    /// The three day levels on the five-step scale: 2, 3, and 5, so calm still
-    /// shows on paper and a hard day stands apart from a medium one.
+    /// Nights on the same four marks as skin: good = calm, okay = a little itchy,
+    /// rough = very rough (DESIGN.md §3). Step 3 is no longer used.
     public func color(for level: CareLevel) -> Color {
         switch level {
-        case .low: severity(step: 2)
-        case .medium: severity(step: 3)
+        case .low: severity(step: 1)
+        case .medium: severity(step: 2)
         case .high: severity(step: 5)
         }
+    }
+
+    /// A skin answer at its own step: 1, 2, 4, or 5.
+    public func color(for skin: SkinToday) -> Color {
+        severity(step: skin.step)
     }
 }
 
@@ -132,33 +137,34 @@ extension Color {
 
 // MARK: - Type
 
-/// The seven type styles. Nothing else is allowed. Newsreader (bundled, OFL) for
-/// anything read as a sentence or heading; SF Pro for controls and meta.
+/// The type scale from DESIGN.md §4: five sizes. Newsreader (bundled, OFL) only
+/// for headlines and hero words; SF Pro for everything else, body included.
+/// `lede`, `section`, `control`, and `meta` are the older names, kept so every
+/// screen moved to the new scale at once: lede = title, section = label,
+/// control = body, meta = caption.
 /// Call `FontRegistry.registerAll()` once per process before use.
 public enum TypeStyle: CaseIterable, Sendable {
-    /// Child's name on Today, report headline. Once per screen at most.
+    /// Newsreader 500, 34/40: the screen title ("Today"), the Welcome headline.
     case display
-    /// Screen and section titles.
+    /// Newsreader 500, 24/30: summary card titles, the skin question, hero words.
     case title
-    /// The one summary sentence.
+    /// Same as title (the old summary-sentence style).
     case lede
-    /// Section headers ("Reminders"), sentence case, in graphite.
+    /// SF Pro 600, 15/20: section labels, the child switcher, primary buttons.
     case section
-    /// Sentences, notes, care plan text.
+    /// SF Pro 400, 17/24: all body copy and row labels.
     case body
-    /// Buttons, row labels, tabs.
+    /// Same as body (the old control style).
     case control
-    /// Times, "by Dad," captions.
+    /// SF Pro 400, 13/18: times, eyebrows, footnotes.
     case meta
 
     public var font: Font {
         switch self {
-        case .display: .custom(Self.displayCut, size: 32, relativeTo: .largeTitle)
-        case .title: .custom(Self.displayCut, size: 24, relativeTo: .title2)
-        case .lede: .custom(Self.textCut, size: 20, relativeTo: .title3)
+        case .display: .custom(Self.displayCut, size: 34, relativeTo: .largeTitle)
+        case .title, .lede: .custom(Self.displayCut, size: 24, relativeTo: .title2)
         case .section: .system(.subheadline, weight: .semibold)
-        case .body: .custom(Self.textCut, size: 17, relativeTo: .body)
-        case .control: .system(.body, weight: .medium)
+        case .body, .control: .system(.body)
         case .meta: .system(.footnote)
         }
     }
@@ -166,9 +172,8 @@ public enum TypeStyle: CaseIterable, Sendable {
     /// Point size and line height from DESIGN.md, before Dynamic Type scaling.
     public var size: CGFloat {
         switch self {
-        case .display: 32
-        case .title: 24
-        case .lede: 20
+        case .display: 34
+        case .title, .lede: 24
         case .section: 15
         case .body, .control: 17
         case .meta: 13
@@ -177,12 +182,10 @@ public enum TypeStyle: CaseIterable, Sendable {
 
     public var lineHeight: CGFloat {
         switch self {
-        case .display: 38
-        case .title: 30
-        case .lede: 28
+        case .display: 40
+        case .title, .lede: 30
         case .section: 20
-        case .body: 25
-        case .control: 22
+        case .body, .control: 24
         case .meta: 18
         }
     }
@@ -190,17 +193,16 @@ public enum TypeStyle: CaseIterable, Sendable {
     public var dynamicTypeBase: Font.TextStyle {
         switch self {
         case .display: .largeTitle
-        case .title: .title2
-        case .lede: .title3
+        case .title, .lede: .title2
         case .section: .subheadline
         case .body, .control: .body
         case .meta: .footnote
         }
     }
 
-    /// Newsreader cut at optical size 36, for 24pt and up.
-    static let displayCut = "NewsreaderDisplay-Regular"
-    /// Newsreader cut at optical size 16, for reading sizes.
+    /// Newsreader at optical size 36, weight 500 (cut from the variable font).
+    static let displayCut = "NewsreaderDisplay-Medium"
+    /// Newsreader at optical size 16, weight 400: widgets' small serif only.
     static let textCut = "NewsreaderText-Regular"
 }
 
@@ -212,19 +214,23 @@ public enum Spacing {
     public static let x2: CGFloat = 8
     public static let x3: CGFloat = 12
     public static let x4: CGFloat = 16
+    public static let x5: CGFloat = 24
+    public static let x6: CGFloat = 32
     /// Screen margins.
     public static let margin: CGFloat = 24
     public static let titleToLede: CGFloat = 8
     public static let ledeToSection: CGFloat = 32
-    /// Between ledger sections.
-    public static let section: CGFloat = 40
+    /// Between sections (DESIGN.md §5).
+    public static let section: CGFloat = 32
 }
 
 public enum Corner {
-    /// Buttons and sheets.
-    public static let control: CGFloat = 4
+    /// Buttons, cards, inputs (DESIGN.md §5).
+    public static let control: CGFloat = 12
     /// Images and screenshots.
     public static let image: CGFloat = 2
+    /// DESIGN.md §5: buttons, cards, inputs, and widget tiles (the new rule; screens move to it in U3–U5).
+    public static let card: CGFloat = 12
 }
 
 public enum Rule {

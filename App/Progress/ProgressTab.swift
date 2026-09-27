@@ -17,49 +17,56 @@ struct ProgressTab: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    LedgerSection("Weekly card") {
-                        weekRow
+                    AppHeader(title: "Progress")
+                    if let report {
+                        SummaryCard(
+                            eyebrow: report.dateRange(),
+                            title: report.headline.text,
+                            caption: report.worthWatching.map { "Worth watching: \($0.prefix(1).lowercased())\($0.dropFirst())" },
+                            art: .flower
+                        )
+                        .padding(.horizontal, Spacing.margin)
+                        .padding(.top, Spacing.x5)
+
+                        WeekGrid(days: report.days)
+                            .padding(.horizontal, Spacing.margin)
+                            .padding(.top, Spacing.x6)
                     }
 
-                    preview
-                        .padding(.horizontal, Spacing.margin)
-                        .padding(.top, Spacing.ledeToSection)
-
                     if let child = model.child {
-                        LedgerSection("For a visit", footnote: "A PDF of every log over a few weeks, for a provider.") {
+                        VStack(spacing: Spacing.x2) {
                             NavigationLink {
                                 DoctorReportView(child: child)
                             } label: {
-                                NavigationRow(title: "Doctor report")
+                                Text("Share with provider")
+                                    .font(TypeStyle.section.font)
+                                    .foregroundStyle(palette.ink)
+                                    .frame(maxWidth: .infinity, minHeight: 52)
+                                    .overlay(RoundedRectangle(cornerRadius: Corner.card).strokeBorder(palette.ink, lineWidth: 1))
                             }
-                            .buttonStyle(.ledger)
+                            if let file {
+                                ShareLink(item: file) {
+                                    Text("Share this week’s card")
+                                        .textStyle(.body)
+                                        .foregroundStyle(palette.indigo)
+                                        .frame(minHeight: Size.touchTarget)
+                                }
+                            }
                         }
-                        .padding(.top, Spacing.section)
+                        .padding(.horizontal, Spacing.margin)
+                        .padding(.top, Spacing.x6)
                     }
-
-                    VStack(alignment: .leading, spacing: Spacing.x2) {
-                        if let file {
-                            ShareLink(item: file) { Text("Share") }
-                                .buttonStyle(.primary)
-                        }
-                        Text("Shares as a picture. Always light, even at night, so it reads well anywhere.")
-                            .textStyle(.meta)
-                            .foregroundStyle(palette.graphite)
-                        if let problem {
-                            Text(problem)
-                                .textStyle(.body)
-                                .foregroundStyle(palette.ink)
-                        }
+                    if let problem {
+                        Text(problem)
+                            .textStyle(.body)
+                            .foregroundStyle(palette.ink)
+                            .padding(.horizontal, Spacing.margin)
                     }
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, Spacing.margin)
-                    .padding(.top, Spacing.section)
                 }
-                .padding(.vertical, Spacing.x4)
+                .padding(.bottom, BottomBar.clearance)
             }
             .paperBackground()
-            .logConfirmation(on: .progress)
-            .shellToolbar(showsSwitcher: true)
+            .toolbar(.hidden, for: .navigationBar)
         }
         .task(id: "\(model.child?.id.uuidString ?? "")-\(weekEnding)") { await build() }
     }

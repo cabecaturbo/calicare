@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Medium widget</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{classes}}" style="width:338px;height:158px;box-sizing:border-box;padding:var(--s3);border-radius:var(--mock-r-widget);background:var(--w-bg);color:var(--w-fg);font-family:var(--sans);display:flex;gap:var(--s2)">
+<div style="flex-grow:1;display:flex;flex-direction:column;gap:var(--s2)">
+<span class="t-label" style="padding:0 var(--s1)">Tonight: 2 wake-ups</span>
+<button type="button" aria-label="Log itching" class="t-title" style="flex-grow:1;border:0;border-radius:var(--r);background:var(--w-btn-bg);color:var(--w-btn-fg);display:flex;align-items:flex-end;padding:var(--s3);box-sizing:border-box">Itchy</button>
+</div>
+<div style="width:104px;display:flex;flex-direction:column;gap:var(--s2)">
+<button type="button" class="t-label" style="flex-grow:1;min-height:var(--tap);border:0;border-radius:var(--r);background:var(--w-soft);color:var(--w-fg)">Flare</button>
+<button type="button" class="t-label" style="flex-grow:1;min-height:var(--tap);border:0;border-radius:var(--r);background:var(--w-soft);color:var(--w-fg)">Note</button>
+<span class="t-caption" style="text-align:center;color:var(--w-muted)">Last 1:52 AM</span>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"look":{"editor":"enum","options":["full","tinted","clear"],"default":"full"},"theme":{"editor":"enum","options":["day","night"],"default":"day"},"$preview":{"width":338,"height":158}}'>
+class Component extends DCLogic {
+renderVals() {
+const look = this.props.look ?? 'full';
+const theme = this.props.theme === 'night' ? 'night' : 'day';
+return { classes: theme + ' w-' + look };
+}
+}
+</script>
+</body>
+</html>

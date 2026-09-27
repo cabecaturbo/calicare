@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Plan</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{themeClass}}" style="position:relative;width:390px;height:844px;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--sans)">
+<div style="height:844px;overflow-y:auto;box-sizing:border-box;padding-bottom:120px">
+<dc-import name="AppHeader" heading="Plan" caption="The routine you set, morning and evening" theme="{{theme}}" hint-size="390px,156px"></dc-import>
+
+<div style="padding:var(--s5) var(--gutter) 0">
+<dc-import name="SummaryCard" eyebrow="Up next" heading="Evening · 3 left" caption="" art="moon" theme="{{theme}}" hint-size="342px,128px"></dc-import>
+</div>
+
+<section style="padding:var(--s3) var(--gutter) 0">
+<sc-for list="{{evening}}" as="step" hint-placeholder-count="3">
+<button type="button" class="row" style="justify-content:flex-start;gap:var(--s3);padding:var(--s2) 0"><span aria-hidden="true" style="width:24px;height:24px;flex-shrink:0;border-radius:var(--r-pill);border:1px solid var(--ink);box-sizing:border-box"></span><span style="display:flex;flex-direction:column"><span class="t-body">{{step.name}}</span><sc-if value="{{step.hasNote}}" hint-placeholder-val="{{false}}"><span class="t-caption muted">{{step.note}}</span></sc-if></span></button>
+</sc-for>
+</section>
+
+<section style="padding:var(--s6) var(--gutter) 0">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><h2 class="t-label" style="margin:0">Morning</h2><span class="t-caption muted">Done 7:40 AM</span></div>
+<div style="margin-top:var(--s2)">
+<sc-for list="{{morning}}" as="step" hint-placeholder-count="2">
+<div class="row t-body muted" style="justify-content:flex-start;gap:var(--s3)"><span aria-hidden="true" style="width:24px;height:24px;flex-shrink:0;border-radius:var(--r-pill);background:var(--accent);display:flex;align-items:center;justify-content:center;color:var(--on-accent)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></span><span>{{step}}</span></div>
+</sc-for>
+</div>
+<button type="button" class="btn-text t-body" style="margin-top:var(--s1);padding:0">Edit routine</button>
+</section>
+
+<section style="padding:var(--s5) var(--gutter) 0">
+<h2 class="t-label" style="margin:0">From your provider</h2>
+<button type="button" class="row" style="margin-top:var(--s2);border-top:var(--hairline) solid var(--line)"><span style="display:flex;flex-direction:column;align-items:flex-start"><span class="t-body">Provider’s plan</span><span class="t-caption muted">Dr. [NAME] · [DATE]</span></span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="color:var(--muted)"><path d="m9 6 6 6-6 6"/></svg></button>
+</section>
+</div>
+
+<div style="position:absolute;left:var(--gutter);bottom:28px"><dc-import name="TabBar" active="plan" theme="{{theme}}" width="{{tabWidth}}" hint-size="218px,62px"></dc-import></div>
+<div style="position:absolute;right:var(--gutter);bottom:28px"><dc-import name="LogControl" theme="{{theme}}" size="{{logSize}}" hint-size="200px,260px"></dc-import></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["day","night"],"default":"day"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const night = this.props.theme === 'night';
+return {
+theme: night ? 'night' : 'day',
+themeClass: night ? 'night' : 'day',
+logSize: night ? 'large' : 'regular',
+tabWidth: 218,
+evening: [
+{ name: 'Bath', hasNote: false, note: '' },
+{ name: 'Moisturizer', hasNote: false, note: '' },
+{ name: '[Medicine name] · [dose]', hasNote: true, note: 'From Dr. [NAME]’s plan' }
+],
+morning: ['Wash and pat dry', 'Moisturizer']
+};
+}
+}
+</script>
+</body>
+</html>

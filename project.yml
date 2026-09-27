@@ -41,7 +41,11 @@ targets:
     info:
       path: App/Info.plist
       properties:
-        CFBundleDisplayName: CaliCare
+        CFBundleDisplayName: Cali Care
+        # calicare://note opens the note sheet (the medium widget's Note button).
+        CFBundleURLTypes:
+          - CFBundleURLName: com.cursorkittens.calicare
+            CFBundleURLSchemes: [calicare]
         # Empty when Config/Supabase.local.xcconfig is missing; accounts are then hidden.
         SupabaseHost: $(SUPABASE_HOST)
         SupabasePublishableKey: $(SUPABASE_PUBLISHABLE_KEY)
@@ -93,7 +97,7 @@ targets:
     info:
       path: WidgetsExtension/Info.plist
       properties:
-        CFBundleDisplayName: CaliCare Widgets
+        CFBundleDisplayName: Cali Care Widgets
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     entitlements:
@@ -120,7 +124,7 @@ targets:
     info:
       path: MessagesExtension/Info.plist
       properties:
-        CFBundleDisplayName: CaliCare
+        CFBundleDisplayName: Cali Care
         NSExtension:
           NSExtensionPointIdentifier: com.apple.message-payload-provider
           NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).MessagesViewController

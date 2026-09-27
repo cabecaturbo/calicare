@@ -42,13 +42,14 @@ public struct DoctorReport: Equatable, Sendable {
         public let source: String
     }
 
-    /// One day, for the trend chart and the skin list. Nil levels mean nothing was logged.
+    /// One day, for the trend chart and the skin list. Nil night means nothing was
+    /// logged; nil skin means the daily skin question wasn't answered.
     public struct Day: Equatable, Sendable {
         public let day: CareDay
         public let label: String
         public let itchyWakeUps: Int
         public let night: CareLevel?
-        public let skin: CareLevel?
+        public let skin: SkinToday?
         public let bowelMovements: [String]
     }
 

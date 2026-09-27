@@ -146,3 +146,76 @@ Other
 - **Quick logging guides in Settings:** Home Screen widget, Lock Screen widget, and Siri. Action Button and Control Center are hidden until their steps are recorded on a real iPhone.
 - **New `section` type style** (SF Pro 600, 15/20, subheadline) from DESIGN.md §4, for List headers. The rest of the type table (sizes, the 500 title) is still the old six styles; that's U3–U5 work.
 - **The child switcher in the navigation bar** has its shared glass background hidden on iOS 26+, so it reads as a name, not a button.
+
+## U2: New measures (September 27, 2026)
+
+- **The prompt was cut off at item 7** ("App Intent for skinToday so it works from Siri and…") with no "Done when". Item 7 was read as Siri and the Shortcuts app; done as clean build, all tests (Swift and pgTAP), migration tested, docs, commit.
+- **skinToday is a log type** (`skinToday`, value `calm` / `littleItchy` / `flaring` / `veryRough`), stored like a night rating, so the server needed no change for it. Steps on the indigo scale: 1, 2, 4, 5.
+- **One answer per child per day:** answering again soft-deletes that day's earlier answer and inserts the new one (instead of editing it), so Undo removes the newest answer and leaves the day unanswered. Both rows sync.
+- **Which day a skin answer is about:** care days run 7 PM to 7 PM, so an evening answer would land on tomorrow. An answer given at night (7 PM – 7 AM) counts for the day that just ended and is filed at 6:59 PM (`SkinDay`). The skin check-in's own day follows the same rule, so a check-in set for 8 PM still asks about that day.
+- **Skin by day comes only from skinToday.** The week strip, weekly card, weekly headline, and doctor report read the answer; unanswered days are "no data" (an outline; "not answered" in the PDF). Itches and flares never set skin. `WeekDay.hasLogs` now means "anything logged that day".
+- **Weekly headline:** skin answers are put on the night levels' 0…2 scale (`(step − 1) / 2`) and only count when both weeks have answers.
+- **Weekly card links:** skin travels as its indigo step under a new key `k`. Older Messages bubbles (key `s`, guessed skin) now show skin as empty rather than a guess.
+- **SchemaV2** (lightweight migration from V1): `LogEvent.bodyAreasRaw` (comma-separated `BodyArea` raw values), `LogEvent.routineStepID`, and a new `RoutineStep` model (child by id, name, morning/evening, order, active). New fields are optional so no defaults are needed.
+- **Body areas are a string, not `[String]`.** Array attributes are stored as transformables; it's the safer shape for migrations. Areas from a newer app version are kept (for sync) but not shown.
+- **Opening the store retries.** On the first launch after an update, the app and a widget can open the App Group store at the same moment; one finds it mid-migration ("store version hashes didn't migrate") and fails. Seen in the simulator after installing U2 over U1 data: a one-time "Couldn't load today" alert. `CaliCareModelContainer.shared()` now retries up to 4 times, 0.3 s apart; the upgrade then opens cleanly with all data.
+- **Routine steps link to children by id, and logs to steps by id with no foreign key on the server,** so upload order can never block a log. Push order is children → steps → logs.
+- **Server:** `log_events.body_areas text[]` (default empty, at most 20) and `routine_step_id uuid`; new `routine_steps` table with the usual indexes, `sync_stamp`, and member RLS (no hard deletes). Applied to the calicare project with `supabase db push`.
+- **Evening skin check-in:** off by default at 6:30 PM, like the other reminders. 14 one-off notifications (`calicare.skin.<day>`), skipped and cleared once that day is answered. Buttons Calm / A little itchy / Flaring / Very rough log in the background; a tap the next morning is filed at the check-in's time. Settings lists it second: morning check-in, skin check-in, routines.
+- **Saved reminder settings decode field by field,** so settings from before the skin check-in keep their values instead of resetting.
+- **Siri:** a fifth App Shortcut, "Log skin in Cali Care" or "Log skin today in Cali Care"; Siri asks which answer. A phrase with the answer in it ("Log flaring skin…") was dropped: the answer type lives in Core, and Siri's phrase training couldn't resolve it (a device-build warning). `LogEventIntent` also offers Skin today in Shortcuts.
+
+## Consistency pass: one set of rules (September 27, 2026)
+
+From a design brief the owner brought from a separate brainstorm, applied to the design canvas (https://claude.ai/artifact/DgxTwrnEfu9GHkfp44HwD6; source copied to `design/canvas/`). The owner chose to let the brief's rules replace DESIGN.md where they differ. The app build follows the canvas next.
+
+- **One tokens file.** Every color, type style, spacing step, radius, and animation comes from `tokens.css` (the app's equivalent is `DesignSystem.swift`). The rebuilt screens have no hard-coded hex colors, font sizes, or radii.
+- **Palette trimmed.** Day bg/surface/ink/muted/line/accent/onAccent, and the same names at night. Ochre and the middle indigo step (#8C9BB8) are gone; "worth watching" is a muted caption in the summary card.
+- **One four-step scale for skin and nights.** Nights map good → calm, okay → a little itchy, rough → very rough. Every mark has a 1px muted border.
+- **Night ramp flips so rougher still stands out.** The day ramp on the dark background made calm the brightest mark, so Progress at night read backwards (owner's review). At night calm is a low-contrast dark slate and very rough the brightest (#2A3142, #3C4760, #8497BD, #B7C5E0).
+- **Five type sizes:** display 34, title 24, body 17, label 15, caption 13 (plus 12pt tab labels). Serif only for headlines and hero words; all body copy is sans, onboarding included.
+- **12pt corners** on buttons, cards, inputs, and choices; pills only for the tab bar, log control, and segmented control.
+- **Cards and dividers, no heavy rules.** A summary card (eyebrow, serif title, caption, optional drawing) is the one hero per screen; lists use 0.5pt dividers.
+- **AppHeader on every tab:** child switcher and gear on top, the tab name as the display title. This replaces "child's name in display on Today only".
+- **One log control on every tab,** docked right of the tab bar: "Itchy" plus "More" (Flare, Bowel movement, Note). It replaces Today's Log section and the quick log bar. "Itchy" in the pill is deliberately quieter than the active tab. On Today at night only, a large full-width Itchy button (title size, 96pt, accent) returns the 2 AM priority and the pill shows only "More".
+- **Skin check-in on Today** is four card buttons with a selected state, the primary element until answered, then one line "Skin today: A little itchy · Change".
+- **Plan:** summary card "Evening · 3 left" (text, no progress dots: showing both was redundant), provider medicine with dose and "From Dr. [name]'s plan", and a "Provider's plan" row (in the app, once a plan is imported).
+- **Progress:** Week / Month / Since visit; headline "Calmer than last week" (shortened so it never wraps with an orphan); one aligned week grid (skin bar, night dot, day letter) with a legend; "Share with provider" as the secondary button.
+- **Onboarding:** Welcome → Name → Scale → Widget → Check-in, with a back button and an equal-step progress bar on steps 2–5, a real "First name" field, and "Not medical advice" moved from Welcome to Settings > About.
+- **Hand-drawn ink illustrations are allowed** (sun, moon, flower; no leaves). They draw in once and stop; only onboarding keeps a gentle wobble; Reduce Motion shows them complete with no animation. This replaces "no illustrations until a human illustrator".
+- **Checks run on the canvas:** all text pairs are at least 4.5:1 in both themes (lowest 5.8 day, 6.2 night); the "More" button (was 40pt wide) and the segmented control (was 36pt tall) were raised to 44pt.
+
+## Widgets & setup guides (September 27, 2026)
+
+From the owner's widget brief, designed on the canvas under "Widgets & setup".
+
+- **Matched to iOS 27.0,** the simulator's runtime, from real captures (Home Screen and Lock Screen from earlier; Control Center captured now by `ControlCenterStepTests`, images in `design-review/redesign/steps/controlCenter_ios27_step1–5`).
+- **The brief's Home Screen steps were corrected to iOS 27:** Edit is in the top-left corner and opens a menu (Add Widget, Customize, Edit Wallpaper, Edit Pages); the gallery shows the bundle name "CaliCare", so the guide says to search "CaliCare", not "Cali Care"; Done is a checkmark in the top-right corner.
+- **Control Center on iOS 27:** swipe down from the top right; touch and hold an empty area (or tap +) to show an empty grid and "Add a Control"; the sheet's search finds CaliCare and its control; tapping adds it; tapping an empty area finishes. The shipped control is still named "Log itch" with a hand symbol. The design calls it "Log Itchy", so the rename is part of the widget restyle in the app.
+- **Drawn iPhone frames:** Apple Design Resources bezels can't be downloaded or used here, so the frame is drawn to true size (393 × 852 screen, Dynamic Island, status bar) with neutral placeholder apps and generic names. All its values are `--mock-*` tokens. Real simulator screenshots replace the drawings after the widget restyle.
+- **Looks:** Home Screen widgets in full color, tinted and clear, day and night. Lock Screen widgets and controls are monochrome only. Light glass failed contrast on the day wallpaper (3.98:1), so monochrome widgets sit on dark glass (text 8.2:1). Every look keeps text at least 4.5:1 over the wallpaper.
+- **One type exception:** the Lock Screen circle's "Itchy" is serif 17, because a 72-pt circle can't hold the 24-pt title size.
+- **Next (app):** restyle the Swift widgets to these designs (including `widgetRenderingMode` for tinted and clear and the logged state with Undo), rename the control, capture real screenshots into `design/screenshots/`, and swap them into onboarding and the guides.
+
+## Review of 455e7f1: names, real screenshots, guide layout (September 27, 2026)
+
+- **Display name "Cali Care"** (CFBundleDisplayName for the app and Messages; the extension is "Cali Care Widgets"). The Home Screen label, widget gallery, and Control Center search now read "Cali Care", so the guides say "Search for Cali Care". The control is renamed "Log Itchy". Invite messages say "Cali Care".
+- **Widgets restyled in the app** to the canvas designs, using the existing type styles (the full type migration is still U3–U5):
+  - Every Itchy button is a filled 12-pt tile (`Corner.card`, new) with a plus and the word, centered.
+  - Tinted and clear (`widgetRenderingMode == .accented`) keep a filled glass tile for Itchy and draw Flare/Note as outlines, so Itchy stays first.
+  - Medium: "Last night: N wake-ups" by day, "Tonight" from 7 PM (`WidgetSnapshot.nightWakeUps`, `isNight`), Itchy, Flare (new `WidgetAction.flare`), and Note.
+  - **Note from a widget opens the app** (`calicare://note`, scheme registered in project.yml) to a small new note sheet, because a widget can't take typing and the app had no note entry yet.
+  - Lock Screen: a plus over "Itchy" (circle) and "Tonight/Last night: N · Last: time" (rectangle).
+- **Real screenshots, taken on a separate simulator.** `scripts/capture-guides.sh` erases and uses "CaliCare Captures" (iPhone 17, iOS 27), so the everyday simulator isn't wiped. It starts from a debug-only seed (`-designReviewSeed YES`: Cal, onboarded, two wake-ups), because tapping through onboarding on a fresh simulator kept tripping over system tips. `GuideCaptureTests` captures every guide moment and each Home Screen look; images and tap spots are in `design/screenshots/`.
+- **Looks are chosen in the Home Screen's Customize sheet** (Default, Dark, Clear, Tinted). The test taps them by name, then taps "Auto" so the simulator's light or dark appearance decides; left on "Light", night captures came out light. With Clear or Tinted chosen, the sheet grows (tint sliders), so fixed tap positions didn't work.
+- **Undo after the "Logged" capture,** so later captures show the widget and not a leftover "Logged".
+- **Real frames are iPhone 17 size (402 × 874)**, which is what the captures are; the drawn 393 × 852 phone stays as the fallback.
+- **Guide layout:** phone at about 70% of the screen height, a round 2× zoom callout of the tap spot, the instruction in sans body (at most two lines), "Next" on every step and "Done" at the end, and "You're set." screens with no instructions ("tap an empty area to finish" moved into Control Center step 3). One date everywhere: Sunday, September 27.
+- **Welcome drawing fix:** drawings only showed their line caps because HTML parsing lowercases `pathLength`, so React never received it and the 1-unit dash pattern became dots. `.draw` now uses a fixed 420-unit dash.
+- **Canvas fixes from the earlier review:**
+  - The log control's Itchy has a bg fill, a 1-pt border, and a plus (it no longer looks like the active tab).
+  - The night tab bar's active tab is an accent pill (7.3:1 against the bar).
+  - "Not answered" is a short muted dash with no bar, and the legend matches.
+  - A 48-pt bg fade sits behind the bottom bar (the one allowed gradient). A "Plan · scrolled" board shows the Provider's plan row.
+  - The check-in's selected check is a corner badge, so labels stay on one line.
+- **Drawings redraw on every visit (owner's request).** The hand-drawn sun, moon, and flower draw themselves in each time their screen appears (switching tabs, returning to the app), then stop. They still never loop, and Reduce Motion shows them complete.

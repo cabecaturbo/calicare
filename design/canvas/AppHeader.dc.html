@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>App header</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<header class="{{themeClass}}" style="width:390px;height:156px;box-sizing:border-box;padding:52px var(--gutter) 0;background:var(--bg);color:var(--ink);font-family:var(--sans)">
+<div style="display:flex;justify-content:space-between;align-items:center;height:var(--tap)">
+<button type="button" class="t-label" aria-label="Cal. Switch child" style="height:var(--tap);border:0;background:none;padding:0;display:flex;align-items:center;gap:var(--s1)">Cal<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+<button type="button" aria-label="Settings" class="muted" style="width:var(--tap);height:var(--tap);border-radius:var(--r-pill);border:var(--hairline) solid var(--line);background:var(--bg);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
+</div>
+<h1 class="t-display" style="margin:var(--s2) 0 0">{{heading}}</h1>
+<sc-if value="{{hasCaption}}" hint-placeholder-val="{{true}}">
+<p class="t-caption muted" style="margin:var(--s1) 0 0">{{caption}}</p>
+</sc-if>
+</header>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"heading":{"editor":"text","default":"Today"},"caption":{"editor":"text","default":"Sunday, September 27"},"theme":{"editor":"enum","options":["day","night"],"default":"day"},"$preview":{"width":390,"height":156}}'>
+class Component extends DCLogic {
+renderVals() {
+const caption = this.props.caption ?? '';
+return {
+heading: this.props.heading ?? 'Today',
+caption: caption,
+hasCaption: caption.length > 0,
+themeClass: this.props.theme === 'night' ? 'night' : 'day'
+};
+}
+}
+</script>
+</body>
+</html>

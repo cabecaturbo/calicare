@@ -10,10 +10,10 @@ struct LogItchControl: ControlWidget {
     var body: some ControlWidgetConfiguration {
         StaticControlConfiguration(kind: Self.kind) {
             ControlWidgetButton(action: LogItchIntent()) {
-                Label("Log itch", systemImage: "hand.raised")
+                Label("Log Itchy", systemImage: "hand.raised")
             }
         }
-        .displayName("Log itch")
+        .displayName("Log Itchy")
         .description("Logs an itchy moment for your current child.")
     }
 }

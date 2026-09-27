@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Evening check-in</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+@keyframes drop{0%,8%{opacity:0;transform:translateY(-18px)}16%,100%{opacity:1;transform:none}}
+@keyframes open{0%,28%{max-height:0;opacity:0}38%,100%{max-height:200px;opacity:1}}
+@keyframes tap{0%,52%{background:transparent}56%,70%{background:var(--little-itchy)}74%,100%{background:transparent}}
+@keyframes done{0%,72%{opacity:0}78%,95%{opacity:1}100%{opacity:0}}
+.note{animation:drop 6s ease-out .8s infinite}
+.acts{overflow:hidden;animation:open 6s ease-out .8s infinite}
+.tap{animation:tap 6s linear .8s infinite}
+.done{animation:done 6s linear .8s infinite;opacity:0}
+@media (prefers-reduced-motion: reduce){.note,.acts,.tap{animation:none}.done{animation:none;opacity:0}}
+</style>
+</helmet>
+<div class="day" style="width:390px;height:844px;box-sizing:border-box;padding:52px var(--gutter) 40px;background:var(--bg);color:var(--ink);font-family:var(--sans);display:flex;flex-direction:column">
+<dc-import name="OnbProgress" step="{{step}}" back="OnbWidget.dc.html" hint-size="342px,44px"></dc-import>
+<div class="rise" style="margin:var(--s5) auto 0;width:220px;height:420px;box-sizing:border-box;padding:10px;border-radius:var(--mock-r-device);background:var(--mock-bezel)" role="img" aria-label="A locked phone at 6:30 PM. A Cali Care notification asks how Cal's skin was today, with four buttons. Tapping A little itchy logs it.">
+<div style="position:relative;width:100%;height:100%;border-radius:var(--mock-r-screen);background:var(--mock-lock);overflow:hidden;box-sizing:border-box;padding:36px 10px 10px;display:flex;flex-direction:column;align-items:center;color:var(--mock-lock-text)">
+<div class="mock-xs" style="opacity:.8">Sunday, September 27</div>
+<div class="mock-clock">6:30</div>
+<div class="note" style="margin-top:18px;width:100%;border-radius:var(--r);background:var(--bg);color:var(--ink);overflow:hidden">
+<div style="padding:8px 10px;display:flex;flex-direction:column;gap:1px">
+<div class="mock-xs muted" style="display:flex;justify-content:space-between"><span>Cali Care</span><span>now</span></div>
+<div class="mock-s" style="font-weight:600">How was Cal’s skin today?</div>
+<div class="mock-s muted">One tap is enough.</div>
+</div>
+<div class="acts mock-s" style="display:flex;flex-direction:column;border-top:var(--hairline) solid var(--line)">
+<div style="padding:7px 10px;border-bottom:var(--hairline) solid var(--line)">Calm</div>
+<div class="tap" style="padding:7px 10px;border-bottom:var(--hairline) solid var(--line)">A little itchy</div>
+<div style="padding:7px 10px;border-bottom:var(--hairline) solid var(--line)">Flaring</div>
+<div style="padding:7px 10px">Very rough</div>
+</div>
+</div>
+<div class="done mock-xs" style="position:absolute;bottom:22px;left:10px;right:10px;padding:9px 10px;border-radius:var(--r);background:var(--bg);color:var(--ink)">Logged: skin a little itchy, 6:31 PM</div>
+</div>
+</div>
+<div style="margin-top:var(--s5);display:flex;flex-direction:column;gap:var(--s2)">
+<h1 class="t-title" style="margin:0">Answer from your Lock Screen</h1>
+<p class="t-body muted" style="margin:0">A quiet reminder at 6:30 PM with the four answers right on it. Skipped on days you’ve already answered.</p>
+</div>
+<div style="flex-grow:1"></div>
+<div style="display:flex;flex-direction:column;gap:var(--s1)">
+<a href="Today.dc.html" class="btn-primary t-label">Turn on reminders</a>
+<a href="Today.dc.html" class="btn-text t-body">Not now</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return { step: 4 }; }
+}
+</script>
+</body>
+</html>

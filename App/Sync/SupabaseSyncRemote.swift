@@ -52,6 +52,11 @@ struct SupabaseSyncRemote: SyncRemote {
         try await client.from("log_events").upsert(logs, onConflict: "id", returning: .minimal).execute()
     }
 
+    func upsert(routineSteps: [RemoteRoutineStep]) async throws {
+        guard !routineSteps.isEmpty else { return }
+        try await client.from("routine_steps").upsert(routineSteps, onConflict: "id", returning: .minimal).execute()
+    }
+
     func memberCount(household: UUID) async throws -> Int {
         try await client.from("household_members")
             .select("id", head: true, count: .exact)
@@ -64,7 +69,8 @@ struct SupabaseSyncRemote: SyncRemote {
     func changes(household: UUID, since: Date?) async throws -> RemoteChanges {
         RemoteChanges(
             children: try await pages(of: "children", household: household, since: since),
-            logs: try await pages(of: "log_events", household: household, since: since)
+            logs: try await pages(of: "log_events", household: household, since: since),
+            routineSteps: try await pages(of: "routine_steps", household: household, since: since)
         )
     }
 

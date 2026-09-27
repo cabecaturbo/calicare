@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Today</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{themeClass}}" style="position:relative;width:390px;height:844px;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--sans)">
+<div style="height:844px;overflow-y:auto;box-sizing:border-box;padding-bottom:120px">
+<dc-import name="AppHeader" heading="Today" caption="{{dateLine}}" theme="{{theme}}" hint-size="390px,156px"></dc-import>
+
+<sc-if value="{{asking}}" hint-placeholder-val="{{true}}">
+<section style="padding:var(--s5) var(--gutter) 0">
+<h2 class="t-title" style="margin:0">How was Cal’s skin today?</h2>
+<p class="t-caption muted" style="margin:var(--s1) 0 0">One tap. You can change it later.</p>
+<div role="radiogroup" aria-label="Skin today" style="margin-top:var(--s4);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)">
+<sc-for list="{{choices}}" as="c" hint-placeholder-count="4">
+<sc-if value="{{c.selected}}" hint-placeholder-val="{{false}}">
+<button type="button" role="radio" aria-checked="true" class="choice selected t-body"><span class="swatch {{c.swatch}}"></span><span style="flex-grow:1">{{c.label}}</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--accent)"><path d="m5 12 5 5 9-10"/></svg></button>
+</sc-if>
+<sc-if value="{{c.plain}}" hint-placeholder-val="{{true}}">
+<button type="button" role="radio" aria-checked="false" class="choice t-body"><span class="swatch {{c.swatch}}"></span><span>{{c.label}}</span></button>
+</sc-if>
+</sc-for>
+</div>
+</section>
+</sc-if>
+
+<div style="padding:{{cardTop}} var(--gutter) 0">
+<dc-import name="SummaryCard" eyebrow="{{card.eyebrow}}" heading="{{card.heading}}" caption="{{card.caption}}" art="{{card.art}}" theme="{{theme}}" hint-size="342px,128px"></dc-import>
+</div>
+
+<sc-if value="{{answered}}" hint-placeholder-val="{{false}}">
+<div style="padding:var(--s3) var(--gutter) 0">
+<div class="row" style="border-bottom:var(--hairline) solid var(--line)"><span class="t-body" style="display:flex;align-items:center;gap:var(--s2)"><span class="swatch sw-little-itchy" style="width:16px;height:16px"></span>Skin today: A little itchy</span><button type="button" class="btn-text t-body" style="padding:0">Change</button></div>
+</div>
+</sc-if>
+
+<sc-if value="{{isNight}}" hint-placeholder-val="{{false}}">
+<div style="padding:var(--s4) var(--gutter) 0">
+<button type="button" class="t-title" aria-label="Log itching" style="width:100%;height:96px;border:0;border-radius:var(--r);background:var(--accent);color:var(--on-accent);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;padding:0 var(--s5);box-sizing:border-box"><span>Itchy</span><span class="t-caption" style="opacity:.8">Last at 1:52 AM</span></button>
+</div>
+</sc-if>
+
+<section style="padding:var(--s6) var(--gutter) 0">
+<h2 class="t-label" style="margin:0">{{listTitle}}</h2>
+<div style="margin-top:var(--s2)">
+<sc-for list="{{entries}}" as="e" hint-placeholder-count="2">
+<div class="row t-body"><span>{{e.what}}</span><span class="t-caption muted">{{e.time}}</span></div>
+</sc-for>
+</div>
+</section>
+</div>
+
+<div style="position:absolute;left:var(--gutter);bottom:28px"><dc-import name="TabBar" active="today" theme="{{theme}}" width="{{tabWidth}}" hint-size="218px,62px"></dc-import></div>
+<div style="position:absolute;right:var(--gutter);bottom:28px"><dc-import name="LogControl" theme="{{theme}}" size="{{logSize}}" itchy="{{isDay}}" hint-size="200px,260px"></dc-import></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["day","night"],"default":"day"},"skin":{"editor":"enum","options":["unanswered","choosing","answered"],"default":"unanswered"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const night = this.props.theme === 'night';
+const skin = this.props.skin ?? 'unanswered';
+const asking = !night && skin !== 'answered';
+const answers = [
+{ id: 'calm', label: 'Calm', swatch: 'sw-calm' },
+{ id: 'littleItchy', label: 'A little itchy', swatch: 'sw-little-itchy' },
+{ id: 'flaring', label: 'Flaring', swatch: 'sw-flaring' },
+{ id: 'veryRough', label: 'Very rough', swatch: 'sw-very-rough' }
+];
+const picked = skin === 'choosing' ? 'littleItchy' : null;
+return {
+theme: night ? 'night' : 'day',
+themeClass: night ? 'night' : 'day',
+isDay: !night,
+isNight: night,
+asking,
+answered: !night && skin === 'answered',
+choices: answers.map(a => ({ ...a, selected: a.id === picked, plain: a.id !== picked })),
+cardTop: asking ? 'var(--s6)' : 'var(--s5)',
+tabWidth: night ? 274 : 218,
+dateLine: night ? '' : 'Sunday, September 27',
+logSize: night ? 'large' : 'regular',
+card: night
+? { eyebrow: 'So far tonight', heading: 'Two wake-ups', caption: '11:40 PM and 1:52 AM', art: 'moon' }
+: { eyebrow: 'Last night', heading: 'A good night', caption: 'One itchy wake-up, at 2:14 AM', art: 'sun' },
+listTitle: night ? 'Tonight so far' : 'Today so far',
+entries: night
+? [{ what: 'Itchy wake-up', time: '1:52 AM' }, { what: 'Itchy wake-up', time: '11:40 PM' }]
+: [{ what: 'Bowel movement', time: '9:10 AM' }, { what: 'Itchy wake-up', time: '2:14 AM' }]
+};
+}
+}
+</script>
+</body>
+</html>

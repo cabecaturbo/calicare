@@ -12,6 +12,8 @@ public struct DaySummary: Hashable, Sendable {
     /// Bowel movements that happened, with or without a kind (an explicit "none" isn't one).
     public let bowelMovementCount: Int
     public let mood: Mood?
+    /// The parent's answer to "How was the skin today?", or nil if not answered.
+    public let skinToday: SkinToday?
     public let routinesDone: Int
     public let notes: Int
     public let totalEvents: Int
@@ -43,6 +45,10 @@ public struct DaySummary: Hashable, Sendable {
         }.count
         self.mood = inDay.compactMap { entry -> Mood? in
             if case .mood(let mood)? = entry.value { return mood }
+            return nil
+        }.last
+        self.skinToday = inDay.compactMap { entry -> SkinToday? in
+            if case .skin(let answer)? = entry.value { return answer }
             return nil
         }.last
         self.routinesDone = inDay.filter { $0.type == .routineDone }.count

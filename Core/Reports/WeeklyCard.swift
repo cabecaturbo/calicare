@@ -6,11 +6,13 @@ import Foundation
 public struct WeeklyCard: Codable, Equatable, Sendable {
     public struct Day: Codable, Equatable, Sendable {
         public var letter: String
-        /// CareLevel raw values; nil when nothing was logged.
+        /// CareLevel raw value; nil when nothing was logged.
         public var night: Int?
+        /// The skin answer's indigo step (1, 2, 4, 5); nil when not answered.
+        /// Key "k": links from before skinToday used "s" for guessed skin, which is no longer read.
         public var skin: Int?
 
-        enum CodingKeys: String, CodingKey { case letter = "l", night = "n", skin = "s" }
+        enum CodingKeys: String, CodingKey { case letter = "l", night = "n", skin = "k" }
     }
 
     public var childName: String
@@ -41,7 +43,7 @@ public struct WeeklyCard: Codable, Equatable, Sendable {
         headline = report.headline.text
         hasSummary = report.headline != .notEnoughLogs
         days = report.days.map {
-            Day(letter: $0.day.noon(calendar: calendar).formatted(letters), night: $0.night?.rawValue, skin: $0.skin?.rawValue)
+            Day(letter: $0.day.noon(calendar: calendar).formatted(letters), night: $0.night?.rawValue, skin: $0.skin?.step)
         }
         goodNights = report.goodNights
         itchyWakeUps = report.itchyWakeUps

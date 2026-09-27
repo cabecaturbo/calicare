@@ -15,21 +15,22 @@ struct AppShell: View {
     var body: some View {
         @Bindable var shell = shell
         TabView(selection: $shell.tab) {
+            // The system tab bar is hidden; BottomBar draws the canvas's pill and log control.
             Tab("Today", systemImage: "sun.horizon", value: AppTab.today) {
                 TodayView()
-                    .quickLogBarInset(isEnabled: false)
+                    .toolbar(.hidden, for: .tabBar)
             }
             Tab("Plan", systemImage: "list.bullet.clipboard", value: AppTab.plan) {
                 PlanView()
-                    .quickLogBarInset(isEnabled: true)
+                    .toolbar(.hidden, for: .tabBar)
             }
             Tab("Progress", systemImage: "chart.line.uptrend.xyaxis", value: AppTab.progress) {
                 ProgressTab()
-                    .quickLogBarInset(isEnabled: true)
+                    .toolbar(.hidden, for: .tabBar)
             }
         }
         .tint(palette.indigo)
-        .quickLogAccessory(isEnabled: shell.tab != .today)
+        .overlay(alignment: .bottom) { BottomBar() }
         .sensoryFeedback(.impact(weight: .light), trigger: model.confirmation?.id) { _, new in new != nil }
         .sheet(isPresented: $shell.showingSettings, onDismiss: reload) {
             SettingsView()
@@ -42,6 +43,13 @@ struct AppShell: View {
         .sheet(isPresented: $shell.showingAddChild, onDismiss: reload) {
             AddChildSheet()
                 .nightAwarePalette()
+        }
+        .sheet(isPresented: $shell.showingNote) {
+            NoteSheet()
+                .nightAwarePalette()
+        }
+        .onOpenURL { url in
+            if DeepLink.isNote(url) { shell.showingNote = true }
         }
         .sheet(isPresented: $shell.showingLog) {
             LogSheet()
@@ -110,7 +118,7 @@ struct AppShell: View {
     }
 
     private func offerRemindersIfNeeded() async {
-        guard !shell.showingSettings, !shell.showingAddChild, !shell.showingLog else { return }
+        guard !shell.showingSettings, !shell.showingAddChild, !shell.showingLog, !shell.showingNote else { return }
         await reminders.offerAfterFirstLogIfNeeded()
     }
 }

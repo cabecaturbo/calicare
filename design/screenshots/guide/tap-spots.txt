@@ -1,0 +1,16 @@
+home_step1 0.500 0.680
+home_step2 0.172 0.038
+home_step3 0.393 0.106
+home_step4 0.500 0.291
+home_step5 0.500 0.905
+home_step6 0.828 0.038
+lock_step1 0.500 0.450
+lock_step2 0.500 0.930
+lock_step3 0.500 0.788
+lock_step4 0.500 0.724
+lock_step5 0.500 0.710
+lock_step6 0.818 0.038
+cc_step1 0.900 0.010
+cc_step2 0.500 0.880
+cc_step3 0.500 0.916
+cc_step4 0.144 0.302

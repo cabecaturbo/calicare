@@ -9,6 +9,7 @@ public protocol SyncRemote: Sendable {
     /// Inserts or updates by id. The server keeps whichever has the newer updated_at.
     func upsert(children: [RemoteChild]) async throws
     func upsert(logs: [RemoteLogEvent]) async throws
+    func upsert(routineSteps: [RemoteRoutineStep]) async throws
     /// How many people are in the household now.
     func memberCount(household: UUID) async throws -> Int
     /// Rows whose server_updated_at is after `since` (everything when nil).

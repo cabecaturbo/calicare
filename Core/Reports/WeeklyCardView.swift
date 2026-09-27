@@ -119,7 +119,7 @@ private struct WeekChart: View {
             ForEach(Array(days.enumerated()), id: \.offset) { _, day in
                 VStack(spacing: Spacing.x3) {
                     mark(Circle(), level: day.night.flatMap(CareLevel.init(rawValue:))).frame(width: 18, height: 18)
-                    bar(day.skin.flatMap(CareLevel.init(rawValue:))).frame(height: 40, alignment: .bottom)
+                    bar(step: day.skin).frame(height: 40, alignment: .bottom)
                     label(day.letter)
                 }
                 .frame(maxWidth: .infinity)
@@ -142,13 +142,13 @@ private struct WeekChart: View {
         }
     }
 
-    /// Taller and deeper for harder days; an outline when nothing was logged.
+    /// Taller and deeper for harder days (indigo steps 1–5); an outline when not answered.
     @ViewBuilder
-    private func bar(_ level: CareLevel?) -> some View {
+    private func bar(step: Int?) -> some View {
         let shape = RoundedRectangle(cornerRadius: Corner.image)
-        if let level {
-            shape.fill(palette.color(for: level))
-                .frame(width: 18, height: CGFloat(14 + 13 * level.rawValue))
+        if let step, (1...5).contains(step) {
+            shape.fill(palette.severity(step: step))
+                .frame(width: 18, height: CGFloat(8 + 6 * step))
         } else {
             shape.strokeBorder(palette.graphite.opacity(0.5), lineWidth: 1)
                 .frame(width: 18, height: 14)

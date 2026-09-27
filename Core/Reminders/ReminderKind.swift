@@ -1,21 +1,28 @@
 import Foundation
 
-/// The three reminders a parent can turn on.
+/// The reminders a parent can turn on, in the order Settings lists them.
 public enum ReminderKind: String, Codable, Sendable, CaseIterable {
-    case checkIn, morningRoutine, eveningRoutine
+    case checkIn, skinCheckIn, morningRoutine, eveningRoutine
 
-    /// Which routine this reminds about; nil for the morning check-in.
+    /// Which routine this reminds about; nil for the check-ins.
     public var routineTime: RoutineTime? {
         switch self {
-        case .checkIn: nil
+        case .checkIn, .skinCheckIn: nil
         case .morningRoutine: .morning
         case .eveningRoutine: .evening
         }
     }
 
     var categoryID: String {
-        self == .checkIn ? ReminderIDs.checkInCategory : ReminderIDs.routineCategory
+        switch self {
+        case .checkIn: ReminderIDs.checkInCategory
+        case .skinCheckIn: ReminderIDs.skinCategory
+        case .morningRoutine, .eveningRoutine: ReminderIDs.routineCategory
+        }
     }
+
+    /// One-off reminders planned per care day and skipped once that day is answered.
+    var isDailyQuestion: Bool { self == .checkIn || self == .skinCheckIn }
 
     var threadID: String { "calicare.thread.\(rawValue)" }
 }
@@ -23,6 +30,7 @@ public enum ReminderKind: String, Codable, Sendable, CaseIterable {
 /// The buttons on reminder notifications.
 public enum ReminderAction: String, Sendable, CaseIterable {
     case good, okay, rough, done, snooze
+    case calm, littleItchy, flaring, veryRough
 
     public var identifier: String { "calicare.action.\(rawValue)" }
 
@@ -38,6 +46,7 @@ public enum ReminderAction: String, Sendable, CaseIterable {
         case .rough: "Rough"
         case .done: "Done"
         case .snooze: "Snooze 30 min"
+        case .calm, .littleItchy, .flaring, .veryRough: skinToday?.title ?? ""
         }
     }
 
@@ -46,7 +55,17 @@ public enum ReminderAction: String, Sendable, CaseIterable {
         case .good: .good
         case .okay: .okay
         case .rough: .rough
-        case .done, .snooze: nil
+        default: nil
+        }
+    }
+
+    var skinToday: SkinToday? {
+        switch self {
+        case .calm: .calm
+        case .littleItchy: .littleItchy
+        case .flaring: .flaring
+        case .veryRough: .veryRough
+        default: nil
         }
     }
 }
@@ -55,11 +74,19 @@ public enum ReminderAction: String, Sendable, CaseIterable {
 enum ReminderIDs {
     static let checkInCategory = "calicare.category.checkIn"
     static let routineCategory = "calicare.category.routine"
+    static let skinCategory = "calicare.category.skin"
 
     private static let checkInPrefix = "calicare.checkIn."
+    private static let skinPrefix = "calicare.skin."
     private static let snoozePrefix = "calicare.snooze."
 
     static func checkIn(for day: CareDay) -> String { checkInPrefix + day.description }
+    static func skinCheckIn(for day: CareDay) -> String { skinPrefix + day.description }
+
+    /// The one-off request for a daily question on one care day.
+    static func question(_ kind: ReminderKind, for day: CareDay) -> String {
+        kind == .skinCheckIn ? skinCheckIn(for: day) : checkIn(for: day)
+    }
     static func routine(_ kind: ReminderKind) -> String { "calicare.\(kind.rawValue)" }
     static func snooze(_ kind: ReminderKind) -> String { snoozePrefix + kind.rawValue }
     static func test(_ kind: ReminderKind) -> String { "calicare.test.\(kind.rawValue)" }
@@ -67,7 +94,8 @@ enum ReminderIDs {
     /// Requests a refresh owns and may replace: check-ins and repeating routines.
     /// Snoozes and test notifications are left alone.
     static func isPlanned(_ id: String) -> Bool {
-        id.hasPrefix(checkInPrefix) || id == routine(.morningRoutine) || id == routine(.eveningRoutine)
+        id.hasPrefix(checkInPrefix) || id.hasPrefix(skinPrefix)
+            || id == routine(.morningRoutine) || id == routine(.eveningRoutine)
     }
 
     /// The reminder a snooze request belongs to.

@@ -19,7 +19,8 @@ See docs/prompts/README.md for the rules.
       Households, members, children, log_events with RLS; 19 pgTAP tests pass locally; applied to the real project. See supabase/README.md.
 - [x] 2.2 🛑 Sign in with Apple (optional account)
       Native Sign in with Apple via Supabase; Settings → Account and an optional last onboarding step. Owner confirmed sign in/out on the iPhone 15 Pro.
-- [ ] 2.3 Background sync engine
+- [x] 2.3 Background sync engine
+      Push/pull with last-write-wins, soft deletes, first-sign-in upload; syncs on open, 3 s after changes, and in the background. Verified on the iPhone both ways.
 - [ ] 2.4 Households and caregiver invites
 - [ ] 2.5 "Logged by" names
 - [ ] 2.6 Account settings and account deletion

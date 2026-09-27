@@ -32,7 +32,8 @@ See docs/prompts/README.md for the rules.
 ## Phase 3: Report cards (docs/prompts/phase-3-reports.md)
 - [x] 3.1 Weekly stats engine
       WeeklyReport in Core: nights, wake-ups vs last week, routines, skin by day, bowel movements, mood, headline, one worth-watching line. 12 tests.
-- [ ] 3.2 Weekly report card image and share sheet
+- [x] 3.2 Weekly report card image and share sheet
+      WeeklyCardView per DESIGN.md §10, rendered at 3x; Today → Share this week. Verified sharing to Messages and Mail on the iPhone.
 - [ ] 3.3 🛑 iMessage extension
 - [ ] 3.4 Doctor PDF
 - [ ] 3.5 Caregiver card

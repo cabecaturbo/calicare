@@ -160,6 +160,15 @@ struct WeeklyReportTests {
         #expect(report(lastWeek + moreFlares).worthWatching == "More flares this week.")
     }
 
+    @Test func theHeadlineNeverContradictsWorthWatching() {
+        // Nights rated good, but wake-ups jumped: not "a calmer week".
+        let lastWeek = (13...19).map { night(.okay, $0) }
+        let thisWeek = (20...26).map { night(.good, $0) } + (23...26).flatMap { [wakeUp($0), wakeUp($0)] }
+        let report = report(lastWeek + thisWeek)
+        #expect(report.worthWatching == "Itchy wake-ups went up this week.")
+        #expect(report.headline == .aboutTheSame)
+    }
+
     @Test func worthWatchingNeverClaimsACause() {
         let calmLastWeek = (13...19).map { night(.good, $0) }
         let roughWeek = (20...26).flatMap { [night(.rough, $0), wakeUp($0), log(.flare, day: $0, hour: 12)] }

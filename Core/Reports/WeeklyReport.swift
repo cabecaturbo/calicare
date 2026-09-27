@@ -91,8 +91,11 @@ extension WeeklyReport {
             headline = .firstWeek
             worthWatching = nil
         } else {
-            headline = Self.compare(this, with: last)
-            worthWatching = Self.worthWatching(this, last)
+            let line = Self.worthWatching(this, last)
+            let compared = Self.compare(this, with: last)
+            // Never "a calmer week" above a line saying something got worse.
+            headline = compared == .calmer && line != nil ? .aboutTheSame : compared
+            worthWatching = line
         }
     }
 

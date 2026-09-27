@@ -16,7 +16,10 @@ final class SyncController {
 
     private let account: AccountController
     private let settings = SyncSettings()
+    /// A sync waiting for its delay. Replacing it never touches a running sync.
     private var scheduled: Task<Void, Never>?
+    /// A request came in while syncing; run once more when this one ends.
+    private var syncAgain = false
     private var failures = 0
     private var listening = false
 
@@ -38,13 +41,14 @@ final class SyncController {
     }
 
     /// Syncs after `delay`, replacing anything already waiting. Bursts of taps
-    /// become one sync.
+    /// become one sync. Only the wait is cancelled, never a sync in progress:
+    /// cancelling mid-sync would cut off its network requests.
     func requestSync(after delay: Duration = .seconds(3)) {
         scheduled?.cancel()
         scheduled = Task { [weak self] in
             try? await Task.sleep(for: delay)
             guard !Task.isCancelled else { return }
-            await self?.syncNow()
+            Task { [weak self] in await self?.syncNow() }
         }
     }
 
@@ -52,10 +56,20 @@ final class SyncController {
     @discardableResult
     func syncNow() async -> Bool {
         guard case .signedIn(let info) = account.state, let name = info.displayName,
-              let client = Backend.client, !isSyncing
+              let client = Backend.client
         else { return false }
+        guard !isSyncing else {
+            syncAgain = true
+            return false
+        }
         isSyncing = true
-        defer { isSyncing = false }
+        defer {
+            isSyncing = false
+            if syncAgain {
+                syncAgain = false
+                requestSync(after: .zero)
+            }
+        }
         do {
             let engine = SyncEngine(
                 modelContainer: try CaliCareModelContainer.shared(),
@@ -68,8 +82,13 @@ final class SyncController {
             if report.changedLocalData { await LogChanges.didReceiveRemoteChanges() }
             scheduleBackgroundSync()
             return true
+        } catch is CancellationError {
+            return false
         } catch {
             // Offline or a hiccup: try again later, quietly. The logs are safe here.
+            #if DEBUG
+            print("CaliCare sync failed: \(error)")
+            #endif
             failures += 1
             requestSync(after: Self.backoff(failures: failures))
             return false

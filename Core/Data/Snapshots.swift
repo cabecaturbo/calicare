@@ -39,6 +39,14 @@ public struct ChildInfo: Identifiable, Hashable, Sendable {
     public let birthDate: Date?
     public let colorTag: String
     public let isActive: Bool
+
+    public init(id: UUID, name: String, birthDate: Date?, colorTag: String, isActive: Bool) {
+        self.id = id
+        self.name = name
+        self.birthDate = birthDate
+        self.colorTag = colorTag
+        self.isActive = isActive
+    }
 }
 
 extension LogEntry {

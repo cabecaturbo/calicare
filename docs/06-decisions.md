@@ -115,3 +115,34 @@ Decisions that aren't obvious from the code, newest at the bottom. Add a dated e
   - **Rows per page:** 22 log or day rows, and up to 9 notes (3 lines each). The table cuts long notes short, and the full text is on the Notes pages.
   - **Default range:** since the last visit if known (nothing records visits until Phase 4's provider tracker), otherwise the last 4 weeks ending today.
   - **Where it lives:** the Weekly card screen → "Doctor report". Share PDF, or "Email to provider" when Mail is set up.
+
+## UX rebuild doc decisions (September 27, 2026)
+
+DESIGN.md
+- **Newsreader 500 is bundled.** The title style is Newsreader Display 500, so the 500 weight must ship alongside 400. Replaces the Notebook redesign note that 500 wasn't bundled.
+- **Active text is never lighter than graphite.** Disabled controls use the standard iOS disabled appearance instead of a custom color.
+- **SF Symbols use regular weight only.** "Light" is removed, matching the no-light-weights type rule.
+- **The system segmented control is allowed,** for example the Progress range picker (Week, Month, Since last visit).
+- **Indigo scale dots and bars get a 0.75pt graphite outline.** Steps 1–3 are under 3:1 on paper, so the outline carries visibility. Bar height also encodes the level, so color is never the only signal. Calm = step 1 (replaces the earlier choice of drawing levels as steps 2, 3, 5). A day with no skinToday answer is an empty outline. Skin is never inferred from itches or flares.
+- **Lock Screen widget steps re-captured on iOS 27.0 in the simulator** (`StepAssetTests.testWidgetLockSteps`, images in `design-review/redesign/steps/widgetLock_ios27_step1–6`). The flow: touch and hold → Customize (opens the Lock Screen editor directly) → tap the widget area under the clock → CaliCare → tap a widget → Done. DESIGN.md §7 now says this.
+
+UX.md
+- **Only Today uses display type for the child's name.** Plan and Progress show the name as a small switcher in the navigation bar (row style, 600).
+- **No sign-in step in onboarding.** The reminders sheet after the first log is removed; reminders live only in onboarding step 3 and Settings > Reminders. The Reminders section on Plan is removed to match.
+- **Visual steps:** onboarding shows only the Home Screen widget, with the Action Button optional. Every other guide lives in Settings > Quick logging. A step without a real screenshot or recording is hidden, never a placeholder.
+- **U2 also adds routine steps** (name, morning or evening). Until they exist, Routine on Today and Plan shows two rows: Morning and Evening.
+
+Other
+- **Decisions go to `docs/06-decisions.md`.** `docs/prompts/README.md` pointed to a `05-decisions-log.md` that doesn't exist.
+
+## U1: App shell (September 27, 2026)
+
+- **One shared `TodayModel` for all three tabs.** The shell owns it, so the child switcher, the quick log bar, the log sheet, and Plan all log through the same path and show the same "Logged · Undo" line. The line shows only on the visible tab, so it's announced once.
+- **Quick log bar:** `tabViewBottomAccessory(isEnabled:)` on iOS 26.1 and later (the `isEnabled` form is 26.1+, and it's what keeps the bar off Today). iOS 18–26.0 get a paper bar inset above the tab bar with a primary "Itchy" and a secondary "Log…".
+- **"Log…" opens a sheet with Today's Log rows** (`LogButtons`); a tap logs and closes it.
+- **Plan before U2:** a Routine section with Morning and Evening rows; a tap logs `routineDone` for that routine, and the row shows "Done 7:40 AM". No reminders on Plan, no care-plan row until Phase 4.
+- **Progress for now** is the old Weekly card screen (week picker, card, share) plus the doctor report push, following the current child. Today's "Share this week" row is gone; tapping the week strip opens Progress.
+- **Settings is a native grouped `List` on paper.** Children, Family (sign in, household), Reminders, Quick logging, Account (signed in only), About, then Debug in debug builds only (Recent logs, Try a notification). "Your data" is absent until export exists. About has the "Not medical advice" line and the version; privacy, support email, and "how the app works" wait until they exist.
+- **Quick logging guides in Settings:** Home Screen widget, Lock Screen widget, and Siri. Action Button and Control Center are hidden until their steps are recorded on a real iPhone.
+- **New `section` type style** (SF Pro 600, 15/20, subheadline) from DESIGN.md §4, for List headers. The rest of the type table (sizes, the 500 title) is still the old six styles; that's U3–U5 work.
+- **The child switcher in the navigation bar** has its shared glass background hidden on iOS 26+, so it reads as a name, not a button.

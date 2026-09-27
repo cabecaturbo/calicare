@@ -81,6 +81,18 @@ Severity and data scale (indigo density, light = calm, deep = hard day)
 | 4 | #56698F |
 | 5 hard | #2E3E5E |
 
+Drawing the scale (dots and bars)
+- Every dot and bar on the indigo scale gets a 0.75pt graphite outline
+  (nightSecondary at night). Steps 1–3 are under 3:1 on paper, so the
+  outline is what makes them visible.
+- Color is never the only signal: bar height also encodes the level
+  (step 1 shortest, step 5 tallest).
+- Calm = step 1.
+- A day with no skinToday answer is an empty outline: no fill, same
+  0.75pt graphite outline.
+- Never infer skin from itches or flares. Skin by day comes only from
+  the skinToday answer.
+
 Night palette (automatic 8 PM – 7 AM)
 | Token | Hex | Use |
 |---|---|---|
@@ -107,7 +119,8 @@ symptoms (itch, sleep, spread), never by how skin looks.
 Two families only.
 
 - Newsreader (serif, OFL, bundled, with optical sizes): editorial text
-  only. The child's name, screen titles, the lede sentence, report
+  only. Bundle weights 400 and 500; the 500 weight is required for
+  the title style. The child's name, screen titles, the lede sentence, report
   headlines, and longer reading (notes, care plan text, report prose).
   Fallback if Newsreader ever causes trouble: New York, Apple's own
   serif, which ships with iOS and supports Dynamic Type natively.
@@ -144,9 +157,11 @@ Size rules
   is 1.5x row. If two things look the same size, one of them is wrong.
 
 Contrast rules (three levels only)
-- Primary text: ink. Secondary text: graphite. There is no lighter text
-  color: anything lighter than graphite fails 4.5:1 on paper. Lighter
-  tones are for hairlines and disabled icons only, never words.
+- Primary text: ink. Secondary text: graphite. Active text is never
+  lighter than graphite: anything lighter fails 4.5:1 on paper.
+  Lighter tones are for hairlines only.
+- Disabled controls use the standard iOS disabled appearance
+  (.disabled()); don't invent a custom disabled color.
 
 Other rules
 - Left-aligned always; centered only inside buttons.
@@ -173,7 +188,11 @@ the work). Between sections 40pt. Title to lede 8pt. Lede to first
 section 32pt.
 
 Corners: 4pt on buttons and sheets, 2pt on images. Nothing is pill-shaped
-except the segmented night/day toggle if one exists.
+except the system segmented control.
+
+Segmented control: the system segmented control (Picker with
+.segmented style) is allowed, e.g. the Progress range picker (Week,
+Month, Since last visit). Tint it with our tokens; don't rebuild it.
 
 Buttons
 - Primary: ink fill, paper text, 4pt corners, full width, 56pt tall
@@ -192,7 +211,7 @@ on iOS 26+). Don't restyle them and don't imitate glass inside content.
 Content stays matte paper.
 
 ## 6. Icons, logo, and imagery
-- Icons: SF Symbols, regular or light weight, ink or graphite, used only
+- Icons: SF Symbols, regular weight only, ink or graphite, used only
   where a word alone is unclear. Never in colored containers.
 - Logo: a wordmark, "Cali Care," set in Newsreader Display 400. No symbol
   for now. The old leaf is deleted everywhere.
@@ -234,8 +253,11 @@ Capturing the assets
 Current step flows to build (verify each on the current iOS first):
 - Home Screen widget: touch and hold an empty spot → tap Edit → Add
   Widget → find Cali Care → pick a size → Add Widget → Done.
-- Lock Screen widget: touch and hold the Lock Screen → Customize → Lock
-  Screen → tap the widget area → pick Cali Care.
+- Lock Screen widget (captured on iOS 27.0 in the simulator,
+  widgetLock_ios27_step1–6): touch and hold the Lock Screen → Customize
+  (opens the Lock Screen editor directly; there is no Lock Screen / Home
+  Screen choice) → tap the widget area under the clock → tap CaliCare in
+  the list → tap a widget to add it → Done.
 - Action Button: Settings → Action Button → swipe to Shortcut → choose
   "Log itching."
 - Control Center: swipe down from the top-right → touch and hold → Add a

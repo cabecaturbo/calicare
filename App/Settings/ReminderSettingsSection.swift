@@ -10,16 +10,16 @@ struct ReminderSettingsSection: View {
     @Environment(\.openURL) private var openURL
 
     var body: some View {
-        LedgerSection(
+        SettingsSection(
             "Reminders",
             footnote: "Answer right from the notification. If you skip one, nothing else happens."
         ) {
             if reminders.status == .denied {
-                LedgerRow {
+                VStack(alignment: .leading, spacing: Spacing.x2) {
                     Text("Notifications are off for CaliCare. You can turn them on in iOS Settings whenever you like.")
                         .textStyle(.body)
                         .foregroundStyle(palette.graphite)
-                } trailing: {
+                        .fixedSize(horizontal: false, vertical: true)
                     Button("Open Settings") {
                         if let url = URL(string: UIApplication.openNotificationSettingsURLString) {
                             openURL(url)
@@ -27,6 +27,7 @@ struct ReminderSettingsSection: View {
                     }
                     .buttonStyle(.textLink)
                 }
+                .padding(.vertical, Spacing.x2)
             }
             ForEach(ReminderKind.allCases, id: \.self) { kind in
                 row(for: kind)
@@ -36,35 +37,28 @@ struct ReminderSettingsSection: View {
 
     @ViewBuilder
     private func row(for kind: ReminderKind) -> some View {
-        LedgerRow {
-            Toggle(isOn: Binding(
-                get: { reminders.settings[kind].isOn },
-                set: { reminders.setOn($0, for: kind) }
-            )) {
-                Text(ReminderCopy.settingsTitle(kind))
-                    .textStyle(.control)
-                    .foregroundStyle(palette.ink)
-            }
-            .tint(palette.indigo)
+        Toggle(isOn: Binding(
+            get: { reminders.settings[kind].isOn },
+            set: { reminders.setOn($0, for: kind) }
+        )) {
+            SettingsLabel(ReminderCopy.settingsTitle(kind))
         }
+        .tint(palette.indigo)
 
         if reminders.settings[kind].isOn {
-            LedgerRow {
+            DatePicker(
+                selection: Binding(
+                    get: { reminders.time(for: kind) },
+                    set: { reminders.setTime($0, for: kind) }
+                ),
+                displayedComponents: .hourAndMinute
+            ) {
                 Text("Time")
                     .textStyle(.meta)
                     .foregroundStyle(palette.graphite)
-            } trailing: {
-                DatePicker(
-                    "\(ReminderCopy.settingsTitle(kind)) time",
-                    selection: Binding(
-                        get: { reminders.time(for: kind) },
-                        set: { reminders.setTime($0, for: kind) }
-                    ),
-                    displayedComponents: .hourAndMinute
-                )
-                .labelsHidden()
-                .tint(palette.indigo)
             }
+            .accessibilityLabel("\(ReminderCopy.settingsTitle(kind)) time")
+            .tint(palette.indigo)
         }
     }
 }

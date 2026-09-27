@@ -9,7 +9,7 @@ struct RootView: View {
     var body: some View {
         Group {
             if hasOnboarded {
-                TodayView()
+                AppShell()
             } else if let start {
                 OnboardingView(start: start) { hasOnboarded = true }
             } else {

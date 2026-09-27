@@ -7,24 +7,17 @@ import UserNotifications
 /// Go to the Home Screen (or lock the simulator) before it arrives.
 struct TryNotificationSection: View {
     @Environment(ReminderController.self) private var reminders
-    @Environment(\.palette) private var palette
     @State private var message: String?
 
     var body: some View {
-        LedgerSection("Try a notification", footnote: footnote) {
+        SettingsSection("Try a notification", footnote: footnote) {
             ForEach(ReminderKind.allCases, id: \.self) { kind in
                 Button {
                     Task { await send(kind) }
                 } label: {
-                    LedgerRow {
-                        Text("\(ReminderCopy.settingsTitle(kind)) in 5 seconds")
-                            .textStyle(.control)
-                            .foregroundStyle(palette.ink)
-                    }
+                    SettingsLabel("\(ReminderCopy.settingsTitle(kind)) in 5 seconds")
                 }
-                .buttonStyle(.ledger)
                 .disabled(reminders.status != .authorized)
-                .opacity(reminders.status == .authorized ? 1 : 0.5)
             }
         }
     }

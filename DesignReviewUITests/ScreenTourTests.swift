@@ -32,7 +32,13 @@ final class ScreenTourTests: XCTestCase {
         Capture.screen("05-onboarding-siri")
         tapButton(app, "Done")
         Capture.screen("06-onboarding-action-button")
-        tapButton(app, "Done, go to Today")
+        // Builds with accounts end on the share offer.
+        if app.buttons["Done, go to Today"].exists {
+            tapButton(app, "Done, go to Today")
+        } else {
+            tapButton(app, "Done")
+            tapButton(app, "Not now, go to Today")
+        }
         sleep(1)
         Capture.screen("07-today-empty")
 
@@ -76,8 +82,7 @@ final class ScreenTourTests: XCTestCase {
         Capture.screen("16-recent-logs-debug-list")
         app.navigationBars.buttons.firstMatch.tap()
         sleep(1)
-        app.swipeDown()
-        tapButton(app, "Widgets, Siri, and Action Button")
+        tapButton(app, "Home Screen widget")
         Capture.screen("17-quick-logging-guide")
     }
 

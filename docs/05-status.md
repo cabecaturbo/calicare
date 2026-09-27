@@ -15,6 +15,10 @@ Where CaliCare stands at the end of Phase 1, for the local Claude Code session t
 - **VisualSteps:** onboarding and Settings show real iOS 27 screenshots for the Home Screen and Lock Screen widgets. Action Button and Control Center are placeholders until they're recorded on a real iPhone.
 - **Design review:** the `DesignReview` scheme captures step assets and screenshots; results are in `design-review/redesign/`.
 
+## UX rebuild (September 27, 2026)
+- **U1 app shell is built** (branch `ux/u1-app-shell`): Today, Plan, and Progress tabs; the child's name in display type on Today and as a small switcher in the navigation bar on Plan and Progress; Settings as a large sheet (native List) from every tab; the quick log bar on Plan and Progress. The weekly card and doctor report now live in Progress. Screenshots: `design-review/ux/u1/`.
+- **Next:** U2 (measures: skinToday, flare areas, routine steps).
+
 ## What's built (by prompt)
 1. **Scaffold:** XcodeGen `project.yml` with App, WidgetsExtension, Core (framework), and CoreTests. Fraunces and DM Sans are bundled in Core with their OFL licenses. `DesignSystem.swift` holds the day and night palettes, type, spacing, and radii.
 2. **Data:** SwiftData in the App Group: `Child`, `LogEvent` (`SchemaV1` plus a migration plan), `LogStore`, `ChildStore`, and `CurrentChildSetting`. `CareDay` runs 7 PM to 7 PM.

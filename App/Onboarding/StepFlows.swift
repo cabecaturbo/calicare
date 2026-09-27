@@ -19,8 +19,8 @@ enum StepFlows {
     static let widgetLock: [VisualStep] = [
         VisualStep(asset: "widgetLock_ios27_step1", sentence: "Touch and hold your Lock Screen.", tap: UnitPoint(x: 0.500, y: 0.450)),
         VisualStep(asset: "widgetLock_ios27_step2", sentence: "Tap Customize.", tap: UnitPoint(x: 0.500, y: 0.930)),
-        VisualStep(asset: "widgetLock_ios27_step3", sentence: "Tap Add Widgets.", tap: UnitPoint(x: 0.500, y: 0.788)),
-        VisualStep(asset: "widgetLock_ios27_step4", sentence: "Tap CaliCare.", tap: UnitPoint(x: 0.500, y: 0.724)),
+        VisualStep(asset: "widgetLock_ios27_step3", sentence: "Tap the widget area under the clock.", tap: UnitPoint(x: 0.500, y: 0.788)),
+        VisualStep(asset: "widgetLock_ios27_step4", sentence: "Tap CaliCare in the list.", tap: UnitPoint(x: 0.500, y: 0.724)),
         VisualStep(asset: "widgetLock_ios27_step5", sentence: "Tap Itchy to add it. Swipe for Last night.", tap: UnitPoint(x: 0.500, y: 0.698)),
         VisualStep(asset: "widgetLock_ios27_step6", sentence: "Tap Done.", tap: UnitPoint(x: 0.818, y: 0.038)),
     ]

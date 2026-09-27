@@ -1,12 +1,11 @@
 import Core
 import SwiftUI
 
-/// Pick a child and a week, preview the card, and share it.
-struct ReportsView: View {
+/// Progress: the weekly card (pick a week, preview, share) and the doctor report.
+/// Contents are the old Weekly card screen until U5 rebuilds this tab.
+struct ProgressTab: View {
     @Environment(\.palette) private var palette
-    @Environment(\.dismiss) private var dismiss
-    @State private var children: [ChildInfo] = []
-    @State private var child: ChildInfo?
+    @Environment(TodayModel.self) private var model
     @State private var weekEnding = CareDay.containing(.now)
     @State private var report: WeeklyReport?
     @State private var file: URL?
@@ -18,8 +17,7 @@ struct ReportsView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    LedgerSection {
-                        if children.count > 1 { childRow }
+                    LedgerSection("Weekly card") {
                         weekRow
                     }
 
@@ -27,7 +25,7 @@ struct ReportsView: View {
                         .padding(.horizontal, Spacing.margin)
                         .padding(.top, Spacing.ledeToSection)
 
-                    if let child {
+                    if let child = model.child {
                         LedgerSection("For a visit", footnote: "A PDF of every log over a few weeks, for a provider.") {
                             NavigationLink {
                                 DoctorReportView(child: child)
@@ -60,36 +58,10 @@ struct ReportsView: View {
                 .padding(.vertical, Spacing.x4)
             }
             .paperBackground()
-            .navigationTitle("Weekly card")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                }
-            }
+            .logConfirmation(on: .progress)
+            .shellToolbar(showsSwitcher: true)
         }
-        .tint(palette.indigo)
-        .task { await loadChildren() }
-        .task(id: "\(child?.id.uuidString ?? "")-\(weekEnding)") { await build() }
-    }
-
-    private var childRow: some View {
-        LedgerRow {
-            Text("Child")
-                .textStyle(.control)
-                .foregroundStyle(palette.ink)
-        } trailing: {
-            Menu {
-                ForEach(children) { option in
-                    Button(option.name) { child = option }
-                }
-            } label: {
-                Text(child?.name ?? "")
-                    .textStyle(.control)
-                    .foregroundStyle(palette.indigo)
-            }
-            .accessibilityLabel("Child: \(child?.name ?? "")")
-        }
+        .task(id: "\(model.child?.id.uuidString ?? "")-\(weekEnding)") { await build() }
     }
 
     private var weekRow: some View {
@@ -140,14 +112,8 @@ struct ReportsView: View {
         return parts.joined(separator: " ")
     }
 
-    private func loadChildren() async {
-        guard let store = try? ChildStore(modelContainer: CaliCareModelContainer.shared()) else { return }
-        children = (try? await store.activeChildren()) ?? []
-        if child == nil { child = try? await store.currentChild() }
-    }
-
     private func build() async {
-        guard let child, let container = try? CaliCareModelContainer.shared() else { return }
+        guard let child = model.child, let container = try? CaliCareModelContainer.shared() else { return }
         do {
             let report = try await WeeklyReport.load(child: child, weekEnding: weekEnding, container: container)
             self.report = report

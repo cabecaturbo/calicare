@@ -101,3 +101,6 @@ Decisions that aren't obvious from the code, newest at the bottom. Add a dated e
   - **A fifth headline, "A first week of logs":** used when last week has too few logs to compare. The prompt's four headlines would otherwise invent a comparison.
   - **Worth watching:** checks wake-ups up 3 or more, then rough nights up 2, then flares up 2. The first match wins, and it's only used when last week is comparable.
   - **Routines:** "routine completion" is the logged days with a routine done (the app doesn't know how many routines a plan has).
+- **3.1 addendum: the headline never contradicts "worth watching."** If something clearly got worse, the headline can't say "A calmer week"; it says "About the same as last week."
+- **3.2 WeeklyCardView lives in Core,** so the Messages extension (3.3) and the Shortcuts intents (3.6) can reuse it. It's 600 × 750 points, rendered at 3x (1800 × 2250), always the day palette, with no grain and fixed type sizes. It's shared as a PNG file named "Cal week Sep 20 – 26.png" so Mail and Messages show a sensible name.
+- **The card's entry point:** a "Share this week" row under the week strip on Today opens the Weekly card screen.

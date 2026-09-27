@@ -12,6 +12,7 @@ struct TodayView: View {
     @State private var model = TodayModel()
     @State private var showingSettings = false
     @State private var showingAddChild = false
+    @State private var showingReport = false
     @State private var editing: LogEntry?
 
     var body: some View {
@@ -37,7 +38,14 @@ struct TodayView: View {
                             Task { await model.log(type, value: value) }
                         }
                         TodayTimeline(model: model, isDaytime: model.isDaytime) { editing = $0 }
-                        WeekStrip(days: model.week)
+                        VStack(alignment: .leading, spacing: 0) {
+                            WeekStrip(days: model.week)
+                            Button { showingReport = true } label: {
+                                NavigationRow(title: "Share this week")
+                            }
+                            .buttonStyle(.ledger)
+                            .padding(.top, Spacing.x4)
+                        }
                     }
                     .padding(.top, Spacing.ledeToSection)
                 } else if model.hasLoaded {
@@ -70,6 +78,10 @@ struct TodayView: View {
                 .environment(reminders)
                 .environment(account)
                 .environment(sync)
+                .nightAwarePalette()
+        }
+        .sheet(isPresented: $showingReport) {
+            ReportsView()
                 .nightAwarePalette()
         }
         .sheet(isPresented: $showingAddChild, onDismiss: reload) {

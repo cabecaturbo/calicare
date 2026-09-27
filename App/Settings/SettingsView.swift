@@ -9,49 +9,47 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                ReminderSettingsSection()
+            ScrollView {
+                VStack(alignment: .leading, spacing: Spacing.section) {
+                    ReminderSettingsSection()
 
-                Section {
-                    NavigationLink("Widget, Siri, and Action Button") {
-                        QuickLoggingGuideView()
+                    LedgerSection("Quick logging", footnote: "Log without opening the app.") {
+                        NavigationLink {
+                            QuickLoggingGuideView()
+                        } label: {
+                            NavigationRow(title: "Widgets, Siri, and Action Button")
+                        }
+                        .buttonStyle(.ledger)
                     }
-                    .font(Typography.body)
-                    .frame(minHeight: TouchTarget.minimum)
-                } header: {
-                    Text("Quick logging")
-                } footer: {
-                    Text("Log without opening the app.")
-                }
-                .listRowBackground(palette.card)
 
-                Section {
-                    NavigationLink("Recent logs") {
-                        RecentLogsView()
+                    LedgerSection(
+                        "Behind the scenes",
+                        footnote: "See what widgets, Siri, Control Center, and notifications saved."
+                    ) {
+                        NavigationLink {
+                            RecentLogsView()
+                        } label: {
+                            NavigationRow(title: "Recent logs")
+                        }
+                        .buttonStyle(.ledger)
                     }
-                    .font(Typography.body)
-                    .frame(minHeight: TouchTarget.minimum)
-                } header: {
-                    Text("Behind the scenes")
-                } footer: {
-                    Text("See what widgets, Siri, Control Center, and notifications saved.")
-                }
-                .listRowBackground(palette.card)
 
-                #if DEBUG
-                TryNotificationSection()
-                #endif
+                    #if DEBUG
+                    TryNotificationSection()
+                    #endif
+                }
+                .padding(.vertical, Spacing.x4)
             }
-            .scrollContentBackground(.hidden)
-            .background(palette.background.ignoresSafeArea())
+            .paperBackground()
             .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
                 }
             }
         }
-        .tint(palette.accent)
+        .tint(palette.indigo)
         .task { await reminders.reload() }
         .sheet(isPresented: toggleOffer) {
             ReminderOfferSheet(
@@ -72,5 +70,24 @@ struct SettingsView: View {
                 if !isShowing, case .toggle = reminders.offer { reminders.declineOffer() }
             }
         )
+    }
+}
+
+/// A ledger row that opens another page.
+struct NavigationRow: View {
+    @Environment(\.palette) private var palette
+    let title: String
+
+    var body: some View {
+        LedgerRow {
+            Text(title)
+                .textStyle(.control)
+                .foregroundStyle(palette.ink)
+        } trailing: {
+            Image(systemName: "chevron.right")
+                .font(.footnote.weight(.regular))
+                .foregroundStyle(palette.graphite)
+                .accessibilityHidden(true)
+        }
     }
 }

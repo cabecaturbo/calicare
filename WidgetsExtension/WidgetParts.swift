@@ -2,42 +2,36 @@ import Core
 import SwiftUI
 import WidgetKit
 
-/// A widget button that logs instantly, without opening the app.
+/// A widget cell that logs instantly, without opening the app: a word, and a
+/// count or time in meta. No icons, no tile fill.
 struct LogButton: View {
     let action: WidgetAction
     let child: ChildEntity?
     let detail: String?
     let palette: Palette
-    /// Big filled sage button (small widget) or a quiet sand tile (medium widget).
+    /// The small widget's one big word, or a medium widget ledger cell.
     var prominent = false
 
     var body: some View {
         Button(intent: WidgetLogIntent(action: action, child: child)) {
-            VStack(spacing: Spacing.xxs) {
-                Image(systemName: action.symbol)
-                    .font(.system(size: prominent ? 30 : 20, weight: .medium))
-                    .foregroundStyle(prominent ? palette.onAccent : palette.accent)
+            VStack(alignment: .leading, spacing: prominent ? Spacing.x1 : 2) {
+                if prominent { Spacer(minLength: 0) }
                 Text(action.shortTitle)
-                    .font(prominent ? Typography.title3 : Typography.caption)
-                    .foregroundStyle(prominent ? palette.onAccent : palette.ink)
-                    .multilineTextAlignment(.center)
+                    .font(prominent ? TypeStyle.display.font : TypeStyle.control.font)
+                    .foregroundStyle(palette.ink)
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
                 if let detail {
                     Text(detail)
-                        .font(Typography.caption)
-                        .foregroundStyle(prominent ? palette.onAccent : palette.muted)
+                        .font(TypeStyle.meta.font)
+                        .foregroundStyle(palette.graphite)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                 }
             }
-            .padding(Spacing.xxs)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .frame(minWidth: TouchTarget.minimum, minHeight: TouchTarget.minimum)
-            .background(
-                prominent ? palette.accent : palette.sand,
-                in: RoundedRectangle(cornerRadius: prominent ? Radius.card : Radius.small, style: .continuous)
-            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .frame(minWidth: Size.touchTarget, minHeight: Size.touchTarget)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(action.accessibilityLabel(for: child?.name))
@@ -51,39 +45,32 @@ struct UndoButton: View {
 
     var body: some View {
         Button(intent: UndoLastIntent()) {
-            Label("Undo", systemImage: "arrow.uturn.backward")
-                .font(Typography.button)
-                .foregroundStyle(palette.sageDark)
-                .padding(.horizontal, Spacing.m)
-                .frame(minWidth: TouchTarget.minimum, minHeight: TouchTarget.minimum)
-                .background(palette.sand, in: Capsule())
+            Text("Undo")
+                .font(TypeStyle.control.font)
+                .foregroundStyle(palette.indigo)
+                .frame(minWidth: Size.touchTarget, minHeight: Size.touchTarget, alignment: .leading)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Undo")
         .accessibilityHint("Removes what you just logged.")
     }
 }
 
-/// Calm check mark and what was logged.
+/// "Logged" and what was logged, in words.
 struct LoggedLabel: View {
     let feedback: WidgetFeedback
     let palette: Palette
 
     var body: some View {
-        HStack(spacing: Spacing.xs) {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.title2)
-                .foregroundStyle(palette.accent)
-            VStack(alignment: .leading, spacing: 0) {
-                Text("Logged")
-                    .font(Typography.headline)
-                    .foregroundStyle(palette.ink)
-                Text("\(feedback.title), \(feedback.loggedAt.formatted(date: .omitted, time: .shortened))")
-                    .font(Typography.caption)
-                    .foregroundStyle(palette.muted)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.8)
-            }
+        VStack(alignment: .leading, spacing: 2) {
+            Text("Logged")
+                .font(TypeStyle.title.font)
+                .foregroundStyle(palette.ink)
+            Text("\(feedback.title), \(feedback.loggedAt.formatted(date: .omitted, time: .shortened))")
+                .font(TypeStyle.meta.font)
+                .foregroundStyle(palette.graphite)
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
         }
         .accessibilityElement(children: .combine)
     }
@@ -95,9 +82,20 @@ struct AddChildPrompt: View {
 
     var body: some View {
         Text("Add your child in CaliCare to start logging.")
-            .font(Typography.callout)
-            .foregroundStyle(palette.muted)
+            .font(TypeStyle.body.font)
+            .foregroundStyle(palette.graphite)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+}
+
+/// A 0.5pt rule for widget ledgers.
+struct WidgetRule: View {
+    let palette: Palette
+    var vertical = false
+
+    var body: some View {
+        palette.hairline
+            .frame(width: vertical ? Rule.width : nil, height: vertical ? nil : Rule.width)
     }
 }
 
@@ -108,15 +106,6 @@ extension WidgetAction {
         case .roughNight: "Rough night"
         case .bowelMovement: "Bowel movement"
         case .routineDone: "Routine done"
-        }
-    }
-
-    var symbol: String {
-        switch self {
-        case .itchy: "hand.raised"
-        case .roughNight: "moon.zzz"
-        case .bowelMovement: "toilet"
-        case .routineDone: "checkmark.circle"
         }
     }
 

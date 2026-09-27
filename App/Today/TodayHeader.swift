@@ -11,30 +11,30 @@ struct TodayHeader: View {
     let onSettings: () -> Void
 
     var body: some View {
-        HStack(alignment: .top, spacing: Spacing.s) {
-            VStack(alignment: .leading, spacing: Spacing.xxs) {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .center) {
                 Text(Date.now, format: .dateTime.weekday(.wide).month(.wide).day())
-                    .font(Typography.caption)
-                    .foregroundStyle(palette.muted)
-                if let child {
-                    switcher(for: child)
-                } else {
-                    Text("Today")
-                        .font(Typography.largeTitle)
-                        .foregroundStyle(palette.ink)
-                        .accessibilityAddTraits(.isHeader)
+                    .textStyle(.meta)
+                    .foregroundStyle(palette.graphite)
+                Spacer(minLength: Spacing.x4)
+                Button(action: onSettings) {
+                    Image(systemName: "gearshape")
+                        .font(.body.weight(.regular))
+                        .foregroundStyle(palette.graphite)
+                        .frame(width: Size.touchTarget, height: Size.touchTarget)
+                        .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Settings")
             }
-            Spacer(minLength: 0)
-            Button(action: onSettings) {
-                Image(systemName: "gearshape")
-                    .font(.title3)
-                    .foregroundStyle(palette.sageDark)
-                    .frame(width: TouchTarget.minimum, height: TouchTarget.minimum)
-                    .contentShape(Rectangle())
+            if let child {
+                switcher(for: child)
+            } else {
+                Text("Today")
+                    .textStyle(.display)
+                    .foregroundStyle(palette.ink)
+                    .accessibilityAddTraits(.isHeader)
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Settings")
         }
     }
 
@@ -57,21 +57,21 @@ struct TodayHeader: View {
                 Label("Add a child", systemImage: "plus")
             }
         } label: {
-            HStack(alignment: .center, spacing: Spacing.xs) {
+            HStack(alignment: .firstTextBaseline, spacing: Spacing.x2) {
                 if children.count > 1 {
-                    ChildDot(color: ChildColor(tag: child.colorTag), size: 16)
+                    ChildDot(color: ChildColor(tag: child.colorTag), size: 12)
                 }
                 Text(child.name)
-                    .font(Typography.largeTitle)
+                    .textStyle(.display)
                     .foregroundStyle(palette.ink)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
                 Image(systemName: "chevron.down")
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(palette.sageDark)
+                    .font(.footnote.weight(.regular))
+                    .foregroundStyle(palette.graphite)
                     .accessibilityHidden(true)
             }
-            .frame(minHeight: TouchTarget.minimum)
+            .frame(minHeight: Size.touchTarget)
             .contentShape(Rectangle())
         }
         .accessibilityLabel(child.name)

@@ -1,118 +1,120 @@
 import SwiftUI
 
-// Design tokens from CLAUDE.md. Never red for "bad"; severity uses sage lightness.
+// Tokens from DESIGN.md: paper, ink, and indigo. Only this file should change
+// if the palette or the serif is ever swapped.
 
-// MARK: - Colors
+// MARK: - Color
 
 public struct Palette: Sendable, Equatable {
-    public let background: Color
-    public let card: Color
-    public let ink: Color
-    public let muted: Color
-    public let accent: Color
-    /// Text/icons placed on `accent`.
-    public let onAccent: Color
-    /// Text on light sage.
-    public let sageDark: Color
-    /// "Avoid" and "worth watching" labels.
-    public let clay: Color
-    /// Callout boxes.
-    public let sand: Color
-    public let severityLow: Color
-    public let severityMedium: Color
-    public let severityHigh: Color
+    public enum Token: String, CaseIterable, Sendable {
+        /// Main background everywhere.
+        case paper
+        /// Secondary surface: sheets, selected rows, the log confirmation.
+        case oat
+        /// Text, primary buttons, full-strength rules.
+        case ink
+        /// Secondary text, captions, timestamps.
+        case graphite
+        /// 0.5pt rules between rows and sections.
+        case hairline
+        /// The one accent: selected states, links, charts.
+        case indigo
+        /// "Worth watching" text only, used rarely. Paper only: it fails on oat.
+        case ochre
+    }
+
+    /// A text color on a background color that screens are allowed to use.
+    public struct TextPair: Sendable, Equatable {
+        public let text: Token
+        public let background: Token
+    }
+
     public let isNight: Bool
+    private let tokens: [Token: UInt32]
+    /// Indigo density, calm first. Day: light is calm. Night: brighter is harder.
+    public let severityScale: [UInt32]
 
     public static let day = Palette(
-        background: Color(hex: 0xF8F3EA),
-        card: Color(hex: 0xFFFFFF),
-        ink: Color(hex: 0x2B2622),
-        muted: Color(hex: 0x6B6259),
-        accent: Color(hex: 0x4F6F57),
-        onAccent: Color(hex: 0xFFFFFF),
-        sageDark: Color(hex: 0x3F5E47),
-        clay: Color(hex: 0x8A5A3C),
-        sand: Color(hex: 0xF0E6D6),
-        severityLow: Color(hex: 0xC9D6C9),
-        severityMedium: Color(hex: 0x8FA995),
-        severityHigh: Color(hex: 0x3F5E47),
-        isNight: false
+        isNight: false,
+        tokens: [
+            .paper: 0xF6F1E8, .oat: 0xECE4D6, .ink: 0x1E1B18, .graphite: 0x5C554D,
+            .hairline: 0xD8CFC0, .indigo: 0x34466A, .ochre: 0x8A6320,
+        ],
+        severityScale: [0xE3E7EE, 0xC2CBDB, 0x8C9BB8, 0x56698F, 0x2E3E5E]
     )
 
-    /// 8 PM – 7 AM. Warm and dim: no bright whites. Only the background is
-    /// specified in CLAUDE.md; the rest are proposed values (all text ≥ 4.5:1).
+    /// 8 PM – 7 AM. Warm text, never pure white. Night ochre isn't in DESIGN.md;
+    /// #C9A15B is a proposed value (7.5:1 on night).
     public static let night = Palette(
-        background: Color(hex: 0x1E1B18),
-        card: Color(hex: 0x2A2521),
-        ink: Color(hex: 0xE8DFD2),
-        muted: Color(hex: 0xA89E92),
-        accent: Color(hex: 0x8FA995),
-        onAccent: Color(hex: 0x1E1B18),
-        sageDark: Color(hex: 0xA9BDAE),
-        clay: Color(hex: 0xC4A58E),
-        sand: Color(hex: 0x332D28),
-        severityLow: Color(hex: 0x3A443C),
-        severityMedium: Color(hex: 0x4F6655),
-        severityHigh: Color(hex: 0x8FA995),
-        isNight: true
+        isNight: true,
+        tokens: [
+            .paper: 0x14161C, .oat: 0x1E2129, .ink: 0xEAE3D6, .graphite: 0xA8A093,
+            .hairline: 0x2C303A, .indigo: 0x9FB0D0, .ochre: 0xC9A15B,
+        ],
+        severityScale: [0x2A3142, 0x3C4760, 0x5A6B8E, 0x8497BD, 0xB7C5E0]
     )
+
+    /// Every text-on-background combination the UI may use. The contrast test
+    /// holds each one to 4.5:1 in both palettes. Paper on ink is the primary button.
+    public static let textPairs: [TextPair] = [
+        TextPair(text: .ink, background: .paper),
+        TextPair(text: .ink, background: .oat),
+        TextPair(text: .graphite, background: .paper),
+        TextPair(text: .graphite, background: .oat),
+        TextPair(text: .indigo, background: .paper),
+        TextPair(text: .indigo, background: .oat),
+        TextPair(text: .ochre, background: .paper),
+        TextPair(text: .paper, background: .ink),
+    ]
 
     public static func current(at date: Date = .now, calendar: Calendar = .current) -> Palette {
-        NightMode.isActive(at: date, calendar: calendar) ? .night : .day
+        #if DEBUG
+        if let forced = DesignReview.forcedNight { return forced ? .night : .day }
+        #endif
+        return NightMode.isActive(at: date, calendar: calendar) ? .night : .day
     }
-}
 
-extension Palette {
-    /// A point on the sage scale: lighter is calmer.
+    public func hex(_ token: Token) -> UInt32 {
+        tokens[token] ?? 0
+    }
+
+    public func color(_ token: Token) -> Color {
+        Color(hex: hex(token))
+    }
+
+    public var paper: Color { color(.paper) }
+    public var oat: Color { color(.oat) }
+    public var ink: Color { color(.ink) }
+    public var graphite: Color { color(.graphite) }
+    public var hairline: Color { color(.hairline) }
+    public var indigo: Color { color(.indigo) }
+    public var ochre: Color { color(.ochre) }
+
+    /// A step on the severity scale, 1 (calm) to 5 (hard).
+    public func severity(step: Int) -> Color {
+        Color(hex: severityScale[min(max(step, 1), severityScale.count) - 1])
+    }
+
+    /// The three day levels on the five-step scale: 2, 3, and 5, so calm still
+    /// shows on paper and a hard day stands apart from a medium one.
     public func color(for level: CareLevel) -> Color {
         switch level {
-        case .low: severityLow
-        case .medium: severityMedium
-        case .high: severityHigh
+        case .low: severity(step: 2)
+        case .medium: severity(step: 3)
+        case .high: severity(step: 5)
         }
     }
 }
 
 extension ChildColor {
-    /// Same in day and night; dots get a thin outline so sand shows on cream.
-    public var color: Color {
+    /// Tags keep their stored names; they now draw from the notebook palette.
+    public func color(in palette: Palette) -> Color {
         switch self {
-        case .sage: Color(hex: 0x4F6F57)
-        case .clay: Color(hex: 0x8A5A3C)
-        case .moss: Color(hex: 0x8FA995)
-        case .sand: Color(hex: 0xF0E6D6)
+        case .sage: palette.indigo
+        case .clay: palette.ochre
+        case .moss: palette.graphite
+        case .sand: palette.oat
         }
-    }
-}
-
-public enum NightMode {
-    public static let startHour = 20
-    public static let endHour = 7
-
-    public static func isActive(at date: Date, calendar: Calendar = .current) -> Bool {
-        let hour = calendar.component(.hour, from: date)
-        return hour >= startHour || hour < endHour
-    }
-
-    /// The next moment night mode switches on or off.
-    public static func nextChange(after date: Date, calendar: Calendar = .current) -> Date {
-        let hour = isActive(at: date, calendar: calendar) ? endHour : startHour
-        return calendar.nextDate(
-            after: date,
-            matching: DateComponents(hour: hour, minute: 0, second: 0),
-            matchingPolicy: .nextTime
-        ) ?? date.addingTimeInterval(3600)
-    }
-}
-
-private struct PaletteKey: EnvironmentKey {
-    static let defaultValue: Palette = .day
-}
-
-extension EnvironmentValues {
-    public var palette: Palette {
-        get { self[PaletteKey.self] }
-        set { self[PaletteKey.self] = newValue }
     }
 }
 
@@ -128,47 +130,108 @@ extension Color {
     }
 }
 
-// MARK: - Fonts
+// MARK: - Type
 
-/// Fraunces for headings, DM Sans for body. All scale with Dynamic Type.
+/// The six type styles. Nothing else is allowed. Newsreader (bundled, OFL) for
+/// anything read as a sentence or heading; SF Pro for controls and meta.
 /// Call `FontRegistry.registerAll()` once per process before use.
-public enum Typography {
-    public static let largeTitle = Font.custom("Fraunces-SemiBold", size: 34, relativeTo: .largeTitle)
-    public static let title = Font.custom("Fraunces-SemiBold", size: 28, relativeTo: .title)
-    public static let title2 = Font.custom("Fraunces-Medium", size: 22, relativeTo: .title2)
-    public static let title3 = Font.custom("Fraunces-Medium", size: 20, relativeTo: .title3)
-    public static let headline = Font.custom("DMSans-SemiBold", size: 17, relativeTo: .headline)
-    public static let body = Font.custom("DMSans-Regular", size: 17, relativeTo: .body)
-    public static let bodyMedium = Font.custom("DMSans-Medium", size: 17, relativeTo: .body)
-    public static let callout = Font.custom("DMSans-Regular", size: 16, relativeTo: .callout)
-    public static let caption = Font.custom("DMSans-Medium", size: 13, relativeTo: .caption)
-    public static let button = Font.custom("DMSans-SemiBold", size: 17, relativeTo: .body)
+public enum TypeStyle: CaseIterable, Sendable {
+    /// Child's name on Today, report headline. Once per screen at most.
+    case display
+    /// Screen and section titles.
+    case title
+    /// The one summary sentence.
+    case lede
+    /// Sentences, notes, care plan text.
+    case body
+    /// Buttons, row labels, tabs.
+    case control
+    /// Times, "by Dad," captions.
+    case meta
+
+    public var font: Font {
+        switch self {
+        case .display: .custom(Self.displayCut, size: 32, relativeTo: .largeTitle)
+        case .title: .custom(Self.displayCut, size: 24, relativeTo: .title2)
+        case .lede: .custom(Self.textCut, size: 20, relativeTo: .title3)
+        case .body: .custom(Self.textCut, size: 17, relativeTo: .body)
+        case .control: .system(.body, weight: .medium)
+        case .meta: .system(.footnote)
+        }
+    }
+
+    /// Point size and line height from DESIGN.md, before Dynamic Type scaling.
+    public var size: CGFloat {
+        switch self {
+        case .display: 32
+        case .title: 24
+        case .lede: 20
+        case .body, .control: 17
+        case .meta: 13
+        }
+    }
+
+    public var lineHeight: CGFloat {
+        switch self {
+        case .display: 38
+        case .title: 30
+        case .lede: 28
+        case .body: 25
+        case .control: 22
+        case .meta: 18
+        }
+    }
+
+    public var dynamicTypeBase: Font.TextStyle {
+        switch self {
+        case .display: .largeTitle
+        case .title: .title2
+        case .lede: .title3
+        case .body, .control: .body
+        case .meta: .footnote
+        }
+    }
+
+    /// Newsreader cut at optical size 36, for 24pt and up.
+    static let displayCut = "NewsreaderDisplay-Regular"
+    /// Newsreader cut at optical size 16, for reading sizes.
+    static let textCut = "NewsreaderText-Regular"
 }
 
-// MARK: - Spacing, radii, sizes
+// MARK: - Space, corners, sizes
 
+/// 4pt base.
 public enum Spacing {
-    public static let xxs: CGFloat = 4
-    public static let xs: CGFloat = 8
-    public static let s: CGFloat = 12
-    public static let m: CGFloat = 16
-    /// Card padding.
-    public static let l: CGFloat = 20
-    public static let xl: CGFloat = 28
-    public static let xxl: CGFloat = 40
+    public static let x1: CGFloat = 4
+    public static let x2: CGFloat = 8
+    public static let x3: CGFloat = 12
+    public static let x4: CGFloat = 16
+    /// Screen margins.
+    public static let margin: CGFloat = 24
+    public static let titleToLede: CGFloat = 8
+    public static let ledeToSection: CGFloat = 32
+    /// Between ledger sections.
+    public static let section: CGFloat = 40
 }
 
-public enum Radius {
-    public static let card: CGFloat = 18
-    public static let small: CGFloat = 10
-    // Pills use Capsule() (fully rounded).
+public enum Corner {
+    /// Buttons and sheets.
+    public static let control: CGFloat = 4
+    /// Images and screenshots.
+    public static let image: CGFloat = 2
 }
 
-public enum TouchTarget {
-    public static let minimum: CGFloat = 44
-    /// Bigger one-hand buttons at night.
-    public static let night: CGFloat = 60
-    /// The main log buttons on Today: large by day, larger at night.
-    public static let logButtonDay: CGFloat = 72
-    public static let logButtonNight: CGFloat = 92
+public enum Rule {
+    /// Hairlines between rows and sections, and the secondary button outline.
+    public static let width: CGFloat = 0.5
+}
+
+public enum Size {
+    public static let touchTarget: CGFloat = 44
+
+    /// Ledger rows: roomier at night for one-handed, half-asleep taps.
+    public static func row(isNight: Bool) -> CGFloat { isNight ? 72 : 56 }
+
+    /// Primary and secondary buttons.
+    public static func button(isNight: Bool) -> CGFloat { isNight ? 64 : 56 }
 }

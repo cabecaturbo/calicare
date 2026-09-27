@@ -8,6 +8,13 @@ Where CaliCare stands at the end of Phase 1, for the local Claude Code session t
 - **Verified on the Mac (Xcode, iPhone 17 simulator):** clean build with no warnings, all 125 tests pass, and the app launches into onboarding.
 - **CI:** `.github/workflows/ios.yml` runs on every push to this branch. It generates the project, builds, runs the tests, and fails on any warning in our sources.
 
+## Notebook redesign (September 26, 2026)
+- **DESIGN.md** (repo root) is now the design system. Newsreader replaced Fraunces and DM Sans; paper, ink, and indigo replaced cream and sage.
+- **New pieces in Core:** `DesignSystem.swift` (tokens, the six type styles, spacing, corners), `LedgerRow`/`LedgerSection`, button styles, and the paper grain. `ContrastTests` checks every text/background pair.
+- **Restyled:** Today, onboarding, Settings, the debug list, the sheets, all widgets, and the log confirmation. The leaf is gone; the app icon is an ink "c" on paper.
+- **VisualSteps:** onboarding and Settings show real iOS 27 screenshots for the Home Screen and Lock Screen widgets. Action Button and Control Center are placeholders until they're recorded on a real iPhone.
+- **Design review:** the `DesignReview` scheme captures step assets and screenshots; results are in `design-review/redesign/`.
+
 ## What's built (by prompt)
 1. **Scaffold:** XcodeGen `project.yml` with App, WidgetsExtension, Core (framework), and CoreTests. Fraunces and DM Sans are bundled in Core with their OFL licenses. `DesignSystem.swift` holds the day and night palettes, type, spacing, and radii.
 2. **Data:** SwiftData in the App Group: `Child`, `LogEvent` (`SchemaV1` plus a migration plan), `LogStore`, `ChildStore`, and `CurrentChildSetting`. `CareDay` runs 7 PM to 7 PM.

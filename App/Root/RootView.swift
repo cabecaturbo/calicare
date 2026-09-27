@@ -4,7 +4,6 @@ import SwiftUI
 /// Onboarding until it's finished once, then Today.
 struct RootView: View {
     @AppStorage(OnboardingFlag.key) private var hasOnboarded = false
-    @Environment(\.palette) private var palette
     @State private var start: OnboardingView.Step?
 
     var body: some View {
@@ -14,7 +13,7 @@ struct RootView: View {
             } else if let start {
                 OnboardingView(start: start) { hasOnboarded = true }
             } else {
-                palette.background.ignoresSafeArea()
+                Color.clear.paperBackground()
             }
         }
         .task { await chooseStart() }

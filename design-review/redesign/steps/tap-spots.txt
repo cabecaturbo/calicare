@@ -1,0 +1,12 @@
+widgetHome_ios27_step1 0.500 0.680
+widgetHome_ios27_step2 0.172 0.038
+widgetHome_ios27_step3 0.391 0.106
+widgetHome_ios27_step4 0.500 0.538
+widgetHome_ios27_step5 0.500 0.905
+widgetHome_ios27_step6 0.828 0.038
+widgetLock_ios27_step1 0.500 0.450
+widgetLock_ios27_step2 0.500 0.930
+widgetLock_ios27_step3 0.500 0.788
+widgetLock_ios27_step4 0.500 0.724
+widgetLock_ios27_step5 0.500 0.698
+widgetLock_ios27_step6 0.818 0.038

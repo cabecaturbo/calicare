@@ -28,57 +28,50 @@ struct EditLogSheet: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    DatePicker("Time", selection: $timestamp, in: ...max(Date.now, entry.timestamp))
-                        .font(Typography.body)
-                        .frame(minHeight: TouchTarget.minimum)
-                }
-                .listRowBackground(palette.card)
+            ScrollView {
+                VStack(alignment: .leading, spacing: Spacing.section) {
+                    LedgerSection {
+                        LedgerRow {
+                            Text("Time")
+                                .textStyle(.control)
+                                .foregroundStyle(palette.ink)
+                        } trailing: {
+                            DatePicker("Time", selection: $timestamp, in: ...max(Date.now, entry.timestamp))
+                                .labelsHidden()
+                                .tint(palette.indigo)
+                        }
+                    }
 
-                if !options.isEmpty {
-                    Section {
-                        Picker("Kind", selection: $value) {
+                    if !options.isEmpty {
+                        LedgerSection("Kind") {
                             ForEach(options, id: \.self) { option in
-                                Text(option.title)
-                                    .font(Typography.body)
-                                    .tag(option.value)
+                                kindRow(option)
                             }
                         }
-                        .pickerStyle(.inline)
-                        .labelsHidden()
-                    } header: {
-                        Text("Kind")
                     }
-                    .listRowBackground(palette.card)
-                }
 
-                Section {
-                    TextField(entry.type == .note ? "Write a note" : "Add a note", text: $note, axis: .vertical)
-                        .font(Typography.body)
-                        .lineLimit(1...6)
-                        .frame(minHeight: TouchTarget.minimum)
-                } header: {
-                    Text("Note")
-                }
-                .listRowBackground(palette.card)
-
-                Section {
-                    Button {
-                        confirmingDelete = true
-                    } label: {
-                        Label("Delete this log", systemImage: "trash")
-                            .font(Typography.button)
-                            .foregroundStyle(palette.clay)
-                            .frame(minHeight: TouchTarget.minimum)
+                    LedgerSection("Note") {
+                        LedgerRow {
+                            TextField(entry.type == .note ? "Write a note" : "Add a note", text: $note, axis: .vertical)
+                                .textStyle(.body)
+                                .foregroundStyle(palette.ink)
+                                .lineLimit(1...6)
+                        }
                     }
-                } footer: {
-                    Text("Deleted logs disappear from Today, widgets, and reports.")
+
+                    VStack(alignment: .leading, spacing: Spacing.x2) {
+                        Button("Delete this log") { confirmingDelete = true }
+                            .buttonStyle(.secondary)
+                        Text("Deleted logs disappear from Today, widgets, and reports.")
+                            .textStyle(.meta)
+                            .foregroundStyle(palette.graphite)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(.horizontal, Spacing.margin)
                 }
-                .listRowBackground(palette.card)
+                .padding(.vertical, Spacing.margin)
             }
-            .scrollContentBackground(.hidden)
-            .background(palette.background.ignoresSafeArea())
+            .paperBackground(.oat)
             .navigationTitle(model.title(for: entry))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -100,7 +93,29 @@ struct EditLogSheet: View {
                 Button("Keep it", role: .cancel) {}
             }
         }
-        .tint(palette.accent)
+        .tint(palette.indigo)
+    }
+
+    private func kindRow(_ option: Option) -> some View {
+        let selected = option.value == value
+        return Button {
+            value = option.value
+        } label: {
+            LedgerRow {
+                Text(option.title)
+                    .textStyle(.control)
+                    .foregroundStyle(palette.ink)
+            } trailing: {
+                if selected {
+                    Image(systemName: "checkmark")
+                        .font(.body.weight(.regular))
+                        .foregroundStyle(palette.indigo)
+                        .accessibilityHidden(true)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(selected ? .isSelected : [])
     }
 
     private var canSave: Bool {

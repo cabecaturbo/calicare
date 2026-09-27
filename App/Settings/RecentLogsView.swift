@@ -9,30 +9,27 @@ struct RecentLogsView: View {
     @State private var status: String?
 
     var body: some View {
-        List {
-            if let status {
-                Text(status)
-                    .font(Typography.callout)
-                    .foregroundStyle(palette.muted)
-                    .listRowBackground(palette.card)
-            }
-            ForEach(rows) { row in
-                VStack(alignment: .leading, spacing: Spacing.xxs) {
-                    Text(row.title)
-                        .font(Typography.bodyMedium)
-                        .foregroundStyle(palette.ink)
-                    Text(row.details)
-                        .font(Typography.caption)
-                        .foregroundStyle(palette.muted)
+        ScrollView {
+            LedgerSection(footnote: status) {
+                ForEach(rows) { row in
+                    LedgerRow {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(row.title)
+                                .textStyle(.control)
+                                .foregroundStyle(palette.ink)
+                            Text(row.details)
+                                .textStyle(.meta)
+                                .foregroundStyle(palette.graphite)
+                        }
+                    }
+                    .accessibilityElement(children: .combine)
                 }
-                .padding(.vertical, Spacing.xxs)
-                .accessibilityElement(children: .combine)
-                .listRowBackground(palette.card)
             }
+            .padding(.vertical, Spacing.x4)
         }
-        .scrollContentBackground(.hidden)
-        .background(palette.background.ignoresSafeArea())
+        .paperBackground()
         .navigationTitle("Recent logs")
+        .navigationBarTitleDisplayMode(.inline)
         .task { await load() }
         .refreshable { await load() }
         .onChange(of: scenePhase) { _, phase in

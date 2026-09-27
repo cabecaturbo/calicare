@@ -25,6 +25,7 @@ struct ChildDetails {
     }
 }
 
+/// Full-width ledger rows: name, optional birth date, optional color.
 struct ChildDetailsForm: View {
     @Environment(\.palette) private var palette
     @Binding var details: ChildDetails
@@ -37,13 +38,11 @@ struct ChildDetailsForm: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.l) {
-            VStack(alignment: .leading, spacing: Spacing.xs) {
-                Text("Name")
-                    .font(Typography.headline)
-                    .foregroundStyle(palette.ink)
+        VStack(alignment: .leading, spacing: 0) {
+            Hairline()
+            LedgerRow {
                 TextField("First name or nickname", text: $details.name)
-                    .font(Typography.body)
+                    .textStyle(.body)
                     .foregroundStyle(palette.ink)
                     .textContentType(.givenName)
                     .textInputAutocapitalization(.words)
@@ -51,55 +50,62 @@ struct ChildDetailsForm: View {
                     .submitLabel(.done)
                     .focused($nameFocused)
                     .onSubmit(onSubmit)
-                    .padding(.horizontal, Spacing.m)
-                    .frame(minHeight: TouchTarget.night)
-                    .background(palette.card, in: RoundedRectangle(cornerRadius: Radius.small, style: .continuous))
+                    .accessibilityLabel("Name")
             }
 
-            VStack(alignment: .leading, spacing: Spacing.xs) {
-                Toggle(isOn: $details.hasBirthDate.animation()) {
-                    Text("Add birth date")
-                        .font(Typography.body)
-                        .foregroundStyle(palette.ink)
+            LedgerRow {
+                Toggle(isOn: $details.hasBirthDate.animation(.easeOut(duration: 0.2))) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Birth date")
+                            .textStyle(.control)
+                            .foregroundStyle(palette.ink)
+                        Text("Optional")
+                            .textStyle(.meta)
+                            .foregroundStyle(palette.graphite)
+                    }
                 }
-                .tint(palette.accent)
-                .frame(minHeight: TouchTarget.minimum)
-
-                if details.hasBirthDate {
-                    DatePicker("Birth date", selection: $details.birthDate, in: ...Date.now, displayedComponents: .date)
-                        .font(Typography.body)
-                        .foregroundStyle(palette.ink)
-                        .frame(minHeight: TouchTarget.minimum)
-                }
-                Text("Optional")
-                    .font(Typography.caption)
-                    .foregroundStyle(palette.muted)
+                .tint(palette.indigo)
             }
 
-            VStack(alignment: .leading, spacing: Spacing.xs) {
-                Text("Color")
-                    .font(Typography.headline)
-                    .foregroundStyle(palette.ink)
+            if details.hasBirthDate {
+                LedgerRow {
+                    Text("Born")
+                        .textStyle(.control)
+                        .foregroundStyle(palette.ink)
+                } trailing: {
+                    DatePicker("Born", selection: $details.birthDate, in: ...Date.now, displayedComponents: .date)
+                        .labelsHidden()
+                        .tint(palette.indigo)
+                }
+            }
+
+            LedgerRow {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Color")
+                        .textStyle(.control)
+                        .foregroundStyle(palette.ink)
+                    Text("Optional. Helps tell children apart.")
+                        .textStyle(.meta)
+                        .foregroundStyle(palette.graphite)
+                }
+            } trailing: {
                 colorChoices
-                Text("Optional. Helps tell children apart.")
-                    .font(Typography.caption)
-                    .foregroundStyle(palette.muted)
             }
         }
         .onAppear { nameFocused = details.name.isEmpty }
     }
 
     private var colorChoices: some View {
-        HStack(spacing: Spacing.s) {
+        HStack(spacing: 0) {
             ForEach(ChildColor.allCases) { color in
                 let selected = details.color == color
                 Button {
                     details.color = selected ? nil : color
                 } label: {
-                    ChildDot(color: color, size: 30)
-                        .padding(Spacing.xxs)
-                        .overlay(Circle().strokeBorder(selected ? palette.ink : .clear, lineWidth: 2))
-                        .frame(minWidth: TouchTarget.minimum, minHeight: TouchTarget.minimum)
+                    ChildDot(color: color, size: 20)
+                        .padding(3)
+                        .overlay(Circle().strokeBorder(selected ? palette.ink : .clear, lineWidth: 1))
+                        .frame(minWidth: Size.touchTarget, minHeight: Size.touchTarget)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)

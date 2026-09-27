@@ -3,19 +3,20 @@ import SwiftUI
 
 /// The onboarding setup steps, all on one page, for later.
 struct QuickLoggingGuideView: View {
-    @Environment(\.palette) private var palette
     @State private var childName: String?
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: Spacing.xxl) {
+            VStack(alignment: .leading, spacing: Spacing.section) {
                 WidgetSetupGuide(childName: childName)
+                LockScreenSetupGuide()
                 SiriSetupGuide()
                 ActionButtonSetupGuide()
+                ControlCenterSetupGuide()
             }
-            .padding(Spacing.l)
+            .padding(.vertical, Spacing.x4)
         }
-        .background(palette.background.ignoresSafeArea())
+        .paperBackground()
         .navigationTitle("Quick logging")
         .navigationBarTitleDisplayMode(.inline)
         .task {

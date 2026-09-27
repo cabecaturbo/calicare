@@ -4,48 +4,46 @@ import SwiftUI
 /// A short, friendly explanation before the system permission prompt.
 struct ReminderOfferSheet: View {
     @Environment(\.palette) private var palette
+    @Environment(\.dynamicTypeSize) private var typeSize
     let onTurnOn: () -> Void
     let onNotNow: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.m) {
-            Image(systemName: "bell")
-                .font(.title2)
-                .foregroundStyle(palette.accent)
-                .accessibilityHidden(true)
-
-            Text("A gentle nudge, if you'd like")
-                .font(Typography.title2)
-                .foregroundStyle(palette.ink)
-                .accessibilityAddTraits(.isHeader)
-
-            Text("CaliCare can ask how last night went, and remind you about morning and evening routines. Answer right from the notification. No need to open the app.")
-                .font(Typography.body)
-                .foregroundStyle(palette.ink)
-
-            Text("Skip one anytime. Change times or turn them off in Settings.")
-                .font(Typography.callout)
-                .foregroundStyle(palette.muted)
-
-            Spacer(minLength: Spacing.s)
-
-            Button(action: onTurnOn) {
-                Text("Turn on reminders")
-                    .font(Typography.button)
-                    .foregroundStyle(palette.onAccent)
-                    .frame(maxWidth: .infinity, minHeight: TouchTarget.minimum)
-                    .background(palette.accent, in: Capsule())
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("A gentle nudge, if you'd like")
+                    .textStyle(.title)
+                    .foregroundStyle(palette.ink)
+                    .accessibilityAddTraits(.isHeader)
+                Text("CaliCare can ask how last night went, and remind you about morning and evening routines. Answer right from the notification. No need to open the app.")
+                    .textStyle(.body)
+                    .foregroundStyle(palette.ink)
+                    .padding(.top, Spacing.titleToLede)
+                Text("Skip one anytime. Change times or turn them off in Settings.")
+                    .textStyle(.meta)
+                    .foregroundStyle(palette.graphite)
+                    .padding(.top, Spacing.x3)
             }
-
-            Button(action: onNotNow) {
-                Text("Not now")
-                    .font(Typography.button)
-                    .foregroundStyle(palette.sageDark)
-                    .frame(maxWidth: .infinity, minHeight: TouchTarget.minimum)
-            }
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, Spacing.margin)
+            .padding(.top, Spacing.section)
         }
-        .padding(Spacing.l)
-        .background(palette.background.ignoresSafeArea())
-        .presentationDetents([.medium, .large])
+        .scrollBounceBehavior(.basedOnSize)
+        .safeAreaInset(edge: .bottom) {
+            VStack(spacing: Spacing.x2) {
+                Button("Turn on reminders", action: onTurnOn)
+                    .buttonStyle(.primary)
+                Button("Not now", action: onNotNow)
+                    .buttonStyle(.textLink)
+            }
+            .padding(.horizontal, Spacing.margin)
+            .padding(.top, Spacing.x3)
+            .padding(.bottom, Spacing.x2)
+            .paperBackground(.oat)
+        }
+        .paperBackground(.oat)
+        // Half height fits the words at normal sizes; large text needs the full sheet.
+        .presentationDetents(typeSize.isAccessibilitySize ? [.large] : [.medium, .large])
     }
 }

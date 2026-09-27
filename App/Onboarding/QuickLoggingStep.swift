@@ -1,10 +1,11 @@
 import Core
 import SwiftUI
 
-/// Screen 3: widget, Siri, and Action Button, one at a time. Every part is skippable.
+/// Screen 3: Home Screen widget, Lock Screen widget, Siri, and Action Button,
+/// one at a time. Every part can be skipped.
 struct QuickLoggingStep: View {
     enum Part: Int, CaseIterable {
-        case widget, siri, actionButton
+        case widget, lockScreen, siri, actionButton
     }
 
     @Environment(\.palette) private var palette
@@ -19,25 +20,32 @@ struct QuickLoggingStep: View {
 
     var body: some View {
         OnboardingPage {
-            HStack(alignment: .firstTextBaseline) {
+            HStack(alignment: .center) {
                 Text("Part \(part.rawValue + 1) of \(Part.allCases.count)")
-                    .font(Typography.caption)
-                    .foregroundStyle(palette.muted)
+                    .textStyle(.meta)
+                    .foregroundStyle(palette.graphite)
                 Spacer()
                 Button("Skip setup", action: onFinish)
-                    .font(Typography.button)
-                    .foregroundStyle(palette.sageDark)
-                    .frame(minHeight: TouchTarget.minimum)
+                    .buttonStyle(.textLink)
                     .accessibilityHint("Goes straight to Today. You can find these steps later in Settings.")
             }
-            switch part {
-            case .widget: WidgetSetupGuide(childName: childName)
-            case .siri: SiriSetupGuide()
-            case .actionButton: ActionButtonSetupGuide()
+            .padding(.horizontal, Spacing.margin)
+            .padding(.bottom, Spacing.x4)
+
+            Group {
+                switch part {
+                case .widget: WidgetSetupGuide(childName: childName)
+                case .lockScreen: LockScreenSetupGuide()
+                case .siri: SiriSetupGuide()
+                case .actionButton: ActionButtonSetupGuide()
+                }
             }
+            .id(part)
         } footer: {
-            PrimaryButton(title: isLast ? "Start using CaliCare" : "Next", action: advance)
-            SecondaryButton(title: isLast ? "Skip for now" : "Skip this step", action: advance)
+            Button(isLast ? "Done, go to Today" : "Done", action: advance)
+                .buttonStyle(.primary)
+            Button(isLast ? "Skip for now" : "Skip this one", action: advance)
+                .buttonStyle(.textLink)
         }
     }
 
@@ -48,6 +56,6 @@ struct QuickLoggingStep: View {
             onFinish()
             return
         }
-        withAnimation(.easeInOut(duration: 0.25)) { part = next }
+        withAnimation(.easeOut(duration: 0.25)) { part = next }
     }
 }

@@ -59,3 +59,12 @@ Decisions that aren't obvious from the code, newest at the bottom. Add a dated e
 - **When it runs:** on app open, 3 seconds after any local change (bursts become one sync), on sign-in, and via `BGAppRefreshTask` (about hourly, when iOS allows). Widgets and intents only set `needsSync`; the app does the syncing. Failures retry quietly (30 s doubling to 15 min). The only status shown is "Last synced" in Settings → Account.
 - **Sync needs a display name,** because creating a household adds the person as a named owner.
 - **Never cancel a running sync.** A new request only replaces a sync that's still waiting for its delay. On the first device test, requests from opening the app, signing in, and a local change kept cancelling each other mid-request (`CancellationError`), so nothing uploaded. A request that arrives mid-sync now runs one more sync afterwards. Debug builds print sync errors to the console.
+
+## Phase 2.4: Invites (September 26, 2026)
+
+- **Invites are Postgres functions, not Edge Functions:** `create_invite(household, role)` and `accept_invite(code, member_id, display_name)`, both security definer. Same rules, testable with pgTAP (16 invite tests), nothing extra to deploy. Edge Functions are still planned for account deletion (2.6), which needs the service role.
+- **Codes:** 6 characters from an alphabet without 0/O/1/I, single use, 7 days. Accepting while already a member is harmless and doesn't use up the code. Errors come back as `CC001` (no such code), `CC002` (expired), and `CC003` (already used), and the app says each one plainly.
+- **"Ask before merging":** if the phone already has children or logs, joining asks "Add what's on this phone?" with Join and add them, or Cancel. Keeping them separate isn't possible (one local store), and Cancel changes nothing.
+- **A phone follows the household joined most recently.** The old membership stays on the server; leaving it is a separate step.
+- **Leaving signs you out on that phone,** so its sync can't quietly create a new household and re-upload the old one's logs. The last owner can't leave while others remain.
+- **Guards now check `current_user`, not `auth.role()`,** so trusted functions like `accept_invite` can change a rejoining member's role while app requests still can't.

@@ -22,6 +22,7 @@ See docs/prompts/README.md for the rules.
 - [x] 2.3 Background sync engine
       Push/pull with last-write-wins, soft deletes, first-sign-in upload; syncs on open, 3 s after changes, and in the background. Verified on the iPhone both ways.
 - [ ] 2.4 Households and caregiver invites
+      Code merged: invite and join by code, members list, 16 SQL tests. Still to do: the two-phone test (a second account joins and sees the same logs).
 - [ ] 2.5 "Logged by" names
 - [ ] 2.6 Account settings and account deletion
 

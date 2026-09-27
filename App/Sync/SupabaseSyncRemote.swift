@@ -20,7 +20,8 @@ struct SupabaseSyncRemote: SyncRemote {
             .select("household_id")
             .eq("user_id", value: userID)
             .is("deleted_at", value: nil)
-            .order("created_at")
+            // The household joined most recently, e.g. a partner's after accepting an invite.
+            .order("created_at", ascending: false)
             .limit(1)
             .execute()
             .value

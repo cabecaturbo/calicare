@@ -2,40 +2,86 @@ import Core
 import SwiftUI
 import WidgetKit
 
-/// A widget cell that logs instantly, without opening the app: a word, and a
-/// count or time in meta. No icons, no tile fill.
-struct LogButton: View {
-    let action: WidgetAction
+/// The main Itchy button: a filled tile with a plus and the word, centered.
+/// In tinted and clear (accented) looks it keeps a filled glass shape, so it
+/// stays the most prominent thing in the widget.
+struct ItchyTile: View {
+    @Environment(\.widgetRenderingMode) private var renderingMode
     let child: ChildEntity?
-    let detail: String?
     let palette: Palette
-    /// The small widget's one big word, or a medium widget ledger cell.
-    var prominent = false
 
     var body: some View {
-        Button(intent: WidgetLogIntent(action: action, child: child)) {
-            VStack(alignment: .leading, spacing: prominent ? Spacing.x1 : 2) {
-                if prominent { Spacer(minLength: 0) }
-                Text(action.shortTitle)
-                    .font(prominent ? TypeStyle.display.font : TypeStyle.control.font)
-                    .foregroundStyle(palette.ink)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.8)
-                if let detail {
-                    Text(detail)
-                        .font(TypeStyle.meta.font)
-                        .foregroundStyle(palette.graphite)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-                }
+        let fullColor = renderingMode == .fullColor
+        Button(intent: WidgetLogIntent(action: .itchy, child: child)) {
+            HStack(spacing: Spacing.x2) {
+                Image(systemName: "plus")
+                    .font(.body.weight(.semibold))
+                Text("Itchy")
+                    .font(TypeStyle.title.font)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .frame(minWidth: Size.touchTarget, minHeight: Size.touchTarget)
-            .contentShape(Rectangle())
+            .foregroundStyle(fullColor ? palette.paper : Color.primary)
+            .widgetAccentable()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(minHeight: Size.touchTarget)
+            .background(
+                RoundedRectangle(cornerRadius: Corner.card)
+                    .fill(fullColor ? palette.indigo : Color.primary.opacity(0.28))
+            )
+            .contentShape(RoundedRectangle(cornerRadius: Corner.card))
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(action.accessibilityLabel(for: child?.name))
-        .accessibilityValue(detail ?? "")
+        .accessibilityLabel(WidgetAction.itchy.accessibilityLabel(for: child?.name))
+    }
+}
+
+/// A quieter one-tap button beside Itchy: a soft fill in full color, an
+/// outline in tinted and clear.
+struct SecondaryWidgetButton<Label: View>: View {
+    @Environment(\.widgetRenderingMode) private var renderingMode
+    let palette: Palette
+    @ViewBuilder let label: Label
+
+    var body: some View {
+        let fullColor = renderingMode == .fullColor
+        label
+            .font(TypeStyle.control.font)
+            .foregroundStyle(fullColor ? palette.ink : Color.primary)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(minHeight: Size.touchTarget)
+            .background {
+                if fullColor {
+                    RoundedRectangle(cornerRadius: Corner.card).fill(palette.oat)
+                } else {
+                    RoundedRectangle(cornerRadius: Corner.card).strokeBorder(Color.primary.opacity(0.5), lineWidth: 1)
+                }
+            }
+            .contentShape(RoundedRectangle(cornerRadius: Corner.card))
+    }
+}
+
+/// Flare logs instantly; Note opens the app's note sheet (there's no typing in a widget).
+struct FlareButton: View {
+    let child: ChildEntity?
+    let palette: Palette
+
+    var body: some View {
+        Button(intent: WidgetLogIntent(action: .flare, child: child)) {
+            SecondaryWidgetButton(palette: palette) { Text("Flare") }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(WidgetAction.flare.accessibilityLabel(for: child?.name))
+    }
+}
+
+struct NoteLink: View {
+    let palette: Palette
+
+    var body: some View {
+        Link(destination: DeepLink.note) {
+            SecondaryWidgetButton(palette: palette) { Text("Note") }
+        }
+        .accessibilityLabel("Write a note")
+        .accessibilityHint("Opens Cali Care.")
     }
 }
 
@@ -63,6 +109,11 @@ struct LoggedLabel: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
+            Image(systemName: "checkmark")
+                .font(.body.weight(.semibold))
+                .foregroundStyle(palette.indigo)
+                .widgetAccentable()
+                .accessibilityHidden(true)
             Text("Logged")
                 .font(TypeStyle.title.font)
                 .foregroundStyle(palette.ink)
@@ -81,7 +132,7 @@ struct AddChildPrompt: View {
     let palette: Palette
 
     var body: some View {
-        Text("Add your child in CaliCare to start logging.")
+        Text("Add your child in Cali Care to start logging.")
             .font(TypeStyle.body.font)
             .foregroundStyle(palette.graphite)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -106,6 +157,7 @@ extension WidgetAction {
         case .roughNight: "Rough night"
         case .bowelMovement: "Bowel movement"
         case .routineDone: "Routine done"
+        case .flare: "Flare"
         }
     }
 
@@ -115,6 +167,7 @@ extension WidgetAction {
         case .roughNight: "Log a rough night"
         case .bowelMovement: "Log a bowel movement"
         case .routineDone: "Log routine done"
+        case .flare: "Log a flare"
         }
         guard let childName else { return what }
         return "\(what) for \(childName)"
@@ -122,6 +175,18 @@ extension WidgetAction {
 }
 
 enum WidgetText {
+    /// "Last: 1:52 AM", "Last: Tue 1:52 AM by Dad", or a calm empty state.
+    static func last(_ date: Date?, by byline: String? = nil, now: Date, calendar: Calendar = .autoupdatingCurrent) -> String {
+        guard date != nil else { return "No itches logged yet" }
+        return lastItch(date, by: byline, now: now, calendar: calendar).replacingOccurrences(of: "Last itch ", with: "Last: ")
+    }
+
+    /// "Last night: 2 wake-ups" by day, "Tonight: 1 wake-up" from 7 PM.
+    static func wakeUps(_ count: Int, isNight: Bool) -> String {
+        let noun = count == 1 ? "wake-up" : "wake-ups"
+        return "\(isNight ? "Tonight" : "Last night"): \(count) \(noun)"
+    }
+
     /// "Last itch 2:14 AM", "Last itch Tue 2:14 AM by Dad", or a calm empty state.
     static func lastItch(_ date: Date?, by byline: String? = nil, now: Date, calendar: Calendar = .autoupdatingCurrent) -> String {
         guard let date else { return "No itches logged yet" }

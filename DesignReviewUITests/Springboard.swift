@@ -31,7 +31,7 @@ struct Springboard {
 
     /// Adds a CaliCare widget from the Home Screen. `page` 0 is the small widget,
     /// 1 the medium. With `captureAs`, saves each step and where to tap.
-    func addHomeWidget(page: Int = 0, captureAs prefix: String? = nil) {
+    func addHomeWidget(page: Int = 0, search: String? = nil, captureAs prefix: String? = nil) {
         let spot = CGVector(dx: 0.5, dy: 0.68)
         goHome()
         step(prefix, 1, tapAt: spot)
@@ -52,14 +52,22 @@ struct Springboard {
         sleep(3)
         dismissTips()
 
-        let cell = app.cells["CaliCare"]
+        if let search {
+            let field = app.searchFields.firstMatch
+            if field.waitForExistence(timeout: 3) {
+                field.tap()
+                field.typeText(search)
+                sleep(2)
+            }
+        }
+        let cell = app.cells["Cali Care"]
         XCTAssertTrue(cell.waitForExistence(timeout: 5))
         step(prefix, 4, element: cell)
         cell.tap()
         sleep(3)
 
         for _ in 0..<page {
-            app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'CaliCare,'")).firstMatch.swipeLeft()
+            app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Cali Care,'")).firstMatch.swipeLeft()
             sleep(2)
         }
         let confirm = app.buttons[" Add Widget"]
@@ -118,17 +126,17 @@ struct Springboard {
         area.tap()
         sleep(3)
 
-        let itchy = app.buttons["CaliCare, Itchy"]
+        let itchy = app.buttons["Cali Care, Itchy"]
         for (i, page) in pages.enumerated() {
             // After one widget is added the sheet may stay on CaliCare's page.
-            let cell = app.cells["CaliCare"]
+            let cell = app.cells["Cali Care"]
             if i == 0 || !itchy.exists {
                 XCTAssertTrue(cell.waitForExistence(timeout: 5))
                 if i == 0 { step(prefix, 4, element: cell) }
                 cell.tap()
                 sleep(3)
             }
-            let widget = app.buttons[page == 0 ? "CaliCare, Itchy" : "CaliCare, Last night"]
+            let widget = app.buttons[page == 0 ? "Cali Care, Itchy" : "Cali Care, Last night"]
             if page == 1, !widget.isHittable, itchy.exists {
                 itchy.swipeLeft()
                 sleep(2)

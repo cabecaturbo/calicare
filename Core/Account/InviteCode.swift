@@ -25,7 +25,7 @@ public struct InviteCode: Equatable, Sendable, CustomStringConvertible {
         let who = childName.map { "\($0)'s" } ?? "our"
         let what = role == .partner ? "log \(who) day together" : "help log \(who) day"
         let date = expires.formatted(.dateTime.month(.abbreviated).day().locale(locale))
-        return "Join me on CaliCare to \(what). Open CaliCare, go to Settings → Household → Join with a code, and enter \(description). It works once and expires \(date)."
+        return "Join me on Cali Care to \(what). Open Cali Care, go to Settings → Household → Join with a code, and enter \(description). It works once and expires \(date)."
     }
 }
 

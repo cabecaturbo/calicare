@@ -107,7 +107,8 @@ Day layout (7 AM – 8 PM), top to bottom:
    caregiver). Swipe to delete, tap to edit.
 5. Logging is the docked log control. Flare logs instantly; the
    confirmation line adds "Add where" (body outline, optional). Bowel
-   movement opens a small sheet; Note opens a text sheet.
+   movement opens a small sheet; Note opens a text sheet (the same sheet
+   the medium widget's Note button opens, via calicare://note).
 
 Night layout (8 PM – 7 AM):
 1. AppHeader: "Today", no caption.
@@ -194,7 +195,9 @@ button. Steps 2–5 have a back button and a progress bar in equal steps
    Lock Screen / Control Center (the phone follows it). "Show me how"
    opens the setup guide for the chosen surface (DESIGN.md §7: 4 steps
    for the Home Screen, 3 each for the Lock Screen and Control Center,
-   then "You're set."); "Skip for now".
+   then "You're set."); "Skip for now". Every guide screen shows a real
+   iOS screenshot with a zoom callout on the spot to tap; "Next" on each
+   step, "Done" at the end.
 5. Evening check-in: a locked phone at 6:30 PM with the four answers on
    the notification. "Turn on reminders" turns on the evening skin
    check-in (with a short priming line, then the system prompt); "Not

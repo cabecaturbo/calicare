@@ -56,7 +56,10 @@ public struct WidgetDataSource: Sendable {
             lastItch: lastItch?.timestamp,
             lastItchBy: lastItch.flatMap {
                 LoggedBy.byline($0.loggedBy, myName: AccountSettings().displayName, householdSize: SyncSettings().householdSize)
-            }
+            },
+            // The care day's night is last night by day and tonight from 7 PM.
+            nightWakeUps: today.nightItchEpisodes,
+            isNight: !day.isDaytime(date, calendar: calendar)
         )
     }
 

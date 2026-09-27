@@ -103,7 +103,8 @@ Drawing the scale
 - Every swatch, bar, and dot has a 1px muted border, so calm never
   vanishes into the background.
 - Color is never the only signal: bar height also encodes the answer.
-- A day with no skin answer is an empty dashed outline ("not answered").
+- A day with no skin answer is a short muted dash on the baseline, with no
+  bar ("not answered" in the legend).
 - Never infer skin from itches or flares. Skin by day comes only from
   the skinToday answer.
 
@@ -157,6 +158,17 @@ the tab bar, the log control, and the segmented control. Chart marks 3pt.
 Separators: filled surface cards for summaries; 0.5pt line dividers
 inside lists. No heavy rules above sections.
 
+Bottom scrim: a 48pt fade from transparent to bg sits behind the bottom
+bar, so scrolled content never collides with it. It's the one allowed
+gradient (a scrim, not decoration).
+
+Tab bar active tab: by day a surface pill with accent text; at night an
+accent pill with onAccent text (the surface pill disappears into the
+night bar; the accent pill is 7.3:1 against it).
+
+Log control: "Itchy" in the pill has a bg fill, a 1pt line border, and a
+small plus, so it never looks like the active tab.
+
 Summary card: surface fill, 12pt corners, caption eyebrow, serif title,
 muted caption, and an optional ink drawing on the right. Used for "Last
 night", "Up next", and the Progress headline. One per screen.
@@ -170,7 +182,8 @@ summary card, and the pill shows just "More".
 
 Skin check-in (Today, until answered): the question in title size and
 four card buttons (swatch + label, at least 44pt, selected = accent
-border on surface). Once answered it collapses to one line: "Skin
+border on surface with the check as a small badge on the card's corner,
+so labels like "A little itchy" stay on one line). Once answered it collapses to one line: "Skin
 today: A little itchy · Change".
 
 Buttons
@@ -210,6 +223,10 @@ Any instruction that happens outside our app (adding a widget, Lock
 Screen widgets, Action Button, Siri, Control Center, notification
 permissions, Shortcuts automations) must be shown, not described.
 
+**The app's display name is "Cali Care"** (CFBundleDisplayName), so that's what
+the Home Screen label, the widget gallery, and Control Center search show; the
+guides say "Search for Cali Care". The control is named "Log Itchy".
+
 **Matched to iOS 27.0** (the current simulator runtime, iPhone 17), checked
 September 27, 2026 against simulator captures in
 `design-review/redesign/steps/` (widgetHome_, widgetLock_ and
@@ -217,17 +234,22 @@ controlCenter_ios27_step*). Re-check whenever iOS changes and update the
 wording and drawings together.
 
 The setup guide ("Show me how")
-- One step per screen: "Step N of M", a back button, the iPhone at that
-  exact moment with a highlight ring and a finger-tap marker on what to
-  press, one sentence of instruction (title), then Back and Next. The
-  last screen says "You're set." and invites one real tap.
-- The iPhone is a drawn frame at true size (393 × 852 pt screen, Dynamic
-  Island, 9:41 status bar, calm neutral wallpaper, correct 4-column grid
-  and dock, neutral placeholder icons with generic names, never real
-  third-party icons or logos). Apple's device bezels aren't available
-  here, so the frame is drawn; its values are `--mock-*` tokens.
-- These drawings are replaced by real simulator screenshots once the
-  restyled widgets ship (saved to `design/screenshots/`).
+- One step per screen: "Step N of M" with a progress bar and back
+  button; the iPhone at about 70% of the screen height showing that exact
+  moment as a **real iOS 27 simulator screenshot** inside the device
+  frame, with a highlight ring and a finger-tap marker; a round zoom
+  callout (about 2×) of the exact spot to tap; one instruction sentence
+  in sans body, at most two lines; Back and Next.
+- CTA labels: "Next" on every step, "Done" on the final screen.
+- The final screen says only "You're set." over the real screenshot of
+  the result. No instructions there.
+- One date everywhere: Sunday, September 27 (the captures' date).
+- Captures come from `scripts/capture-guides.sh` on a separate simulator
+  ("CaliCare Captures", erased first) and live in
+  `design/screenshots/guide` and `design/screenshots/looks`.
+- The drawn iPhone (393 × 852, `--mock-*` tokens) is kept only as a
+  fallback for moments that can't be captured. Real captures are iPhone 17
+  size (402 × 874).
 - Where iOS offers a direct button, use it instead of steps (SiriTipView,
   ShortcutsLink, opening the Settings app).
 - Assets are named by feature and iOS version (widgetHome_ios27_step1).
@@ -238,19 +260,19 @@ The three paths, in iOS 27 wording
      jiggle.
   2. Tap Edit in the top-left corner, then Add Widget. (Edit opens a
      menu: Add Widget, Customize, Edit Wallpaper, Edit Pages.)
-  3. Search for CaliCare, tap it, and swipe to pick a size. (The gallery
-     shows the bundle name, "CaliCare".)
+  3. Search for Cali Care, tap it, and swipe to pick a size.
   4. Tap Add Widget, then tap the checkmark in the top-right corner.
      (iOS 27's Done is a checkmark.)
 - Lock Screen widget (3 steps):
   1. Touch and hold your Lock Screen, then tap Customize. (It opens the
      Lock Screen editor directly.)
-  2. Tap the widget area under the clock, then CaliCare.
+  2. Tap the widget area under the clock, then Cali Care.
   3. Tap Itchy to add it, then tap Done.
 - Control Center control (3 steps):
   1. Swipe down from the top-right corner to open Control Center.
   2. Touch and hold an empty area, then tap Add a Control. (Or tap +.)
-  3. Search for CaliCare, then tap Log Itchy. Tap an empty area to finish.
+  3. Search for Cali Care, tap Log Itchy, then tap an empty area to
+     finish.
 - Action Button (iPhones that have one): Settings › Action Button ›
   Controls › Log Itchy.
 
@@ -292,22 +314,28 @@ Sizes at true point size for a 393-pt-wide iPhone. Inside the system's
 shape: our tokens, the serif only for "Itchy", sans everywhere else, 12pt
 inner corners.
 
-- Small (158 × 158): one big Itchy button (logs without opening the app,
-  an interactive widget) and "Last: 1:52 AM". After a tap: "Logged ·
+- Every Itchy button has a clear tap affordance: a filled 12pt tile with a
+  small plus and the word, centered.
+- Small (158 × 158): the Itchy tile (logs without opening the app, an
+  interactive widget) and "Last: 1:52 AM". After a tap: "Logged ·
   2:14 AM" with an Undo button (44pt) for 5 seconds.
-- Medium (338 × 158): "Tonight: 2 wake-ups", Itchy (primary), Flare and
-  Note (secondary), "Last 1:52 AM".
+- Medium (338 × 158): "Last night: 2 wake-ups" by day, "Tonight: 2
+  wake-ups" from 7 PM; the Itchy tile (primary); Flare (logs instantly) and
+  Note (opens the app's note sheet; a widget can't take typing); "Last
+  1:52 AM".
 - Lock Screen circular (72 × 72): one-tap "Itchy" (the one widget-only
   type exception: serif 17).
-- Lock Screen rectangular (160 × 72): "Tonight: 2 · Last 1:52 AM".
+- Lock Screen rectangular (160 × 72): "Tonight: 2" (or "Last night: 2")
+  over "Last 1:52 AM".
 - Control (Control Center and the Lock Screen): "Log Itchy", small and
   wide. It can be assigned to the Action Button.
 
 Looks (iOS 27, as since iOS 26): Home Screen widgets render full color,
 tinted, and clear, each in light and dark. Full color uses our palette
 (night palette in dark). Tinted and clear have no fills of their own:
-content becomes one tint or white on glass, so hierarchy comes from size
-and weight only, and every piece of text stays at least 4.5:1 on the
+content becomes one tint or white on glass. Itchy stays the most
+prominent element: its tile keeps a stronger glass fill while Flare and
+Note become outlines. Hierarchy otherwise comes from size and weight, and every piece of text stays at least 4.5:1 on the
 glass over the wallpaper. Lock Screen widgets and controls are always
 monochrome on dark glass.
 

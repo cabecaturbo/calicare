@@ -19,7 +19,11 @@ final class ShellTourTests: XCTestCase {
         XCTAssertTrue(name.waitForExistence(timeout: 5))
         name.tap()
         name.typeText("Cal")
-        tap(app.buttons["Continue"])
+        // A fresh simulator can show a keyboard tip with its own "Continue".
+        for _ in 0..<3 where name.exists {
+            app.buttons["Continue"].firstMatch.tap()
+            sleep(1)
+        }
         tap(app.buttons["Skip setup"])
 
         // A few logs so the tabs have something in them.

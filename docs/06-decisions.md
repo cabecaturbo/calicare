@@ -196,3 +196,25 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
 - **Looks:** Home Screen widgets in full color, tinted and clear, day and night. Lock Screen widgets and controls are monochrome only. Light glass failed contrast on the day wallpaper (3.98:1), so monochrome widgets sit on dark glass (text 8.2:1). Every look keeps text at least 4.5:1 over the wallpaper.
 - **One type exception:** the Lock Screen circle's "Itchy" is serif 17, because a 72-pt circle can't hold the 24-pt title size.
 - **Next (app):** restyle the Swift widgets to these designs (including `widgetRenderingMode` for tinted and clear and the logged state with Undo), rename the control, capture real screenshots into `design/screenshots/`, and swap them into onboarding and the guides.
+
+## Review of 455e7f1: names, real screenshots, guide layout (September 27, 2026)
+
+- **Display name "Cali Care"** (CFBundleDisplayName for the app and Messages; the extension is "Cali Care Widgets"). The Home Screen label, widget gallery, and Control Center search now read "Cali Care", so the guides say "Search for Cali Care". The control is renamed "Log Itchy". Invite messages say "Cali Care".
+- **Widgets restyled in the app** to the canvas designs, using the existing type styles (the full type migration is still U3–U5):
+  - Every Itchy button is a filled 12-pt tile (`Corner.card`, new) with a plus and the word, centered.
+  - Tinted and clear (`widgetRenderingMode == .accented`) keep a filled glass tile for Itchy and draw Flare/Note as outlines, so Itchy stays first.
+  - Medium: "Last night: N wake-ups" by day, "Tonight" from 7 PM (`WidgetSnapshot.nightWakeUps`, `isNight`), Itchy, Flare (new `WidgetAction.flare`), and Note.
+  - **Note from a widget opens the app** (`calicare://note`, scheme registered in project.yml) to a small new note sheet, because a widget can't take typing and the app had no note entry yet.
+  - Lock Screen: a plus over "Itchy" (circle) and "Tonight/Last night: N · Last: time" (rectangle).
+- **Real screenshots, taken on a separate simulator.** `scripts/capture-guides.sh` erases and uses "CaliCare Captures" (iPhone 17, iOS 27), so the everyday simulator isn't wiped. It starts from a debug-only seed (`-designReviewSeed YES`: Cal, onboarded, two wake-ups), because tapping through onboarding on a fresh simulator kept tripping over system tips. `GuideCaptureTests` captures every guide moment and each Home Screen look; images and tap spots are in `design/screenshots/`.
+- **Looks are chosen in the Home Screen's Customize sheet** (Default, Dark, Clear, Tinted). The test taps them by name, then taps "Auto" so the simulator's light or dark appearance decides; left on "Light", night captures came out light. With Clear or Tinted chosen, the sheet grows (tint sliders), so fixed tap positions didn't work.
+- **Undo after the "Logged" capture,** so later captures show the widget and not a leftover "Logged".
+- **Real frames are iPhone 17 size (402 × 874)**, which is what the captures are; the drawn 393 × 852 phone stays as the fallback.
+- **Guide layout:** phone at about 70% of the screen height, a round 2× zoom callout of the tap spot, the instruction in sans body (at most two lines), "Next" on every step and "Done" at the end, and "You're set." screens with no instructions ("tap an empty area to finish" moved into Control Center step 3). One date everywhere: Sunday, September 27.
+- **Welcome drawing fix:** drawings only showed their line caps because HTML parsing lowercases `pathLength`, so React never received it and the 1-unit dash pattern became dots. `.draw` now uses a fixed 420-unit dash.
+- **Canvas fixes from the earlier review:**
+  - The log control's Itchy has a bg fill, a 1-pt border, and a plus (it no longer looks like the active tab).
+  - The night tab bar's active tab is an accent pill (7.3:1 against the bar).
+  - "Not answered" is a short muted dash with no bar, and the legend matches.
+  - A 48-pt bg fade sits behind the bottom bar (the one allowed gradient). A "Plan · scrolled" board shows the Provider's plan row.
+  - The check-in's selected check is a corner badge, so labels stay on one line.

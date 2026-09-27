@@ -13,4 +13,5 @@ final class Shell {
     var showingSettings = false
     var showingAddChild = false
     var showingLog = false
+    var showingNote = false
 }

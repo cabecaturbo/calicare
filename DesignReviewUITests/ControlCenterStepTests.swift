@@ -41,7 +41,7 @@ final class ControlCenterStepTests: XCTestCase {
         let search = springboard.searchFields.firstMatch
         if search.waitForExistence(timeout: 4) {
             search.tap()
-            search.typeText("CaliCare")
+            search.typeText("Cali Care")
             sleep(2)
         }
         Capture.screen("controlCenter_ios27_step4")

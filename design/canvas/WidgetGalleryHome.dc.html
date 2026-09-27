@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Home Screen widgets, every look</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width:1320px;height:980px;display:flex;flex-direction:column;font-family:var(--sans)">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<section style="flex-grow:1;box-sizing:border-box;padding:var(--s5) var(--s6);background:{{th.wall}};color:var(--mock-on-wall);display:flex;flex-direction:column;gap:var(--s4)">
+<h2 class="t-label" style="margin:0">{{th.title}}</h2>
+<div style="display:flex;gap:var(--s6);align-items:flex-start">
+<sc-for list="{{looks}}" as="lk" hint-placeholder-count="3">
+<div style="display:flex;flex-direction:column;gap:var(--s2)">
+<span class="t-caption">{{lk.label}}</span>
+<div style="display:flex;gap:var(--s4)">
+<dc-import name="WSmall" look="{{lk.id}}" theme="{{th.id}}" state="normal" hint-size="158px,158px"></dc-import>
+<dc-import name="WSmall" look="{{lk.id}}" theme="{{th.id}}" state="logged" hint-size="158px,158px"></dc-import>
+</div>
+<dc-import name="WMedium" look="{{lk.id}}" theme="{{th.id}}" hint-size="338px,158px"></dc-import>
+</div>
+</sc-for>
+</div>
+</section>
+</sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1320,"height":980}}'>
+class Component extends DCLogic {
+renderVals() {
+return {
+themes: [
+{ id: 'day', title: 'Day · small (normal, logged) and medium', wall: 'var(--mock-wall)' },
+{ id: 'night', title: 'Night · small (normal, logged) and medium', wall: 'var(--mock-wall-night)' }
+],
+looks: [
+{ id: 'full', label: 'Full color' },
+{ id: 'tinted', label: 'Tinted' },
+{ id: 'clear', label: 'Clear' }
+]
+};
+}
+}
+</script>
+</body>
+</html>

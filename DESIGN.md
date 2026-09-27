@@ -210,40 +210,56 @@ Any instruction that happens outside our app (adding a widget, Lock
 Screen widgets, Action Button, Siri, Control Center, notification
 permissions, Shortcuts automations) must be shown, not described.
 
-The VisualSteps component
-- One step per screen, swipeable. Each step shows an iPhone frame with
-  the exact screen the parent will see, with the spot to tap marked by a
-  soft indigo ring. Under it, one short sentence in row style:
-  "Touch and hold an empty spot on your Home Screen."
-- Steps are real screenshots or short looping screen recordings (3–6
-  seconds, no sound), never drawings of a phone.
-- A "Show me again" link and a "Done" button. Steps can always be skipped.
-- Assets live in the asset catalog, named by feature and iOS version
-  (e.g. widgetHome_ios27_step1), so they're easy to replace when iOS
-  changes.
+**Matched to iOS 27.0** (the current simulator runtime, iPhone 17), checked
+September 27, 2026 against simulator captures in
+`design-review/redesign/steps/` (widgetHome_, widgetLock_ and
+controlCenter_ios27_step*). Re-check whenever iOS changes and update the
+wording and drawings together.
+
+The setup guide ("Show me how")
+- One step per screen: "Step N of M", a back button, the iPhone at that
+  exact moment with a highlight ring and a finger-tap marker on what to
+  press, one sentence of instruction (title), then Back and Next. The
+  last screen says "You're set." and invites one real tap.
+- The iPhone is a drawn frame at true size (393 × 852 pt screen, Dynamic
+  Island, 9:41 status bar, calm neutral wallpaper, correct 4-column grid
+  and dock, neutral placeholder icons with generic names, never real
+  third-party icons or logos). Apple's device bezels aren't available
+  here, so the frame is drawn; its values are `--mock-*` tokens.
+- These drawings are replaced by real simulator screenshots once the
+  restyled widgets ship (saved to `design/screenshots/`).
 - Where iOS offers a direct button, use it instead of steps (SiriTipView,
   ShortcutsLink, opening the Settings app).
+- Assets are named by feature and iOS version (widgetHome_ios27_step1).
+
+The three paths, in iOS 27 wording
+- Home Screen widget (4 steps):
+  1. Touch and hold an empty area of your Home Screen until the apps
+     jiggle.
+  2. Tap Edit in the top-left corner, then Add Widget. (Edit opens a
+     menu: Add Widget, Customize, Edit Wallpaper, Edit Pages.)
+  3. Search for CaliCare, tap it, and swipe to pick a size. (The gallery
+     shows the bundle name, "CaliCare".)
+  4. Tap Add Widget, then tap the checkmark in the top-right corner.
+     (iOS 27's Done is a checkmark.)
+- Lock Screen widget (3 steps):
+  1. Touch and hold your Lock Screen, then tap Customize. (It opens the
+     Lock Screen editor directly.)
+  2. Tap the widget area under the clock, then CaliCare.
+  3. Tap Itchy to add it, then tap Done.
+- Control Center control (3 steps):
+  1. Swipe down from the top-right corner to open Control Center.
+  2. Touch and hold an empty area, then tap Add a Control. (Or tap +.)
+  3. Search for CaliCare, then tap Log Itchy. Tap an empty area to finish.
+- Action Button (iPhones that have one): Settings › Action Button ›
+  Controls › Log Itchy.
 
 Capturing the assets
-- Simulator: Claude Code captures with
-  `xcrun simctl io booted screenshot` and `xcrun simctl io booted
-  recordVideo`, on the current iOS.
-- Real device only (the human records these with Screen Recording):
-  Action Button setup, anything Siri, Control Center on device.
+- Simulator: the `DesignReview` scheme's UI tests drive Springboard and
+  save screenshots (StepAssetTests, ControlCenterStepTests,
+  WidgetReviewTests).
+- Real device only (the human records these): Action Button, Siri.
 - Blur or remove any personal content in captures.
-
-Current step flows to build (verify each on the current iOS first):
-- Home Screen widget: touch and hold an empty spot → tap Edit → Add
-  Widget → find Cali Care → pick a size → Add Widget → Done.
-- Lock Screen widget (captured on iOS 27.0 in the simulator,
-  widgetLock_ios27_step1–6): touch and hold the Lock Screen → Customize
-  (opens the Lock Screen editor directly; there is no Lock Screen / Home
-  Screen choice) → tap the widget area under the clock → tap CaliCare in
-  the list → tap a widget to add it → Done.
-- Action Button: Settings → Action Button → swipe to Shortcut → choose
-  "Log itching."
-- Control Center: swipe down from the top-right → touch and hold → Add a
-  Control → find Cali Care.
 
 ## 8. Motion and feedback
 - Illustrations draw themselves in once (about 1 second) and then stop.
@@ -272,10 +288,28 @@ a page from a small magazine.
 - Footer in meta: "Cali Care · Not medical advice."
 
 ## 11. Widgets
-Widgets use the same palette and type: paper or night background, ink
-text, indigo only for the selected or most recent item. The small widget
-is one big word ("Itchy") and the last-logged time. No icons unless the
-Lock Screen size demands one.
+Sizes at true point size for a 393-pt-wide iPhone. Inside the system's
+shape: our tokens, the serif only for "Itchy", sans everywhere else, 12pt
+inner corners.
+
+- Small (158 × 158): one big Itchy button (logs without opening the app,
+  an interactive widget) and "Last: 1:52 AM". After a tap: "Logged ·
+  2:14 AM" with an Undo button (44pt) for 5 seconds.
+- Medium (338 × 158): "Tonight: 2 wake-ups", Itchy (primary), Flare and
+  Note (secondary), "Last 1:52 AM".
+- Lock Screen circular (72 × 72): one-tap "Itchy" (the one widget-only
+  type exception: serif 17).
+- Lock Screen rectangular (160 × 72): "Tonight: 2 · Last 1:52 AM".
+- Control (Control Center and the Lock Screen): "Log Itchy", small and
+  wide. It can be assigned to the Action Button.
+
+Looks (iOS 27, as since iOS 26): Home Screen widgets render full color,
+tinted, and clear, each in light and dark. Full color uses our palette
+(night palette in dark). Tinted and clear have no fills of their own:
+content becomes one tint or white on glass, so hierarchy comes from size
+and weight only, and every piece of text stays at least 4.5:1 on the
+glass over the wallpaper. Lock Screen widgets and controls are always
+monochrome on dark glass.
 
 ## 12. Definition of done for any UI task
 - Uses only tokens and type styles from DesignSystem.swift.

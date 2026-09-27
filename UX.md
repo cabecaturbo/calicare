@@ -162,8 +162,9 @@ Grouped List:
 1. Children
 2. Family: sign in, members, invite (Phase 2)
 3. Reminders: morning check-in, skin check-in, routine reminders
-4. Quick logging: Home Screen widget, Lock Screen widget, Action Button,
-   Siri, Control Center (each opens VisualSteps). This is the home for
+4. Quick logging: Home Screen widget, Lock Screen widget, Control
+   Center, Action Button, Siri. The first three open the same setup
+   guides as onboarding. This is the home for
    every guide except onboarding's Home Screen widget. A guide or step
    without a real screenshot or recording is hidden, never shown as a
    placeholder.
@@ -187,9 +188,13 @@ button. Steps 2–5 have a back button and a progress bar in equal steps
    "First name" (autofocus, display size). Birthday later.
 3. The one scale: "How was Cal's skin today?" with the four answers
    rising as bars; "Lighter is calmer", "One tap".
-4. Log from anywhere: a phone Home Screen where a tap on the Itchy widget
-   logs it. "Show me how" opens VisualSteps; "Skip for now". (Action
-   Button guide is optional, in Settings.)
+4. Log from anywhere (step 3 of 4): a realistic iPhone showing the small
+   widget, looping tap → "Logged" → normal. "Log at 2 AM without opening
+   anything", one sentence, and a switch under the phone: Home Screen /
+   Lock Screen / Control Center (the phone follows it). "Show me how"
+   opens the setup guide for the chosen surface (DESIGN.md §7: 4 steps
+   for the Home Screen, 3 each for the Lock Screen and Control Center,
+   then "You're set."); "Skip for now".
 5. Evening check-in: a locked phone at 6:30 PM with the four answers on
    the notification. "Turn on reminders" turns on the evening skin
    check-in (with a short priming line, then the system prompt); "Not

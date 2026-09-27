@@ -53,10 +53,11 @@
     },
     "OnbWidget.dc.html": {
       "h": 844,
-      "title": "4 Log from anywhere",
+      "title": "4 Log from anywhere (redesigned)",
       "w": 390,
       "x": 1410,
-      "y": 0
+      "y": 0,
+      "is_interactive": true
     },
     "Plan.dc.html": {
       "h": 844,
@@ -134,6 +135,159 @@
       "w": 390,
       "h": 844,
       "title": "Today \u00b7 answered"
+    },
+    "WSmall.dc.html": {
+      "x": 0,
+      "y": 4450,
+      "w": 158,
+      "h": 158,
+      "title": "Small widget"
+    },
+    "WMedium.dc.html": {
+      "x": 238,
+      "y": 4450,
+      "w": 338,
+      "h": 158,
+      "title": "Medium widget"
+    },
+    "WLock.dc.html": {
+      "x": 656,
+      "y": 4450,
+      "w": 72,
+      "h": 72,
+      "title": "Lock Screen and control"
+    },
+    "WidgetGalleryHome.dc.html": {
+      "x": 808,
+      "y": 4450,
+      "w": 1320,
+      "h": 980,
+      "title": "Home Screen widgets \u00b7 every look, day and night"
+    },
+    "WidgetGalleryLock.dc.html": {
+      "x": 2208,
+      "y": 4450,
+      "w": 820,
+      "h": 520,
+      "title": "Lock Screen widgets and control \u00b7 day and night"
+    },
+    "Phone.dc.html": {
+      "x": 0,
+      "y": 5850,
+      "w": 417,
+      "h": 876,
+      "title": "iPhone (iOS 27, 393\u00d7852 screen)"
+    },
+    "SetupStep.dc.html": {
+      "x": 1007,
+      "y": 5850,
+      "w": 390,
+      "h": 844,
+      "title": "SetupStep (component)"
+    },
+    "GuideHome1.dc.html": {
+      "x": 0,
+      "y": 7100,
+      "w": 390,
+      "h": 844,
+      "title": "Home Screen guide \u00b7 Step 1",
+      "is_interactive": true
+    },
+    "GuideHome2.dc.html": {
+      "x": 470,
+      "y": 7100,
+      "w": 390,
+      "h": 844,
+      "title": "Home Screen guide \u00b7 Step 2",
+      "is_interactive": true
+    },
+    "GuideHome3.dc.html": {
+      "x": 940,
+      "y": 7100,
+      "w": 390,
+      "h": 844,
+      "title": "Home Screen guide \u00b7 Step 3",
+      "is_interactive": true
+    },
+    "GuideHome4.dc.html": {
+      "x": 1410,
+      "y": 7100,
+      "w": 390,
+      "h": 844,
+      "title": "Home Screen guide \u00b7 Step 4",
+      "is_interactive": true
+    },
+    "GuideHomeDone.dc.html": {
+      "x": 1880,
+      "y": 7100,
+      "w": 390,
+      "h": 844,
+      "title": "Home Screen guide \u00b7 Done",
+      "is_interactive": true
+    },
+    "GuideLock1.dc.html": {
+      "x": 0,
+      "y": 8300,
+      "w": 390,
+      "h": 844,
+      "title": "Lock Screen guide \u00b7 Step 1",
+      "is_interactive": true
+    },
+    "GuideLock2.dc.html": {
+      "x": 470,
+      "y": 8300,
+      "w": 390,
+      "h": 844,
+      "title": "Lock Screen guide \u00b7 Step 2",
+      "is_interactive": true
+    },
+    "GuideLock3.dc.html": {
+      "x": 940,
+      "y": 8300,
+      "w": 390,
+      "h": 844,
+      "title": "Lock Screen guide \u00b7 Step 3",
+      "is_interactive": true
+    },
+    "GuideLockDone.dc.html": {
+      "x": 1410,
+      "y": 8300,
+      "w": 390,
+      "h": 844,
+      "title": "Lock Screen guide \u00b7 Done",
+      "is_interactive": true
+    },
+    "GuideControl1.dc.html": {
+      "x": 0,
+      "y": 9500,
+      "w": 390,
+      "h": 844,
+      "title": "Control Center guide \u00b7 Step 1",
+      "is_interactive": true
+    },
+    "GuideControl2.dc.html": {
+      "x": 470,
+      "y": 9500,
+      "w": 390,
+      "h": 844,
+      "title": "Control Center guide \u00b7 Step 2",
+      "is_interactive": true
+    },
+    "GuideControl3.dc.html": {
+      "x": 940,
+      "y": 9500,
+      "w": 390,
+      "h": 844,
+      "title": "Control Center guide \u00b7 Step 3",
+      "is_interactive": true
+    },
+    "GuideControlDone.dc.html": {
+      "x": 1410,
+      "y": 9500,
+      "w": 390,
+      "h": 844,
+      "title": "Control Center guide \u00b7 Done",
+      "is_interactive": true
     }
   },
   "createdOnFiles": {
@@ -176,6 +330,41 @@
       "w": 240,
       "x": 0,
       "y": 1650
+    },
+    "widgets": {
+      "x": 0,
+      "y": 4200,
+      "text": "Widgets & setup \u00b7 the widgets",
+      "kind": "title1",
+      "maxW": 3030
+    },
+    "phones": {
+      "x": 0,
+      "y": 5620,
+      "text": "Widgets & setup \u00b7 the iPhone (onboarding step 4 is in the top row)",
+      "kind": "title1",
+      "maxW": 1400
+    },
+    "g_home": {
+      "x": 0,
+      "y": 6860,
+      "text": "Widgets & setup \u00b7 Home Screen guide",
+      "kind": "title1",
+      "maxW": 2270
+    },
+    "g_lock": {
+      "x": 0,
+      "y": 8060,
+      "text": "Widgets & setup \u00b7 Lock Screen guide",
+      "kind": "title1",
+      "maxW": 2270
+    },
+    "g_control": {
+      "x": 0,
+      "y": 9260,
+      "text": "Widgets & setup \u00b7 Control Center guide",
+      "kind": "title1",
+      "maxW": 2270
     }
   },
   "order": [
@@ -197,7 +386,27 @@
     "ProgressNight.dc.html",
     "OnbProgress.dc.html",
     "TodayChoosing.dc.html",
-    "TodayAnswered.dc.html"
+    "TodayAnswered.dc.html",
+    "WSmall.dc.html",
+    "WMedium.dc.html",
+    "WLock.dc.html",
+    "WidgetGalleryHome.dc.html",
+    "WidgetGalleryLock.dc.html",
+    "Phone.dc.html",
+    "SetupStep.dc.html",
+    "GuideHome1.dc.html",
+    "GuideHome2.dc.html",
+    "GuideHome3.dc.html",
+    "GuideHome4.dc.html",
+    "GuideHomeDone.dc.html",
+    "GuideLock1.dc.html",
+    "GuideLock2.dc.html",
+    "GuideLock3.dc.html",
+    "GuideLockDone.dc.html",
+    "GuideControl1.dc.html",
+    "GuideControl2.dc.html",
+    "GuideControl3.dc.html",
+    "GuideControlDone.dc.html"
   ],
   "pages": [],
   "title": "Cali Care screen directions"

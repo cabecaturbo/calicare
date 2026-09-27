@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Setup step</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="day" style="width:390px;height:844px;box-sizing:border-box;padding:52px var(--gutter) 32px;background:var(--bg);color:var(--ink);font-family:var(--sans);display:flex;flex-direction:column">
+<div style="height:var(--tap);display:flex;align-items:center;gap:var(--s3)">
+<a href="{{back}}" aria-label="Back" style="width:var(--tap);height:var(--tap);margin-left:-12px;display:flex;align-items:center;justify-content:center;color:var(--ink);text-decoration:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></a>
+<div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="{{total}}" aria-valuenow="{{shown}}" aria-label="{{counter}}" style="flex-grow:1"><div class="progress-fill" style="width:{{pct}}"></div></div>
+<span class="t-caption muted" style="min-width:76px;text-align:right">{{counter}}</span>
+</div>
+<span class="t-caption muted" style="margin-top:var(--s2)">{{where}}</span>
+
+<div style="margin:var(--s3) auto 0;width:234px;height:491px;overflow:hidden">
+<div style="width:417px;height:876px;transform:scale(0.56);transform-origin:top left">
+<dc-import name="Phone" surface="{{surface}}" mode="{{mode}}" ring="{{ring}}" tap="{{tap}}" loop="{{loop}}" hint-size="417px,876px"></dc-import>
+</div>
+</div>
+
+<div style="margin-top:var(--s4);display:flex;flex-direction:column;gap:var(--s1)">
+<h1 class="t-title" style="margin:0">{{heading}}</h1>
+<sc-if value="{{hasBody}}" hint-placeholder-val="{{false}}"><p class="t-body muted" style="margin:0">{{body}}</p></sc-if>
+</div>
+<div style="flex-grow:1"></div>
+<div style="display:flex;align-items:center;gap:var(--s3)">
+<a href="{{back}}" class="btn-text t-body" style="min-width:72px;justify-content:flex-start">Back</a>
+<a href="{{next}}" class="btn-primary t-label" style="flex-grow:1">{{nextLabel}}</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"path":{"editor":"enum","options":["home","lock","control"],"default":"home"},"step":{"editor":"int","default":1,"min":1,"max":5},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const path = this.props.path ?? 'home';
+const step = Number(this.props.step ?? 1);
+const flows = {
+home: {
+where: 'Home Screen widget',
+file: 'GuideHome', surface: 'home',
+steps: [
+{ mode: 'normal', tap: '196,560', ring: '', heading: 'Touch and hold an empty area of your Home Screen until the apps jiggle.' },
+{ mode: 'editMenu', tap: '90,131', ring: '24,106,242,50', heading: 'Tap Edit in the top-left corner, then Add Widget.' },
+{ mode: 'gallerySearch', tap: '100,177', ring: '12,147,369,60', heading: 'Search for CaliCare, tap it, and swipe to pick a size.' },
+{ mode: 'sizePicker', tap: '196,782', ring: '14,752,365,60', heading: 'Tap Add Widget, then tap the checkmark in the top-right corner.' }
+],
+done: { mode: 'normal', tap: '103,151', heading: 'You’re set.', body: 'Try it: tap Itchy on your Home Screen.' }
+},
+lock: {
+where: 'Lock Screen widget',
+file: 'GuideLock', surface: 'lock',
+steps: [
+{ mode: 'hold', tap: '196,766', ring: '116,740,161,52', heading: 'Touch and hold your Lock Screen, then tap Customize.' },
+{ mode: 'list', tap: '120,573', ring: '12,543,369,60', heading: 'Tap the widget area under the clock, then CaliCare.' },
+{ mode: 'picker', tap: '196,671', ring: '144,619,105,105', heading: 'Tap Itchy to add it, then tap Done.' }
+],
+done: { mode: 'normal', tap: '110,258', heading: 'You’re set.', body: 'Try it: tap Itchy on your Lock Screen, even before you unlock.' }
+},
+control: {
+where: 'Control Center control',
+file: 'GuideControl', surface: 'control',
+steps: [
+{ mode: 'home', tap: '352,24', ring: '', heading: 'Swipe down from the top-right corner to open Control Center.' },
+{ mode: 'edit', tap: '196,780', ring: '106,756,181,48', heading: 'Touch and hold an empty area, then tap Add a Control.' },
+{ mode: 'gallery', tap: '60,241', ring: '20,203,80,80', heading: 'Search for CaliCare, then tap Log Itchy.' }
+],
+done: { mode: 'added', tap: '75,154', heading: 'You’re set.', body: 'Tap an empty area to finish. You can also put Log Itchy on the Action Button in Settings.' }
+}
+};
+const f = flows[path] || flows.home;
+const total = f.steps.length;
+const isDone = step > total;
+const s = isDone ? f.done : f.steps[step - 1];
+const name = n => n > total ? f.file + 'Done.dc.html' : f.file + n + '.dc.html';
+return {
+where: f.where,
+surface: f.surface,
+mode: s.mode,
+ring: s.ring || '',
+tap: s.tap || '',
+loop: isDone && path === 'home',
+heading: s.heading,
+body: s.body || '',
+hasBody: !!s.body,
+total,
+shown: Math.min(step, total),
+counter: isDone ? 'Done' : 'Step ' + step + ' of ' + total,
+pct: (Math.min(step, total) / total * 100) + '%',
+back: step === 1 ? 'OnbWidget.dc.html' : name(step - 1),
+next: isDone ? 'OnbCheckin.dc.html' : name(step + 1),
+nextLabel: isDone ? 'Continue' : (step === total ? 'I did it' : 'Next')
+};
+}
+}
+</script>
+</body>
+</html>

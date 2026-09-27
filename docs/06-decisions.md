@@ -184,3 +184,15 @@ From a design brief the owner brought from a separate brainstorm, applied to the
 - **Onboarding:** Welcome → Name → Scale → Widget → Check-in, with a back button and an equal-step progress bar on steps 2–5, a real "First name" field, and "Not medical advice" moved from Welcome to Settings > About.
 - **Hand-drawn ink illustrations are allowed** (sun, moon, flower; no leaves). They draw in once and stop; only onboarding keeps a gentle wobble; Reduce Motion shows them complete with no animation. This replaces "no illustrations until a human illustrator".
 - **Checks run on the canvas:** all text pairs are at least 4.5:1 in both themes (lowest 5.8 day, 6.2 night); the "More" button (was 40pt wide) and the segmented control (was 36pt tall) were raised to 44pt.
+
+## Widgets & setup guides (September 27, 2026)
+
+From the owner's widget brief, designed on the canvas under "Widgets & setup".
+
+- **Matched to iOS 27.0,** the simulator's runtime, from real captures (Home Screen and Lock Screen from earlier; Control Center captured now by `ControlCenterStepTests`, images in `design-review/redesign/steps/controlCenter_ios27_step1–5`).
+- **The brief's Home Screen steps were corrected to iOS 27:** Edit is in the top-left corner and opens a menu (Add Widget, Customize, Edit Wallpaper, Edit Pages); the gallery shows the bundle name "CaliCare", so the guide says to search "CaliCare", not "Cali Care"; Done is a checkmark in the top-right corner.
+- **Control Center on iOS 27:** swipe down from the top right; touch and hold an empty area (or tap +) to show an empty grid and "Add a Control"; the sheet's search finds CaliCare and its control; tapping adds it; tapping an empty area finishes. The shipped control is still named "Log itch" with a hand symbol. The design calls it "Log Itchy", so the rename is part of the widget restyle in the app.
+- **Drawn iPhone frames:** Apple Design Resources bezels can't be downloaded or used here, so the frame is drawn to true size (393 × 852 screen, Dynamic Island, status bar) with neutral placeholder apps and generic names. All its values are `--mock-*` tokens. Real simulator screenshots replace the drawings after the widget restyle.
+- **Looks:** Home Screen widgets in full color, tinted and clear, day and night. Lock Screen widgets and controls are monochrome only. Light glass failed contrast on the day wallpaper (3.98:1), so monochrome widgets sit on dark glass (text 8.2:1). Every look keeps text at least 4.5:1 over the wallpaper.
+- **One type exception:** the Lock Screen circle's "Itchy" is serif 17, because a 72-pt circle can't hold the 24-pt title size.
+- **Next (app):** restyle the Swift widgets to these designs (including `widgetRenderingMode` for tinted and clear and the logged state with Undo), rename the control, capture real screenshots into `design/screenshots/`, and swap them into onboarding and the guides.

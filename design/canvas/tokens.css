@@ -111,3 +111,80 @@ button, a, input { font: inherit; color: inherit; }
 .mock-s { font-family: var(--sans); font-size: 12px; line-height: 16px; }
 .mock-word { font-family: var(--serif); font-size: 28px; line-height: 32px; }
 .mock-clock { font-family: var(--sans); font-size: 52px; line-height: 60px; font-weight: 300; }
+
+/* ---------- Widgets (inside the system's widget shape) ----------
+   Looks the current iOS (27.0) supports: full color, tinted, clear.
+   Lock Screen widgets and controls are always monochrome. */
+.w-full   { --w-bg: var(--bg); --w-fg: var(--ink); --w-muted: var(--muted); --w-btn-bg: var(--accent); --w-btn-fg: var(--on-accent); --w-soft: var(--surface); }
+.w-tinted { --w-bg: rgba(38, 54, 86, 0.55); --w-fg: #F1F5FC; --w-muted: #D9E2F1; --w-btn-bg: rgba(241, 245, 252, 0.18); --w-btn-fg: #FFFFFF; --w-soft: rgba(241, 245, 252, 0.12); }
+.w-clear  { --w-bg: rgba(20, 22, 28, 0.30); --w-fg: #FFFFFF; --w-muted: #E6E8EC; --w-btn-bg: rgba(255, 255, 255, 0.16); --w-btn-fg: #FFFFFF; --w-soft: rgba(255, 255, 255, 0.10); }
+.w-mono   { --w-bg: rgba(20, 22, 28, 0.30); --w-fg: #FFFFFF; --w-muted: #E6E8EC; --w-btn-bg: rgba(255, 255, 255, 0.16); --w-btn-fg: #FFFFFF; --w-soft: rgba(255, 255, 255, 0.10); }
+/* The one widget-only type exception: "Itchy" in the small Lock Screen circle. */
+.t-itchy-s { font-family: var(--serif); font-weight: 500; font-size: 17px; line-height: 20px; }
+
+/* ---------- Drawn iPhone (current iOS 27, 393 × 852 pt screen) ---------- */
+:root {
+  --mock-frame: #2C2C2E;
+  --mock-island: #000000;
+  --mock-r-phone: 67px;
+  --mock-r-display: 55px;
+  --mock-wall: #5E6878;
+  --mock-wall-shape: #6E7889;
+  --mock-wall-shape-2: #535D6C;
+  --mock-wall-night: #232833;
+  --mock-wall-night-shape: #2C3240;
+  --mock-on-wall: #FFFFFF;
+  --mock-icon-1: #E6E0D5;
+  --mock-icon-2: #CBD3DD;
+  --mock-icon-3: #DDD6C9;
+  --mock-icon-4: #B9C3CF;
+  --mock-icon-glyph: #4A5260;
+  --mock-glass: rgba(255, 255, 255, 0.18);
+  --mock-glass-strong: rgba(255, 255, 255, 0.30);
+  --mock-dim: rgba(10, 12, 16, 0.45);
+  --mock-sheet: #F2F2F4;
+  --mock-sheet-dark: #1C1C1E;
+  --mock-sheet-text: #1C1C1E;
+  --mock-sheet-muted: #6C6C70;
+  --mock-sheet-field: #E3E3E8;
+  --mock-system-blue: #0A7AFF;
+  --mock-key: #FFFFFF;
+  --mock-keyboard: #D1D3D9;
+  --mock-badge: #D9D9DE;
+  --mock-key-dark: #4A4A4E;
+  --mock-keyboard-dark: #2B2B2E;
+  --mock-app-icon: #F6F1E8;
+  --mock-r-icon: 15px;
+  --mock-r-dock: 36px;
+  --mock-r-widget: 22px;
+  --mock-r-sheet: 38px;
+  --mock-r-control: 999px;
+  --mock-r-menu: 24px;
+  --mock-r-field: 12px;
+  --mock-r-app-s: 9px;
+  --mock-r-app-xs: 8px;
+  --mock-r-key: 6px;
+}
+.mock-status { font-family: var(--sans); font-size: 17px; line-height: 22px; font-weight: 600; }
+.mock-label { font-family: var(--sans); font-size: 11px; line-height: 13px; font-weight: 500; }
+.mock-lock-clock { font-family: var(--sans); font-size: 92px; line-height: 96px; font-weight: 600; letter-spacing: -2px; }
+.mock-lock-date { font-family: var(--sans); font-size: 20px; line-height: 24px; font-weight: 500; }
+.mock-sheet-title { font-family: var(--sans); font-size: 28px; line-height: 34px; font-weight: 700; }
+.mock-sheet-body { font-family: var(--sans); font-size: 17px; line-height: 22px; }
+.mock-key-t { font-family: var(--sans); font-size: 22px; line-height: 26px; }
+
+/* Guide markers: a highlight ring and a finger tap. */
+.guide-ring { position: absolute; border: 2px solid var(--accent); border-radius: var(--r-pill); box-sizing: border-box; pointer-events: none; }
+.guide-tap { position: absolute; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: var(--r-pill); background: rgba(52, 70, 106, 0.35); border: 2px solid var(--mock-on-wall); box-sizing: border-box; animation: tap-pulse 1.6s ease-out infinite; pointer-events: none; }
+@keyframes tap-pulse { 0% { transform: scale(0.8); opacity: 0.9; } 70% { transform: scale(1.15); opacity: 0.5; } 100% { transform: scale(0.8); opacity: 0.9; } }
+/* The widget loop: tap, "Logged", back to normal. */
+.loop-normal { animation: loop-a 5s linear 1s infinite; }
+.loop-logged { animation: loop-b 5s linear 1s infinite; opacity: 0; }
+.loop-press { animation: loop-press 5s ease-out 1s infinite; }
+@keyframes loop-a { 0%, 20% { opacity: 1; } 24%, 90% { opacity: 0; } 94%, 100% { opacity: 1; } }
+@keyframes loop-b { 0%, 20% { opacity: 0; } 24%, 90% { opacity: 1; } 94%, 100% { opacity: 0; } }
+@keyframes loop-press { 0%, 16% { transform: scale(1); } 20% { transform: scale(0.95); } 26%, 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .loop-normal { opacity: 1; } .loop-logged { opacity: 0; }
+  .guide-tap { transform: none; }
+}

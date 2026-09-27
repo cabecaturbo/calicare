@@ -30,7 +30,8 @@ See docs/prompts/README.md for the rules.
       Delete account with the last-owner rule (Edge Function + SQL). Verified on the iPhone: nothing left in Supabase afterwards. Left over: Apple token revocation before App Store review.
 
 ## Phase 3: Report cards (docs/prompts/phase-3-reports.md)
-- [ ] 3.1 Weekly stats engine
+- [x] 3.1 Weekly stats engine
+      WeeklyReport in Core: nights, wake-ups vs last week, routines, skin by day, bowel movements, mood, headline, one worth-watching line. 12 tests.
 - [ ] 3.2 Weekly report card image and share sheet
 - [ ] 3.3 🛑 iMessage extension
 - [ ] 3.4 Doctor PDF

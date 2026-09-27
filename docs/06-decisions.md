@@ -90,3 +90,14 @@ Decisions that aren't obvious from the code, newest at the bottom. Add a dated e
 - **Phone data stays unless you choose otherwise.** "Also delete data on this phone" is off by default; turned on, children and logs are erased and the app returns to the welcome screen.
 - **No red.** Deleting uses the ink outline button and a confirmation that says what goes.
 - **Before App Store submission:** Apple asks apps with Sign in with Apple to revoke the person's Apple token when they delete their account. That needs a Sign in with Apple private key from the Apple Developer site, stored as a Supabase secret. Not done yet; it's listed in the status doc.
+
+## Phase 3: Report cards (September 27, 2026)
+
+- **DESIGN.md wins over the Phase 3 prompt's card details.** The prompt points to the old `docs/03-design-system.md` and asks for a trend pill, sage bars, and a sand callout box. The card follows DESIGN.md §10 instead: the trend in words (no pills), indigo-scale bars, and one "worth watching" line in ochre text with no box.
+- **3.1 WeeklyReport:**
+  - **Same levels as Today:** it uses the Today strip's night and skin levels.
+  - **Minimum logs:** it needs at least 3 logged days to summarize ("Not enough logs yet for a summary").
+  - **Comparing weeks:** calmer or harder when the average night-plus-skin level moves by half a level or more; otherwise "About the same as last week."
+  - **A fifth headline, "A first week of logs":** used when last week has too few logs to compare. The prompt's four headlines would otherwise invent a comparison.
+  - **Worth watching:** checks wake-ups up 3 or more, then rough nights up 2, then flares up 2. The first match wins, and it's only used when last week is comparable.
+  - **Routines:** "routine completion" is the logged days with a routine done (the app doesn't know how many routines a plan has).

@@ -21,10 +21,14 @@ public enum LogChanges {
     }
 
     /// Refreshes widgets, and reschedules reminders so a night rating skips
-    /// that morning's check-in (and an undo brings it back).
+    /// that morning's check-in (and an undo brings it back). Rescheduling runs
+    /// on its own: the notification service can be slow to answer (on a fresh
+    /// simulator it sometimes never does), and saving must never wait on it.
     public static func refreshDisplays() async {
         await reloadWidgets()
-        try? await ReminderScheduler.live().refresh()
+        Task.detached(priority: .utility) {
+            try? await ReminderScheduler.live().refresh()
+        }
     }
 
     @MainActor

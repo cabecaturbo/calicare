@@ -241,3 +241,16 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
 - **The reminders sheet after the first log is removed.** Reminders are offered in onboarding and Settings only.
 - **Debug seed variants:** `-designReviewSeed UNRATED` and `EMPTY`, used by the new `TodayCaptureTests`.
 - **Sheets and Undo don't wait on the widget and reminder refresh.** On the simulator, `LogChanges.didChange` (widgets plus rescheduling reminders) sometimes never finished. That left "Add where" stuck on Save, and Undo never showed after a swipe. Both now save, update the screen, and run the refresh in the background. Worth checking the refresh itself on the phone.
+
+## New onboarding and setup guides (UX.2, September 27, 2026)
+
+- **Onboarding is Welcome → Your child → Reminders → Log from anywhere → Today.**
+  - The partner-sharing offer left onboarding. It lives in Settings › Family, which keeps onboarding to what a tired parent needs on day one.
+  - Going back to "Your child" edits the saved child (new `ChildStore.updateChild`) instead of adding a second one.
+- **Reminders in onboarding:** only the morning check-in and the evening skin check-in. The routine reminders stay in Settings. The first switch shows a one-line explanation, then asks for permission directly (`ReminderController.turnOnAsking`).
+- **The setup guide replaces VisualSteps:**
+  - Full screen, one step per screen, the real screenshots from `design/screenshots/guide` copied into the asset catalog (steps plus a `_done` screen per path), and a zoomed callout.
+  - The Home and Lock Screen guides keep every captured step (6 each) rather than squeezing them into 4 and 3, because each screenshot is one real tap.
+  - Control Center now uses real captures (5 steps).
+  - The Action Button stays hidden until it's recorded on a real iPhone.
+- **Reminder rescheduling no longer blocks saving.** `LogChanges.refreshDisplays` reloads widgets and then reschedules reminders in a detached task. On a freshly erased simulator the notification service sometimes never answers, which froze saving a child and "Add where".

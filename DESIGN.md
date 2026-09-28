@@ -219,20 +219,20 @@ September 27, 2026 against simulator captures in
 controlCenter_ios27_step*). Re-check whenever iOS changes and update the
 wording and drawings together.
 
-**On the phone today:** onboarding and Settings › Quick logging use the older
-VisualSteps: swipeable real iOS 27 screenshots with a soft indigo ring, one
-sentence per step, and "Done". Settings › Quick logging lists the Home Screen
-widget, the Lock Screen widget, and Siri; onboarding also shows the Action
-Button. The one-step-per-screen guide below is designed on the canvas and
-not built yet.
+**In the app:** onboarding's "Show me how" and Settings › Quick logging open
+the setup guide below (`SetupGuide`, `GuideScreenshot`). Home Screen widget,
+Lock Screen widget, and Control Center; the Action Button is hidden until
+it's recorded on a real iPhone.
 
-The setup guide ("Show me how", designed, not built)
-- One step per screen: "Step N of M" with a progress bar and back
-  button; the iPhone at about 70% of the screen height showing that exact
-  moment as a **real iOS 27 simulator screenshot** inside the device
-  frame, with a highlight ring and a finger-tap marker; a round zoom
-  callout (about 2×) of the exact spot to tap; one instruction sentence
-  in sans body, at most two lines; Back and Next.
+The setup guide ("Show me how")
+- One step per screen: the guide's name (section style), a close button,
+  and a thin progress line; the **real iOS 27 simulator screenshot** of
+  that exact moment, rounded like the phone, filling the space between;
+  an indigo ring (40pt, 3pt line) with a dot on the tap spot; a round
+  zoom callout (112pt, about 2.4×, paper edge and a soft shadow) beside
+  the phone at the tap's height, on the side away from the tap; one
+  sentence in sans body, centered, at most three lines; Back (text) and
+  Next (primary). Swipe works too.
 - CTA labels: "Next" on every step, "Done" on the final screen.
 - The final screen says only "You're set." over the real screenshot of
   the result. No instructions there.

@@ -24,6 +24,8 @@ final class TodayModel {
     private(set) var week: [WeekDay] = []
     /// The skin answer for the day a skin answer given now would be about.
     private(set) var skin: SkinToday?
+    /// The current child's routine steps, morning and evening, paused ones included.
+    private(set) var routineSteps: [RoutineStepInfo] = []
     /// False until anything has been logged for any child: shows the first-run hint.
     private(set) var hasEverLogged = true
     /// False from 7 PM, when the care day is tonight's.
@@ -65,6 +67,7 @@ final class TodayModel {
             skin = events.last { $0.type == .skinToday && skinDay.contains($0.timestamp, calendar: calendar) }
                 .flatMap { if case .skin(let answer)? = $0.value { answer } else { nil } }
             hasEverLogged = try await !store.recent(limit: 1).isEmpty
+            routineSteps = try await RoutineStore(modelContainer: container).steps(child: child.id, includeInactive: true)
             isDaytime = today.isDaytime(now, calendar: calendar)
             myName = AccountSettings().displayName
             householdSize = SyncSettings().householdSize
@@ -115,6 +118,24 @@ final class TodayModel {
         } else {
             await delete(confirmation.entry)
         }
+    }
+
+    /// Ticks off one routine step.
+    func tick(_ step: RoutineStepInfo) async {
+        guard child != nil else { return }
+        do {
+            let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+            let entry = try await store.logRoutineStep(step.id, source: .app)
+            confirmation = Confirmation(entry: entry, text: "Done: \(step.name), \(time(entry.timestamp)).")
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't save that. Please try again."
+        }
+    }
+
+    func progress(_ time: RoutineTime) -> RoutineProgress {
+        RoutineProgress(time: time, steps: routineSteps, entries: entries)
     }
 
     /// Swipe to delete: soft delete, with Undo in the Logged line.
@@ -213,6 +234,7 @@ final class TodayModel {
         lastNight = nil
         week = []
         skin = nil
+        routineSteps = []
         hasLoaded = true
     }
 }

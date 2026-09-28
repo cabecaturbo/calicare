@@ -132,16 +132,22 @@ Job: follow the care plan without thinking about it.
 
 1. Header: "Plan", caption "The routine you set, morning and evening".
 2. Summary card "Up next": the routine due now (morning until 2 PM,
-   evening after) as the title, "Evening · not done yet" or "Evening ·
-   done", "Done 7:40 PM" as the caption, and the sun (morning) or moon
-   (evening) drawing.
-3. That routine's row: a circle to check, "Evening routine", and the time
-   when done. One tap logs it done.
-4. The other routine under its own label ("Morning"), the same kind of row.
+   evening after) as the title ("Evening · 3 steps", "Evening · 2 left",
+   "Evening · done", or "Evening · not done yet" with no steps), "Done
+   7:40 PM" as the caption, and the sun (morning) or moon (evening)
+   drawing.
+3. That routine's rows: one check row per step (circle, the parent's own
+   words, "Done 7:40 PM"). Tap to tick; tap a ticked step to untick (Undo
+   in the Logged line). With no steps, one row "Evening routine" logs the
+   whole routine.
+4. The other routine under its own label ("Morning"), the same rows.
+5. "Edit routine" (or "Add steps" with a line explaining it when there are
+   none) opens the Routine sheet: Morning and Evening lists, "Add a step"
+   at the end of each, tap to rename, swipe left for Pause/Delete (indigo
+   and graphite, never red), touch and hold to move. Paused steps stay in
+   the editor marked "Paused" and leave Plan. Nothing is suggested.
 
 Not built yet:
-- Routine steps (the data exists; there's no screen to add steps, so each
-  routine is one row).
 - The provider's plan (import is Phase 4), then Supplements, Food
   (Phase 5), and Provider (next visit).
 

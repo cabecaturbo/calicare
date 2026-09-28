@@ -16,7 +16,7 @@ struct BottomBar: View {
     var body: some View {
         VStack(spacing: Spacing.x2) {
             if let confirmation = model.confirmation {
-                LoggedBanner(confirmation: confirmation) {
+                LoggedBanner(confirmation: confirmation, onAddWhere: addWhere(for: confirmation)) {
                     Task { await model.undo(confirmation) }
                 } onDismiss: {
                     model.confirmation = nil
@@ -40,6 +40,15 @@ struct BottomBar: View {
             .allowsHitTesting(false)
         }
         .animation(.easeOut(duration: 0.25), value: model.confirmation)
+    }
+
+    /// "Add where" for a flare just logged.
+    private func addWhere(for confirmation: TodayModel.Confirmation) -> (() -> Void)? {
+        guard confirmation.entry.type == .flare, !confirmation.wasDeleted else { return nil }
+        return {
+            model.confirmation = nil
+            shell.addingWhere = confirmation.entry
+        }
     }
 }
 
@@ -88,7 +97,7 @@ private struct TabPill: View {
 }
 
 /// One log control, the same on every tab: "Itchy" (one tap) and "More"
-/// (Flare, Bowel movement, Note). Quieter than the active tab on purpose.
+/// (Flare, Bowel movement, Mood, Note). Quieter than the active tab on purpose.
 private struct LogPill: View {
     @Environment(\.palette) private var palette
     @Environment(TodayModel.self) private var model
@@ -116,7 +125,8 @@ private struct LogPill: View {
             }
             Menu {
                 Button("Flare") { Task { await model.log(.flare) } }
-                Button("Bowel movement") { Task { await model.log(.bowelMovement) } }
+                Button("Bowel movement") { shell.choosing = .bowel }
+                Button("Mood") { shell.choosing = .mood }
                 Button("Note") { shell.showingNote = true }
             } label: {
                 Image(systemName: "ellipsis")

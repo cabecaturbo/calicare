@@ -3,30 +3,24 @@
 Every remaining build prompt lives in this folder, one file per phase.
 PROGRESS.md in the repo root tracks which prompts are done.
 
-## Rules for Claude Code
-1. Do exactly ONE prompt per session: the first unchecked one in PROGRESS.md.
-2. Before planning, inspect the code that exists. Earlier prompts may have
-   used different names than these docs. Adapt to the real code; don't
-   rename working code to match the docs.
-3. If a prompt conflicts with CLAUDE.md, the product principles, or the
-   existing code, STOP and ask. Don't guess.
-4. Plan first. Wait for approval before editing files.
-5. A prompt marked 🛑 MANUAL has steps only the human can do (Apple
-   Developer portal, Supabase dashboard, App Store Connect, device
-   testing). List them clearly and STOP until the human confirms they're
-   done.
-6. Done means: builds cleanly, tests pass, "Done when" is met.
-7. When done: commit with a clear message, check the box in PROGRESS.md,
-   add a one-line note under it (what was built, anything left over),
-   and add any new decisions to docs/06-decisions.md.
-8. Then STOP. Never start the next prompt on your own.
+## Rules for Claude Code (autopilot)
+autopilot.md in the repo root is the operating manual. In short:
+1. Do the next unchecked step in PROGRESS.md, reading its phase file.
+2. Inspect the code first; adapt to what exists.
+3. Plan, build, test, save it to main (PR with CI, then merge), update
+   PROGRESS.md and docs/06-decisions.md, then go to the next step.
+4. Make technical decisions yourself; ask the owner only about product,
+   money, or taste.
+5. Stop only when a phase is finished (put it on the owner's phone and
+   say in plain words what to try), when something needs the owner
+   (🛑 steps, accounts, keys, a second phone), or when something is broken
+   after a real attempt. No jargon when talking to the owner.
+6. The owner's phone is the design reference; DESIGN.md and UX.md
+   describe it.
 
-## Standard kickoff (paste this after every /clear)
-```
-Read CLAUDE.md, PROGRESS.md, and docs/prompts/README.md. Find the first
-unchecked prompt and read it in its phase file. Inspect the existing code
-it touches. Then give me your plan and wait for my approval.
-```
+## After a /clear or a new session
+Read autopilot.md and PROGRESS.md, say in one sentence where we are, and
+continue.
 
 ## Standing rules that apply to every prompt
 - Product principles in CLAUDE.md always win.

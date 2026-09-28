@@ -219,3 +219,14 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - A 48-pt bg fade sits behind the bottom bar (the one allowed gradient). A "Plan · scrolled" board shows the Provider's plan row.
   - The check-in's selected check is a corner badge, so labels stay on one line.
 - **Drawings redraw on every visit (owner's request).** The hand-drawn sun, moon, and flower draw themselves in each time their screen appears (switching tabs, returning to the app), then stop. They still never loop, and Reduce Motion shows them complete.
+
+## Autopilot (September 27, 2026)
+
+- **The build runs on autopilot** (autopilot.md in the repo root). Claude does each step in PROGRESS.md in turn and saves it to main. It stops only at the end of a phase (for the owner to try on the phone), when something needs the owner, or when something is broken.
+- **The owner's phone is the design reference.** DESIGN.md and UX.md describe it.
+- **Remaining steps are written** in the existing format:
+  - `docs/prompts/ux-finish.md`: UX.1–UX.6, from UX.md's "Not built yet" lists.
+  - Phase 3's 3.5–3.6, updated to the phone's style.
+  - New `phase-4-care-plans.md`, `phase-5-food.md`, `phase-6-photos-products-home.md`, and `phase-7-launch.md`.
+- **Old U4–U6 are replaced** by UX.2–UX.6.
+- **The one-time reminders sheet after the first log goes** (UX.1), as UX.md already says.

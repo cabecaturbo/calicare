@@ -64,20 +64,26 @@ Done when: a clean multi-page PDF opens in Files and Mail.
 ---
 
 ## 3.5 Caregiver card
-1. Parent-entered fields: bedtime routine steps, safe snacks, please
-   avoid, "if [child] is scratching," contacts.
-2. Card image and one-page PDF in the design system style.
+Lives in Progress › Share (next to "Share with provider"), in the phone's
+style; the card itself follows DESIGN.md §10 (paper, Newsreader headline,
+ledger rows, "Not medical advice" footer).
+1. Parent-entered fields: bedtime routine steps (prefilled from Plan's
+   routine steps, editable), safe snacks, please avoid, "if [child] is
+   scratching," contacts.
+2. Card image (600 × 750 at 3x) and a one-page PDF.
 3. Nothing is pre-filled with advice. Empty sections are hidden.
    (Phase 4 can fill fields from the care plan, with parent approval.)
 4. Share sheet.
-Done when: card renders and shares; empty fields don't appear.
+Done when: the card renders and shares; empty fields don't appear; builds
+clean; tests pass.
 
 ---
 
 ## 3.6 Scheduled sends via Shortcuts
 1. App Intent "Get weekly report card" (child, week) returns the image
-   file so it can be sent in Shortcuts.
+   file so Shortcuts can send it.
 2. App Intent "Get doctor report" (child, date range) returns the PDF.
-3. In-app help screen: step-by-step to create a Personal Automation
-   (e.g. Sunday 7 PM → send card to partner in Messages).
-Done when: the automation runs on device and sends the card.
+3. A help screen in Settings › Quick logging, in the setup-guide style
+   (real screenshots, one step per screen): create a Personal Automation
+   (for example Sunday 7 PM → send the card to a partner in Messages).
+Done when: the automation runs on the owner's phone and sends the card.

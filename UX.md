@@ -171,8 +171,8 @@ A grouped list, in this order:
    (sign in), or "Household" (members and invites) once signed in.
 3. Reminders: Morning check-in, Evening skin check-in, Morning routine,
    Evening routine, each a switch with a time.
-4. Quick logging: Home Screen widget, Lock Screen widget, Siri (each opens
-   its guide).
+4. Quick logging: Home Screen widget, Lock Screen widget, Control Center
+   (each opens the full-screen setup guide), and Siri.
 5. Account (signed in only): Shown as, Sign out, Delete account.
 6. About: "Cali Care organizes the plan your provider gave you. Not
    medical advice." and the version.
@@ -183,26 +183,31 @@ Not built yet:
 - Your data (export CSV and PDF).
 - About: how the app works, privacy, support email.
 - Editing a child.
-- Control Center and Action Button guides in Quick logging.
+- The Action Button guide (until it's recorded on a real iPhone).
 
 ## 8. Onboarding (full screen, no account)
-On the phone today (the older flow, not yet in the new style):
-1. Welcome: the "Cali Care" wordmark over a hairline rule, "A calm place to
-   follow your child's care plan and log how their skin and nights are
-   going, in one tap.", "No account needed. Everything stays on this
-   phone.", and "Add your child".
-2. "Who are you caring for?": first name (a nickname is fine), then
-   Continue.
-3. Quick logging, one part at a time with "Part N of M" and "Skip setup":
-   the Home Screen widget, the Lock Screen widget, Siri, the Action Button,
-   and (when accounts are available) "Share with your partner". Each has
-   Done and Skip.
-4. Today.
-After the first log, a one-time sheet offers reminders.
+1. Welcome: the "Cali Care" wordmark over a hairline rule, the sunrise
+   drawing, "A calm place to follow your child's care plan and log how
+   their skin and nights are going, in one tap.", "Add your child", and
+   "No ads. Photos never leave your phone." under it.
+2. "Who are we looking after?": first name (focused), birth date and
+   color optional, Continue. Going back and forward edits the same child.
+3. "Gentle reminders": Morning check-in and Evening skin check-in, each a
+   switch with a time. The first switch shows one line ("Your iPhone will
+   ask once…"), then the system prompt. "Skip for now" until one is on,
+   then Continue.
+4. "Log from anywhere": Home / Lock / Control Center, each showing a real
+   screenshot of the finished setup; "Show me how" opens that guide;
+   "Skip for now" (or "Go to Today" after a guide).
+5. Today.
+Steps 2–4 have a back button and a thin three-part progress line.
+Someone who left after adding a child picks up at step 3.
 
-Not built yet (designed on the canvas):
-- The new onboarding in the app's current style, with real iPhone
-  screenshots and the one-step-per-screen setup guide (DESIGN.md §7).
+The setup guide (from onboarding and Settings): full screen, the guide's
+name and a close button, a progress line, one real iOS 27 screenshot per
+step with the tap spot ringed and a zoomed circle of it, one sentence,
+Back and Next, then "You're set." over the finished screen, and Done.
+Home Screen widget (6 steps), Lock Screen widget (6), Control Center (5).
 
 ## 9. Legitimacy checklist
 - Reports say exactly what was measured and how ("Skin today is the

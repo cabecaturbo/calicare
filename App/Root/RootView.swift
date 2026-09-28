@@ -19,11 +19,11 @@ struct RootView: View {
         .task { await chooseStart() }
     }
 
-    /// Someone who already added a child (and left mid-setup) picks up at quick logging.
+    /// Someone who already added a child (and left mid-setup) picks up at reminders.
     private func chooseStart() async {
         guard !hasOnboarded, start == nil else { return }
         let children = try? await ChildStore(modelContainer: try CaliCareModelContainer.shared()).activeChildren()
-        start = (children?.isEmpty ?? true) ? .welcome : .quickLogging
+        start = (children?.isEmpty ?? true) ? .welcome : .reminders
     }
 }
 

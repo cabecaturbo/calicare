@@ -8,17 +8,29 @@ struct ChildDetails {
     var birthDate = Calendar.autoupdatingCurrent.date(byAdding: .year, value: -2, to: .now) ?? .now
     var color: ChildColor?
 
+    init() {}
+
+    /// Starts from a saved child, for editing.
+    init(_ child: ChildInfo) {
+        name = child.name
+        hasBirthDate = child.birthDate != nil
+        if let born = child.birthDate { birthDate = born }
+        color = ChildColor(tag: child.colorTag)
+    }
+
     var trimmedName: String { name.trimmingCharacters(in: .whitespacesAndNewlines) }
     var canSave: Bool { !trimmedName.isEmpty }
 
-    /// Saves the child and makes them the one quick logs go to.
-    func save() async throws -> ChildInfo {
+    /// Saves the child (or changes `updating`) and makes them the one quick logs go to.
+    func save(updating id: UUID? = nil) async throws -> ChildInfo {
         let store = ChildStore(modelContainer: try CaliCareModelContainer.shared())
-        let child = try await store.addChild(
-            name: trimmedName,
-            birthDate: hasBirthDate ? birthDate : nil,
-            colorTag: (color ?? .standard).rawValue
-        )
+        let born = hasBirthDate ? birthDate : nil
+        let tag = (color ?? .standard).rawValue
+        let child = if let id {
+            try await store.updateChild(id, name: trimmedName, birthDate: born, colorTag: tag)
+        } else {
+            try await store.addChild(name: trimmedName, birthDate: born, colorTag: tag)
+        }
         CurrentChildSetting().childID = child.id
         await LogChanges.didChange()
         return child

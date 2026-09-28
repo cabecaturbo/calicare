@@ -37,6 +37,17 @@ final class ReminderController {
         save()
     }
 
+    /// Onboarding: asks for permission right away if it's undecided, then turns it on.
+    func turnOnAsking(_ kind: ReminderKind) async {
+        if status == .notDetermined {
+            _ = await NotificationPermission.request()
+            status = await NotificationPermission.status()
+        }
+        guard status == .authorized || status == .provisional || status == .ephemeral else { return }
+        settings[kind].isOn = true
+        save()
+    }
+
     func setTime(_ date: Date, for kind: ReminderKind) {
         let parts = Calendar.autoupdatingCurrent.dateComponents([.hour, .minute], from: date)
         settings[kind].hour = parts.hour ?? settings[kind].hour

@@ -10,6 +10,7 @@ struct SettingsView: View {
     @Environment(ReminderController.self) private var reminders
     @Environment(TodayModel.self) private var model
     @State private var addingChild = false
+    @State private var guide: GuidePath?
 
     var body: some View {
         NavigationStack {
@@ -39,6 +40,10 @@ struct SettingsView: View {
             AddChildSheet()
                 .nightAwarePalette()
         }
+        .fullScreenCover(item: $guide) { path in
+            SetupGuide(path: path)
+                .nightAwarePalette()
+        }
         .sheet(isPresented: toggleOffer) {
             ReminderOfferSheet(
                 onTurnOn: { Task { await reminders.acceptOffer() } },
@@ -65,17 +70,12 @@ struct SettingsView: View {
 
     private var quickLoggingSection: some View {
         SettingsSection("Quick logging", footnote: "Log without opening the app.") {
-            NavigationLink {
-                GuidePage("Home Screen widget") { WidgetSetupGuide(childName: model.child?.name) }
-            } label: {
-                SettingsLabel("Home Screen widget")
+            ForEach(GuidePath.allCases) { path in
+                Button { guide = path } label: {
+                    SettingsLabel(path.title)
+                }
             }
-            NavigationLink {
-                GuidePage("Lock Screen widget") { LockScreenSetupGuide() }
-            } label: {
-                SettingsLabel("Lock Screen widget")
-            }
-            // Action Button and Control Center return once their steps are recorded on a real iPhone.
+            // The Action Button guide returns once it's recorded on a real iPhone.
             NavigationLink {
                 GuidePage("Siri") { SiriSetupGuide() }
             } label: {

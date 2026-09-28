@@ -24,7 +24,8 @@ final class ShellTourTests: XCTestCase {
             app.buttons["Continue"].firstMatch.tap()
             sleep(1)
         }
-        tap(app.buttons["Skip setup"])
+        tap(app.buttons["Skip for now"])  // reminders
+        tap(app.buttons["Skip for now"])  // log from anywhere
 
         // A few logs so the tabs have something in them.
         tap(app.buttons["Log itching"])

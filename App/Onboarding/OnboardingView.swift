@@ -1,16 +1,19 @@
 import Core
 import SwiftUI
 
-/// Three screens, no account: welcome, add a child, set up quick logging.
+/// Full screen, no account: Welcome → Your child → Reminders → Log from anywhere → Today.
 struct OnboardingView: View {
     enum Step: Int, CaseIterable {
-        case welcome, addChild, quickLogging
+        case welcome, child, reminders, logAnywhere
     }
 
     @Environment(\.palette) private var palette
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var step: Step
+    @State private var forward = true
     @State private var details = ChildDetails()
-    @State private var childName: String?
+    /// Set once the child is saved, so going back edits instead of adding twice.
+    @State private var child: ChildInfo?
     @State private var saveError: String?
     @State private var saving = false
     let onFinish: () -> Void
@@ -22,38 +25,63 @@ struct OnboardingView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            progress
+            if step != .welcome { topBar }
             Group {
                 switch step {
                 case .welcome:
-                    WelcomeStep { go(to: .addChild) }
-                case .addChild:
-                    AddChildStep(details: $details, error: saveError) { Task { await saveChild() } }
-                case .quickLogging:
-                    QuickLoggingStep(childName: childName, onFinish: onFinish)
+                    WelcomeStep { go(to: .child) }
+                case .child:
+                    ChildStep(details: $details, error: saveError) { Task { await saveChild() } }
+                case .reminders:
+                    RemindersStep(childName: child?.name) { go(to: .logAnywhere) }
+                case .logAnywhere:
+                    LogAnywhereStep(onFinish: onFinish)
                 }
             }
-            .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .opacity))
+            .id(step)
+            .transition(transition)
         }
         .paperBackground()
-        .task { await loadChildName() }
+        .task { await loadChild() }
     }
 
-    private var progress: some View {
-        HStack(spacing: Spacing.x1) {
-            ForEach(Step.allCases, id: \.self) { item in
-                Rectangle()
-                    .fill(item.rawValue <= step.rawValue ? palette.indigo : palette.hairline)
-                    .frame(height: 2)
+    /// Back, and a thin progress line for the three steps after Welcome.
+    private var topBar: some View {
+        HStack(spacing: Spacing.x3) {
+            Button {
+                if let previous = Step(rawValue: step.rawValue - 1) { go(to: previous) }
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(palette.ink)
+                    .frame(width: Size.touchTarget, height: Size.touchTarget)
             }
+            .accessibilityLabel("Back")
+            HStack(spacing: Spacing.x1) {
+                ForEach(Step.allCases.dropFirst(), id: \.self) { item in
+                    Capsule()
+                        .fill(item.rawValue <= step.rawValue ? palette.indigo : palette.hairline)
+                        .frame(height: 2)
+                }
+            }
+            .accessibilityElement()
+            .accessibilityLabel("Step \(step.rawValue) of \(Step.allCases.count - 1)")
+            Color.clear.frame(width: Size.touchTarget, height: 1)
         }
-        .padding(.horizontal, Spacing.margin)
-        .padding(.top, Spacing.x4)
-        .accessibilityElement()
-        .accessibilityLabel("Step \(step.rawValue + 1) of \(Step.allCases.count)")
+        .padding(.horizontal, Spacing.x3)
+        .padding(.top, Spacing.x2)
+    }
+
+    private var transition: AnyTransition {
+        if reduceMotion { return .opacity }
+        return .asymmetric(
+            insertion: .move(edge: forward ? .trailing : .leading).combined(with: .opacity),
+            removal: .opacity
+        )
     }
 
     private func go(to next: Step) {
+        forward = next.rawValue > step.rawValue
         withAnimation(.easeOut(duration: 0.3)) { step = next }
     }
 
@@ -62,24 +90,25 @@ struct OnboardingView: View {
         saving = true
         defer { saving = false }
         do {
-            let child = try await details.save()
-            childName = child.name
+            child = try await details.save(updating: child?.id)
             saveError = nil
-            go(to: .quickLogging)
+            go(to: .reminders)
         } catch {
             saveError = "Couldn't save that just now. Please try again."
         }
     }
 
-    private func loadChildName() async {
-        guard childName == nil,
-              let child = try? await ChildStore(modelContainer: try CaliCareModelContainer.shared()).currentChild()
+    /// Someone who left mid-setup picks up with their child already there.
+    private func loadChild() async {
+        guard child == nil,
+              let saved = try? await ChildStore(modelContainer: try CaliCareModelContainer.shared()).currentChild()
         else { return }
-        childName = child.name
+        child = saved
+        details = ChildDetails(saved)
     }
 }
 
-/// Screen 1: the wordmark and what the app does, in one warm sentence.
+/// The wordmark, the sunrise drawing, one sentence, and what we promise.
 private struct WelcomeStep: View {
     @Environment(\.palette) private var palette
     let onContinue: () -> Void
@@ -88,20 +117,21 @@ private struct WelcomeStep: View {
         OnboardingPage {
             VStack(alignment: .leading, spacing: 0) {
                 Wordmark()
-                Text("A calm place to follow your child's care plan and log how their skin and nights are going, in one tap.")
+                Illustration(kind: .sun, size: CGSize(width: 168, height: 160))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, Spacing.section)
+                Text("A calm place to follow your child’s care plan and log how their skin and nights are going, in one tap.")
                     .textStyle(.lede)
                     .foregroundStyle(palette.ink)
-                    .padding(.top, Spacing.ledeToSection)
-                Text("No account needed. Everything stays on this phone.")
-                    .textStyle(.body)
-                    .foregroundStyle(palette.graphite)
-                    .padding(.top, Spacing.x4)
             }
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, Spacing.margin)
         } footer: {
             Button("Add your child", action: onContinue)
                 .buttonStyle(.primary)
+            Text("No ads. Photos never leave your phone.")
+                .textStyle(.meta)
+                .foregroundStyle(palette.graphite)
         }
     }
 }
@@ -122,8 +152,8 @@ struct Wordmark: View {
     }
 }
 
-/// Screen 2: name is all we need.
-private struct AddChildStep: View {
+/// A first name is all we need.
+private struct ChildStep: View {
     @Environment(\.palette) private var palette
     @Binding var details: ChildDetails
     let error: String?
@@ -131,19 +161,7 @@ private struct AddChildStep: View {
 
     var body: some View {
         OnboardingPage {
-            VStack(alignment: .leading, spacing: Spacing.titleToLede) {
-                Text("Who are you caring for?")
-                    .textStyle(.title)
-                    .foregroundStyle(palette.ink)
-                    .accessibilityAddTraits(.isHeader)
-                Text("A first name or nickname is enough.")
-                    .textStyle(.body)
-                    .foregroundStyle(palette.graphite)
-            }
-            .fixedSize(horizontal: false, vertical: true)
-            .padding(.horizontal, Spacing.margin)
-            .padding(.bottom, Spacing.ledeToSection)
-
+            OnboardingHeading(title: "Who are we looking after?", detail: "A first name or nickname is enough.")
             ChildDetailsForm(details: $details) {
                 if details.canSave { onContinue() }
             }
@@ -159,6 +177,28 @@ private struct AddChildStep: View {
                 .buttonStyle(.primary)
                 .disabled(!details.canSave)
         }
+    }
+}
+
+/// Title and one line, with the margin, for the steps after Welcome.
+struct OnboardingHeading: View {
+    @Environment(\.palette) private var palette
+    let title: String
+    let detail: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.titleToLede) {
+            Text(title)
+                .textStyle(.title)
+                .foregroundStyle(palette.ink)
+                .accessibilityAddTraits(.isHeader)
+            Text(detail)
+                .textStyle(.body)
+                .foregroundStyle(palette.graphite)
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        .padding(.horizontal, Spacing.margin)
+        .padding(.bottom, Spacing.ledeToSection)
     }
 }
 

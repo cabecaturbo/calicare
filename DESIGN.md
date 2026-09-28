@@ -1,7 +1,8 @@
 # DESIGN.md — Cali Care
 
 This file replaces docs/03-design-system.md and the design section of
-CLAUDE.md. If anything conflicts, this file wins. Read it before touching
+CLAUDE.md. The app on the owner's phone is the reference for how things
+look: if it differs from this file, update this file. Read it before touching
 any UI. Every screen, widget, card, and notification must follow it.
 
 ## 0. Foundation: Apple's Human Interface Guidelines
@@ -59,33 +60,30 @@ Before marking any UI task done, check the screen against this list and
 say which items you checked.
 
 ## 3. Color
-Tokens live in one place (the canvas's `tokens.css`; in the app,
-`DesignSystem.swift`). Nothing else hard-codes a color.
+**This file describes the app as it is on the owner's phone (main, September
+27, 2026).** The phone is the reference; if this file and the phone disagree,
+fix this file. Tokens live in `Core/DesignSystem/DesignSystem.swift`.
 
 Day
 | Token | Hex | Use |
 |---|---|---|
-| bg | #F6F1E8 | Page background |
-| surface | #ECE4D6 | Summary cards, segmented control track, selected choice |
-| ink | #1E1B18 | Text |
-| muted | #5C554D | Secondary text, captions, swatch borders |
-| line | #D8CFC0 | 0.5pt dividers inside lists |
-| accent | #34466A | The one accent: primary buttons, active tab, selection, links |
-| onAccent | #F6F1E8 | Text on accent |
+| paper | #F6F1E8 | Page background, the bottom bar, the Itchy pill |
+| oat | #ECE4D6 | Summary cards, the active tab by day, selected choice |
+| ink | #1E1B18 | Text, primary buttons, outlines |
+| graphite | #5C554D | Secondary text, captions, swatch borders |
+| hairline | #D8CFC0 | 0.5pt dividers, card and pill borders |
+| indigo | #34466A | The one accent: links, "Change", checks, the night Itchy button |
+| ochre | #8A6320 | Still in the palette; no longer used on the tabs |
 
-Night (automatic 8 PM – 7 AM; every tab, so nothing is bright at 2 AM)
+Night (8 PM – 7 AM, every tab)
 | Token | Hex |
 |---|---|
-| bg | #14161C |
-| surface | #1E2129 |
+| paper | #14161C |
+| oat | #1E2129 |
 | ink | #EAE3D6 |
-| muted | #A8A093 |
-| line | #2C303A |
-| accent | #9FB0D0 |
-| onAccent | #14161C |
-
-There is no ochre and no other accent. "Worth watching" is a muted
-caption inside the summary card.
+| graphite | #A8A093 |
+| hairline | #2C303A |
+| indigo | #9FB0D0 |
 
 One scale for skin answers and for nights
 | Answer | Day | Night |
@@ -94,114 +92,102 @@ One scale for skin answers and for nights
 | a little itchy | #C2CBDB | #3C4760 |
 | flaring | #56698F | #8497BD |
 | very rough | #2E3E5E | #B7C5E0 |
-Nights use the same four: good = calm, okay = a little itchy, rough =
-very rough.
+Nights use the same marks: good = calm, okay = a little itchy, rough = very
+rough. (A fifth, middle step, #8C9BB8 by day and #5A6B8E at night, is still in
+the palette but unused.)
 
 Drawing the scale
-- The rule in both themes: rougher always stands out more. By day,
-  deeper is rougher; at night, brighter is rougher.
-- Every swatch, bar, and dot has a 1px muted border, so calm never
-  vanishes into the background.
-- Color is never the only signal: bar height also encodes the answer.
-- A day with no skin answer is a short muted dash on the baseline, with no
-  bar ("not answered" in the legend).
-- Never infer skin from itches or flares. Skin by day comes only from
-  the skinToday answer.
+- Rougher always stands out more: deeper by day, brighter at night.
+- Every swatch, bar, and dot has a 1pt graphite border.
+- Skin bars are taller for rougher days.
+- A day with no skin answer is a short graphite dash (12 × 2pt), no bar.
+- Never infer skin from itches or flares. Skin comes only from the daily
+  answer.
 
-Contrast (checked; keep passing): every text token on bg and surface is
-at least 4.5:1 in both themes (lowest: day muted on surface 5.8, night
-muted on surface 6.2). Keep the unit test that computes WCAG contrast
-for every text/background pair.
+Contrast: every text color passes 4.5:1 on paper and oat in both themes;
+the unit test checks each pair.
 
 Why indigo: calm, works on every skin tone, can't be confused with skin
-or blood, and is not a plant color. Severity is always measured by
-symptoms (itch, sleep, spread), never by how skin looks.
+or blood, and is not a plant color.
 
 ## 4. Type
-Two families. Five sizes, plus tab labels. Nothing else.
+Two families.
 
-| Style | Font | Weight | Size/Line | Dynamic Type base | Use |
-|---|---|---|---|---|---|
-| display | Newsreader | 500 | 34/40 | largeTitle | The screen title ("Today", "Plan", "Progress"); the Welcome headline |
-| title | Newsreader | 500 | 24/30 | title2 | Summary card titles, the skin question, onboarding headings, big hero words |
-| body | SF Pro | 400 | 17/24 | body | All body copy and row labels, including onboarding |
-| label | SF Pro | 600 | 15/20 | subheadline | Section labels, the child switcher, primary button text |
-| caption | SF Pro | 400 | 13/18 | footnote | Times, eyebrows, footnotes, legends |
-Tab labels: SF Pro 12/16, the only exception (minimum 12).
+| Style (code name) | Font | Size/Line | Use on the phone |
+|---|---|---|---|
+| display | Newsreader Display, weight 500 | 34/40 | The tab title ("Today", "Plan", "Progress") |
+| title (also lede) | Newsreader Display, weight 500 | 24/30 | Summary card titles ("A good night"), the skin question, the night Itchy button |
+| section | SF Pro semibold | 15/20 | The child switcher, section labels ("Today so far", "This week"), secondary button labels |
+| body (also control) | SF Pro regular | 17/24 | Row labels, answers, body text, buttons |
+| meta | SF Pro regular | 13/18 | The date, eyebrows ("Last night"), captions, times |
+Tab labels are SF Pro 12 (medium, semibold when active). The Itchy pill
+label is SF Pro 13 semibold.
 
-- The serif is for headlines and hero words only. Never for body copy.
-- Weights: 400, 500 (serif), 600 (labels). Never Light or Bold.
-- Contrast: ink for primary text, muted for secondary. Nothing lighter.
-  Disabled controls use the standard iOS disabled appearance.
-- Left-aligned, sentence case, no all caps. Every style scales with
-  Dynamic Type, and the hierarchy must still read at the largest size.
-- Newsreader ships with weights 400 and 500. Fallback: New York.
+- Newsreader Display 500 is cut from the Google Fonts variable font and
+  bundled (Newsreader Display 400 and Text 400 are bundled too).
+- The serif is only for the tab title, card titles, and the skin question.
+  Everything else is SF Pro.
+- Sentence case, left-aligned. Every style scales with Dynamic Type.
 
 ## 5. Layout
-Every tab is built the same way, top to bottom:
-1. **AppHeader:** the child switcher ("Cal ▾", label) on the left, the
-   settings gear on the right; below it the screen title in display,
-   matching the tab name; an optional caption.
-2. **The one thing now:** a summary card (or, on Today until it's
-   answered, the skin check-in).
-3. **Everything else:** sections with a label, rows separated by 0.5pt
-   dividers.
-4. **Bottom bar:** the tab bar, and the log control to its right.
+Every tab, top to bottom:
+1. **Header:** the child switcher ("Cal ▾") on the left and a gear button
+   (44pt circle with a hairline border) on the right; then the tab name in
+   display type; on Today by day, the date under it.
+2. **The one thing now:** on Today by day, the skin check-in until it's
+   answered; then a summary card.
+3. **Everything else:** a section label, then rows with 0.5pt dividers.
+4. **The bottom bar**, over a 48pt fade into the page.
 
-Spacing: 4 / 8 / 12 / 16 / 24 / 32. Page gutters 24. Between sections
-32. Content scrolls with bottom padding equal to the bottom bar plus the
-safe area, so nothing sits under it.
+Spacing: 4 / 8 / 12 / 16 / 24 / 32. Page margins 24. Sections 32 apart.
+Content scrolls with 120pt of room at the bottom for the bar.
 
-Corners: 12pt on buttons, cards, inputs, and choices. Pill shape only for
-the tab bar, the log control, and the segmented control. Chart marks 3pt.
+Corners: 12pt on summary cards, choice cards, buttons, and the "Logged"
+line. Pills (fully round) for the tab bar and the log control. 3pt on
+swatches and chart marks.
 
-Separators: filled surface cards for summaries; 0.5pt line dividers
-inside lists. No heavy rules above sections.
+**Summary card:** oat fill, 12pt corners, 16pt padding, at least 128pt tall.
+A small eyebrow (meta, graphite), a serif title, an optional caption (meta,
+graphite), and a hand-drawn drawing on the right (84 × 80): the sun on
+Today by day, the moon at night and for the evening routine, the flower on
+Progress.
 
-Bottom scrim: a 48pt fade from transparent to bg sits behind the bottom
-bar, so scrolled content never collides with it. It's the one allowed
-gradient (a scrim, not decoration).
+**Skin check-in (Today, by day, until answered):** "How was Cal's skin
+today?" (title), "One tap. You can change it later." (meta), then four
+choice cards in a 2 × 2 grid: paper fill, 1pt hairline border, 12pt
+corners, 64pt tall, a 24pt swatch and the answer. The selected card has an
+oat fill, a 2pt indigo border, and a small indigo check badge on its
+corner. Once answered it becomes one line: a swatch, "Skin today: a little
+itchy", and "Change" in indigo.
 
-Tab bar active tab: by day a surface pill with accent text; at night an
-accent pill with onAccent text (the surface pill disappears into the
-night bar; the accent pill is 7.3:1 against it).
+**Rows ("Today so far", Plan's routines):** at least 52pt, 0.5pt hairline
+below, label in body, time or status in meta on the right.
 
-Log control: "Itchy" in the pill has a bg fill, a 1pt line border, and a
-small plus, so it never looks like the active tab.
+**Night Today:** a large Itchy button right under the summary card: indigo
+fill, paper text, 96pt tall, 12pt corners, "Itchy" in title type and "Last
+at 1:52 AM" under it.
 
-Summary card: surface fill, 12pt corners, caption eyebrow, serif title,
-muted caption, and an optional ink drawing on the right. Used for "Last
-night", "Up next", and the Progress headline. One per screen.
+**Bottom bar:**
+- **Tab pill** (62pt tall): three tabs, each an 18pt symbol over a 12pt
+  label, on paper at 96% with a hairline border. The active tab by day is
+  an oat pill with indigo text; at night an indigo pill with paper text.
+- **Log control** (62pt pill beside it): "Itchy" (paper fill, 1pt hairline
+  border, a small plus, SF 13 semibold) and "•••", which opens a menu:
+  Flare, Bowel movement, Note. On Today at night the pill shows only
+  "•••" (the large Itchy button is on the page).
+- The "Logged, 2:14 AM · Undo" line appears just above the bar.
 
-Log control: one control, the same place on every tab: a pill beside the
-tab bar with "Itchy" (one tap) and "More" (Flare, Bowel movement, Note).
-It stays quieter than the active tab and than an unanswered check-in.
-At night it is taller. On Today at night only, a large full-width
-"Itchy" button (title size, about 96pt, accent fill) sits right under the
-summary card, and the pill shows just "More".
+**Buttons:**
+- Primary: ink fill, paper text, 12pt corners, full width, 56pt (64pt at
+  night).
+- Secondary: 0.5pt ink outline, ink text, 12pt corners ("Share with
+  provider": 1pt ink outline, 52pt).
+- Text links: indigo ("Change", "Share this week's card").
 
-Skin check-in (Today, until answered): the question in title size and
-four card buttons (swatch + label, at least 44pt, selected = accent
-border on surface with the check as a small badge on the card's corner,
-so labels like "A little itchy" stay on one line). Once answered it collapses to one line: "Skin
-today: A little itchy · Change".
+**Settings:** a grouped list on paper with SF section headers.
 
-Buttons
-- Primary: accent fill, onAccent label, 12pt corners, full width, 56pt.
-  One per screen.
-- Secondary: 1pt ink outline, 12pt corners (e.g. "Share with provider").
-- Text buttons: accent text, at least 44pt tall.
-
-Segmented control: the system segmented control, tinted with tokens
-(Progress: Week / Month / Since visit), at least 44pt tall.
-
-Tap targets: at least 44 × 44pt everywhere.
-
-Texture: a very faint paper grain over bg and surface (static noise at
-3–4%, multiply). Never on shared report cards or widgets.
-
-System chrome: let iOS draw its own navigation and tab bars (Liquid Glass
-on iOS 26+), styled with the tokens. Content stays matte.
+Texture: a very faint paper grain over paper and oat. Never in widgets or
+shared report cards.
 
 ## 6. Icons, logo, and imagery
 - Icons: SF Symbols, regular weight only, ink or muted, used only
@@ -233,7 +219,14 @@ September 27, 2026 against simulator captures in
 controlCenter_ios27_step*). Re-check whenever iOS changes and update the
 wording and drawings together.
 
-The setup guide ("Show me how")
+**On the phone today:** onboarding and Settings › Quick logging use the older
+VisualSteps: swipeable real iOS 27 screenshots with a soft indigo ring, one
+sentence per step, and "Done". Settings › Quick logging lists the Home Screen
+widget, the Lock Screen widget, and Siri; onboarding also shows the Action
+Button. The one-step-per-screen guide below is designed on the canvas and
+not built yet.
+
+The setup guide ("Show me how", designed, not built)
 - One step per screen: "Step N of M" with a progress bar and back
   button; the iPhone at about 70% of the screen height showing that exact
   moment as a **real iOS 27 simulator screenshot** inside the device
@@ -324,8 +317,8 @@ inner corners.
   wake-ups" from 7 PM; the Itchy tile (primary); Flare (logs instantly) and
   Note (opens the app's note sheet; a widget can't take typing); "Last
   1:52 AM".
-- Lock Screen circular (72 × 72): one-tap "Itchy" (the one widget-only
-  type exception: serif 17).
+- Lock Screen circular (72 × 72): a plus over "Itchy" (SF Pro 17 on the
+  phone today).
 - Lock Screen rectangular (160 × 72): "Tonight: 2" (or "Last night: 2")
   over "Last 1:52 AM".
 - Control (Control Center and the Lock Screen): "Log Itchy", small and

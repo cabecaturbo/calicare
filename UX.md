@@ -1,8 +1,14 @@
 # UX.md — Cali Care (v2)
 
+**This file describes the app as it is on the owner's phone (main, September
+27, 2026).** The phone is the reference; where this file and the phone
+disagree, fix this file. Planned pieces that aren't built are listed under
+"Not built yet" in each section.
+
 DESIGN.md says how things look. This file says what screens exist, what
 goes on each one, in what order, and how people move between them. Follow
-both. If the current app differs from this file, this file wins.
+both. The app on the owner's phone is the reference: if it differs from
+this file, update this file.
 
 ## 0. What we're building, and the bar
 Job of the app: help a tired parent manage their child's skin simply.
@@ -50,16 +56,14 @@ Three tabs. Nothing else is top-level.
 | Progress | See whether things are getting better, and share it | chart.line.uptrend.xyaxis |
 
 On every tab (DESIGN.md §5)
-- AppHeader: the child switcher ("Cal ▾", label size) on the left, the
-  Settings gear on the right (Settings opens as a sheet). Below it the
-  screen title in display, matching the tab name: "Today", "Plan",
-  "Progress". Optional caption (Today: the date).
-- One log control, docked right of the tab bar on every tab: "Itchy"
-  (one tap) and "More" (Flare, Bowel movement, Note). Same options day
-  and night. It replaces Today's old Log section and the quick log bar.
-  In the app: the tab bar accessory on iOS 26.1+, an inset bar before.
-- Every tab has a night version (8 PM – 7 AM): the same layout in the
-  night palette.
+- Header: the child switcher ("Cal ▾") on the left, the Settings gear on
+  the right (Settings opens as a large sheet). Below it the tab name as the
+  title: "Today", "Plan", "Progress". Today shows the date under it by day.
+- A bottom bar the app draws itself (the system tab bar is hidden): the
+  tab pill, and next to it the log control, "Itchy" (one tap) and "•••"
+  (a menu: Flare, Bowel movement, Note). Flare and Bowel movement log right
+  away; Note opens the note sheet.
+- Every tab switches to the night palette from 8 PM to 7 AM.
 
 Navigation
 - Push: entry detail, a day in Progress, a supplement's detail.
@@ -76,9 +80,9 @@ Everything the app shows comes from these. Keep them few and consistent.
 2. Skin today (new, daily, 5 seconds): "How was [name]'s skin today?"
    Calm / A little itchy / Flaring / Very rough. Maps to indigo steps
    1, 2, 4, 5. This is the source of every "skin by day" view.
-   Asked once a day: on Today after 4 PM if not logged, and as an evening
-   notification with the four answers as buttons (logs without opening
-   the app).
+   Asked once a day: on Today (all day, until it's answered), and as an
+   evening notification with the four answers as buttons (logs without
+   opening the app).
 3. Itch episodes and flares, with optional body areas.
 4. Bowel movements, mood, routine done, notes.
 5. Weekly check-in (later, optional): a validated 7-question caregiver
@@ -94,118 +98,113 @@ never from how skin looks in color. No scores we invented get fancy names.
 Job: log in one tap and see how last night and today are going.
 
 Day layout (7 AM – 8 PM), top to bottom:
-1. AppHeader: "Today", the date as caption.
-2. Skin today, until answered: "How was Cal's skin today?" (title) and
-   four card buttons (Calm, A little itchy, Flaring, Very rough). This is
-   the primary element; nothing else on the screen is louder. Once
-   answered it collapses to one line under the summary card: "Skin
-   today: A little itchy · Change".
-3. Summary card "Last night": "A good night", "One itchy wake-up, at
-   2:14 AM", sun drawing. If the night isn't rated, the card asks "How
-   was last night?" with Good, Okay, Rough.
-4. Today so far: the timeline (event, time; "by Dad" with more than one
-   caregiver). Swipe to delete, tap to edit.
-5. Logging is the docked log control. Flare logs instantly; the
-   confirmation line adds "Add where" (body outline, optional). Bowel
-   movement opens a small sheet; Note opens a text sheet (the same sheet
-   the medium widget's Note button opens, via calicare://note).
+1. Header: "Today", the date.
+2. Skin today, until answered: "How was Cal's skin today?", "One tap. You
+   can change it later.", and four choice cards (Calm, A little itchy,
+   Flaring, Very rough). Once answered it collapses to one line under the
+   summary card: "Skin today: a little itchy · Change".
+3. Summary card "Last night": the rating as the title ("A good night",
+   "An okay night", "A rough night", or "Not rated yet"/"Nothing logged"),
+   the wake-ups as the caption ("One itchy wake-up, at 2:14 AM"), and the
+   sun drawing.
+4. Today so far: today's logs, newest first (event, time; "by Dad" with
+   more than one caregiver). Tap one to edit or delete it.
+5. Logging is the bottom bar's log control.
 
 Night layout (8 PM – 7 AM):
-1. AppHeader: "Today", no caption.
-2. Summary card "So far tonight": "Two wake-ups", the times, moon drawing.
-3. A large full-width "Itchy" button (title size, about 96pt, accent
-   fill). The docked log control shows only "More" on this screen.
+1. Header: "Today", no date.
+2. Summary card "So far tonight": "A quiet night" or "2 wake-ups", the
+   times, and the moon drawing.
+3. A large Itchy button ("Last at 1:52 AM" under it). The log control in
+   the bar shows only "•••".
 4. Tonight so far.
-Nothing else.
 
-First run: a one-line hint under the header: "Tap Itchy whenever it
-happens. That's all it takes." Gone after the first log.
+Not built yet:
+- Rating last night from Today (Good / Okay / Rough) when it isn't rated.
+- The first-run hint.
+- "Add where" after a flare (the body outline).
+- Mood, and small sheets for Bowel movement and Mood.
+- Swipe to delete in Today so far.
+- Asking the skin question only after 4 PM (it shows all day).
 
 ## 5. Plan
 Job: follow the care plan without thinking about it.
 
-1. AppHeader: "Plan", caption "The routine you set, morning and evening".
-2. Summary card "Up next": "Evening · 3 left", moon drawing (sun in the
-   morning). Then that routine's steps as check rows. A step from the
-   provider's plan shows its name and dose, with "From Dr. [name]'s
-   plan" as a caption.
-3. The other routine (e.g. Morning, "Done 7:40 AM"), then "Edit routine".
-4. From your provider: one "Provider's plan" row (provider, date) that
-   opens the full plan. It appears once a plan has been imported
-   (Phase 4); until then the section is absent.
+1. Header: "Plan", caption "The routine you set, morning and evening".
+2. Summary card "Up next": the routine due now (morning until 2 PM,
+   evening after) as the title, "Evening · not done yet" or "Evening ·
+   done", "Done 7:40 PM" as the caption, and the sun (morning) or moon
+   (evening) drawing.
+3. That routine's row: a circle to check, "Evening routine", and the time
+   when done. One tap logs it done.
+4. The other routine under its own label ("Morning"), the same kind of row.
 
-After import (Phase 4+), more sections in this order, each hidden if
-empty: Supplements (active, what starts next and when), Food (Phase 5),
-Provider (next visit, messages left).
+Not built yet:
+- Routine steps (the data exists; there's no screen to add steps, so each
+  routine is one row).
+- The provider's plan (import is Phase 4), then Supplements, Food
+  (Phase 5), and Provider (next visit).
 
 ## 6. Progress
 Job: show whether things are getting better, and share it.
 
-1. AppHeader: "Progress".
-2. Segmented control: Week / Month / Since visit (Since visit once a
-   visit date exists; doctors think in visits).
-3. Summary card: the headline ("Calmer than last week") with at most one
-   "worth watching" line as its caption. Flower drawing. Compared with
-   this child's own history only.
-4. This week: one aligned grid, a column per day: the skin bar on top,
-   the night dot below, the day letter underneath (today in accent). A
-   small legend: calm → very rough, dashed outline = not answered.
-5. Share with provider: one secondary button (doctor report; the weekly
-   card for family is in its share sheet).
-6. Later: itchy wake-ups chart, Photos (Phase 6), day rows (tap → that
-   day's timeline).
+1. Header: "Progress".
+2. Summary card: the week's dates as the eyebrow, the headline as the
+   title ("A calmer week", "About the same as last week", …), "Worth
+   watching: …" as the caption when something clearly changed, and the
+   flower drawing. Compared with this child's own history only.
+3. This week: one grid, a column per day: the skin bar on top, the night
+   dot below, the day letter underneath (today in indigo). "4 good nights
+   of 7" on the right, and a legend: Calm to Very rough, and a dash for
+   Not answered.
+4. "Share with provider" (opens the doctor report, a PDF) and "Share this
+   week's card" (the weekly card as a picture).
 
-Fewer than 3 days of logs: the grid is replaced by one sentence: "After a
-few days of logging, you'll see how things are going here." Share stays.
+Not built yet:
+- Week / Month / Since last visit ranges (only this week is shown).
+- Itchy wake-ups chart, Photos (Phase 6), day-by-day rows.
 
 ## 7. Settings (sheet)
-Grouped List:
-1. Children
-2. Family: sign in, members, invite (Phase 2)
-3. Reminders: morning check-in, skin check-in, routine reminders
-4. Quick logging: Home Screen widget, Lock Screen widget, Control
-   Center, Action Button, Siri. The first three open the same setup
-   guides as onboarding. This is the home for
-   every guide except onboarding's Home Screen widget. A guide or step
-   without a real screenshot or recording is hidden, never shown as a
-   placeholder.
-5. Your data: export everything (CSV and PDF), what's stored where
-6. Account: display name, sign out, delete account
-7. About: how the app works (what each measure means, in plain words),
-   privacy, "Not medical advice," version, support email
-Debug list: debug builds only.
+A grouped list, in this order:
+1. Children: each child, and "Add a child".
+2. Family (when accounts are available): "Share logs with your partner"
+   (sign in), or "Household" (members and invites) once signed in.
+3. Reminders: Morning check-in, Evening skin check-in, Morning routine,
+   Evening routine, each a switch with a time.
+4. Quick logging: Home Screen widget, Lock Screen widget, Siri (each opens
+   its guide).
+5. Account (signed in only): Shown as, Sign out, Delete account.
+6. About: "Cali Care organizes the plan your provider gave you. Not
+   medical advice." and the version.
+7. Debug (debug builds only): Recent logs, Try a notification.
+
+Not built yet:
+- The Settings redesign in the new style.
+- Your data (export CSV and PDF).
+- About: how the app works, privacy, support email.
+- Editing a child.
+- Control Center and Action Button guides in Quick logging.
 
 ## 8. Onboarding (full screen, no account)
-Install to first log in under 60 seconds when optional steps are skipped.
-One idea per screen: a large visual (a hand-drawn drawing or a phone
-showing the real thing), a heading in title, body in sans, one primary
-button. Steps 2–5 have a back button and a progress bar in equal steps
-(25 / 50 / 75 / 100%).
-1. Welcome: wordmark, a sunrise drawing, the headline in display ("Your
-   child's skin, kept in one calm place."), one sentence, "Add your
-   child", and the trust line "No ads. Photos never leave your phone."
-   ("Not medical advice" lives in Settings > About.)
-2. Your child: "Who are we looking after?", a real text field labelled
-   "First name" (autofocus, display size). Birthday later.
-3. The one scale: "How was Cal's skin today?" with the four answers
-   rising as bars; "Lighter is calmer", "One tap".
-4. Log from anywhere (step 3 of 4): a realistic iPhone showing the small
-   widget, looping tap → "Logged" → normal. "Log at 2 AM without opening
-   anything", one sentence, and a switch under the phone: Home Screen /
-   Lock Screen / Control Center (the phone follows it). "Show me how"
-   opens the setup guide for the chosen surface (DESIGN.md §7: 4 steps
-   for the Home Screen, 3 each for the Lock Screen and Control Center,
-   then "You're set."); "Skip for now". Every guide screen shows a real
-   iOS screenshot with a zoom callout on the spot to tap; "Next" on each
-   step, "Done" at the end.
-5. Evening check-in: a locked phone at 6:30 PM with the four answers on
-   the notification. "Turn on reminders" turns on the evening skin
-   check-in (with a short priming line, then the system prompt); "Not
-   now". Then land on Today.
-No sign-in step, no account, paywall, or survey in onboarding.
+On the phone today (the older flow, not yet in the new style):
+1. Welcome: the "Cali Care" wordmark over a hairline rule, "A calm place to
+   follow your child's care plan and log how their skin and nights are
+   going, in one tap.", "No account needed. Everything stays on this
+   phone.", and "Add your child".
+2. "Who are you caring for?": first name (a nickname is fine), then
+   Continue.
+3. Quick logging, one part at a time with "Part N of M" and "Skip setup":
+   the Home Screen widget, the Lock Screen widget, Siri, the Action Button,
+   and (when accounts are available) "Share with your partner". Each has
+   Done and Skip.
+4. Today.
+After the first log, a one-time sheet offers reminders.
 
-Reminders live in two places only: onboarding step 5 and Settings >
-Reminders. No reminders sheet or prompt after the first log.
+Not built yet (designed on the canvas):
+- The new onboarding in the app's current style, with real iPhone
+  screenshots and the one-step-per-screen setup guide (DESIGN.md §7).
+- No reminders sheet after the first log (reminders only in onboarding and
+  Settings).
 
 ## 9. Legitimacy checklist
 - Reports say exactly what was measured and how ("Skin today is the

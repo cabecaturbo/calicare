@@ -136,9 +136,12 @@ struct Week {
     let logged: [DaySummary]
 
     init(ending: CareDay, events: [LogEntry], calendar: Calendar) {
-        let summaries = (0..<7).reversed().map { offset in
-            DaySummary(day: ending.adding(days: -offset, calendar: calendar), events: events, calendar: calendar)
-        }
+        self.init(days: (0..<7).reversed().map { ending.adding(days: -$0, calendar: calendar) }, events: events, calendar: calendar)
+    }
+
+    /// Any run of days (the monthly report uses a calendar month).
+    init(days careDays: [CareDay], events: [LogEntry], calendar: Calendar) {
+        let summaries = careDays.map { DaySummary(day: $0, events: events, calendar: calendar) }
         days = summaries.map(WeekDay.init(summary:))
         logged = summaries.filter { $0.totalEvents > 0 }
     }

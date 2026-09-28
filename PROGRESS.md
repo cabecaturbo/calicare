@@ -64,7 +64,7 @@ One prompt per session, same rules as docs/prompts/README.md.
 - [x] UX.1 Today: the missing pieces (rate last night, first-run hint, "Add where", Mood, swipe to delete, skin after 4 PM, no reminders sheet after the first log)
 - [x] UX.2 New onboarding and the setup guides (real iPhone screenshots)
 - [x] UX.3 Routine steps in Plan
-- [ ] UX.4 Progress ranges (Week / Month / Since visit)
+- [x] UX.4 Progress ranges (Week / Month / Since visit)
 - [ ] UX.5 Settings, finished (edit a child, Your data export, About)
 - [ ] UX.6 Review pass (owner checks it on the phone)
 

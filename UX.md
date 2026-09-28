@@ -154,7 +154,7 @@ Not built yet:
 ## 6. Progress
 Job: show whether things are getting better, and share it.
 
-1. Header: "Progress".
+1. Header: "Progress", then a Week / Month switch.
 2. Summary card: the week's dates as the eyebrow, the headline as the
    title ("A calmer week", "About the same as last week", …), "Worth
    watching: …" as the caption when something clearly changed, and the
@@ -163,11 +163,18 @@ Job: show whether things are getting better, and share it.
    dot below, the day letter underneath (today in indigo). "4 good nights
    of 7" on the right, and a legend: Calm to Very rough, and a dash for
    Not answered.
-4. "Share with provider" (opens the doctor report, a PDF) and "Share this
-   week's card" (the weekly card as a picture).
+4. "Share with provider" (opens the doctor report, a PDF, starting at the
+   dates on screen) and, on Week, "Share this week's card" (the weekly
+   card as a picture).
+
+Month: the same summary card ("September 2026", "A calmer month", "About
+the same as last month", …, compared with last month by averages, so a
+partial month is fair) and a calendar grid: weekday letters, then each
+day's number (today in indigo), skin square, and night dot; dashes for not
+answered. "9 good nights of 28" on the right.
 
 Not built yet:
-- Week / Month / Since last visit ranges (only this week is shown).
+- "Since visit" (once visits exist, Phase 4).
 - Itchy wake-ups chart, Photos (Phase 6), day-by-day rows.
 
 ## 7. Settings (sheet)

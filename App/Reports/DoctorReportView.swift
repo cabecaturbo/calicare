@@ -14,10 +14,13 @@ struct DoctorReportView: View {
     @State private var problem: String?
     @State private var composing = false
 
-    init(child: ChildInfo, lastVisit: Date? = nil) {
+    /// `range` starts the dates at what Progress was showing; otherwise since
+    /// the last visit, or the last 4 weeks.
+    init(child: ChildInfo, lastVisit: Date? = nil, range: DoctorReport.Range? = nil) {
         self.child = child
-        let range = DoctorReport.Range.standard(lastVisit: lastVisit)
+        let range = range ?? DoctorReport.Range.standard(lastVisit: lastVisit)
         _from = State(initialValue: range.first.noon())
+        _to = State(initialValue: min(range.last.noon(), .now))
     }
 
     private var range: DoctorReport.Range {

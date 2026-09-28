@@ -6,13 +6,14 @@ import WidgetKit
 /// Debug builds only: lets design-review screenshots pin day or night, and
 /// (`-designReviewSeed YES`) start from a known family instead of tapping
 /// through onboarding: Cal, onboarded, with last night's two itchy wake-ups.
-/// `UNRATED` leaves last night unrated; `EMPTY` adds Cal with nothing logged.
+/// `UNRATED` leaves last night unrated; `EMPTY` adds Cal with nothing logged;
+/// `MONTHS` adds about two months of nights and skin answers.
 enum DesignReviewLaunch {
     static func apply() {
         if DesignReview.applyLaunchArgument() {
             WidgetCenter.shared.reloadAllTimelines()
         }
-        if let kind = UserDefaults.standard.string(forKey: "designReviewSeed"), ["YES", "UNRATED", "EMPTY"].contains(kind) {
+        if let kind = UserDefaults.standard.string(forKey: "designReviewSeed"), ["YES", "UNRATED", "EMPTY", "MONTHS"].contains(kind) {
             UserDefaults.standard.set(true, forKey: OnboardingFlag.key)
             Task { await seed(kind) }
         }
@@ -38,6 +39,18 @@ enum DesignReviewLaunch {
         }
         _ = try? await logs.log(.itchEpisode, child: cal.id, source: .widget, at: at(23, 40, daysAgo: 1))
         _ = try? await logs.log(.itchEpisode, child: cal.id, source: .widget, at: at(1, 52))
+        if kind == "MONTHS" {
+            // A rougher August easing into a calmer September. Some days skipped.
+            let nights: [NightRating] = [.rough, .okay, .rough, .okay, .good]
+            let skins: [SkinToday] = [.veryRough, .flaring, .littleItchy, .calm]
+            for daysAgo in 1...58 where daysAgo % 6 != 0 {
+                let calmer = daysAgo < 28
+                let night = calmer ? nights[(daysAgo % 3) + 2] : nights[daysAgo % 3]
+                let skin = calmer ? skins[(daysAgo % 2) + 2] : skins[daysAgo % 3]
+                _ = try? await logs.log(.nightRating, value: .night(night), child: cal.id, source: .notification, at: at(7, 5, daysAgo: daysAgo))
+                _ = try? await logs.log(.skinToday, value: .skin(skin), child: cal.id, source: .app, at: at(17, 30, daysAgo: daysAgo))
+            }
+        }
         if kind == "YES" {
             _ = try? await logs.log(.nightRating, value: .night(.okay), child: cal.id, source: .notification, at: at(7, 5))
         }

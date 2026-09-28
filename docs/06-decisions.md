@@ -261,3 +261,15 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
 - **Tapping a ticked step unticks it** with the same soft delete and Undo as Today.
 - **The editor has no red.** It uses swipe actions (Pause in indigo, Delete in graphite) and touch-and-hold to reorder, not edit mode, because edit mode shows red delete circles and turns off swipe actions.
 - **No example steps.** The empty state says "Add the steps from your plan, in your own words" and names no treatments.
+
+## Progress by month (UX.4, September 28, 2026)
+
+- **`MonthlyReport` (Core, tested) is built like the weekly report:**
+  - A calendar month of care days, through today.
+  - At least 7 logged days for a summary, and 7 in the month before for a comparison.
+  - The headline compares average night and skin levels.
+  - "Worth watching" compares rates per logged day, so a partial month is compared fairly with a full one.
+- **A care day belongs to its month by its date**, so an itch at 11 PM on September 30 counts for October 1, the same as everywhere else.
+- **"Since visit" is hidden** until visits exist (Phase 4).
+- **Share with provider starts at what's on screen.** The doctor report opens set to that range (the week, or the month so far).
+- **Debug seed `MONTHS`:** about two months of nights and skin answers, for screenshots.

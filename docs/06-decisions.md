@@ -254,3 +254,10 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - Control Center now uses real captures (5 steps).
   - The Action Button stays hidden until it's recorded on a real iPhone.
 - **Reminder rescheduling no longer blocks saving.** `LogChanges.refreshDisplays` reloads widgets and then reschedules reminders in a detached task. On a freshly erased simulator the notification service sometimes never answers, which froze saving a child and "Add where".
+
+## Routine steps in Plan (UX.3, September 27, 2026)
+
+- **Plan uses `RoutineProgress`** (Core, tested) to decide each routine's rows and title. Steps count as done only when ticked one by one. A one-tap "routine done" (widget, Siri, notification) still marks a routine with no steps as done, but doesn't tick individual steps.
+- **Tapping a ticked step unticks it** with the same soft delete and Undo as Today.
+- **The editor has no red.** It uses swipe actions (Pause in indigo, Delete in graphite) and touch-and-hold to reorder, not edit mode, because edit mode shows red delete circles and turns off swipe actions.
+- **No example steps.** The empty state says "Add the steps from your plan, in your own words" and names no treatments.

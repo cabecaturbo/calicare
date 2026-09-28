@@ -99,17 +99,25 @@ Job: log in one tap and see how last night and today are going.
 
 Day layout (7 AM – 8 PM), top to bottom:
 1. Header: "Today", the date.
-2. Skin today, until answered: "How was Cal's skin today?", "One tap. You
-   can change it later.", and four choice cards (Calm, A little itchy,
-   Flaring, Very rough). Once answered it collapses to one line under the
-   summary card: "Skin today: a little itchy · Change".
+   Until the first log ever, one indigo line under it: "Start here: one
+   tap for today's skin." (or "Start here: tap Itchy whenever Cal
+   scratches." before 4 PM; "Tap Itchy whenever Cal wakes up." at night).
+2. Skin today, from 4 PM until answered: "How was Cal's skin today?", "One
+   tap. You can change it later.", and four choice cards (Calm, A little
+   itchy, Flaring, Very rough). Once answered it collapses to one line
+   under the summary card: "Skin today: a little itchy · Change".
 3. Summary card "Last night": the rating as the title ("A good night",
    "An okay night", "A rough night", or "Not rated yet"/"Nothing logged"),
    the wake-ups as the caption ("One itchy wake-up, at 2:14 AM"), and the
-   sun drawing.
+   sun drawing. Until 7 PM, an unrated night shows "How was the night?"
+   and Good / Okay / Rough cards under it; one tap rates it.
 4. Today so far: today's logs, newest first (event, time; "by Dad" with
-   more than one caregiver). Tap one to edit or delete it.
-5. Logging is the bottom bar's log control.
+   more than one caregiver). Tap one to edit it; swipe left to delete
+   (Delete is ink on oat; Undo in the Logged line).
+5. Logging is the bottom bar's log control. More (•••) has Flare, Bowel
+   movement, Mood, and Note. Bowel movement and Mood open a small sheet of
+   choices (one tap logs). After a flare, the Logged line offers "Add
+   where": a front/back body outline, tap areas, Save. Optional.
 
 Night layout (8 PM – 7 AM):
 1. Header: "Today", no date.
@@ -118,14 +126,6 @@ Night layout (8 PM – 7 AM):
 3. A large Itchy button ("Last at 1:52 AM" under it). The log control in
    the bar shows only "•••".
 4. Tonight so far.
-
-Not built yet:
-- Rating last night from Today (Good / Okay / Rough) when it isn't rated.
-- The first-run hint.
-- "Add where" after a flare (the body outline).
-- Mood, and small sheets for Bowel movement and Mood.
-- Swipe to delete in Today so far.
-- Asking the skin question only after 4 PM (it shows all day).
 
 ## 5. Plan
 Job: follow the care plan without thinking about it.
@@ -203,8 +203,6 @@ After the first log, a one-time sheet offers reminders.
 Not built yet (designed on the canvas):
 - The new onboarding in the app's current style, with real iPhone
   screenshots and the one-step-per-screen setup guide (DESIGN.md §7).
-- No reminders sheet after the first log (reminders only in onboarding and
-  Settings).
 
 ## 9. Legitimacy checklist
 - Reports say exactly what was measured and how ("Skin today is the

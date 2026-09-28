@@ -227,6 +227,19 @@ public actor LogStore: ModelActor {
         return entry
     }
 
+    /// Brings back a log deleted by mistake (Undo after a swipe). Returns nil if it's gone for good.
+    @discardableResult
+    public func restore(_ id: UUID) async throws -> LogEntry? {
+        var descriptor = FetchDescriptor<LogEvent>(predicate: #Predicate { $0.id == id && $0.deletedAt != nil })
+        descriptor.fetchLimit = 1
+        guard let event = try modelContext.fetch(descriptor).first else { return nil }
+        event.deletedAt = nil
+        event.updatedAt = now()
+        event.needsSync = true
+        try modelContext.save()
+        return LogEntry(event)
+    }
+
     /// Summary of the current care day. From 7 PM this already means tonight and tomorrow.
     public func todaySummary(child childID: UUID) async throws -> DaySummary {
         let today = CareDay.containing(now(), calendar: calendar)

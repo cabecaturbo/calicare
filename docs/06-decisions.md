@@ -230,3 +230,14 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - New `phase-4-care-plans.md`, `phase-5-food.md`, `phase-6-photos-products-home.md`, and `phase-7-launch.md`.
 - **Old U4–U6 are replaced** by UX.2–UX.6.
 - **The one-time reminders sheet after the first log goes** (UX.1), as UX.md already says.
+
+## Today's missing pieces (UX.1, September 27, 2026)
+
+- **Rating last night:** offered on Today only before 7 PM. After 7 PM a rating would be filed on tonight's care day, so the offer goes away. A morning rating lands on the care day that includes last night.
+- **The skin question is asked from 4 PM** until night mode starts (8 PM), or when the parent taps Change. The rule lives in `TodayPrompts` in Core, with tests. The answered state follows `SkinDay`, so a 7:30 PM answer still counts for today.
+- **The first-run hint** shows until anything has been logged for any child.
+- **Swipe to delete is a small drag**, because Today's rows live in a ScrollView, not a List. Delete is ink on oat, never red. Undo puts the log back with the new `LogStore.restore`.
+- **"Add where" is a plain front/back figure made of rounded shapes**, one per `BodyArea`, with VoiceOver actions for each area. It uses the Logged line, which stays up for 6 seconds instead of 4 when there's "Add where".
+- **The reminders sheet after the first log is removed.** Reminders are offered in onboarding and Settings only.
+- **Debug seed variants:** `-designReviewSeed UNRATED` and `EMPTY`, used by the new `TodayCaptureTests`.
+- **Sheets and Undo don't wait on the widget and reminder refresh.** On the simulator, `LogChanges.didChange` (widgets plus rescheduling reminders) sometimes never finished. That left "Add where" stuck on Save, and Undo never showed after a swipe. Both now save, update the screen, and run the refresh in the background. Worth checking the refresh itself on the phone.

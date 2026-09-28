@@ -55,20 +55,19 @@ struct AppShell: View {
             LogSheet()
                 .nightAwarePalette()
         }
-        .sheet(isPresented: firstLogOffer) {
-            ReminderOfferSheet(
-                onTurnOn: { Task { await reminders.acceptOffer() } },
-                onNotNow: { reminders.declineOffer() }
-            )
+        .sheet(item: $shell.choosing) { choice in
+            ChoiceSheet(choice: choice)
+                .nightAwarePalette()
+        }
+        .sheet(item: $shell.addingWhere) { entry in
+            BodyAreaSheet(entry: entry)
+                .nightAwarePalette()
         }
         .alert(model.problem ?? "", isPresented: problemShowing) {
             Button("OK", role: .cancel) { model.problem = nil }
         }
         .onReceive(NotificationCenter.default.publisher(for: .caliCareRemoteDataChanged)) { _ in reload() }
-        .task {
-            await model.load()
-            await offerRemindersIfNeeded()
-        }
+        .task { await model.load() }
         .task {
             // Picks up logs from widgets and Siri, and the 7 PM switch to tonight.
             while !Task.isCancelled {
@@ -77,19 +76,7 @@ struct AppShell: View {
             }
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active {
-                Task {
-                    await model.load()
-                    await offerRemindersIfNeeded()
-                }
-            }
-        }
-        .onChange(of: model.confirmation) { old, new in
-            // Right after the first log is a sensible moment to offer reminders:
-            // once its confirmation has gone, so the offer never hides Undo.
-            if old != nil, new == nil {
-                Task { await offerRemindersIfNeeded() }
-            }
+            if phase == .active { reload() }
         }
         // Last, so the tabs, the accessory, and every sheet share them.
         .environment(model)
@@ -100,25 +87,10 @@ struct AppShell: View {
         Task { await model.load() }
     }
 
-    /// The one-time reminders offer, after something has been logged. Swiping it away counts as "Not now".
-    private var firstLogOffer: Binding<Bool> {
-        Binding(
-            get: { reminders.offer == .firstLog },
-            set: { isShowing in
-                if !isShowing, reminders.offer == .firstLog { reminders.declineOffer() }
-            }
-        )
-    }
-
     private var problemShowing: Binding<Bool> {
         Binding(
             get: { model.problem != nil },
             set: { if !$0 { model.problem = nil } }
         )
-    }
-
-    private func offerRemindersIfNeeded() async {
-        guard !shell.showingSettings, !shell.showingAddChild, !shell.showingLog, !shell.showingNote else { return }
-        await reminders.offerAfterFirstLogIfNeeded()
     }
 }

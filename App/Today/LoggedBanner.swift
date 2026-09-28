@@ -5,6 +5,8 @@ import SwiftUI
 struct LoggedBanner: View {
     @Environment(\.palette) private var palette
     let confirmation: TodayModel.Confirmation
+    /// Only for a flare: opens the body outline.
+    var onAddWhere: (() -> Void)?
     let onUndo: () -> Void
     let onDismiss: () -> Void
 
@@ -15,6 +17,11 @@ struct LoggedBanner: View {
                 .foregroundStyle(palette.ink)
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
+            if let onAddWhere {
+                Button("Add where", action: onAddWhere)
+                    .buttonStyle(.textLink)
+                    .accessibilityHint("Mark where the flare was.")
+            }
             Button("Undo", action: onUndo)
                 .buttonStyle(.textLink)
                 .accessibilityHint("Removes what you just logged.")
@@ -26,7 +33,8 @@ struct LoggedBanner: View {
         .clipShape(RoundedRectangle(cornerRadius: Corner.control))
         .task(id: confirmation.id) {
             AccessibilityNotification.Announcement(confirmation.text).post()
-            try? await Task.sleep(for: .seconds(4))
+            // A little longer when there's "Add where" to reach.
+            try? await Task.sleep(for: .seconds(onAddWhere == nil ? 4 : 6))
             if !Task.isCancelled { onDismiss() }
         }
     }

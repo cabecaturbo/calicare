@@ -1,3 +1,4 @@
+import Core
 import Observation
 
 /// The three top-level tabs. Nothing else is top-level.
@@ -14,4 +15,8 @@ final class Shell {
     var showingAddChild = false
     var showingLog = false
     var showingNote = false
+    /// Bowel movement or Mood from the More menu.
+    var choosing: LogChoice?
+    /// A flare getting "Add where".
+    var addingWhere: LogEntry?
 }

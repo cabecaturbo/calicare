@@ -40,8 +40,20 @@ struct TodayView: View {
     @ViewBuilder
     private var content: some View {
         let night = palette.isNight
-        let skin = model.week.last?.skin
-        if !night, skin == nil || changingSkin {
+        let skin = model.skin
+        let asksSkin = !night && (changingSkin || TodayPrompts.asksSkin(at: .now, answered: skin != nil))
+        let name = model.child?.name ?? "your child"
+
+        if let hint = TodayPrompts.firstRunHint(hasEverLogged: model.hasEverLogged, isNight: night, asksSkin: asksSkin, childName: name) {
+            Text(hint)
+                .textStyle(.body)
+                .foregroundStyle(palette.indigo)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, Spacing.margin)
+                .padding(.top, Spacing.x3)
+        }
+
+        if asksSkin {
             SkinCheckIn(childName: model.child?.name ?? "their", selected: skin) { answer in
                 changingSkin = false
                 Task { await model.log(.skinToday, value: .skin(answer)) }
@@ -52,7 +64,15 @@ struct TodayView: View {
 
         summary
             .padding(.horizontal, Spacing.margin)
-            .padding(.top, !night && (skin == nil || changingSkin) ? Spacing.x6 : Spacing.x5)
+            .padding(.top, asksSkin ? Spacing.x6 : Spacing.x5)
+
+        if !night, model.isDaytime, let report = model.lastNight, report.rating == nil, !report.isTonight {
+            NightRatingChoices { rating in
+                Task { await model.log(.nightRating, value: .night(rating)) }
+            }
+            .padding(.horizontal, Spacing.margin)
+            .padding(.top, Spacing.x3)
+        }
 
         if !night, let skin, !changingSkin {
             HStack {
@@ -121,7 +141,7 @@ struct TodayView: View {
         case nil: wakeUps > 0 ? "Not rated yet" : "Nothing logged"
         }
         let caption: String? = wakeUps == 0
-            ? (report?.rating == nil ? "Log a wake-up or rate the night any time." : "No itchy wake-ups.")
+            ? (report?.rating == nil ? nil : "No itchy wake-ups.")
             : "\(wakeUps == 1 ? "One itchy wake-up" : "\(wakeUps) itchy wake-ups")\(times.isEmpty ? "" : ", at \(times.reversed().joined(separator: " and "))")"
         return SummaryCard(eyebrow: "Last night", title: title, caption: caption, art: .sun)
     }
@@ -202,6 +222,37 @@ struct SkinCheckIn: View {
     }
 }
 
+/// Good / Okay / Rough under the Last night card while last night isn't rated.
+/// Same cards as the skin check-in; one tap logs it.
+struct NightRatingChoices: View {
+    @Environment(\.palette) private var palette
+    let onRate: (NightRating) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.x2) {
+            Text("How was the night?")
+                .textStyle(.meta)
+                .foregroundStyle(palette.graphite)
+            HStack(spacing: Spacing.x2) {
+                ForEach(NightRating.allCases, id: \.self) { rating in
+                    Button { onRate(rating) } label: {
+                        Text(rating.title)
+                            .textStyle(.body)
+                            .foregroundStyle(palette.ink)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.85)
+                            .frame(maxWidth: .infinity, minHeight: 56)
+                            .background(palette.paper, in: RoundedRectangle(cornerRadius: Corner.card))
+                            .overlay(RoundedRectangle(cornerRadius: Corner.card).strokeBorder(palette.hairline, lineWidth: 1))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Last night was \(rating.title.lowercased())")
+                }
+            }
+        }
+    }
+}
+
 /// A mark on the one skin scale, with its 1pt muted border (DESIGN.md §3).
 struct SkinSwatch: View {
     @Environment(\.palette) private var palette
@@ -217,7 +268,8 @@ struct SkinSwatch: View {
     }
 }
 
-/// Today's (or tonight's) logs, newest first, with 0.5pt dividers. Tap to edit.
+/// Today's (or tonight's) logs, newest first, with 0.5pt dividers. Tap to
+/// edit; swipe left to delete (Undo in the Logged line).
 private struct TodaySoFar: View {
     @Environment(\.palette) private var palette
     @Environment(TodayModel.self) private var model
@@ -240,6 +292,7 @@ private struct TodaySoFar: View {
             } else {
                 VStack(spacing: 0) {
                     ForEach(entries) { entry in
+                        SwipeToDelete { Task { await model.deleteWithUndo(entry) } } content: {
                         Button { onEdit(entry) } label: {
                             HStack {
                                 Text(model.title(for: entry))
@@ -255,7 +308,8 @@ private struct TodaySoFar: View {
                             .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
                         }
                         .buttonStyle(.plain)
-                        .accessibilityHint("Edit or delete")
+                        .accessibilityHint("Edit, or swipe left to delete")
+                        }
                     }
                 }
                 .padding(.horizontal, Spacing.margin)

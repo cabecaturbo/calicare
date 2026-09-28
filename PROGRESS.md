@@ -55,19 +55,13 @@ One prompt per session, same rules as docs/prompts/README.md.
       Done: skinToday (one per day, evening answers count for that day), flare body areas, routine steps, SchemaV2 migration, Supabase migration (applied) and sync, evening skin check-in, "Log skin" for Siri; all skin-by-day views read only skinToday. Left over: UI for skin on Today, body outline (U3), routine step editor (U5).
 - [x] U3 Today: day and night layouts exactly as UX.md section 4, all states.
       Done in the canvas design: the shared header, the skin check-in as four cards (then one line with Change), the Last night card, Today so far, the night layout with a large Itchy, and the docked log control (Itchy, More: Flare, Bowel movement, Note).
-      Still missing from UX.md §4:
-      - "Add where" after a flare (the body outline).
-      - Rating last night from Today (the card asking Good / Okay / Rough when it isn't rated).
-      - Asking the skin question only after 4 PM (it shows all day now).
-      - The first-run hint "Tap Itchy whenever it happens" (only an empty-state line now).
-      - Swipe to delete in Today so far (tap to edit works).
-      - Mood in More, and small sheets for Bowel movement and Mood (Bowel movement logs instantly now).
+      The missing pieces are done in UX.1.
 - [ ] U4 Onboarding (now UX.2 below).
 - [ ] U5 Plan and Progress (now UX.3–UX.5 below).
 - [ ] U6 Review pass (now UX.6 below).
 
 ## Finish the UX (docs/prompts/ux-finish.md)
-- [ ] UX.1 Today: the missing pieces (rate last night, first-run hint, "Add where", Mood, swipe to delete, skin after 4 PM, no reminders sheet after the first log)
+- [x] UX.1 Today: the missing pieces (rate last night, first-run hint, "Add where", Mood, swipe to delete, skin after 4 PM, no reminders sheet after the first log)
 - [ ] UX.2 New onboarding and the setup guides (real iPhone screenshots)
 - [ ] UX.3 Routine steps in Plan
 - [ ] UX.4 Progress ranges (Week / Month / Since visit)

@@ -11,6 +11,8 @@ final class TodayModel {
     struct Confirmation: Identifiable, Equatable {
         let entry: LogEntry
         let text: String
+        /// Undo brings a deleted log back instead of removing a new one.
+        var wasDeleted = false
         var id: UUID { entry.id }
     }
 
@@ -20,6 +22,10 @@ final class TodayModel {
     private(set) var entries: [LogEntry] = []
     private(set) var lastNight: LastNightReport?
     private(set) var week: [WeekDay] = []
+    /// The skin answer for the day a skin answer given now would be about.
+    private(set) var skin: SkinToday?
+    /// False until anything has been logged for any child: shows the first-run hint.
+    private(set) var hasEverLogged = true
     /// False from 7 PM, when the care day is tonight's.
     private(set) var isDaytime = true
     private(set) var hasLoaded = false
@@ -46,7 +52,8 @@ final class TodayModel {
             if setting.childID != child.id { setting.childID = child.id }
 
             let today = CareDay.containing(now, calendar: calendar)
-            let events = try await LogStore(modelContainer: container, calendar: calendar)
+            let store = LogStore(modelContainer: container, calendar: calendar)
+            let events = try await store
                 .events(from: today.adding(days: -6, calendar: calendar), through: today, child: child.id)
             let todaySummary = DaySummary(day: today, events: events, calendar: calendar)
             let previous = DaySummary(day: today.adding(days: -1, calendar: calendar), events: events, calendar: calendar)
@@ -54,6 +61,10 @@ final class TodayModel {
             entries = events.filter { today.contains($0.timestamp, calendar: calendar) }.reversed()
             lastNight = LastNightReport.resolve(at: now, today: todaySummary, previous: previous, calendar: calendar)
             week = WeekOverview.days(ending: today, events: events, calendar: calendar)
+            let skinDay = SkinDay.day(for: now, calendar: calendar)
+            skin = events.last { $0.type == .skinToday && skinDay.contains($0.timestamp, calendar: calendar) }
+                .flatMap { if case .skin(let answer)? = $0.value { answer } else { nil } }
+            hasEverLogged = try await !store.recent(limit: 1).isEmpty
             isDaytime = today.isDaytime(now, calendar: calendar)
             myName = AccountSettings().displayName
             householdSize = SyncSettings().householdSize
@@ -99,7 +110,49 @@ final class TodayModel {
 
     func undo(_ confirmation: Confirmation) async {
         if self.confirmation == confirmation { self.confirmation = nil }
-        await delete(confirmation.entry)
+        if confirmation.wasDeleted {
+            await restore(confirmation.entry)
+        } else {
+            await delete(confirmation.entry)
+        }
+    }
+
+    /// Swipe to delete: soft delete, with Undo in the Logged line.
+    func deleteWithUndo(_ entry: LogEntry) async {
+        do {
+            let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+            try await store.delete(entry.id)
+            entries.removeAll { $0.id == entry.id }
+            // Undo shows at once; widgets and reminders refresh after.
+            confirmation = Confirmation(entry: entry, text: phrases.removed(entry), wasDeleted: true)
+            Task { await afterChange() }
+        } catch {
+            problem = "Couldn't delete that. Please try again."
+        }
+    }
+
+    /// Where a flare was ("Add where"). Returns false (with `problem` set) if it wasn't saved.
+    func setBodyAreas(_ areas: [BodyArea], on entry: LogEntry) async -> Bool {
+        do {
+            let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+            try await store.setBodyAreas(areas, on: entry.id)
+            // The sheet closes as soon as it's saved; the refresh follows.
+            Task { await afterChange() }
+            return true
+        } catch {
+            problem = "Couldn't save where. Please try again."
+            return false
+        }
+    }
+
+    private func restore(_ entry: LogEntry) async {
+        do {
+            let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+            try await store.restore(entry.id)
+            await afterChange()
+        } catch {
+            problem = "Couldn't bring that back. Please try again."
+        }
     }
 
     func update(_ entry: LogEntry, value: LogValue?, note: String?, timestamp: Date) async -> Bool {
@@ -159,6 +212,7 @@ final class TodayModel {
         entries = []
         lastNight = nil
         week = []
+        skin = nil
         hasLoaded = true
     }
 }

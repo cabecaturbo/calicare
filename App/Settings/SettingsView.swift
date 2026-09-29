@@ -86,7 +86,16 @@ struct SettingsView: View {
         SettingsSection("Quick logging", footnote: "Log without opening the app.") {
             ForEach(GuidePath.allCases) { path in
                 Button { guide = path } label: {
-                    SettingsLabel(path.title)
+                    HStack {
+                        SettingsLabel(path.title)
+                        Spacer()
+                        // Matches the navigation rows' chevron; opens full screen.
+                        Image(systemName: "chevron.right")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(palette.graphite.opacity(0.6))
+                            .accessibilityHidden(true)
+                    }
+                    .contentShape(Rectangle())
                 }
             }
             // The Action Button guide returns once it's recorded on a real iPhone.

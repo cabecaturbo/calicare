@@ -273,3 +273,15 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
 - **"Since visit" is hidden** until visits exist (Phase 4).
 - **Share with provider starts at what's on screen.** The doctor report opens set to that range (the week, or the month so far).
 - **Debug seed `MONTHS`:** about two months of nights and skin answers, for screenshots.
+
+## Settings, finished (UX.5, September 28, 2026)
+
+- **Editing a child** uses `ChildStore.updateChild` and doesn't change which child is current.
+  - Removing a child is offered only with more than one child in a family that isn't shared. Shared families need the owner check (later).
+  - The remove confirmation isn't red.
+- **CSV export (`LogExport`, tested):**
+  - One row per log, oldest first, in plain words (Child, Date, Time, What, Value, Where, Note, Logged from, Logged by).
+  - Removed children say "Removed child".
+  - Cells starting with = + - @ get an apostrophe so spreadsheets don't run them as formulas.
+- **About** is a "How Cali Care works" page (what each log means, how Progress compares).
+  - The support email and privacy link wait for the owner and the landing page.

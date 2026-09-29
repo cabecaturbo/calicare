@@ -312,3 +312,13 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
 - **Phones before iOS 26.1 keep our pills**, relabeled with the palm and "Log".
 - **Follow-up:** the setup guide screenshots still show the old "+ Itchy" widget and need recapturing with `scripts/capture-guides.sh`.
 - **CI builds with Xcode 26.6**, so `.prominent` is behind `#if compiler(>=6.4)`.
+
+## Sample data and one drawing per screen (September 28, 2026)
+
+- **Settings › Debug › "Fill with sample data (8 weeks)"** (debug builds only, `Core/Debug/SampleData.swift`, tested):
+  - Adds seeded, believable logs for the current child: nights, wake-ups, skin, flares with areas, bowel movements, mood, notes, and ticked routine steps.
+  - There's a rougher stretch 5 to 7 weeks ago that calms down later. Some days are skipped, so nothing looks like a streak.
+  - Every log is "by Sample", so "Remove sample data" takes only those (and the steps it added).
+  - It's disabled while signed in, so sample logs never sync.
+- **Each screen has its own drawing** (the owner picked them): Plan is a sprout (morning) or a lamp (evening), and Progress › Month is a small tree. Today keeps the sun and moon, and Week keeps the flower.
+- **Today so far shows a ticked routine step by its own name** ("Bath"), not "Evening routine".

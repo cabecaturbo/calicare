@@ -127,6 +127,7 @@ struct SettingsView: View {
     #if DEBUG
     private var debugSection: some View {
         Group {
+            SampleDataSection()
             SettingsSection(
                 "Debug",
                 footnote: "Debug builds only. See what widgets, Siri, Control Center, and notifications saved."

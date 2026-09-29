@@ -85,6 +85,11 @@ public struct QuickLog: Sendable {
         return phrases.removed(entry)
     }
 
+    /// The child an intent means: the one picked, or the current child.
+    public func child(_ id: UUID?) async throws -> ChildInfo {
+        try await resolveChild(id)
+    }
+
     private func resolveChild(_ id: UUID?) async throws -> ChildInfo {
         guard let id else {
             guard let current = try await children.currentChild(setting: setting) else {

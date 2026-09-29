@@ -331,3 +331,12 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - Shared as a picture (1800 × 2250) or a one-page Letter PDF, with "Not medical advice" at the foot.
   - Saved per child in UserDefaults on this phone. It isn't synced yet; that can come with Phase 4 when the care plan fills fields, with the parent's approval.
 - **The setup guide screenshots were retaken** with the palm and "Log" widgets. The widget and the control are named "Log" in the galleries.
+
+## Sends through Shortcuts (3.6, September 28, 2026)
+
+- **Two new Shortcuts actions:**
+  - "Get Weekly Card" (child optional) returns this week's card as a PNG.
+  - "Get Care Log" (child optional, 28 days by default, 7 to 365) returns the doctor PDF.
+  - Both pick the child the way logging does (`QuickLog.child`, tested) and are listed in App Shortcuts, 7 of 10 now.
+- **The how-to** ("Send the weekly card automatically", in Settings › Quick logging) is four numbered steps plus Apple's `ShortcutsLink`. Driving the Shortcuts app on the simulator is too fragile to capture, so real screenshots wait for a recording on the owner's iPhone.
+- **`CFBundleName` is "Cali Care"**, so Apple's Shortcuts button and other system surfaces don't say "CaliCare".

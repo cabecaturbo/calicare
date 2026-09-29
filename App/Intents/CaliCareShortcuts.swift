@@ -55,5 +55,21 @@ struct CaliCareShortcuts: AppShortcutsProvider {
             shortTitle: "Undo Last Log",
             systemImageName: "arrow.uturn.backward"
         )
+        AppShortcut(
+            intent: GetWeeklyCardIntent(),
+            phrases: [
+                "Get the weekly card from \(.applicationName)",
+            ],
+            shortTitle: "Weekly Card",
+            systemImageName: "rectangle.portrait.on.rectangle.portrait"
+        )
+        AppShortcut(
+            intent: GetCareLogIntent(),
+            phrases: [
+                "Get the care log from \(.applicationName)",
+            ],
+            shortTitle: "Care Log",
+            systemImageName: "doc.text"
+        )
     }
 }

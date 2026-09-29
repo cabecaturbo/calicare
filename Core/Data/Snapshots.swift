@@ -114,3 +114,63 @@ extension RoutineStepInfo {
         self.init(id: step.id, childID: step.childID, name: step.name, time: time, order: step.order, isActive: step.isActive)
     }
 }
+
+/// A care plan, copied out of SwiftData.
+public struct CarePlanInfo: Identifiable, Hashable, Sendable {
+    public let id: UUID
+    public let childID: UUID
+    public let provider: String
+    public let planDate: Date?
+    public let sourceFileName: String?
+    public let status: CarePlanStatus
+    public let startedAt: Date?
+    public let endedAt: Date?
+}
+
+extension CarePlanInfo {
+    init?(_ plan: CarePlan) {
+        guard let status = plan.status else { return nil }
+        self.init(id: plan.id, childID: plan.childID, provider: plan.provider, planDate: plan.planDate,
+                  sourceFileName: plan.sourceFileName, status: status, startedAt: plan.startedAt, endedAt: plan.endedAt)
+    }
+}
+
+/// One plan item, copied out of SwiftData.
+public struct PlanItemInfo: Identifiable, Hashable, Sendable {
+    public let id: UUID
+    public let planID: UUID
+    public let kind: PlanItemKind
+    public let text: String
+    public let dose: String?
+    public let frequency: String?
+    public let timing: String?
+    public let duration: String?
+    public let sourcePage: Int?
+    public let sourceLine: String?
+    public let isConfirmed: Bool
+    public let order: Int
+}
+
+extension PlanItemInfo {
+    init?(_ item: PlanItem) {
+        guard let kind = item.kind else { return nil }
+        self.init(id: item.id, planID: item.planID, kind: kind, text: item.text, dose: item.dose,
+                  frequency: item.frequency, timing: item.timing, duration: item.duration,
+                  sourcePage: item.sourcePage, sourceLine: item.sourceLine, isConfirmed: item.isConfirmed, order: item.order)
+    }
+}
+
+/// A provider visit, copied out of SwiftData.
+public struct VisitInfo: Identifiable, Hashable, Sendable {
+    public let id: UUID
+    public let childID: UUID
+    public let date: Date
+    public let provider: String
+    public let notes: String?
+}
+
+extension VisitInfo {
+    init(_ visit: Visit) {
+        self.init(id: visit.id, childID: visit.childID, date: visit.date, provider: visit.provider, notes: visit.notes)
+    }
+}

@@ -340,3 +340,16 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - Both pick the child the way logging does (`QuickLog.child`, tested) and are listed in App Shortcuts, 7 of 10 now.
 - **The how-to** ("Send the weekly card automatically", in Settings › Quick logging) is four numbered steps plus Apple's `ShortcutsLink`. Driving the Shortcuts app on the simulator is too fragile to capture, so real screenshots wait for a recording on the owner's iPhone.
 - **`CFBundleName` is "Cali Care"**, so Apple's Shortcuts button and other system surfaces don't say "CaliCare".
+
+## Care plan data model (4.1, September 28, 2026)
+
+- **SchemaV3** copies the V2 models unchanged, except for an optional `RoutineStep.planItemID`. It adds three models:
+  - `CarePlan`: child, provider, plan date, the original file's name on this phone, status draft/active/ended.
+  - `PlanItem`: kind, text as written, dose/frequency/timing/duration only when the plan states them, source page and line, confirmed flag, order.
+  - `Visit`: date, provider, notes.
+- The migration from V2 is lightweight (tested, along with V1 → V3).
+- **`CarePlanStore` (tested):**
+  - Drafts are editable; a started plan isn't.
+  - Starting needs at least one confirmed item, drops the unconfirmed ones, and ends the child's previous plan.
+  - The source page and line never change when an item is edited.
+- **The plan kinds' display names are in plain words**, e.g. "On the skin" for topical steps and "Everyday basics" for fundamentals.

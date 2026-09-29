@@ -21,7 +21,8 @@ struct ChildDetails {
     var trimmedName: String { name.trimmingCharacters(in: .whitespacesAndNewlines) }
     var canSave: Bool { !trimmedName.isEmpty }
 
-    /// Saves the child (or changes `updating`) and makes them the one quick logs go to.
+    /// Saves the child (or changes `updating`). A new child becomes the one
+    /// quick logs go to; editing leaves the current child alone.
     func save(updating id: UUID? = nil) async throws -> ChildInfo {
         let store = ChildStore(modelContainer: try CaliCareModelContainer.shared())
         let born = hasBirthDate ? birthDate : nil
@@ -31,7 +32,7 @@ struct ChildDetails {
         } else {
             try await store.addChild(name: trimmedName, birthDate: born, colorTag: tag)
         }
-        CurrentChildSetting().childID = child.id
+        if id == nil { CurrentChildSetting().childID = child.id }
         await LogChanges.didChange()
         return child
     }

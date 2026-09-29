@@ -269,6 +269,15 @@ public actor LogStore: ModelActor {
         return try modelContext.fetchCount(descriptor) > 0
     }
 
+    /// Every live log, for every child, oldest first. For "Your data" export.
+    public func allLive() async throws -> [LogEntry] {
+        let descriptor = FetchDescriptor<LogEvent>(
+            predicate: #Predicate { $0.deletedAt == nil },
+            sortBy: [SortDescriptor(\.timestamp)]
+        )
+        return try modelContext.fetch(descriptor).compactMap { LogEntry($0) }
+    }
+
     /// The most recently created live logs, for any child, newest first.
     public func recent(limit: Int = 50) async throws -> [LogEntry] {
         var descriptor = FetchDescriptor<LogEvent>(

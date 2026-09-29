@@ -179,23 +179,28 @@ Not built yet:
 
 ## 7. Settings (sheet)
 A grouped list, in this order:
-1. Children: each child, and "Add a child".
+1. Children: each child (opens their page: name, birth date, color, Save;
+   "Remove Cal" when there's more than one child and the family isn't
+   shared), and "Add a child".
 2. Family (when accounts are available): "Share logs with your partner"
    (sign in), or "Household" (members and invites) once signed in.
 3. Reminders: Morning check-in, Evening skin check-in, Morning routine,
    Evening routine, each a switch with a time.
 4. Quick logging: Home Screen widget, Lock Screen widget, Control Center
    (each opens the full-screen setup guide), and Siri.
-5. Account (signed in only): Shown as, Sign out, Delete account.
-6. About: "Cali Care organizes the plan your provider gave you. Not
-   medical advice." and the version.
-7. Debug (debug builds only): Recent logs, Try a notification.
+5. Your data: "Export and what's stored where": every log as a
+   spreadsheet (CSV, one row per log), the care log PDF for any dates, and
+   what's stored on the phone, what's shared with family, and that photos
+   never leave the phone.
+6. Account (signed in only): Shown as, Sign out, Delete account.
+7. About: "How Cali Care works" (what each log means, how Progress
+   compares, the 7 PM day), Version, and "Not medical advice" under it.
+8. Debug (debug builds only): Recent logs, Try a notification.
 
 Not built yet:
-- The Settings redesign in the new style.
-- Your data (export CSV and PDF).
-- About: how the app works, privacy, support email.
-- Editing a child.
+- A support email and the privacy policy link in About (the policy comes
+  with the landing page, Phase 7).
+- Removing a child in a shared family (needs the owner check).
 - The Action Button guide (until it's recorded on a real iPhone).
 
 ## 8. Onboarding (full screen, no account)

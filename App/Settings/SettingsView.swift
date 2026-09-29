@@ -2,8 +2,7 @@ import Core
 import SwiftUI
 
 /// Settings, as a large sheet over every tab. Grouped as UX.md section 7:
-/// children, family, reminders, quick logging, account, about. Groups for
-/// things that aren't built yet (exporting your data) are simply absent.
+/// children, family, reminders, quick logging, your data, account, about.
 struct SettingsView: View {
     @Environment(\.palette) private var palette
     @Environment(\.dismiss) private var dismiss
@@ -19,6 +18,7 @@ struct SettingsView: View {
                 FamilySection()
                 ReminderSettingsSection()
                 quickLoggingSection
+                yourDataSection
                 AccountSettingsSection()
                 aboutSection
                 #if DEBUG
@@ -55,11 +55,15 @@ struct SettingsView: View {
     private var childrenSection: some View {
         SettingsSection("Children") {
             ForEach(model.children) { child in
-                HStack(spacing: Spacing.x3) {
-                    if model.children.count > 1 {
-                        ChildDot(color: ChildColor(tag: child.colorTag), size: 12)
+                NavigationLink {
+                    EditChildView(child: child)
+                } label: {
+                    HStack(spacing: Spacing.x3) {
+                        if model.children.count > 1 {
+                            ChildDot(color: ChildColor(tag: child.colorTag), size: 12)
+                        }
+                        SettingsLabel(child.name)
                     }
-                    SettingsLabel(child.name)
                 }
             }
             Button { addingChild = true } label: {
@@ -68,11 +72,30 @@ struct SettingsView: View {
         }
     }
 
+    private var yourDataSection: some View {
+        SettingsSection("Your data", footnote: "Everything stays on this phone unless you share with family.") {
+            NavigationLink {
+                YourDataView()
+            } label: {
+                SettingsLabel("Export and what's stored where")
+            }
+        }
+    }
+
     private var quickLoggingSection: some View {
         SettingsSection("Quick logging", footnote: "Log without opening the app.") {
             ForEach(GuidePath.allCases) { path in
                 Button { guide = path } label: {
-                    SettingsLabel(path.title)
+                    HStack {
+                        SettingsLabel(path.title)
+                        Spacer()
+                        // Matches the navigation rows' chevron; opens full screen.
+                        Image(systemName: "chevron.right")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(palette.graphite.opacity(0.6))
+                            .accessibilityHidden(true)
+                    }
+                    .contentShape(Rectangle())
                 }
             }
             // The Action Button guide returns once it's recorded on a real iPhone.
@@ -85,11 +108,12 @@ struct SettingsView: View {
     }
 
     private var aboutSection: some View {
-        SettingsSection("About") {
-            Text("Cali Care organizes the plan your provider gave you. Not medical advice.")
-                .textStyle(.body)
-                .foregroundStyle(palette.ink)
-                .fixedSize(horizontal: false, vertical: true)
+        SettingsSection("About", footnote: "Cali Care organizes the plan your provider gave you. Not medical advice.") {
+            NavigationLink {
+                AboutView()
+            } label: {
+                SettingsLabel("How Cali Care works")
+            }
             LabeledContent {
                 Text(Self.version)
                     .textStyle(.meta)

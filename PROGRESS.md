@@ -65,7 +65,7 @@ One prompt per session, same rules as docs/prompts/README.md.
 - [x] UX.2 New onboarding and the setup guides (real iPhone screenshots)
 - [x] UX.3 Routine steps in Plan
 - [x] UX.4 Progress ranges (Week / Month / Since visit)
-- [ ] UX.5 Settings, finished (edit a child, Your data export, About)
+- [x] UX.5 Settings, finished (edit a child, Your data export, About). Support email: waiting on the owner.
 - [ ] UX.6 Review pass (owner checks it on the phone)
 
 ## Before App Store (remind the owner when we get close)

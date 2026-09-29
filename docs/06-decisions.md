@@ -285,3 +285,13 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - Cells starting with = + - @ get an apostrophe so spreadsheets don't run them as formulas.
 - **About** is a "How Cali Care works" page (what each log means, how Progress compares).
   - The support email and privacy link wait for the owner and the landing page.
+
+## Review pass (UX.6, September 28, 2026)
+
+- **The screens were captured with two children** (one with a long name), at night, and at the largest accessibility text size (`ReviewTourTests` plus the existing capture tests with `DESIGN_VARIANT=xxxl`).
+- **Fixes from the review at the largest text size:**
+  - The skin answers were cut off. They now go to one column.
+  - Good / Okay / Rough now stack.
+  - Summary card titles broke mid-word next to the drawing. The drawing is hidden at those sizes.
+  - The bottom bar's "•••" grew past the bar. It's now a fixed size, like the tab labels.
+- **The long name truncates in the header** ("Maximilia…") and reads in full in the switcher and Settings, which is fine.

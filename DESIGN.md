@@ -128,6 +128,10 @@ label is SF Pro 13 semibold.
 - The serif is only for the tab title, card titles, and the skin question.
   Everything else is SF Pro.
 - Sentence case, left-aligned. Every style scales with Dynamic Type.
+- At accessibility sizes (AX1 and up): the skin answers go to one column,
+  Good / Okay / Rough stack, summary cards drop their drawing so the title
+  has the full width, and the bottom bar keeps a fixed size (it already
+  carries labels and is the one place that can't grow).
 
 ## 5. Layout
 Every tab, top to bottom:

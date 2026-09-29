@@ -57,6 +57,21 @@ struct SupabaseSyncRemote: SyncRemote {
         try await client.from("routine_steps").upsert(routineSteps, onConflict: "id", returning: .minimal).execute()
     }
 
+    func upsert(carePlans: [RemoteCarePlan]) async throws {
+        guard !carePlans.isEmpty else { return }
+        try await client.from("care_plans").upsert(carePlans, onConflict: "id", returning: .minimal).execute()
+    }
+
+    func upsert(planItems: [RemotePlanItem]) async throws {
+        guard !planItems.isEmpty else { return }
+        try await client.from("plan_items").upsert(planItems, onConflict: "id", returning: .minimal).execute()
+    }
+
+    func upsert(visits: [RemoteVisit]) async throws {
+        guard !visits.isEmpty else { return }
+        try await client.from("visits").upsert(visits, onConflict: "id", returning: .minimal).execute()
+    }
+
     func memberCount(household: UUID) async throws -> Int {
         try await client.from("household_members")
             .select("id", head: true, count: .exact)
@@ -70,7 +85,10 @@ struct SupabaseSyncRemote: SyncRemote {
         RemoteChanges(
             children: try await pages(of: "children", household: household, since: since),
             logs: try await pages(of: "log_events", household: household, since: since),
-            routineSteps: try await pages(of: "routine_steps", household: household, since: since)
+            routineSteps: try await pages(of: "routine_steps", household: household, since: since),
+            carePlans: try await pages(of: "care_plans", household: household, since: since),
+            planItems: try await pages(of: "plan_items", household: household, since: since),
+            visits: try await pages(of: "visits", household: household, since: since)
         )
     }
 

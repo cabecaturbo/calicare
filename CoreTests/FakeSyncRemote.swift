@@ -9,6 +9,9 @@ actor FakeSyncRemote: SyncRemote {
     private(set) var children: [UUID: RemoteChild] = [:]
     private(set) var logs: [UUID: RemoteLogEvent] = [:]
     private(set) var routineSteps: [UUID: RemoteRoutineStep] = [:]
+    private(set) var carePlans: [UUID: RemoteCarePlan] = [:]
+    private(set) var planItems: [UUID: RemotePlanItem] = [:]
+    private(set) var visits: [UUID: RemoteVisit] = [:]
     private(set) var households: Set<UUID> = []
     private var memberHousehold: UUID?
     var members = 1
@@ -58,6 +61,39 @@ actor FakeSyncRemote: SyncRemote {
         }
     }
 
+    func upsert(carePlans rows: [RemoteCarePlan]) async throws {
+        try check()
+        for var row in rows where isNewer(row.updatedAt, than: carePlans[row.id]?.updatedAt) {
+            // Same rule as the database: drafts are refused.
+            guard row.status != "draft" else { throw Offline() }
+            row.serverUpdatedAt = tick()
+            carePlans[row.id] = row
+        }
+    }
+
+    func upsert(planItems rows: [RemotePlanItem]) async throws {
+        try check()
+        for var row in rows where isNewer(row.updatedAt, than: planItems[row.id]?.updatedAt) {
+            row.serverUpdatedAt = tick()
+            planItems[row.id] = row
+        }
+    }
+
+    func upsert(visits rows: [RemoteVisit]) async throws {
+        try check()
+        for var row in rows where isNewer(row.updatedAt, than: visits[row.id]?.updatedAt) {
+            row.serverUpdatedAt = tick()
+            visits[row.id] = row
+        }
+    }
+
+    /// A plan item written by another phone.
+    func insert(planItem row: RemotePlanItem) {
+        var row = row
+        row.serverUpdatedAt = tick()
+        planItems[row.id] = row
+    }
+
     /// A step written by another phone.
     func insert(step row: RemoteRoutineStep) {
         var row = row
@@ -78,7 +114,10 @@ actor FakeSyncRemote: SyncRemote {
         return RemoteChanges(
             children: children.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after },
             logs: logs.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after },
-            routineSteps: routineSteps.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after }
+            routineSteps: routineSteps.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after },
+            carePlans: carePlans.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after },
+            planItems: planItems.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after },
+            visits: visits.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after }
         )
     }
 

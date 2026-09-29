@@ -141,7 +141,7 @@ Every tab, top to bottom:
 2. **The one thing now:** on Today by day, the skin check-in until it's
    answered; then a summary card.
 3. **Everything else:** a section label, then rows with 0.5pt dividers.
-4. **The bottom bar**, over a 48pt fade into the page.
+4. **The bottom bar:** Apple's glass tab bar with the round Log button.
 
 Spacing: 4 / 8 / 12 / 16 / 24 / 32. Page margins 24. Sections 32 apart.
 Content scrolls with 120pt of room at the bottom for the bar.
@@ -167,19 +167,27 @@ itchy", and "Change" in indigo.
 **Rows ("Today so far", Plan's routines):** at least 52pt, 0.5pt hairline
 below, label in body, time or status in meta on the right.
 
-**Night Today:** a large Itchy button right under the summary card: indigo
-fill, paper text, 96pt tall, 12pt corners, "Itchy" in title type and "Last
-at 1:52 AM" under it.
+**Night Today:** a large Log button right under the summary card: indigo
+fill, paper text, 96pt tall, 12pt corners, the palm and "Log" in title
+type, and "Last at 1:52 AM" under it.
 
-**Bottom bar:**
-- **Tab pill** (62pt tall): three tabs, each an 18pt symbol over a 12pt
-  label, on paper at 96% with a hairline border. The active tab by day is
-  an oat pill with indigo text; at night an indigo pill with paper text.
-- **Log control** (62pt pill beside it): "Itchy" (paper fill, 1pt hairline
-  border, a small plus, SF 13 semibold) and "•••", which opens a menu:
-  Flare, Bowel movement, Note. On Today at night the pill shows only
-  "•••" (the large Itchy button is on the page).
-- The "Logged, 2:14 AM · Undo" line appears just above the bar.
+**The word "Itchy" never appears on a button.** Buttons that log itching
+show the palm (hand.raised.fill) and "Log"; VoiceOver says "Log itching".
+Logs, reports, and sentences still say "itchy wake-up".
+
+**Bottom bar (iOS 26.1 and later):** Apple's glass tab bar: Today, Plan,
+Progress (system symbols and labels, the active tab tinted indigo; it
+follows day and night through the color scheme), and, set apart on the
+right, the round **Log** button: the palm with "Log" under it (the `.search`
+role on iOS 26, `.prominent` on iOS 27). One tap logs itching and stays on
+the current tab. The bar shrinks as you scroll down. The "Logged, 2:14 AM
+· Undo" line sits just above it. Flare, Bowel movement, Mood, and Note are
+the "•••" button (an oat circle) beside "Today so far" on Today.
+
+Older phones (before iOS 26.1) keep our own bar: a tab pill (62pt, 18pt
+symbols over 12pt labels, active tab oat with indigo text by day, indigo
+with paper text at night) and a log pill with the palm and "Log" plus
+"•••", over a 48pt fade.
 
 **Buttons:**
 - Primary: ink fill, paper text, 12pt corners, full width, 56pt (64pt at
@@ -309,24 +317,22 @@ a page from a small magazine.
 
 ## 11. Widgets
 Sizes at true point size for a 393-pt-wide iPhone. Inside the system's
-shape: our tokens, the serif only for "Itchy", sans everywhere else, 12pt
-inner corners.
+shape: our tokens, sans throughout, 12pt inner corners.
 
-- Every Itchy button has a clear tap affordance: a filled 12pt tile with a
-  small plus and the word, centered.
-- Small (158 × 158): the Itchy tile (logs without opening the app, an
+- Every log button has a clear tap affordance: a filled 12pt tile with the
+  palm and "Log" under it, centered.
+- Small (158 × 158): the Log tile (logs without opening the app, an
   interactive widget) and "Last: 1:52 AM". After a tap: "Logged ·
   2:14 AM" with an Undo button (44pt) for 5 seconds.
 - Medium (338 × 158): "Last night: 2 wake-ups" by day, "Tonight: 2
-  wake-ups" from 7 PM; the Itchy tile (primary); Flare (logs instantly) and
+  wake-ups" from 7 PM; the Log tile (primary); Flare (logs instantly) and
   Note (opens the app's note sheet; a widget can't take typing); "Last
   1:52 AM".
-- Lock Screen circular (72 × 72): a plus over "Itchy" (SF Pro 17 on the
-  phone today).
+- Lock Screen circular (72 × 72): the palm over "Log".
 - Lock Screen rectangular (160 × 72): "Tonight: 2" (or "Last night: 2")
   over "Last 1:52 AM".
-- Control (Control Center and the Lock Screen): "Log Itchy", small and
-  wide. It can be assigned to the Action Button.
+- Control (Control Center and the Lock Screen): the palm and "Log". Its
+  name in the controls gallery stays "Log Itchy" so search finds it. It can be assigned to the Action Button.
 
 Looks (iOS 27, as since iOS 26): Home Screen widgets render full color,
 tinted, and clear, each in light and dark. Full color uses our palette

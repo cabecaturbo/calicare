@@ -56,7 +56,7 @@ struct ItchWidgetView: View {
         }
     }
 
-    /// The Lock Screen draws its own tint: a plus over the word.
+    /// The Lock Screen draws its own tint: the palm over "Log".
     @ViewBuilder
     private var circular: some View {
         if entry.feedback != nil {
@@ -72,11 +72,11 @@ struct ItchWidgetView: View {
             Button(intent: WidgetLogIntent(action: .itchy, child: child)) {
                 ZStack {
                     AccessoryWidgetBackground()
-                    VStack(spacing: 0) {
-                        Image(systemName: "plus")
-                            .font(.footnote.weight(.semibold))
-                        Text("Itchy")
-                            .font(TypeStyle.body.font)
+                    VStack(spacing: 1) {
+                        Image(systemName: "hand.raised.fill")
+                            .font(.body)
+                        Text("Log")
+                            .font(.system(size: 12, weight: .semibold))
                             .minimumScaleFactor(0.7)
                     }
                 }
@@ -86,9 +86,8 @@ struct ItchWidgetView: View {
         } else {
             ZStack {
                 AccessoryWidgetBackground()
-                Text("Itchy")
-                    .font(TypeStyle.body.font)
-                    .minimumScaleFactor(0.7)
+                Image(systemName: "hand.raised")
+                    .font(.body)
             }
             .accessibilityLabel("Add your child in Cali Care to start logging")
         }

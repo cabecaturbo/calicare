@@ -69,6 +69,9 @@ One prompt per session, same rules as docs/prompts/README.md.
 - [ ] UX.6 Review pass (owner checks it on the phone)
       Screens reviewed day, night, two children, largest text; fixes made. Waiting on the owner's phone check.
 
+## Follow-ups
+- [ ] Recapture the setup guide screenshots (widgets now show the palm and "Log").
+
 ## Before App Store (remind the owner when we get close)
 - [ ] Data export and an About section (privacy link, support email): UX.5.
 - [ ] Apple token revocation on account deletion: a Sign in with Apple key from the Apple Developer site, stored as a Supabase secret, called by the delete-account Edge Function.

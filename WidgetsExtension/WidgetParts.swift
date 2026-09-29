@@ -2,7 +2,7 @@ import Core
 import SwiftUI
 import WidgetKit
 
-/// The main Itchy button: a filled tile with a plus and the word, centered.
+/// The main log button: a filled tile with the palm and "Log" under it, centered.
 /// In tinted and clear (accented) looks it keeps a filled glass shape, so it
 /// stays the most prominent thing in the widget.
 struct ItchyTile: View {
@@ -13,11 +13,11 @@ struct ItchyTile: View {
     var body: some View {
         let fullColor = renderingMode == .fullColor
         Button(intent: WidgetLogIntent(action: .itchy, child: child)) {
-            HStack(spacing: Spacing.x2) {
-                Image(systemName: "plus")
-                    .font(.body.weight(.semibold))
-                Text("Itchy")
-                    .font(TypeStyle.title.font)
+            VStack(spacing: Spacing.x1) {
+                Image(systemName: "hand.raised.fill")
+                    .font(.title2)
+                Text("Log")
+                    .font(.system(size: 15, weight: .semibold))
             }
             .foregroundStyle(fullColor ? palette.paper : Color.primary)
             .widgetAccentable()

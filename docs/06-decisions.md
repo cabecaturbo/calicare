@@ -295,3 +295,20 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - Summary card titles broke mid-word next to the drawing. The drawing is hidden at those sizes.
   - The bottom bar's "•••" grew past the bar. It's now a fixed size, like the tab labels.
 - **The long name truncates in the header** ("Maximilia…") and reads in full in the switcher and Settings, which is fine.
+
+## Bottom bar: glass tab bar with a round Log button (September 28, 2026)
+
+- **The owner tried three bars on the phone and picked the round button** ("itchy circle is fire").
+  - The bar is Apple's glass tab bar (Today, Plan, Progress) with a round Log button set apart on the right: `.search` role on iOS 26, `.prominent` on iOS 27.
+  - Tapping it logs itching and stays on the current tab.
+  - The bar shrinks on scroll.
+  - The "Try a bottom bar" switch and the logging-row option are removed.
+- **No "Itchy" on buttons.** The owner said "put the word log under it. i dont like seeing the word itchy" and "its fine in logs and stuff".
+  - Every button that logs itching shows the palm (hand.raised.fill) with "Log" under it: the round bar button, the widgets' main tile, the Lock Screen circle, the control, the night button on Today, and the fallback pills.
+  - The round button's icon is drawn as one template image (`LogTabIcon`), because iOS shows only the icon in that circle.
+  - Logs, reports, and VoiceOver ("Log itching") keep their words.
+  - The control keeps the gallery name "Log Itchy" so search and the guide still find it.
+- **Flare, bowel movement, mood, and note** moved to a "•••" button beside "Today so far".
+- **Phones before iOS 26.1 keep our pills**, relabeled with the palm and "Log".
+- **Follow-up:** the setup guide screenshots still show the old "+ Itchy" widget and need recapturing with `scripts/capture-guides.sh`.
+- **CI builds with Xcode 26.6**, so `.prominent` is behind `#if compiler(>=6.4)`.

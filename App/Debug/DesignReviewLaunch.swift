@@ -9,17 +9,34 @@ import WidgetKit
 /// `UNRATED` leaves last night unrated; `EMPTY` adds Cal with nothing logged;
 /// `MONTHS` adds about two months of nights and skin answers; `TWO` adds a
 /// second child with a long name; `SAMPLE` fills Cal with the eight weeks of
-/// sample data from Settings › Debug.
+/// sample data from Settings › Debug; `PLAN` adds a draft care plan to review
+/// (the example plan's items, as the reader would return them).
 enum DesignReviewLaunch {
     static func apply() {
         if DesignReview.applyLaunchArgument() {
             WidgetCenter.shared.reloadAllTimelines()
         }
-        if let kind = UserDefaults.standard.string(forKey: "designReviewSeed"), ["YES", "UNRATED", "EMPTY", "MONTHS", "TWO", "SAMPLE"].contains(kind) {
+        if let kind = UserDefaults.standard.string(forKey: "designReviewSeed"), ["YES", "UNRATED", "EMPTY", "MONTHS", "TWO", "SAMPLE", "PLAN"].contains(kind) {
             UserDefaults.standard.set(true, forKey: OnboardingFlag.key)
             Task { await seed(kind) }
         }
     }
+
+    /// What the reader returns for supabase/functions/parse-care-plan/fixtures/example-plan.txt.
+    private static let examplePlan: [PlanItemDraft] = [
+        PlanItemDraft(kind: .fundamental, text: "Open windows 10 minutes daily", frequency: "daily", sourcePage: 1, sourceLine: "Air: open windows 10 minutes daily. HEPA vacuum 2–3x/week. Keep humidity 40–50%."),
+        PlanItemDraft(kind: .fundamental, text: "Hydration: ____ oz water daily", frequency: "daily", sourcePage: 1, sourceLine: "Hydration: ____ oz water daily"),
+        PlanItemDraft(kind: .topicalStep, text: "Rinse with lukewarm water", frequency: "3–4x/day", sourcePage: 1, sourceLine: "1. Rinse with lukewarm water"),
+        PlanItemDraft(kind: .topicalStep, text: "Apply calendula balm to affected areas", frequency: "3–4x/day", sourcePage: 1, sourceLine: "2. Apply calendula balm to affected areas"),
+        PlanItemDraft(kind: .topicalStep, text: "Seal with plain oil", frequency: "3–4x/day", sourcePage: 1, sourceLine: "3. Seal with plain oil"),
+        PlanItemDraft(kind: .bath, text: "Oat bath", frequency: "3x/week", duration: "10 minutes", sourcePage: 1, sourceLine: "Oat bath 3x/week, 10 minutes"),
+        PlanItemDraft(kind: .bath, text: "Rotate baths, don’t combine", sourcePage: 1, sourceLine: "Baths (rotate, don’t combine)"),
+        PlanItemDraft(kind: .supplement, text: "Probiotic, Brand A", dose: "1/4 tsp", frequency: "once daily", timing: "with breakfast", duration: "3 months", sourcePage: 2, sourceLine: "Probiotic, Brand A, 1/4 tsp, once daily, with breakfast, 3 months"),
+        PlanItemDraft(kind: .supplement, text: "Vitamin D3, Brand B", frequency: "daily", sourcePage: 2, sourceLine: "Vitamin D3, Brand B, dose at next visit, daily"),
+        PlanItemDraft(kind: .supplement, text: "Add one at a time, 3–5 days apart", sourcePage: 2, sourceLine: "Add one at a time, 3–5 days apart. Start with a drop."),
+        PlanItemDraft(kind: .foodRule, text: "Avoid: dairy, eggs, peanuts", sourcePage: 2, sourceLine: "Avoid: dairy, eggs, peanuts"),
+        PlanItemDraft(kind: .followUp, text: "Follow-up visit in 4–6 weeks", sourcePage: 2, sourceLine: "Follow-up visit in 4–6 weeks."),
+    ]
 
     private static func seed(_ kind: String) async {
         guard let container = try? CaliCareModelContainer.shared() else { return }
@@ -28,6 +45,12 @@ enum DesignReviewLaunch {
               let cal = try? await children.addChild(name: "Cal", colorTag: "sage")
         else { return }
         CurrentChildSetting().childID = cal.id
+        if kind == "PLAN" {
+            _ = try? await CarePlanStore(modelContainer: container).createDraft(
+                child: cal.id, provider: "Dr. Rivera", items: examplePlan
+            )
+            return
+        }
         if kind == "SAMPLE" {
             _ = try? await SampleData.fill(child: cal.id, container: container)
             await LogChanges.didChange()

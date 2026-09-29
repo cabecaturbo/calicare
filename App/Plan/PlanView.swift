@@ -3,7 +3,7 @@ import SwiftUI
 
 /// Plan (UX.md §5): the routine you set, what's up next first. With steps,
 /// each is a check row; without, the routine is one row that logs it done.
-/// The provider's plan arrives with import (Phase 4); until then it's absent.
+/// Then the care plan section: add the provider's plan, review it, or open it.
 struct PlanView: View {
     @Environment(\.palette) private var palette
     @Environment(TodayModel.self) private var model
@@ -43,6 +43,10 @@ struct PlanView: View {
                         editButton
                             .padding(.horizontal, Spacing.margin)
                             .padding(.top, Spacing.x5)
+
+                        CarePlanSection()
+                            .padding(.horizontal, Spacing.margin)
+                            .padding(.top, Spacing.section)
                     }
                 }
                 .padding(.bottom, BottomBar.clearance)

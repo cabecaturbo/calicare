@@ -374,3 +374,17 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
 - **Tested:** 13 Deno tests (the grounding rules against an example plan built from the anonymized one in the research notes, plus the handler) and 4 pgTAP checks.
   - Deno tests aren't in CI yet. Run `deno test --allow-read --allow-env` in `supabase/functions/parse-care-plan`.
 - The function is deployed. It answers "try again" until `ANTHROPIC_API_KEY` is set as a Supabase secret (the owner does this).
+
+## Importing and reviewing a care plan (4.3, September 29, 2026)
+
+- **Plan › Care plan:** "Add your care plan", then "Finish reviewing your plan" while there's a draft, or "About this plan" once it has started.
+- **Adding a plan** requires signing in (owner decision: "keep the sign in"). The parent can use the VisionKit document camera, a PDF or file, or photos.
+  - The phone extracts the text itself: PDFKit, or Vision OCR for photos and scanned pages, with "--- Page N ---" markers. Only that text is sent to parse-care-plan.
+  - The original is saved on the phone only, in Application Support/Plans (excluded from backup, with complete file protection). Photos are combined into one PDF there.
+  - Errors are plain: no readable words, no plan items found, too many plans for today.
+- **Review:** items are grouped by kind, each with a check, the plan's words, its details, flagged blanks, and the source line in italics.
+  - Tap to edit (the source line never changes). Press and hold to remove. "Check all".
+  - "Start this plan (N)" keeps only checked items. "Later" keeps the draft. "Discard this draft" removes the draft and its file.
+- **Blanks are flagged only on items that give at least one detail,** so a rule like "add one at a time" doesn't show "Dose: blank". The same rule applies in `PlanItemInfo.blanks` and in the function's `grounding.ts`.
+- **Debug seed `PLAN`** is a draft of the example plan, for screenshots.
+- **Waiting on the owner:** the live test on September 29 returned 502 because `ANTHROPIC_API_KEY` wasn't among the project's secrets.

@@ -67,3 +67,10 @@ Deno.test("curly quotes and dashes match their plain forms", () => {
   ], plan);
   assertEquals(items.length, 1);
 });
+
+Deno.test("a rule with no details has nothing to flag", () => {
+  const { items } = check([
+    { kind: "supplement", text: "Add one at a time, 3–5 days apart", source_page: 2, source_line: "Add one at a time, 3–5 days apart. Start with a drop." },
+  ], plan);
+  assertEquals(items[0].blanks, []);
+});

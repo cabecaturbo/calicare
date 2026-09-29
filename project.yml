@@ -59,6 +59,8 @@ targets:
         # Portrait-only iPhone app; without this, device builds warn.
         UIRequiresFullScreen: true
         ITSAppUsesNonExemptEncryption: false
+        # Scanning a care plan's pages (Plan › Add your care plan).
+        NSCameraUsageDescription: Scan the pages of your child's care plan. The pictures stay on this phone.
         # Background sync (prompt 2.3).
         UIBackgroundModes:
           - fetch

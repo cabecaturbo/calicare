@@ -114,4 +114,16 @@ struct CarePlanStoreTests {
         #expect(try context.fetchCount(FetchDescriptor<CarePlan>()) == 1)
         #expect(try context.fetchCount(FetchDescriptor<Visit>()) == 1)
     }
+
+    @Test func blanksOnlyForItemsThatGiveSomeDetail() async throws {
+        let harness = try await TestHarness()
+        let plans = store(harness)
+        let plan = try await plans.createDraft(child: harness.child.id, provider: "", items: [
+            PlanItemDraft(kind: .supplement, text: "Vitamin D3", frequency: "daily", sourceLine: "Vitamin D3, dose at next visit, daily"),
+            PlanItemDraft(kind: .supplement, text: "Add one at a time", sourceLine: "Add one at a time, 3–5 days apart."),
+        ])
+        let items = try await plans.items(plan: plan.id)
+        #expect(items[0].blanks == [.dose])
+        #expect(items[1].blanks.isEmpty)
+    }
 }

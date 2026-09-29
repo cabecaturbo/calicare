@@ -135,7 +135,7 @@ Job: follow the care plan without thinking about it.
 2. Summary card "Up next": the routine due now (morning until 2 PM,
    evening after) as the title ("Evening · 3 steps", "Evening · 2 left",
    "Evening · done", or "Evening · not done yet" with no steps), "Done
-   7:40 PM" as the caption, and the sun (morning) or moon (evening)
+   7:40 PM" as the caption, and the sprout (morning) or lamp (evening)
    drawing.
 3. That routine's rows: one check row per step (circle, the parent's own
    words, "Done 7:40 PM"). Tap to tick; tap a ticked step to untick (Undo
@@ -147,10 +147,24 @@ Job: follow the care plan without thinking about it.
    at the end of each, tap to rename, swipe left for Pause/Delete (indigo
    and graphite, never red), touch and hold to move. Paused steps stay in
    the editor marked "Paused" and leave Plan. Nothing is suggested.
+6. Care plan: "Add your care plan" (with one line saying every item gets
+   checked first), then "Finish reviewing your plan" while a draft waits,
+   or "About this plan" once it's running (who it's from, when it
+   started, every item as written, "Open the original", "End this plan").
+   - Add: sign in once (Sign in with Apple), then scan the pages, choose
+     a PDF or file, or choose photos. The phone reads the words; only the
+     words are sent, and nothing is kept. The file stays on the phone.
+   - Review: items grouped by kind, each with a check, the plan's words,
+     its details, "Dose: your provider left this blank. Worth asking at
+     your next visit." for missing details, and the source line in
+     italics ("Page 2 · “Vitamin D3, Brand B, dose at next visit”").
+     Tap to edit (the source line never changes), press and hold to
+     remove, "Check all". "Start this plan (N)" keeps only checked items;
+     "Later" keeps the draft; "Discard this draft" removes it and the file.
 
 Not built yet:
-- The provider's plan (import is Phase 4), then Supplements, Food
-  (Phase 5), and Provider (next visit).
+- What a started plan does in Plan: its steps, baths, patch tests (4.4),
+  supplements (4.5), and the Provider section (4.7); then Food (Phase 5).
 
 ## 6. Progress
 Job: show whether things are getting better, and share it.

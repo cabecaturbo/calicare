@@ -23,4 +23,48 @@ public enum PlanItemKind: String, Codable, Sendable, CaseIterable {
         case .followUp: "Follow-up"
         }
     }
+
+    /// Details a parent would expect the plan to give for this kind. When the
+    /// plan leaves one out, the review screen says so (the same rule as the
+    /// parse-care-plan function's grounding.ts).
+    public var expectedDetails: [PlanDetail] {
+        switch self {
+        case .supplement, .medication: [.dose, .frequency]
+        case .topicalStep, .bath: [.frequency]
+        case .routineStep, .foodRule, .fundamental, .followUp: []
+        }
+    }
+}
+
+/// The optional details of a plan item, set only when the plan states them.
+public enum PlanDetail: String, Codable, Sendable, CaseIterable {
+    case dose, frequency, timing, duration
+
+    public var title: String {
+        switch self {
+        case .dose: "Dose"
+        case .frequency: "How often"
+        case .timing: "When"
+        case .duration: "How long"
+        }
+    }
+}
+
+extension PlanItemInfo {
+    public func value(_ detail: PlanDetail) -> String? {
+        switch detail {
+        case .dose: dose
+        case .frequency: frequency
+        case .timing: timing
+        case .duration: duration
+        }
+    }
+
+    /// Expected details the plan left blank: "Worth asking at your next visit."
+    /// Only for items that give at least one detail: a rule like "add one at a
+    /// time" has no dose to miss.
+    public var blanks: [PlanDetail] {
+        guard PlanDetail.allCases.contains(where: { value($0) != nil }) else { return [] }
+        return kind.expectedDetails.filter { value($0) == nil }
+    }
 }

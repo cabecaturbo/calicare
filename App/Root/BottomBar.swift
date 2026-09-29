@@ -123,12 +123,7 @@ private struct LogPill: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("Log itching")
             }
-            Menu {
-                Button("Flare") { Task { await model.log(.flare) } }
-                Button("Bowel movement") { shell.choosing = .bowel }
-                Button("Mood") { shell.choosing = .mood }
-                Button("Note") { shell.showingNote = true }
-            } label: {
+            MoreLogMenu {
                 Image(systemName: "ellipsis")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(palette.ink)
@@ -136,12 +131,31 @@ private struct LogPill: View {
                     .frame(maxHeight: .infinity)
                     .contentShape(Rectangle())
             }
-            .accessibilityLabel("More to log")
         }
         .padding(6)
         .frame(height: 62)
         .background(palette.paper.opacity(0.96), in: Capsule())
         .overlay(Capsule().strokeBorder(palette.hairline, lineWidth: Rule.width))
+        .disabled(model.child == nil)
+    }
+}
+
+/// Flare, Bowel movement, Mood, Note: the "•••" menu, wherever it sits.
+struct MoreLogMenu<Label: View>: View {
+    @Environment(TodayModel.self) private var model
+    @Environment(Shell.self) private var shell
+    @ViewBuilder let label: Label
+
+    var body: some View {
+        Menu {
+            Button("Flare") { Task { await model.log(.flare) } }
+            Button("Bowel movement") { shell.choosing = .bowel }
+            Button("Mood") { shell.choosing = .mood }
+            Button("Note") { shell.showingNote = true }
+        } label: {
+            label
+        }
+        .accessibilityLabel("More to log")
         .disabled(model.child == nil)
     }
 }

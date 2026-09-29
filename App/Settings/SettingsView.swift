@@ -10,6 +10,9 @@ struct SettingsView: View {
     @Environment(TodayModel.self) private var model
     @State private var addingChild = false
     @State private var guide: GuidePath?
+    #if DEBUG
+    @AppStorage(BottomBarStyle.key) private var barStyleRaw = BottomBarStyle.pills.rawValue
+    #endif
 
     var body: some View {
         NavigationStack {
@@ -127,6 +130,17 @@ struct SettingsView: View {
     #if DEBUG
     private var debugSection: some View {
         Group {
+            SettingsSection("Try a bottom bar", footnote: "Debug builds only. Switches the bar right away; close Settings to see it.") {
+                Picker(selection: $barStyleRaw) {
+                    ForEach(BottomBarStyle.allCases.filter(\.isAvailable)) { style in
+                        Text(style.title).tag(style.rawValue)
+                    }
+                } label: {
+                    SettingsLabel("Bottom bar")
+                }
+                .pickerStyle(.inline)
+                .labelsHidden()
+            }
             SettingsSection(
                 "Debug",
                 footnote: "Debug builds only. See what widgets, Siri, Control Center, and notifications saved."

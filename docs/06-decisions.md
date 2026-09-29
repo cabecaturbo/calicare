@@ -295,3 +295,12 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - Summary card titles broke mid-word next to the drawing. The drawing is hidden at those sizes.
   - The bottom bar's "•••" grew past the bar. It's now a fixed size, like the tab labels.
 - **The long name truncates in the header** ("Maximilia…") and reads in full in the switcher and Settings, which is fine.
+
+## Bottom bar options (September 28, 2026)
+
+- **The owner asked for a bottom bar redesign.** Three options are now switchable in Settings › Debug › "Try a bottom bar". The current pills stay the default until the owner picks one.
+  - **Pills (current):** our own tab pill, plus an Itchy/••• pill.
+  - **Glass bar + logging row:** Apple's iOS 26 tab bar, with `tabViewBottomAccessory` holding "+ Itchy · Last 1:52 AM" and •••. It shrinks inline on scroll and hides on Today at night.
+  - **Glass bar + Itchy circle:** Apple's tab bar, with Itchy as the separate circle (`.search` role on iOS 26, `.prominent` on iOS 27). Tapping it logs and stays on the current tab. This option has no ••• yet.
+- **Why glass:** Apple's guidelines keep the tab bar for moving between sections. The system bar gives Liquid Glass, large-text labels on long press, and the right behavior on every iPhone for free. Mixing navigation and actions in one custom pill is what made the current bar feel busy.
+- The glass options need iOS 26.1 or later. Older phones keep the pills.

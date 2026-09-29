@@ -167,6 +167,7 @@ struct TodayView: View {
 /// element on Today until it's answered.
 struct SkinCheckIn: View {
     @Environment(\.palette) private var palette
+    @Environment(\.dynamicTypeSize) private var typeSize
     let childName: String
     let selected: SkinToday?
     let onAnswer: (SkinToday) -> Void
@@ -181,7 +182,11 @@ struct SkinCheckIn: View {
             Text("One tap. You can change it later.")
                 .textStyle(.meta)
                 .foregroundStyle(palette.graphite)
-            LazyVGrid(columns: [GridItem(.flexible(), spacing: Spacing.x2), GridItem(.flexible())], spacing: Spacing.x2) {
+            // One column at accessibility sizes, so the answers never cut off.
+            let columns = typeSize.isAccessibilitySize
+                ? [GridItem(.flexible())]
+                : [GridItem(.flexible(), spacing: Spacing.x2), GridItem(.flexible())]
+            LazyVGrid(columns: columns, spacing: Spacing.x2) {
                 ForEach(SkinToday.allCases, id: \.self) { answer in
                     let isSelected = answer == selected
                     Button { onAnswer(answer) } label: {
@@ -226,6 +231,7 @@ struct SkinCheckIn: View {
 /// Same cards as the skin check-in; one tap logs it.
 struct NightRatingChoices: View {
     @Environment(\.palette) private var palette
+    @Environment(\.dynamicTypeSize) private var typeSize
     let onRate: (NightRating) -> Void
 
     var body: some View {
@@ -233,7 +239,10 @@ struct NightRatingChoices: View {
             Text("How was the night?")
                 .textStyle(.meta)
                 .foregroundStyle(palette.graphite)
-            HStack(spacing: Spacing.x2) {
+            let layout = typeSize.isAccessibilitySize
+                ? AnyLayout(VStackLayout(spacing: Spacing.x2))
+                : AnyLayout(HStackLayout(spacing: Spacing.x2))
+            layout {
                 ForEach(NightRating.allCases, id: \.self) { rating in
                     Button { onRate(rating) } label: {
                         Text(rating.title)

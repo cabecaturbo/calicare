@@ -67,6 +67,7 @@ One prompt per session, same rules as docs/prompts/README.md.
 - [x] UX.4 Progress ranges (Week / Month / Since visit)
 - [x] UX.5 Settings, finished (edit a child, Your data export, About). Support email: waiting on the owner.
 - [ ] UX.6 Review pass (owner checks it on the phone)
+      Screens reviewed day, night, two children, largest text; fixes made. Waiting on the owner's phone check.
 
 ## Before App Store (remind the owner when we get close)
 - [ ] Data export and an About section (privacy link, support email): UX.5.

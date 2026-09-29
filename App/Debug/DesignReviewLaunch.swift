@@ -7,13 +7,14 @@ import WidgetKit
 /// (`-designReviewSeed YES`) start from a known family instead of tapping
 /// through onboarding: Cal, onboarded, with last night's two itchy wake-ups.
 /// `UNRATED` leaves last night unrated; `EMPTY` adds Cal with nothing logged;
-/// `MONTHS` adds about two months of nights and skin answers.
+/// `MONTHS` adds about two months of nights and skin answers; `TWO` adds a
+/// second child with a long name.
 enum DesignReviewLaunch {
     static func apply() {
         if DesignReview.applyLaunchArgument() {
             WidgetCenter.shared.reloadAllTimelines()
         }
-        if let kind = UserDefaults.standard.string(forKey: "designReviewSeed"), ["YES", "UNRATED", "EMPTY", "MONTHS"].contains(kind) {
+        if let kind = UserDefaults.standard.string(forKey: "designReviewSeed"), ["YES", "UNRATED", "EMPTY", "MONTHS", "TWO"].contains(kind) {
             UserDefaults.standard.set(true, forKey: OnboardingFlag.key)
             Task { await seed(kind) }
         }
@@ -39,6 +40,9 @@ enum DesignReviewLaunch {
         }
         _ = try? await logs.log(.itchEpisode, child: cal.id, source: .widget, at: at(23, 40, daysAgo: 1))
         _ = try? await logs.log(.itchEpisode, child: cal.id, source: .widget, at: at(1, 52))
+        if kind == "TWO" {
+            _ = try? await children.addChild(name: "Maximiliana-Josephine", colorTag: "clay")
+        }
         if kind == "MONTHS" {
             // A rougher August easing into a calmer September. Some days skipped.
             let nights: [NightRating] = [.rough, .okay, .rough, .okay, .good]
@@ -51,7 +55,7 @@ enum DesignReviewLaunch {
                 _ = try? await logs.log(.skinToday, value: .skin(skin), child: cal.id, source: .app, at: at(17, 30, daysAgo: daysAgo))
             }
         }
-        if kind == "YES" {
+        if kind == "YES" || kind == "TWO" {
             _ = try? await logs.log(.nightRating, value: .night(.okay), child: cal.id, source: .notification, at: at(7, 5))
         }
         _ = try? await logs.log(.bowelMovement, child: cal.id, source: .app, at: at(9, 10))

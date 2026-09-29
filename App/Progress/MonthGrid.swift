@@ -6,17 +6,21 @@ import SwiftUI
 /// answered is a short dash, the same as the week grid.
 struct MonthGrid: View {
     @Environment(\.palette) private var palette
+    @Environment(\.dynamicTypeSize) private var typeSize
     let days: [WeekDay]
     private let calendar = Calendar.autoupdatingCurrent
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.x3) {
-            HStack(alignment: .firstTextBaseline) {
+            let heading = typeSize.isAccessibilitySize
+                ? AnyLayout(VStackLayout(alignment: .leading, spacing: Spacing.x1))
+                : AnyLayout(HStackLayout(alignment: .firstTextBaseline))
+            heading {
                 Text("This month")
                     .textStyle(.section)
                     .foregroundStyle(palette.ink)
                     .accessibilityAddTraits(.isHeader)
-                Spacer()
+                if !typeSize.isAccessibilitySize { Spacer() }
                 Text("\(days.filter { $0.nightRating == .good }.count) good nights of \(days.count)")
                     .textStyle(.meta)
                     .foregroundStyle(palette.graphite)

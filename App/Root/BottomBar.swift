@@ -130,7 +130,7 @@ private struct LogPill: View {
                 Button("Note") { shell.showingNote = true }
             } label: {
                 Image(systemName: "ellipsis")
-                    .font(.body.weight(.semibold))
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(palette.ink)
                     .frame(width: Size.touchTarget)
                     .frame(maxHeight: .infinity)

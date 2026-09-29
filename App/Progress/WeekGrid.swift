@@ -6,16 +6,20 @@ import SwiftUI
 /// dot below, and the day letter underneath. Not answered is a short dash.
 struct WeekGrid: View {
     @Environment(\.palette) private var palette
+    @Environment(\.dynamicTypeSize) private var typeSize
     let days: [WeekDay]
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.x3) {
-            HStack(alignment: .firstTextBaseline) {
+            let heading = typeSize.isAccessibilitySize
+                ? AnyLayout(VStackLayout(alignment: .leading, spacing: Spacing.x1))
+                : AnyLayout(HStackLayout(alignment: .firstTextBaseline))
+            heading {
                 Text("This week")
                     .textStyle(.section)
                     .foregroundStyle(palette.ink)
                     .accessibilityAddTraits(.isHeader)
-                Spacer()
+                if !typeSize.isAccessibilitySize { Spacer() }
                 Text("\(days.filter { $0.nightRating == .good }.count) good nights of \(days.count)")
                     .textStyle(.meta)
                     .foregroundStyle(palette.graphite)

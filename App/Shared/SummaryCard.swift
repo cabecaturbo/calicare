@@ -5,6 +5,7 @@ import SwiftUI
 /// eyebrow, a serif title, a muted caption, and an optional ink drawing.
 struct SummaryCard: View {
     @Environment(\.palette) private var palette
+    @Environment(\.dynamicTypeSize) private var typeSize
     let eyebrow: String
     let title: String
     var caption: String?
@@ -28,7 +29,8 @@ struct SummaryCard: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            if let art {
+            // At accessibility sizes the title needs the whole width.
+            if let art, !typeSize.isAccessibilitySize {
                 Illustration(kind: art)
             }
         }

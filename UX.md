@@ -194,7 +194,9 @@ A grouped list, in this order:
 3. Reminders: Morning check-in, Evening skin check-in, Morning routine,
    Evening routine, each a switch with a time.
 4. Quick logging: Home Screen widget, Lock Screen widget, Control Center
-   (each opens the full-screen setup guide), and Siri.
+   (each opens the full-screen setup guide), Siri, and "Send the weekly
+   card automatically" (four numbered steps for a Shortcuts automation
+   with "Get Weekly Card", and Apple's Shortcuts button).
 5. Your data: "Export and what's stored where": every log as a
    spreadsheet (CSV, one row per log), the care log PDF for any dates, and
    what's stored on the phone, what's shared with family, and that photos

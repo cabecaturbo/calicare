@@ -104,6 +104,11 @@ struct SettingsView: View {
             } label: {
                 SettingsLabel("Siri")
             }
+            NavigationLink {
+                AutoSendGuide()
+            } label: {
+                SettingsLabel("Send the weekly card automatically")
+            }
         }
     }
 

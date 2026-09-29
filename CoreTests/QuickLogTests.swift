@@ -86,4 +86,17 @@ struct QuickLogTests {
         let harness = try await TestHarness()
         #expect(try await quickLog(harness).undoRecent() == LogPhrases.nothingToUndo)
     }
+
+    /// "Get Weekly Card" and "Get Care Log" pick the child the same way logging does.
+    @Test func reportIntentsPickTheChosenOrCurrentChild() async throws {
+        let harness = try await TestHarness()
+        let sibling = try await harness.children.addChild(name: "Leo", colorTag: "clay")
+        let setting = CurrentChildSetting.isolated()
+        setting.childID = sibling.id
+        let quick = quickLog(harness, setting: setting)
+
+        #expect(try await quick.child(nil).id == sibling.id)
+        #expect(try await quick.child(harness.child.id).id == harness.child.id)
+        await #expect(throws: QuickLogError.childNotFound) { try await quick.child(UUID()) }
+    }
 }

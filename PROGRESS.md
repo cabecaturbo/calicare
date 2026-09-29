@@ -82,7 +82,7 @@ One prompt per session, same rules as docs/prompts/README.md.
 ## Phase 3, continued (after the UX rebuild)
 - [ ] 3.4 (check) Doctor PDF on the phone in Files and Mail
 - [x] 3.5 Caregiver card
-- [ ] 3.6 Scheduled sends via Shortcuts
+- [x] 3.6 Scheduled sends via Shortcuts (numbered steps until recorded on the phone)
 
 ## Phase 4: Care plans (docs/prompts/phase-4-care-plans.md)
 - [ ] 4.1 Care plan data model

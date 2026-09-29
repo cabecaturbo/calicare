@@ -42,6 +42,7 @@ targets:
       path: App/Info.plist
       properties:
         CFBundleDisplayName: Cali Care
+        CFBundleName: Cali Care
         # calicare://note opens the note sheet (the medium widget's Note button).
         CFBundleURLTypes:
           - CFBundleURLName: com.cursorkittens.calicare

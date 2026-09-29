@@ -1,12 +1,14 @@
 import Core
 import SwiftUI
 
-/// Hand-drawn ink line drawings (DESIGN.md §6): a sun, a moon, a flower.
+/// Hand-drawn ink line drawings (DESIGN.md §6), one set per screen: Today's
+/// sun and moon, Plan's sprout (morning) and lamp (evening), Progress's
+/// flower (week) and tree (month).
 /// They draw themselves in (about a second) every time the screen appears or
 /// the app comes back, then stop; they never loop. With Reduce Motion they
 /// appear complete.
 struct Illustration: View {
-    enum Kind { case sun, moon, flower }
+    enum Kind { case sun, moon, flower, sprout, lamp, tree }
 
     @Environment(\.palette) private var palette
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -46,13 +48,19 @@ struct Illustration: View {
         case .sun: [InkPath(.sunDisc), InkPath(.sunRays), InkPath(.horizon)]
         case .moon: [InkPath(.moon), InkPath(.stars)]
         case .flower: [InkPath(.stem), InkPath(.petals), InkPath(.ground)]
+        case .sprout: [InkPath(.soil), InkPath(.sproutStem), InkPath(.leaves)]
+        case .lamp: [InkPath(.lampBase), InkPath(.lampShade), InkPath(.glow)]
+        case .tree: [InkPath(.ground), InkPath(.trunk), InkPath(.canopy)]
         }
     }
 }
 
 /// One hand-drawn stroke, drawn in a 100 × 92 box and scaled to fit.
 struct InkPath: Shape {
-    enum Drawing { case sunDisc, sunRays, horizon, moon, stars, stem, petals, ground }
+    enum Drawing {
+        case sunDisc, sunRays, horizon, moon, stars, stem, petals, ground
+        case soil, sproutStem, leaves, lampBase, lampShade, glow, trunk, canopy
+    }
     let drawing: Drawing
 
     init(_ drawing: Drawing) { self.drawing = drawing }
@@ -103,6 +111,49 @@ struct InkPath: Shape {
         case .ground:
             p.move(to: pt(18, 88))
             p.addCurve(to: pt(82, 86), control1: pt(34, 85), control2: pt(58, 90))
+        case .soil:
+            p.move(to: pt(20, 80))
+            p.addCurve(to: pt(80, 79), control1: pt(36, 76), control2: pt(62, 83))
+        case .sproutStem:
+            p.move(to: pt(50, 79))
+            p.addCurve(to: pt(51, 44), control1: pt(48, 66), control2: pt(53, 56))
+        case .leaves:
+            // Left leaf, then right leaf: out along one edge, back along the other.
+            p.move(to: pt(50, 60))
+            p.addCurve(to: pt(28, 46), control1: pt(44, 50), control2: pt(35, 44))
+            p.addCurve(to: pt(50, 60), control1: pt(30, 55), control2: pt(40, 60))
+            p.move(to: pt(51, 50))
+            p.addCurve(to: pt(74, 32), control1: pt(56, 38), control2: pt(66, 31))
+            p.addCurve(to: pt(51, 50), control1: pt(74, 42), control2: pt(63, 50))
+        case .lampBase:
+            p.move(to: pt(50, 46))
+            p.addCurve(to: pt(50, 76), control1: pt(49, 56), control2: pt(51, 66))
+            p.move(to: pt(36, 80))
+            p.addCurve(to: pt(64, 80), control1: pt(40, 74), control2: pt(60, 74))
+            p.addLine(to: pt(36, 80))
+        case .lampShade:
+            p.move(to: pt(33, 46))
+            p.addLine(to: pt(40, 20))
+            p.addCurve(to: pt(60, 20), control1: pt(46, 18), control2: pt(54, 18))
+            p.addLine(to: pt(67, 46))
+            p.addCurve(to: pt(33, 46), control1: pt(56, 49), control2: pt(44, 49))
+        case .glow:
+            for r in [(26.0, 50.0, 18.0, 56.0), (74, 50, 82, 56), (24, 34, 15, 33), (76, 34, 85, 33)] {
+                p.move(to: pt(r.0, r.1)); p.addLine(to: pt(r.2, r.3))
+            }
+        case .trunk:
+            p.move(to: pt(50, 87))
+            p.addCurve(to: pt(50, 52), control1: pt(48, 76), control2: pt(52, 62))
+            p.move(to: pt(50, 66))
+            p.addCurve(to: pt(61, 56), control1: pt(54, 62), control2: pt(58, 58))
+        case .canopy:
+            // A soft cloud of leaves: five bumps around the top of the trunk.
+            p.move(to: pt(30, 50))
+            p.addCurve(to: pt(32, 28), control1: pt(20, 44), control2: pt(22, 30))
+            p.addCurve(to: pt(52, 14), control1: pt(34, 16), control2: pt(46, 12))
+            p.addCurve(to: pt(72, 26), control1: pt(62, 12), control2: pt(72, 18))
+            p.addCurve(to: pt(72, 50), control1: pt(82, 32), control2: pt(82, 46))
+            p.addCurve(to: pt(30, 50), control1: pt(60, 58), control2: pt(42, 58))
         }
         let scale = min(rect.width / 100, rect.height / 92)
         return p.applying(CGAffineTransform(scaleX: scale, y: scale)

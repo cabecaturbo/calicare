@@ -210,8 +210,10 @@ shared report cards.
   Newsreader Display, optically centered. A human illustrator or
   letterer can replace it later.
 - Illustration: hand-drawn single-weight ink line drawings (1.6pt,
-  round caps, ink color): a sun (day, Welcome), a moon (night, evening),
-  a flower (Progress). No leaves or sprouts. They sit on the right of a
+  round caps, ink color), one set per screen: Today's sun (day, also
+  Welcome) and moon (night); Plan's sprout (morning routine) and lamp
+  (evening routine); Progress's flower (Week) and small tree (Month). The
+  owner picked these on September 28. They sit on the right of a
   summary card or large in onboarding. A human illustrator can redraw
   them later; never AI-generated raster images.
 - Photos of children appear only in the on-device photo timeline.

@@ -8,13 +8,14 @@ import WidgetKit
 /// through onboarding: Cal, onboarded, with last night's two itchy wake-ups.
 /// `UNRATED` leaves last night unrated; `EMPTY` adds Cal with nothing logged;
 /// `MONTHS` adds about two months of nights and skin answers; `TWO` adds a
-/// second child with a long name.
+/// second child with a long name; `SAMPLE` fills Cal with the eight weeks of
+/// sample data from Settings › Debug.
 enum DesignReviewLaunch {
     static func apply() {
         if DesignReview.applyLaunchArgument() {
             WidgetCenter.shared.reloadAllTimelines()
         }
-        if let kind = UserDefaults.standard.string(forKey: "designReviewSeed"), ["YES", "UNRATED", "EMPTY", "MONTHS", "TWO"].contains(kind) {
+        if let kind = UserDefaults.standard.string(forKey: "designReviewSeed"), ["YES", "UNRATED", "EMPTY", "MONTHS", "TWO", "SAMPLE"].contains(kind) {
             UserDefaults.standard.set(true, forKey: OnboardingFlag.key)
             Task { await seed(kind) }
         }
@@ -27,6 +28,11 @@ enum DesignReviewLaunch {
               let cal = try? await children.addChild(name: "Cal", colorTag: "sage")
         else { return }
         CurrentChildSetting().childID = cal.id
+        if kind == "SAMPLE" {
+            _ = try? await SampleData.fill(child: cal.id, container: container)
+            await LogChanges.didChange()
+            return
+        }
         guard kind != "EMPTY" else {
             await LogChanges.didChange()
             return

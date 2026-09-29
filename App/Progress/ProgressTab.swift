@@ -35,7 +35,7 @@ struct ProgressTab: View {
                             eyebrow: monthReport.title(),
                             title: monthReport.headline.text,
                             caption: monthReport.worthWatching.map { "Worth watching: \($0.prefix(1).lowercased())\($0.dropFirst())" },
-                            art: .flower
+                            art: .tree
                         )
                         .padding(.horizontal, Spacing.margin)
                         .padding(.top, Spacing.x5)

@@ -20,7 +20,7 @@ struct PlanView: View {
                             eyebrow: "Up next",
                             title: up.title,
                             caption: up.finishedAt.map { "Done \(model.time($0))" },
-                            art: next == .morning ? .sun : .moon
+                            art: next == .morning ? .sprout : .lamp
                         )
                         .padding(.horizontal, Spacing.margin)
                         .padding(.top, Spacing.x5)

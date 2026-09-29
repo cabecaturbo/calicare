@@ -211,8 +211,12 @@ final class TodayModel {
         await afterChange()
     }
 
+    /// A ticked routine step shows its own name ("Bath"); everything else its usual title.
     func title(for entry: LogEntry) -> String {
-        phrases.title(for: entry)
+        if let id = entry.routineStepID, let step = routineSteps.first(where: { $0.id == id }) {
+            return step.name
+        }
+        return phrases.title(for: entry)
     }
 
     /// "by Dad", or nil when it's just one person.

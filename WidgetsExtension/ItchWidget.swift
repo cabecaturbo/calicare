@@ -2,7 +2,7 @@ import Core
 import SwiftUI
 import WidgetKit
 
-/// Home Screen: one big "Itchy" button plus the last itch time.
+/// Home Screen: one big Log button (palm) plus the last itch time.
 /// Lock Screen (circular): an itch button.
 struct ItchWidget: Widget {
     static let kind = "ItchWidget"
@@ -11,7 +11,7 @@ struct ItchWidget: Widget {
         AppIntentConfiguration(kind: Self.kind, intent: SelectChildIntent.self, provider: CareProvider()) { entry in
             ItchWidgetView(entry: entry)
         }
-        .configurationDisplayName("Itchy")
+        .configurationDisplayName("Log")
         .description("One tap logs an itchy moment.")
         .supportedFamilies([.systemSmall, .accessoryCircular])
     }
@@ -30,7 +30,7 @@ struct ItchWidgetView: View {
         }
     }
 
-    /// The Itchy tile (logs without opening the app) and the last itch time.
+    /// The Log tile (logs without opening the app) and the last itch time.
     /// After a tap: "Logged", the time, and Undo.
     @ViewBuilder
     private var small: some View {

@@ -70,7 +70,7 @@ One prompt per session, same rules as docs/prompts/README.md.
       Screens reviewed day, night, two children, largest text; fixes made. Waiting on the owner's phone check.
 
 ## Follow-ups
-- [ ] Recapture the setup guide screenshots (widgets now show the palm and "Log").
+- [x] Recapture the setup guide screenshots (widgets now show the palm and "Log").
 
 ## Before App Store (remind the owner when we get close)
 - [ ] Data export and an About section (privacy link, support email): UX.5.
@@ -81,7 +81,7 @@ One prompt per session, same rules as docs/prompts/README.md.
 
 ## Phase 3, continued (after the UX rebuild)
 - [ ] 3.4 (check) Doctor PDF on the phone in Files and Mail
-- [ ] 3.5 Caregiver card
+- [x] 3.5 Caregiver card
 - [ ] 3.6 Scheduled sends via Shortcuts
 
 ## Phase 4: Care plans (docs/prompts/phase-4-care-plans.md)

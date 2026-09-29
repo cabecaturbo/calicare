@@ -13,6 +13,7 @@ struct ProgressTab: View {
     @Environment(TodayModel.self) private var model
     private var weekEnding: CareDay { CareDay.containing(.now) }
     @State private var span: Span = .week
+    @State private var showingCaregiverCard = false
     @State private var report: WeeklyReport?
     @State private var monthReport: MonthlyReport?
     @State private var file: URL?
@@ -69,6 +70,15 @@ struct ProgressTab: View {
                                     .frame(maxWidth: .infinity, minHeight: 52)
                                     .overlay(RoundedRectangle(cornerRadius: Corner.card).strokeBorder(palette.ink, lineWidth: 1))
                             }
+                            Button {
+                                showingCaregiverCard = true
+                            } label: {
+                                Text("Caregiver card")
+                                    .textStyle(.body)
+                                    .foregroundStyle(palette.indigo)
+                                    .frame(minHeight: Size.touchTarget)
+                            }
+                            .accessibilityHint("A card for a sitter or grandparent, in your words.")
                             if span == .week, let file {
                                 ShareLink(item: file) {
                                     Text("Share this week’s card")
@@ -94,6 +104,15 @@ struct ProgressTab: View {
             .toolbar(.hidden, for: .navigationBar)
         }
         .task(id: "\(model.child?.id.uuidString ?? "")-\(weekEnding)") { await build() }
+        .sheet(isPresented: $showingCaregiverCard) {
+            if let child = model.child {
+                CaregiverCardSheet(
+                    child: child,
+                    eveningSteps: model.routineSteps.filter { $0.time == .evening && $0.isActive }.map(\.name)
+                )
+                .nightAwarePalette()
+            }
+        }
     }
 
     /// The doctor report covers what's on screen: this week or this month.

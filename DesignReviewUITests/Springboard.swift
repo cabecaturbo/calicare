@@ -106,7 +106,7 @@ struct Springboard {
     }
 
     /// Adds CaliCare Lock Screen widgets. `pages` lists which widgets in the
-    /// CaliCare row to add: 0 is Itchy (circular), 1 is Last night.
+    /// CaliCare row to add: 0 is Log (circular), 1 is Last night.
     func addLockWidgets(pages: [Int] = [0], captureAs prefix: String? = nil) {
         let spot = CGVector(dx: 0.5, dy: 0.45)
         showLockScreen()
@@ -126,7 +126,7 @@ struct Springboard {
         area.tap()
         sleep(3)
 
-        let itchy = app.buttons["Cali Care, Itchy"]
+        let itchy = app.buttons["Cali Care, Log"]
         for (i, page) in pages.enumerated() {
             // After one widget is added the sheet may stay on CaliCare's page.
             let cell = app.cells["Cali Care"]
@@ -136,7 +136,7 @@ struct Springboard {
                 cell.tap()
                 sleep(3)
             }
-            let widget = app.buttons[page == 0 ? "Cali Care, Itchy" : "Cali Care, Last night"]
+            let widget = app.buttons[page == 0 ? "Cali Care, Log" : "Cali Care, Last night"]
             if page == 1, !widget.isHittable, itchy.exists {
                 itchy.swipeLeft()
                 sleep(2)

@@ -13,8 +13,8 @@ struct LogItchControl: ControlWidget {
                 Label("Log", systemImage: "hand.raised.fill")
             }
         }
-        // "Log Itchy" is what Control Center search and the guide look for.
-        .displayName("Log Itchy")
+        // Found by searching "Cali Care" in Control Center; the guide says "tap Log".
+        .displayName("Log")
         .description("Logs an itchy moment for your current child.")
     }
 }

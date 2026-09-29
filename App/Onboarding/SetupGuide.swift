@@ -38,7 +38,7 @@ enum GuidePath: String, Identifiable, CaseIterable {
 
     var doneSentence: String {
         switch self {
-        case .homeScreen: "Tap Itchy on your Home Screen whenever it happens. The app never opens."
+        case .homeScreen: "Tap Log on your Home Screen whenever it itches. The app never opens."
         case .lockScreen: "Log an itch or see last night without unlocking."
         case .controlCenter: "Swipe down and tap the hand to log an itch."
         }
@@ -59,14 +59,14 @@ enum GuidePath: String, Identifiable, CaseIterable {
             GuideStep(asset: "widgetLock_ios27_step2", sentence: "Tap Customize.", tap: UnitPoint(x: 0.500, y: 0.930)),
             GuideStep(asset: "widgetLock_ios27_step3", sentence: "Tap Add Widgets under the clock.", tap: UnitPoint(x: 0.500, y: 0.788)),
             GuideStep(asset: "widgetLock_ios27_step4", sentence: "Tap Cali Care in the list.", tap: UnitPoint(x: 0.500, y: 0.724)),
-            GuideStep(asset: "widgetLock_ios27_step5", sentence: "Tap Itchy to add it. Swipe for Last night.", tap: UnitPoint(x: 0.500, y: 0.710)),
+            GuideStep(asset: "widgetLock_ios27_step5", sentence: "Tap Log to add it. Swipe for Last night.", tap: UnitPoint(x: 0.500, y: 0.710)),
             GuideStep(asset: "widgetLock_ios27_step6", sentence: "Tap Done.", tap: UnitPoint(x: 0.818, y: 0.038)),
         ]
         case .controlCenter: [
             GuideStep(asset: "controlCenter_ios27_step1", sentence: "Swipe down from the top-right corner.", tap: UnitPoint(x: 0.900, y: 0.010)),
             GuideStep(asset: "controlCenter_ios27_step2", sentence: "Touch and hold an empty area.", tap: UnitPoint(x: 0.500, y: 0.880)),
             GuideStep(asset: "controlCenter_ios27_step3", sentence: "Tap Add a Control.", tap: UnitPoint(x: 0.500, y: 0.916)),
-            GuideStep(asset: "controlCenter_ios27_step4", sentence: "Search for Cali Care, then tap Log Itchy.", tap: UnitPoint(x: 0.144, y: 0.302)),
+            GuideStep(asset: "controlCenter_ios27_step4", sentence: "Search for Cali Care, then tap Log.", tap: UnitPoint(x: 0.144, y: 0.302)),
             GuideStep(asset: "controlCenter_ios27_step5", sentence: "Tap an empty area to finish."),
         ]
         }

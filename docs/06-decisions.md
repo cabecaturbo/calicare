@@ -307,7 +307,7 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - Every button that logs itching shows the palm (hand.raised.fill) with "Log" under it: the round bar button, the widgets' main tile, the Lock Screen circle, the control, the night button on Today, and the fallback pills.
   - The round button's icon is drawn as one template image (`LogTabIcon`), because iOS shows only the icon in that circle.
   - Logs, reports, and VoiceOver ("Log itching") keep their words.
-  - The control keeps the gallery name "Log Itchy" so search and the guide still find it.
+  - The control and the widget are named "Log" in the galleries too; searching "Cali Care" finds them. This changed later the same day, when the guide screenshots were retaken.
 - **Flare, bowel movement, mood, and note** moved to a "•••" button beside "Today so far".
 - **Phones before iOS 26.1 keep our pills**, relabeled with the palm and "Log".
 - **Follow-up:** the setup guide screenshots still show the old "+ Itchy" widget and need recapturing with `scripts/capture-guides.sh`.
@@ -322,3 +322,12 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - It's disabled while signed in, so sample logs never sync.
 - **Each screen has its own drawing** (the owner picked them): Plan is a sprout (morning) or a lamp (evening), and Progress › Month is a small tree. Today keeps the sun and moon, and Week keeps the flower.
 - **Today so far shows a ticked routine step by its own name** ("Bath"), not "Evening routine".
+
+## Caregiver card, and the guides retaken (3.5, September 28, 2026)
+
+- **The caregiver card is only the parent's words** (`CaregiverCard` in Core, tested):
+  - Bedtime starts from Plan's evening steps, and nothing else is prefilled.
+  - Empty sections are left off the card.
+  - Shared as a picture (1800 × 2250) or a one-page Letter PDF, with "Not medical advice" at the foot.
+  - Saved per child in UserDefaults on this phone. It isn't synced yet; that can come with Phase 4 when the care plan fills fields, with the parent's approval.
+- **The setup guide screenshots were retaken** with the palm and "Log" widgets. The widget and the control are named "Log" in the galleries.

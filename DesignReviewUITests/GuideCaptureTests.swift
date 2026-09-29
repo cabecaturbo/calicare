@@ -67,7 +67,7 @@ final class GuideCaptureTests: XCTestCase {
         search.tap()
         search.typeText("Cali Care")
         sleep(2)
-        let ours = app.buttons["Log Itchy"].firstMatch
+        let ours = app.buttons["Log"].firstMatch
         XCTAssertTrue(ours.waitForExistence(timeout: 5))
         Capture.screen("cc_step4")
         Capture.tapSpot("cc_step4", ours)

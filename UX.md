@@ -165,8 +165,14 @@ Job: show whether things are getting better, and share it.
    of 7" on the right, and a legend: Calm to Very rough, and a dash for
    Not answered.
 4. "Share with provider" (opens the doctor report, a PDF, starting at the
-   dates on screen) and, on Week, "Share this week's card" (the weekly
-   card as a picture).
+   dates on screen), "Caregiver card", and, on Week, "Share this week's
+   card" (the weekly card as a picture).
+5. Caregiver card (sheet): the parent's own words for a sitter or
+   grandparent: bedtime routine (starts from Plan's evening steps), safe
+   snacks, please avoid, "If Cal is scratching", and contacts. A live
+   preview of the card ("Looking after Cal", empty sections left off,
+   "Not medical advice" at the foot); Share picture and Share PDF. Saved
+   per child on this phone.
 
 Month: the same summary card ("September 2026", "A calmer month", "About
 the same as last month", …, compared with last month by averages, so a

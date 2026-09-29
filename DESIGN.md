@@ -225,7 +225,7 @@ permissions, Shortcuts automations) must be shown, not described.
 
 **The app's display name is "Cali Care"** (CFBundleDisplayName), so that's what
 the Home Screen label, the widget gallery, and Control Center search show; the
-guides say "Search for Cali Care". The control is named "Log Itchy".
+guides say "Search for Cali Care". The control and the widget are named "Log".
 
 **Matched to iOS 27.0** (the current simulator runtime, iPhone 17), checked
 September 27, 2026 against simulator captures in
@@ -278,10 +278,10 @@ The three paths, in iOS 27 wording
 - Control Center control (3 steps):
   1. Swipe down from the top-right corner to open Control Center.
   2. Touch and hold an empty area, then tap Add a Control. (Or tap +.)
-  3. Search for Cali Care, tap Log Itchy, then tap an empty area to
+  3. Search for Cali Care, tap Log, then tap an empty area to
      finish.
 - Action Button (iPhones that have one): Settings › Action Button ›
-  Controls › Log Itchy.
+  Controls › Log.
 
 Capturing the assets
 - Simulator: the `DesignReview` scheme's UI tests drive Springboard and
@@ -334,7 +334,7 @@ shape: our tokens, sans throughout, 12pt inner corners.
 - Lock Screen rectangular (160 × 72): "Tonight: 2" (or "Last night: 2")
   over "Last 1:52 AM".
 - Control (Control Center and the Lock Screen): the palm and "Log". Its
-  name in the controls gallery stays "Log Itchy" so search finds it. It can be assigned to the Action Button.
+  name in the controls gallery is "Log" (search "Cali Care" finds it). It can be assigned to the Action Button.
 
 Looks (iOS 27, as since iOS 26): Home Screen widgets render full color,
 tinted, and clear, each in light and dark. Full color uses our palette

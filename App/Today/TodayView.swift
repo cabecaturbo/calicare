@@ -97,7 +97,7 @@ struct TodayView: View {
                 Task { await model.log(.itchEpisode) }
             } label: {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Itchy").textStyle(.title)
+                    Label("Log", systemImage: "hand.raised.fill").textStyle(.title)
                     if let last = model.entries.first(where: { $0.type == .itchEpisode }) {
                         Text("Last at \(model.time(last.timestamp))")
                             .textStyle(.meta)
@@ -288,13 +288,25 @@ private struct TodaySoFar: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.x2) {
-            Text(isNight ? "Tonight so far" : "Today so far")
-                .textStyle(.section)
-                .foregroundStyle(palette.ink)
-                .padding(.horizontal, Spacing.margin)
-                .accessibilityAddTraits(.isHeader)
+            HStack {
+                Text(isNight ? "Tonight so far" : "Today so far")
+                    .textStyle(.section)
+                    .foregroundStyle(palette.ink)
+                    .accessibilityAddTraits(.isHeader)
+                Spacer()
+                // Flare, bowel movement, mood, note: the round Log button in the bar is itching only.
+                MoreLogMenu {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(palette.ink)
+                        .frame(width: Size.touchTarget, height: Size.touchTarget)
+                        .background(palette.oat, in: Circle())
+                        .contentShape(Circle())
+                }
+            }
+            .padding(.horizontal, Spacing.margin)
             if entries.isEmpty {
-                Text(isNight ? "Nothing logged yet tonight." : "Nothing logged yet today. Tap Itchy whenever it happens.")
+                Text(isNight ? "Nothing logged yet tonight." : "Nothing logged yet today. Tap Log whenever it itches.")
                     .textStyle(.body)
                     .foregroundStyle(palette.graphite)
                     .padding(.horizontal, Spacing.margin)

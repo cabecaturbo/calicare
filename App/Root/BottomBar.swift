@@ -1,8 +1,9 @@
 import Core
 import SwiftUI
 
-/// The bottom row on every tab (DESIGN.md §5): the tab pill, and the log
-/// control docked to its right ("Itchy" and "More"), over a 48pt fade into
+/// Fallback for phones before iOS 26.1 (newer phones use Apple's glass tab bar
+/// with the round Log button). The tab pill, and the log control docked to
+/// its right ("Log" and "More"), over a 48pt fade into
 /// the page. The "Logged · Undo" line sits just above it.
 struct BottomBar: View {
     @Environment(\.palette) private var palette
@@ -96,7 +97,7 @@ private struct TabPill: View {
     }
 }
 
-/// One log control, the same on every tab: "Itchy" (one tap) and "More"
+/// One log control, the same on every tab: "Log" (one tap) and "More"
 /// (Flare, Bowel movement, Mood, Note). Quieter than the active tab on purpose.
 private struct LogPill: View {
     @Environment(\.palette) private var palette
@@ -111,8 +112,8 @@ private struct LogPill: View {
                     Task { await model.log(.itchEpisode) }
                 } label: {
                     HStack(spacing: 3) {
-                        Image(systemName: "plus").font(.system(size: 11, weight: .bold))
-                        Text("Itchy").font(.system(size: 13, weight: .semibold))
+                        Image(systemName: "hand.raised.fill").font(.system(size: 12, weight: .semibold))
+                        Text("Log").font(.system(size: 13, weight: .semibold))
                     }
                     .foregroundStyle(palette.ink)
                     .frame(width: 66)

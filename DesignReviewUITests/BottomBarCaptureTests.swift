@@ -1,26 +1,23 @@
 import XCTest
 
-/// The bottom bar options side by side: Today and Plan, and right after an Itchy tap.
+/// The glass tab bar with the round Log button: Today, Plan, and right after a log.
 @MainActor
 final class BottomBarCaptureTests: XCTestCase {
-    func testOptions() {
+    func testBar() {
         let variant = ScreenTourTests.variant
-        for style in ["pills", "glassRow", "glassCircle"] {
-            let app = XCUIApplication()
-            app.launchArguments = ScreenTourTests.launchArguments + ["-designReviewSeed", "YES", "-bottomBarStyle", style]
-            app.launch()
-            sleep(3)
-            Capture.screen("bar-\(style)-today-\(variant)")
-            app.buttons["Plan"].firstMatch.tap()
-            sleep(2)
-            Capture.screen("bar-\(style)-plan-\(variant)")
-            let itchy = style == "glassCircle" ? app.buttons["Itchy"].firstMatch : app.buttons["Log itching"].firstMatch
-            if itchy.waitForExistence(timeout: 3) {
-                itchy.tap()
-                sleep(1)
-                Capture.screen("bar-\(style)-logged-\(variant)")
-            }
-            app.terminate()
-        }
+        let app = XCUIApplication()
+        app.launchArguments = ScreenTourTests.launchArguments + ["-designReviewSeed", "YES"]
+        app.launch()
+        sleep(3)
+        Capture.screen("bar-today-\(variant)")
+        app.buttons["More to log"].firstMatch.tap()
+        sleep(1)
+        Capture.screen("bar-more-\(variant)")
+        app.tap()
+        app.buttons["Plan"].firstMatch.tap()
+        sleep(2)
+        app.buttons["Log itching"].firstMatch.tap()
+        sleep(1)
+        Capture.screen("bar-logged-\(variant)")
     }
 }

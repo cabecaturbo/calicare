@@ -21,7 +21,7 @@ struct AboutView: View {
                         .accessibilityAddTraits(.isHeader)
                     fact("Skin today", "Your one answer each evening: calm, a little itchy, flaring, or very rough. It's the only thing Progress uses for skin.")
                     fact("Last night", "Good, okay, or rough, as you saw it. Without a rating, the number of itchy wake-ups stands in.")
-                    fact("Itchy", "One tap each time it happens. Between 7 PM and 7 AM it counts as an itchy wake-up.")
+                    fact("Log (the palm)", "One tap each time it itches. Between 7 PM and 7 AM it counts as an itchy wake-up.")
                     fact("Flare, bowel movement, mood, note", "Whenever they're worth noting. \"Add where\" after a flare is optional.")
                     fact("Routine", "The steps you set in Plan, ticked off as you go.")
                 }

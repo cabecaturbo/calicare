@@ -114,7 +114,8 @@ Day layout (7 AM – 8 PM), top to bottom:
 4. Today so far: today's logs, newest first (event, time; "by Dad" with
    more than one caregiver). Tap one to edit it; swipe left to delete
    (Delete is ink on oat; Undo in the Logged line).
-5. Logging is the bottom bar's log control. More (•••) has Flare, Bowel
+5. Logging itching is the round Log button in the bottom bar (palm, "Log"),
+   on every tab. The "•••" beside "Today so far" has Flare, Bowel
    movement, Mood, and Note. Bowel movement and Mood open a small sheet of
    choices (one tap logs). After a flare, the Logged line offers "Add
    where": a front/back body outline, tap areas, Save. Optional.
@@ -123,8 +124,8 @@ Night layout (8 PM – 7 AM):
 1. Header: "Today", no date.
 2. Summary card "So far tonight": "A quiet night" or "2 wake-ups", the
    times, and the moon drawing.
-3. A large Itchy button ("Last at 1:52 AM" under it). The log control in
-   the bar shows only "•••".
+3. A large Log button (palm, "Log", "Last at 1:52 AM" under it). The round
+   Log button stays in the bar too.
 4. Tonight so far.
 
 ## 5. Plan

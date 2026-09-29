@@ -4,7 +4,7 @@ import Observation
 /// The three top-level tabs. Nothing else is top-level.
 enum AppTab: Hashable {
     case today, plan, progress
-    /// Only in the "Itchy circle" bar: selecting it logs itching instead of switching tabs.
+    /// The round Log button in the glass bar: selecting it logs itching instead of switching tabs.
     case logItchy
 }
 

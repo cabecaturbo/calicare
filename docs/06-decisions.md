@@ -296,11 +296,19 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - The bottom bar's "•••" grew past the bar. It's now a fixed size, like the tab labels.
 - **The long name truncates in the header** ("Maximilia…") and reads in full in the switcher and Settings, which is fine.
 
-## Bottom bar options (September 28, 2026)
+## Bottom bar: glass tab bar with a round Log button (September 28, 2026)
 
-- **The owner asked for a bottom bar redesign.** Three options are now switchable in Settings › Debug › "Try a bottom bar". The current pills stay the default until the owner picks one.
-  - **Pills (current):** our own tab pill, plus an Itchy/••• pill.
-  - **Glass bar + logging row:** Apple's iOS 26 tab bar, with `tabViewBottomAccessory` holding "+ Itchy · Last 1:52 AM" and •••. It shrinks inline on scroll and hides on Today at night.
-  - **Glass bar + Itchy circle:** Apple's tab bar, with Itchy as the separate circle (`.search` role on iOS 26, `.prominent` on iOS 27). Tapping it logs and stays on the current tab. This option has no ••• yet.
-- **Why glass:** Apple's guidelines keep the tab bar for moving between sections. The system bar gives Liquid Glass, large-text labels on long press, and the right behavior on every iPhone for free. Mixing navigation and actions in one custom pill is what made the current bar feel busy.
-- The glass options need iOS 26.1 or later. Older phones keep the pills.
+- **The owner tried three bars on the phone and picked the round button** ("itchy circle is fire").
+  - The bar is Apple's glass tab bar (Today, Plan, Progress) with a round Log button set apart on the right: `.search` role on iOS 26, `.prominent` on iOS 27.
+  - Tapping it logs itching and stays on the current tab.
+  - The bar shrinks on scroll.
+  - The "Try a bottom bar" switch and the logging-row option are removed.
+- **No "Itchy" on buttons.** The owner said "put the word log under it. i dont like seeing the word itchy" and "its fine in logs and stuff".
+  - Every button that logs itching shows the palm (hand.raised.fill) with "Log" under it: the round bar button, the widgets' main tile, the Lock Screen circle, the control, the night button on Today, and the fallback pills.
+  - The round button's icon is drawn as one template image (`LogTabIcon`), because iOS shows only the icon in that circle.
+  - Logs, reports, and VoiceOver ("Log itching") keep their words.
+  - The control keeps the gallery name "Log Itchy" so search and the guide still find it.
+- **Flare, bowel movement, mood, and note** moved to a "•••" button beside "Today so far".
+- **Phones before iOS 26.1 keep our pills**, relabeled with the palm and "Log".
+- **Follow-up:** the setup guide screenshots still show the old "+ Itchy" widget and need recapturing with `scripts/capture-guides.sh`.
+- **CI builds with Xcode 26.6**, so `.prominent` is behind `#if compiler(>=6.4)`.

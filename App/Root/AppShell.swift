@@ -11,7 +11,6 @@ struct AppShell: View {
     @Environment(SyncController.self) private var sync
     @State private var model = TodayModel()
     @State private var shell = Shell()
-    @AppStorage(BottomBarStyle.key) private var barStyleRaw = BottomBarStyle.pills.rawValue
 
     var body: some View {
         @Bindable var shell = shell
@@ -68,15 +67,16 @@ struct AppShell: View {
         .environment(shell)
     }
 
-    private var barStyle: BottomBarStyle {
-        let style = BottomBarStyle(rawValue: barStyleRaw) ?? .pills
-        return style.isAvailable ? style : .pills
+    /// Apple's glass tab bar with the round Log button (iOS 26.1 and later);
+    /// older phones keep our own pills.
+    private var usesGlassBar: Bool {
+        if #available(iOS 26.1, *) { return true }
+        return false
     }
 
-    /// Today, Plan, Progress, and the bar the owner picked in Settings › Debug.
     @ViewBuilder
     private var tabs: some View {
-        let pills = barStyle == .pills
+        let pills = !usesGlassBar
         let view = TabView(selection: tabSelection) {
             Tab("Today", systemImage: "sun.horizon", value: AppTab.today) {
                 TodayView()
@@ -90,10 +90,13 @@ struct AppShell: View {
                 ProgressTab()
                     .modifier(TabChrome(pills: pills))
             }
-            if barStyle == .glassCircle {
-                Tab("Itchy", systemImage: "hand.raised", value: AppTab.logItchy, role: circleRole) {
+            if !pills {
+                Tab(value: AppTab.logItchy, role: circleRole) {
                     Color.clear
+                } label: {
+                    Label { Text("Log") } icon: { Image(uiImage: LogTabIcon.image) }
                 }
+                .accessibilityLabel("Log itching")
             }
         }
         .tint(palette.indigo)
@@ -101,11 +104,8 @@ struct AppShell: View {
         if pills {
             // The system tab bar is hidden; BottomBar draws the pills and log control.
             view.overlay(alignment: .bottom) { BottomBar() }
-        } else if #available(iOS 26.1, *) {
-            let showsRow = barStyle == .glassRow && model.child != nil && !(shell.tab == .today && palette.isNight)
-            view
-                .tabViewBottomAccessory(isEnabled: showsRow) { LogAccessory() }
-                .tabBarMinimizeBehavior(.onScrollDown)
+        } else if #available(iOS 26.0, *) {
+            view.tabBarMinimizeBehavior(.onScrollDown)
         } else {
             view
         }
@@ -114,7 +114,9 @@ struct AppShell: View {
     /// The role that sets a tab apart as a circle: `.search` on iOS 26,
     /// `.prominent` from iOS 27.
     private var circleRole: TabRole {
+        #if compiler(>=6.4) // Xcode 27: the iOS 27 SDK has .prominent
         if #available(iOS 27.0, *) { return .prominent }
+        #endif
         return .search
     }
 

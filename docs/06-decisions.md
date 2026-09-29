@@ -388,3 +388,7 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
 - **Blanks are flagged only on items that give at least one detail,** so a rule like "add one at a time" doesn't show "Dose: blank". The same rule applies in `PlanItemInfo.blanks` and in the function's `grounding.ts`.
 - **Debug seed `PLAN`** is a draft of the example plan, for screenshots.
 - **Waiting on the owner:** the live test on September 29 returned 502 because `ANTHROPIC_API_KEY` wasn't among the project's secrets.
+- **Anthropic workspace (September 29):**
+  - The owner's API key isn't scoped to a workspace, so Anthropic requires an `anthropic-workspace-id` header. The function sends it when the secret `ANTHROPIC_WORKSPACE_ID` is set.
+  - A 502 now includes Anthropic's error type and message as `reason` (never the key or the plan's text), so setup problems are visible.
+  - The key itself was set with `supabase secrets set`. The owner pasted it in chat, which is less ideal. If it's ever exposed, rotate it in the Anthropic console.

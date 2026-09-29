@@ -54,8 +54,9 @@ export async function handle(req: Request, deps: Deps): Promise<Response> {
   try {
     raw = await deps.extract(text);
   } catch (error) {
-    console.error("extract failed", error instanceof Error ? error.message : "unknown");
-    return reply(502, { error: "Couldn't read the plan just now. Please try again." });
+    const reason = error instanceof Error ? error.message : "unknown";
+    console.error("extract failed", reason);
+    return reply(502, { error: "Couldn't read the plan just now. Please try again.", reason });
   }
   return reply(200, { ...check(raw, text) });
 }
@@ -84,9 +85,17 @@ export const live: Deps = {
   async extract(text) {
     const key = Deno.env.get("ANTHROPIC_API_KEY");
     if (!key) throw new Error("ANTHROPIC_API_KEY isn't set");
+    const headers: Record<string, string> = {
+      "x-api-key": key,
+      "anthropic-version": "2023-06-01",
+      "content-type": "application/json",
+    };
+    // Keys that aren't scoped to a workspace must say which one to use.
+    const workspace = Deno.env.get("ANTHROPIC_WORKSPACE_ID");
+    if (workspace) headers["anthropic-workspace-id"] = workspace;
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
-      headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+      headers,
       body: JSON.stringify({
         model: MODEL,
         max_tokens: 8000,
@@ -97,7 +106,11 @@ export const live: Deps = {
         messages: [{ role: "user", content: `The care plan's text:\n\n${text}` }],
       }),
     });
-    if (!response.ok) throw new Error(`model returned ${response.status}`);
+    if (!response.ok) {
+      // Anthropic's error type and message only: never the key or the plan.
+      const detail = await response.json().catch(() => ({}));
+      throw new Error(`model returned ${response.status}: ${detail?.error?.type ?? ""} ${detail?.error?.message ?? ""}`.trim());
+    }
     const body = await response.json();
     const call = body.content?.find((part: { type: string }) => part.type === "tool_use");
     return Array.isArray(call?.input?.items) ? call.input.items : [];

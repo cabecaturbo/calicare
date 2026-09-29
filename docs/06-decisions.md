@@ -353,3 +353,9 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - Starting needs at least one confirmed item, drops the unconfirmed ones, and ends the child's previous plan.
   - The source page and line never change when an item is edited.
 - **The plan kinds' display names are in plain words**, e.g. "On the skin" for topical steps and "Everyday basics" for fundamentals.
+- **Care plan sync (4.1, second part):**
+  - `care_plans`, `plan_items`, and `visits` in Supabase, members-only with RLS and last write wins, like `routine_steps`.
+  - The database itself refuses drafts (`status in ('active','ended')`) and unconfirmed items (`is_confirmed` must be true), and there is no column for the file.
+  - The app keeps drafts flagged until they start, and clears the flag on items that were never confirmed. Pulled items arrive confirmed.
+  - `plan_date` is a timestamp, so it decodes like every other date. Tested with pgTAP (10 new checks) and in CoreTests.
+  - Applied to the live project with `supabase db push` on September 28.

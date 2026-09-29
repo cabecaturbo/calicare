@@ -85,7 +85,7 @@ One prompt per session, same rules as docs/prompts/README.md.
 - [x] 3.6 Scheduled sends via Shortcuts (numbered steps until recorded on the phone)
 
 ## Phase 4: Care plans (docs/prompts/phase-4-care-plans.md)
-- [ ] 4.1 Care plan data model
+- [x] 4.1 Care plan data model (SchemaV3, CarePlanStore, sync of confirmed items and visits; migration applied to Supabase)
 - [ ] 4.2 🛑 Parse-care-plan Edge Function
 - [ ] 4.3 Import and review flow
 - [ ] 4.4 Routine, topical steps, baths, patch tests

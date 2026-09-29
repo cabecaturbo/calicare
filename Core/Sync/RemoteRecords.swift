@@ -220,16 +220,24 @@ public struct RemoteChanges: Sendable, Equatable {
     public var children: [RemoteChild]
     public var logs: [RemoteLogEvent]
     public var routineSteps: [RemoteRoutineStep]
+    public var carePlans: [RemoteCarePlan]
+    public var planItems: [RemotePlanItem]
+    public var visits: [RemoteVisit]
 
-    public init(children: [RemoteChild] = [], logs: [RemoteLogEvent] = [], routineSteps: [RemoteRoutineStep] = []) {
+    public init(children: [RemoteChild] = [], logs: [RemoteLogEvent] = [], routineSteps: [RemoteRoutineStep] = [],
+                carePlans: [RemoteCarePlan] = [], planItems: [RemotePlanItem] = [], visits: [RemoteVisit] = []) {
         self.children = children
         self.logs = logs
         self.routineSteps = routineSteps
+        self.carePlans = carePlans
+        self.planItems = planItems
+        self.visits = visits
     }
 
     /// The newest server time seen: the next "changes since" cursor.
     public var latestServerTime: Date? {
         (children.compactMap(\.serverUpdatedAt) + logs.compactMap(\.serverUpdatedAt)
-            + routineSteps.compactMap(\.serverUpdatedAt)).max()
+            + routineSteps.compactMap(\.serverUpdatedAt) + carePlans.compactMap(\.serverUpdatedAt)
+            + planItems.compactMap(\.serverUpdatedAt) + visits.compactMap(\.serverUpdatedAt)).max()
     }
 }

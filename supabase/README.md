@@ -19,6 +19,9 @@ is a bonus (Phase 2).
 | `children` | `Child` | `name`, `birth_date`, `color_tag`, `is_active`. |
 | `log_events` | `LogEvent` | `child_id` (optional), `type`, `value`, `note`, `occurred_at`, `logged_by`, `entry_source`, `body_areas` (flares), `routine_step_id` (no foreign key). |
 | `routine_steps` | `RoutineStep` | `child_id`, `name`, `time` (`morning` or `evening`), `sort_order`, `is_active`. |
+| `care_plans` | `CarePlan` | `child_id`, `provider`, `plan_date`, `status` (`active` or `ended`; drafts never upload), `started_at`, `ended_at`. No file: the original stays on the phone. |
+| `plan_items` | `PlanItem` | `plan_id`, `child_id`, `kind`, `text`, `dose`/`frequency`/`timing`/`duration` (null = the plan left it blank), `source_page`, `source_line`, `sort_order`. Confirmed items only (`is_confirmed` must be true). |
+| `visits` | `Visit` | `child_id`, `date`, `provider`, `notes`. |
 
 App field → column: `LogEvent.timestamp` → `occurred_at`, `typeRaw` →
 `type`, `valueRaw` → `value`, `entrySourceRaw` → `entry_source`,

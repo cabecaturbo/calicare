@@ -359,3 +359,18 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - The app keeps drafts flagged until they start, and clears the flag on items that were never confirmed. Pulled items arrive confirmed.
   - `plan_date` is a timestamp, so it decodes like every other date. Tested with pgTAP (10 new checks) and in CoreTests.
   - Applied to the live project with `supabase db push` on September 28.
+
+## Reading a care plan (4.2, September 28, 2026)
+
+- **Edge Function `parse-care-plan`:**
+  - The phone sends only text it extracted (Vision or PDFKit). Claude (`claude-sonnet-5`, temperature 0) must answer through one tool, `record_plan_items`, with the exact source line and page for every item.
+  - Then `grounding.ts` checks the answer in code:
+    - It drops items whose quoted line isn't in the plan, or whose kind is unknown.
+    - It removes any detail (dose, frequency, timing, duration) that isn't in that page's text.
+    - Wording that isn't the plan's own falls back to the quoted line.
+    - It flags the blanks a parent would expect: dose and frequency for supplements and medications, frequency for skin steps and baths.
+- **Nothing is stored.** Only a per-day count per account (`parse_usage`, locked down, via `note_parse_use()`), limited to 10 reads a day. The text is never logged.
+- **Signing in is required**, so the rate limit has an account to count. Whether to allow reading plans without an account is an open question for the owner.
+- **Tested:** 13 Deno tests (the grounding rules against an example plan built from the anonymized one in the research notes, plus the handler) and 4 pgTAP checks.
+  - Deno tests aren't in CI yet. Run `deno test --allow-read --allow-env` in `supabase/functions/parse-care-plan`.
+- The function is deployed. It answers "try again" until `ANTHROPIC_API_KEY` is set as a Supabase secret (the owner does this).

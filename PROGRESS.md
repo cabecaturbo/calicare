@@ -86,7 +86,7 @@ One prompt per session, same rules as docs/prompts/README.md.
 
 ## Phase 4: Care plans (docs/prompts/phase-4-care-plans.md)
 - [x] 4.1 Care plan data model (SchemaV3, CarePlanStore, sync of confirmed items and visits; migration applied to Supabase)
-- [ ] 4.2 🛑 Parse-care-plan Edge Function
+- [ ] 4.2 Parse-care-plan Edge Function: built, tested, deployed. WAITING on the owner: ANTHROPIC_API_KEY as a Supabase secret; decide if reading a plan needs an account.
 - [ ] 4.3 Import and review flow
 - [ ] 4.4 Routine, topical steps, baths, patch tests
 - [ ] 4.5 Supplement ramp-up scheduler

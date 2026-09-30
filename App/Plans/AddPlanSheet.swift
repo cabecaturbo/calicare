@@ -31,7 +31,7 @@ struct AddPlanSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Spacing.section) {
-                    Text("Add the plan \(child.name)’s provider gave you. You’ll check every item before anything starts.")
+                    Text("You’ll check each item before it starts.")
                         .textStyle(.body)
                         .foregroundStyle(palette.graphite)
                         .fixedSize(horizontal: false, vertical: true)
@@ -55,7 +55,7 @@ struct AddPlanSheet: View {
                         }
                     }
 
-                    Text("The photo or PDF stays on this phone. Only its words are sent to be read, and nothing is kept afterward. Not medical advice: this only organizes what your provider wrote.")
+                    Text("The file stays on your phone. Not medical advice.")
                         .textStyle(.meta)
                         .foregroundStyle(palette.graphite)
                         .fixedSize(horizontal: false, vertical: true)
@@ -127,7 +127,7 @@ struct AddPlanSheet: View {
 
     private var signInFirst: some View {
         VStack(alignment: .leading, spacing: Spacing.x3) {
-            Text("Reading a plan needs you signed in, once. It keeps the reading service fair for everyone. Your logs stay on this phone either way.")
+            Text("Sign in once to read plans.")
                 .textStyle(.body)
                 .foregroundStyle(palette.ink)
                 .fixedSize(horizontal: false, vertical: true)
@@ -177,12 +177,12 @@ struct AddPlanSheet: View {
 
     /// Reads the text on the phone, sends only the text, and saves a draft.
     private func read(_ extract: () async throws -> (text: String, file: String)) async {
-        stage = .reading("Reading the pages on this phone…")
+        stage = .reading("Reading the pages…")
         var file: String?
         do {
             let extracted = try await extract()
             file = extracted.file
-            stage = .reading("Picking out each item…")
+            stage = .reading("Finding each item…")
             let items = try await PlanReader.read(extracted.text)
             guard !items.isEmpty else {
                 PlanFiles.delete(file)

@@ -14,7 +14,7 @@ final class PlanReviewCaptureTests: XCTestCase {
         app.swipeUp()
         sleep(1)
         Capture.screen("careplan-section-\(variant)")
-        app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Finish reviewing")).firstMatch.tap()
+        app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Finish checking")).firstMatch.tap()
         sleep(2)
         Capture.screen("careplan-review-\(variant)")
         app.buttons["Check all"].firstMatch.tap()

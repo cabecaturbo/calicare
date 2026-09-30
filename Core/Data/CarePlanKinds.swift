@@ -48,6 +48,16 @@ public enum PlanDetail: String, Codable, Sendable, CaseIterable {
         case .duration: "How long"
         }
     }
+
+    /// For "No dose given": dose, schedule, time, length.
+    public var noun: String {
+        switch self {
+        case .dose: "dose"
+        case .frequency: "schedule"
+        case .timing: "time"
+        case .duration: "length"
+        }
+    }
 }
 
 extension PlanItemInfo {

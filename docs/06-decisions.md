@@ -401,3 +401,10 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - A blank reads "No dose given, ask at next visit" in ochre (the "worth watching" color).
   - The quoted source line appears only when the item is opened.
   - The add sheet and the Plan section are down to one line each. The buttons say "Start plan (N)" and "Discard".
+
+## A started plan in Plan (4.4, first part, September 29, 2026)
+
+- **Starting a plan** turns its confirmed routine and skin steps into Plan's routine steps (`RoutineStep.planItemID`, synced as `routine_steps.plan_item_id`). They come after the parent's own steps, in the plan's order.
+  - Morning or evening follows the plan's words: morning words ("morning", "AM", "wake", "breakfast") or evening words ("evening", "night", "bed", "PM", "after bath"). Otherwise both, because "daily" or "3–4x/day" covers both routines. This is `PlanRoutine`, tested.
+- **Ending a plan, or starting another,** soft-deletes those steps. Their history stays.
+- **Plan rows for plan steps** show the plan's schedule ("3–4x/day") under the name.

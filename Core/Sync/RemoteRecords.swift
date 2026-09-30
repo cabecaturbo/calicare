@@ -165,6 +165,8 @@ public struct RemoteRoutineStep: Codable, Equatable, Sendable {
     public var time: String
     public var sortOrder: Int
     public var isActive: Bool
+    /// The care plan item that made this step, if any.
+    public var planItemID: UUID?
     public var createdAt: Date
     public var updatedAt: Date
     public var deletedAt: Date?
@@ -176,6 +178,7 @@ public struct RemoteRoutineStep: Codable, Equatable, Sendable {
         case childID = "child_id"
         case sortOrder = "sort_order"
         case isActive = "is_active"
+        case planItemID = "plan_item_id"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
         case deletedAt = "deleted_at"
@@ -184,7 +187,7 @@ public struct RemoteRoutineStep: Codable, Equatable, Sendable {
 
     public init(
         id: UUID, householdID: UUID, childID: UUID, name: String, time: String, sortOrder: Int, isActive: Bool,
-        createdAt: Date, updatedAt: Date, deletedAt: Date?, serverUpdatedAt: Date? = nil
+        planItemID: UUID? = nil, createdAt: Date, updatedAt: Date, deletedAt: Date?, serverUpdatedAt: Date? = nil
     ) {
         self.id = id
         self.householdID = householdID
@@ -193,6 +196,7 @@ public struct RemoteRoutineStep: Codable, Equatable, Sendable {
         self.time = time
         self.sortOrder = sortOrder
         self.isActive = isActive
+        self.planItemID = planItemID
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
@@ -209,6 +213,7 @@ public struct RemoteRoutineStep: Codable, Equatable, Sendable {
         try c.encode(time, forKey: .time)
         try c.encode(sortOrder, forKey: .sortOrder)
         try c.encode(isActive, forKey: .isActive)
+        try c.encode(planItemID, forKey: .planItemID)
         try c.encode(createdAt, forKey: .createdAt)
         try c.encode(updatedAt, forKey: .updatedAt)
         try c.encode(deletedAt, forKey: .deletedAt)

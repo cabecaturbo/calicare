@@ -26,6 +26,8 @@ final class TodayModel {
     private(set) var skin: SkinToday?
     /// The current child's routine steps, morning and evening, paused ones included.
     private(set) var routineSteps: [RoutineStepInfo] = []
+    /// The running care plan's items, by id: for plan steps' "3–4x/day".
+    private(set) var planItems: [UUID: PlanItemInfo] = [:]
     /// False until anything has been logged for any child: shows the first-run hint.
     private(set) var hasEverLogged = true
     /// False from 7 PM, when the care day is tonight's.
@@ -68,6 +70,12 @@ final class TodayModel {
                 .flatMap { if case .skin(let answer)? = $0.value { answer } else { nil } }
             hasEverLogged = try await !store.recent(limit: 1).isEmpty
             routineSteps = try await RoutineStore(modelContainer: container).steps(child: child.id, includeInactive: true)
+            let plans = CarePlanStore(modelContainer: container)
+            if let active = try await plans.activePlan(child: child.id) {
+                planItems = Dictionary(uniqueKeysWithValues: try await plans.items(plan: active.id).map { ($0.id, $0) })
+            } else {
+                planItems = [:]
+            }
             isDaytime = today.isDaytime(now, calendar: calendar)
             myName = AccountSettings().displayName
             householdSize = SyncSettings().householdSize
@@ -239,6 +247,7 @@ final class TodayModel {
         week = []
         skin = nil
         routineSteps = []
+        planItems = [:]
         hasLoaded = true
     }
 }

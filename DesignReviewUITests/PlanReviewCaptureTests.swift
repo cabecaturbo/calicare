@@ -22,5 +22,13 @@ final class PlanReviewCaptureTests: XCTestCase {
         app.swipeUp()
         sleep(1)
         Capture.screen("careplan-review-scrolled-\(variant)")
+        app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Start plan")).firstMatch.tap()
+        sleep(2)
+        app.swipeDown()
+        sleep(1)
+        Capture.screen("careplan-started-plan-\(variant)")
+        app.swipeUp()
+        sleep(1)
+        Capture.screen("careplan-started-plan-scrolled-\(variant)")
     }
 }

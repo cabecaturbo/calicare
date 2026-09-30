@@ -96,14 +96,17 @@ public struct RoutineStepInfo: Identifiable, Hashable, Sendable {
     public let time: RoutineTime
     public let order: Int
     public let isActive: Bool
+    /// Set when a started care plan made this step.
+    public let planItemID: UUID?
 
-    public init(id: UUID, childID: UUID, name: String, time: RoutineTime, order: Int, isActive: Bool) {
+    public init(id: UUID, childID: UUID, name: String, time: RoutineTime, order: Int, isActive: Bool, planItemID: UUID? = nil) {
         self.id = id
         self.childID = childID
         self.name = name
         self.time = time
         self.order = order
         self.isActive = isActive
+        self.planItemID = planItemID
     }
 }
 
@@ -111,7 +114,8 @@ extension RoutineStepInfo {
     /// Nil for a step with an unknown time (written by a newer app version).
     init?(_ step: RoutineStep) {
         guard let time = step.time else { return nil }
-        self.init(id: step.id, childID: step.childID, name: step.name, time: time, order: step.order, isActive: step.isActive)
+        self.init(id: step.id, childID: step.childID, name: step.name, time: time, order: step.order,
+                  isActive: step.isActive, planItemID: step.planItemID)
     }
 }
 

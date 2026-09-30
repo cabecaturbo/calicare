@@ -98,7 +98,9 @@ private struct RoutineRows: View {
             } else {
                 ForEach(progress.steps) { step in
                     let done = progress.doneLogs[step.id]
-                    CheckRow(title: step.name, done: done.map { model.time($0.timestamp) }, label: step.name) {
+                    // A plan step shows how often the plan says, e.g. "3–4x/day".
+                    let often = step.planItemID.flatMap { model.planItems[$0]?.frequency }
+                    CheckRow(title: step.name, detail: often, done: done.map { model.time($0.timestamp) }, label: step.name) {
                         if let done {
                             Task { await model.deleteWithUndo(done) }
                         } else {
@@ -115,6 +117,7 @@ private struct RoutineRows: View {
 private struct CheckRow: View {
     @Environment(\.palette) private var palette
     let title: String
+    var detail: String?
     let done: String?
     let label: String
     let action: () -> Void
@@ -133,9 +136,16 @@ private struct CheckRow: View {
                     }
                 }
                 .frame(width: 24, height: 24)
-                Text(title)
-                    .textStyle(.body)
-                    .foregroundStyle(done == nil ? palette.ink : palette.graphite)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .textStyle(.body)
+                        .foregroundStyle(done == nil ? palette.ink : palette.graphite)
+                    if let detail {
+                        Text(detail)
+                            .textStyle(.meta)
+                            .foregroundStyle(palette.graphite)
+                    }
+                }
                 Spacer()
                 if let done {
                     Text("Done \(done)")

@@ -314,6 +314,7 @@ public actor SyncEngine: ModelActor {
         step.timeRaw = remote.time
         step.order = remote.sortOrder
         step.isActive = remote.isActive
+        step.planItemID = remote.planItemID
         step.createdAt = remote.createdAt
         step.updatedAt = remote.updatedAt
         step.deletedAt = remote.deletedAt
@@ -455,7 +456,7 @@ extension RemoteRoutineStep {
     init(_ step: RoutineStep, household: UUID) {
         self.init(
             id: step.id, householdID: household, childID: step.childID, name: step.name,
-            time: step.timeRaw, sortOrder: step.order, isActive: step.isActive,
+            time: step.timeRaw, sortOrder: step.order, isActive: step.isActive, planItemID: step.planItemID,
             createdAt: step.createdAt, updatedAt: step.updatedAt, deletedAt: step.deletedAt
         )
     }

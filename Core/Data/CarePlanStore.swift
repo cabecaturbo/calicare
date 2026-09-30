@@ -110,9 +110,13 @@ public actor CarePlanStore: ModelActor {
             other.endedAt = current
             touch(other, at: current)
         }
+        for other in others where other.id != planID {
+            try removeRoutineSteps(of: other.id, at: current)
+        }
         plan.statusRaw = active
         plan.startedAt = current
         touch(plan, at: current)
+        try addRoutineSteps(for: items.filter(\.isConfirmed), child: plan.childID, at: current)
         try modelContext.save()
         guard let info = CarePlanInfo(plan) else { throw CarePlanStoreError.planNotFound }
         return info
@@ -121,6 +125,7 @@ public actor CarePlanStore: ModelActor {
     public func end(_ planID: UUID) async throws {
         let plan = try fetchPlan(planID)
         let current = now()
+        try removeRoutineSteps(of: planID, at: current)
         plan.statusRaw = CarePlanStatus.ended.rawValue
         plan.endedAt = current
         touch(plan, at: current)
@@ -208,6 +213,44 @@ public actor CarePlanStore: ModelActor {
         visit.deletedAt = current
         touch(visit, at: current)
         try modelContext.save()
+    }
+
+    // MARK: - Routine steps from the plan
+
+    /// The plan's daily steps join Plan's routine, after the parent's own, in
+    /// the plan's order: morning, evening, or both (see PlanRoutine).
+    private func addRoutineSteps(for items: [PlanItem], child childID: UUID, at date: Date) throws {
+        let existing = try modelContext.fetch(FetchDescriptor<RoutineStep>(
+            predicate: #Predicate { $0.childID == childID && $0.deletedAt == nil }
+        ))
+        var next: [RoutineTime: Int] = [:]
+        for time in RoutineTime.allCases {
+            next[time] = (existing.filter { $0.timeRaw == time.rawValue }.map(\.order).max() ?? -1) + 1
+        }
+        for item in items {
+            guard let kind = item.kind, PlanRoutine.kinds.contains(kind) else { continue }
+            for time in PlanRoutine.times(text: item.text, timing: item.timing, frequency: item.frequency) {
+                modelContext.insert(RoutineStep(
+                    childID: childID, name: String(item.text.prefix(80)), time: time,
+                    order: next[time] ?? 0, planItemID: item.id, now: date
+                ))
+                next[time, default: 0] += 1
+            }
+        }
+    }
+
+    /// A plan that ends takes its steps out of Plan (soft delete; history stays).
+    private func removeRoutineSteps(of planID: UUID, at date: Date) throws {
+        let itemIDs = try modelContext.fetch(FetchDescriptor<PlanItem>(predicate: #Predicate { $0.planID == planID })).map(\.id)
+        guard !itemIDs.isEmpty else { return }
+        let steps = try modelContext.fetch(FetchDescriptor<RoutineStep>(
+            predicate: #Predicate { $0.deletedAt == nil }
+        )).filter { $0.planItemID.map(itemIDs.contains) ?? false }
+        for step in steps {
+            step.deletedAt = date
+            step.updatedAt = date
+            step.needsSync = true
+        }
     }
 
     // MARK: - Helpers

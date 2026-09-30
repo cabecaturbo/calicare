@@ -61,10 +61,11 @@ extension PlanItemInfo {
     }
 
     /// Expected details the plan left blank: "Worth asking at your next visit."
-    /// Only for items that give at least one detail: a rule like "add one at a
-    /// time" has no dose to miss.
+    /// Only when the item gives some of them (Vitamin D "daily" but no dose):
+    /// a rule like "rotate after 3 weeks" has no dose to miss.
     public var blanks: [PlanDetail] {
-        guard PlanDetail.allCases.contains(where: { value($0) != nil }) else { return [] }
-        return kind.expectedDetails.filter { value($0) == nil }
+        let expected = kind.expectedDetails
+        guard expected.contains(where: { value($0) != nil }) else { return [] }
+        return expected.filter { value($0) == nil }
     }
 }

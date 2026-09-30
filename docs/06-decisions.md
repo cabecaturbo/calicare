@@ -392,3 +392,6 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - The owner's API key isn't scoped to a workspace, so Anthropic requires an `anthropic-workspace-id` header. The function sends it when the secret `ANTHROPIC_WORKSPACE_ID` is set.
   - A 502 now includes Anthropic's error type and message as `reason` (never the key or the plan's text), so setup problems are visible.
   - The key itself was set with `supabase secrets set`. The owner pasted it in chat, which is less ideal. If it's ever exposed, rotate it in the Anthropic console.
+- **The reader is live (September 29):**
+  - With the key, the workspace ID, and no `temperature` (the model rejects it), the example plan returned 24 items. None were dropped and no details were removed as ungrounded.
+  - Blanks are flagged only when an item gives some of its expected details, so "rotate after 3 weeks" or "start probiotic 2 weeks after" aren't marked as missing a dose.

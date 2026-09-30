@@ -99,7 +99,6 @@ export const live: Deps = {
       body: JSON.stringify({
         model: MODEL,
         max_tokens: 8000,
-        temperature: 0,
         system: SYSTEM,
         tools: [TOOL],
         tool_choice: { type: "tool", name: TOOL.name },

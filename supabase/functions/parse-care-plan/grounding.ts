@@ -133,9 +133,10 @@ export function check(raw: RawItem[], source: string): Checked {
       ...details,
       source_page: found,
       source_line: line,
-      // Only items that give some detail can be missing one: a rule like
-      // "add one at a time" has no dose to miss. Same rule as PlanItemInfo.blanks.
-      blanks: DETAILS.some((detail) => details[detail] !== null)
+      // Only items that give some of the expected details can be missing one:
+      // a rule like "rotate after 3 weeks" has no dose to miss. Same rule as
+      // PlanItemInfo.blanks.
+      blanks: EXPECTED[kind].some((detail) => details[detail] !== null)
         ? EXPECTED[kind].filter((detail) => details[detail] === null)
         : [],
     });

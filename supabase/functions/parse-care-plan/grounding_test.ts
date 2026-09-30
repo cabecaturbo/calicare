@@ -74,3 +74,10 @@ Deno.test("a rule with no details has nothing to flag", () => {
   ], plan);
   assertEquals(items[0].blanks, []);
 });
+
+Deno.test("a rule with only a duration isn't missing a dose", () => {
+  const { items } = check([
+    { kind: "supplement", text: "Rotate antimicrobial", duration: "3 weeks", source_page: 2, source_line: "Antimicrobial herb, Brand C, 2 drops, twice daily, rotate after 3 weeks" },
+  ], plan);
+  assertEquals(items[0].blanks, []);
+});

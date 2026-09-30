@@ -86,8 +86,8 @@ One prompt per session, same rules as docs/prompts/README.md.
 
 ## Phase 4: Care plans (docs/prompts/phase-4-care-plans.md)
 - [x] 4.1 Care plan data model (SchemaV3, CarePlanStore, sync of confirmed items and visits; migration applied to Supabase)
-- [ ] 4.2 Parse-care-plan Edge Function: built, tested, deployed. WAITING on the owner: ANTHROPIC_API_KEY as a Supabase secret; decide if reading a plan needs an account.
-- [ ] 4.3 Import and review flow: built and on the phone. Done when the example plan imports on the phone, which needs the API key secret.
+- [x] 4.2 Parse-care-plan Edge Function: live. The example plan reads as 24 items, each traced to its source, with none invented.
+- [ ] 4.3 Import and review flow: built and on the phone, reader live. Waiting on the owner to import a real plan on the phone.
 - [ ] 4.4 Routine, topical steps, baths, patch tests
 - [ ] 4.5 Supplement ramp-up scheduler
 - [ ] 4.6 "Worse since when?" timeline

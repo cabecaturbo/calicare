@@ -21,7 +21,7 @@ struct PlanReviewView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: Spacing.section) {
                     VStack(alignment: .leading, spacing: Spacing.x2) {
-                        Text("Check each item against the plan. Tap to change the wording. Nothing starts until you tap Start this plan, and only checked items are kept.")
+                        Text("Check what’s right. Only checked items are kept.")
                             .textStyle(.body)
                             .foregroundStyle(palette.graphite)
                             .fixedSize(horizontal: false, vertical: true)
@@ -50,7 +50,7 @@ struct PlanReviewView: View {
                     if let problem {
                         Text(problem).textStyle(.body).foregroundStyle(palette.ink)
                     }
-                    Button("Discard this draft") { confirmingDiscard = true }
+                    Button("Discard") { confirmingDiscard = true }
                         .buttonStyle(.textLink)
                 }
                 .padding(.horizontal, Spacing.margin)
@@ -59,7 +59,7 @@ struct PlanReviewView: View {
             }
             .paperBackground()
             .safeAreaInset(edge: .bottom) {
-                Button(confirmed == 0 ? "Check items to start" : "Start this plan (\(confirmed))") { Task { await start() } }
+                Button(confirmed == 0 ? "Check items to start" : "Start plan (\(confirmed))") { Task { await start() } }
                     .buttonStyle(.primary)
                     .disabled(confirmed == 0)
                     .padding(.horizontal, Spacing.margin)
@@ -156,26 +156,23 @@ private struct ItemRow: View {
             .accessibilityHint("Checks this item against the plan.")
 
             Button(action: onEdit) {
-                VStack(alignment: .leading, spacing: Spacing.x1) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text(item.text)
                         .textStyle(.body)
                         .foregroundStyle(palette.ink)
-                    let details = PlanDetail.allCases.compactMap { detail in item.value(detail).map { "\(detail.title): \($0)" } }
+                    // Just the values, no labels ("1/4 tsp · once daily · with breakfast"),
+                    // skipping any already in the item's name.
+                    let details = PlanDetail.allCases.compactMap { item.value($0) }
+                        .filter { !item.text.localizedCaseInsensitiveContains($0) }
                     if !details.isEmpty {
                         Text(details.joined(separator: " · "))
                             .textStyle(.meta)
-                            .foregroundStyle(palette.ink)
-                    }
-                    ForEach(item.blanks, id: \.self) { blank in
-                        Text("\(blank.title): your provider left this blank. Worth asking at your next visit.")
-                            .textStyle(.meta)
                             .foregroundStyle(palette.graphite)
                     }
-                    if let line = item.sourceLine {
-                        Text("\(item.sourcePage.map { "Page \($0) · " } ?? "")“\(line)”")
+                    if let blank = item.blanks.first {
+                        Text("No \(blank.noun) given, ask at next visit")
                             .textStyle(.meta)
-                            .italic()
-                            .foregroundStyle(palette.graphite)
+                            .foregroundStyle(palette.ochre)
                     }
                 }
                 .fixedSize(horizontal: false, vertical: true)
@@ -183,7 +180,7 @@ private struct ItemRow: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityHint("Edit the wording.")
+            .accessibilityHint("Shows where it's from in the plan, and lets you edit it.")
         }
         .padding(.vertical, Spacing.x3)
         .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }

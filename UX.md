@@ -154,13 +154,13 @@ Job: follow the care plan without thinking about it.
    - Add: sign in once (Sign in with Apple), then scan the pages, choose
      a PDF or file, or choose photos. The phone reads the words; only the
      words are sent, and nothing is kept. The file stays on the phone.
-   - Review: items grouped by kind, each with a check, the plan's words,
-     its details, "Dose: your provider left this blank. Worth asking at
-     your next visit." for missing details, and the source line in
-     italics ("Page 2 · “Vitamin D3, Brand B, dose at next visit”").
-     Tap to edit (the source line never changes), press and hold to
-     remove, "Check all". "Start this plan (N)" keeps only checked items;
-     "Later" keeps the draft; "Discard this draft" removes it and the file.
+   - Review (kept short): "Check what's right. Only checked items are
+     kept." Items grouped by kind, each a check, the plan's words, the
+     values only ("1/4 tsp · once daily"), and "No dose given, ask at next
+     visit" in ochre when a detail is missing. Tap an item to see its
+     source line and edit it; press and hold to remove; "Check all".
+     "Start plan (N)" keeps only checked items; "Later" keeps the draft;
+     "Discard" removes it and the file.
 
 Not built yet:
 - What a started plan does in Plan: its steps, baths, patch tests (4.4),

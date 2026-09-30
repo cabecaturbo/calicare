@@ -395,3 +395,9 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
 - **The reader is live (September 29):**
   - With the key, the workspace ID, and no `temperature` (the model rejects it), the example plan returned 24 items. None were dropped and no details were removed as ungrounded.
   - Blanks are flagged only when an item gives some of its expected details, so "rotate after 3 weeks" or "start probiotic 2 weeks after" aren't marked as missing a dose.
+- **Simpler review (the owner said the review was "very wordy… it should be simple"):**
+  - One short line at the top: "Check what's right. Only checked items are kept."
+  - Each item shows its name and then only the values ("1/4 tsp · once daily · with breakfast"), with no labels and nothing repeated from the name.
+  - A blank reads "No dose given, ask at next visit" in ochre (the "worth watching" color).
+  - The quoted source line appears only when the item is opened.
+  - The add sheet and the Plan section are down to one line each. The buttons say "Start plan (N)" and "Discard".

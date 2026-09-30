@@ -20,11 +20,11 @@ struct CarePlanSection: View {
                 .accessibilityAddTraits(.isHeader)
             switch plan?.status {
             case .draft?:
-                row("Finish reviewing your plan", detail: plan.map(providerLine)) { reviewing = plan }
+                row("Finish checking your plan", detail: plan.map(providerLine)) { reviewing = plan }
             case .active?:
                 row("About this plan", detail: plan.map(providerLine)) { showingAbout = true }
             default:
-                Text("Add the plan from \(model.child?.name ?? "your child")’s provider. You check every item before it starts.")
+                Text("Scan or pick the plan from \(model.child?.name ?? "your child")’s provider.")
                     .textStyle(.body)
                     .foregroundStyle(palette.graphite)
                     .fixedSize(horizontal: false, vertical: true)

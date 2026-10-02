@@ -53,6 +53,7 @@ public enum LogExport {
         case .patchTest: "Patch test"
         case .supplement: "Supplement"
         case .providerMessage: "Message to provider"
+        case .foodTrial: "Food trial"
         }
     }
 

@@ -25,5 +25,26 @@ final class FoodCaptureTests: XCTestCase {
             sleep(1)
         }
         Capture.screen("food-list-\(variant)")
+
+        app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Eggs")).firstMatch.tap()
+        sleep(1)
+        app.buttons["Start a trial"].firstMatch.tap()
+        sleep(1)
+        let amounts = app.textFields["Amounts, one per day (optional)"].firstMatch
+        _ = amounts.waitForExistence(timeout: 3)
+        amounts.tap()
+        amounts.typeText("1 tsp\n1 tbsp\n1/4 cup")
+        Capture.screen("food-trial-start-\(variant)")
+        app.buttons["Start"].firstMatch.tap()
+        sleep(2)
+        app.swipeDown()
+        sleep(1)
+        let trial = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Eggs")).firstMatch
+        trial.tap()
+        sleep(1)
+        let gave = app.buttons["Gave it today"].firstMatch
+        if gave.waitForExistence(timeout: 3) { gave.tap() }
+        sleep(2)
+        Capture.screen("food-trial-\(variant)")
     }
 }

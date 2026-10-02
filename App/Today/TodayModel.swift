@@ -30,6 +30,8 @@ final class TodayModel {
     private(set) var weekLogs: [LogEntry] = []
     /// The child's food list.
     private(set) var foods: [FoodInfo] = []
+    /// The child's food-trial logs (trials can run past the week).
+    private(set) var trialLogs: [LogEntry] = []
     /// The running care plan, its provider visits, and messages sent.
     private(set) var activePlan: CarePlanInfo?
     private(set) var visits: [VisitInfo] = []
@@ -85,6 +87,7 @@ final class TodayModel {
             activePlan = try await plans.activePlan(child: child.id)
             visits = try await plans.visits(child: child.id)
             foods = try await FoodStore(modelContainer: container).foods(child: child.id)
+            trialLogs = try await store.allLive().filter { $0.type == .foodTrial && $0.childID == child.id }
             if let active = activePlan {
                 planItems = Dictionary(uniqueKeysWithValues: try await plans.items(plan: active.id).map { ($0.id, $0) })
                 let mine = try await store.allLive().filter { $0.childID == child.id }
@@ -205,6 +208,58 @@ final class TodayModel {
     func setPatchResult(_ test: PatchTests.Test, _ result: PatchResult) async {
         PatchReminder.cancel(for: test.entry)
         _ = await update(test.entry, value: .patch(result), note: test.entry.note, timestamp: test.entry.timestamp)
+    }
+
+    /// The latest trial for each food.
+    var foodTrials: [FoodTrial] {
+        FoodTrial.trials(foods: foods, logs: trialLogs)
+    }
+
+    /// Starts a trial: the food moves to Testing (the parent decided).
+    func startTrial(_ food: FoodInfo, days: Int, steps: [String]) async {
+        guard let child else { return }
+        do {
+            let container = try CaliCareModelContainer.shared()
+            try await LogStore(modelContainer: container, calendar: calendar)
+                .logTrial(.started, food: food.id, child: child.id, note: FoodTrial.note(days: days, steps: steps), source: .app)
+            if food.status != .testing {
+                try await FoodStore(modelContainer: container).setStatus(food.id, .testing, decidedBy: .parent)
+            }
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't start the trial. Please try again."
+        }
+    }
+
+    /// "Gave it today" or "Worth watching", with Undo.
+    func logTrial(_ event: FoodTrialEvent, _ food: FoodInfo, note: String? = nil) async {
+        guard let child else { return }
+        do {
+            let entry = try await LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+                .logTrial(event, food: food.id, child: child.id, note: note, source: .app)
+            let text = event == .worthWatching ? "Noted for \(food.name): worth watching." : "Logged \(food.name), \(time(entry.timestamp))."
+            confirmation = Confirmation(entry: entry, text: text)
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't save that. Please try again."
+        }
+    }
+
+    /// Ends a trial with the parent's choice for the food.
+    func endTrial(_ trial: FoodTrial, as status: FoodStatus) async {
+        guard let child else { return }
+        do {
+            let container = try CaliCareModelContainer.shared()
+            try await LogStore(modelContainer: container, calendar: calendar)
+                .logTrial(.ended, food: trial.food.id, child: child.id, note: status.rawValue, source: .app)
+            try await FoodStore(modelContainer: container).setStatus(trial.food.id, status, decidedBy: .parent)
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't end the trial. Please try again."
+        }
     }
 
     /// Next visit, follow-up timing, and messages left, from the plan's words.
@@ -343,6 +398,15 @@ final class TodayModel {
         if entry.type == .bath, let id = entry.routineStepID, let item = planItems[id] {
             return item.text
         }
+        if entry.type == .foodTrial, let id = entry.routineStepID, let food = foods.first(where: { $0.id == id }),
+           case .trial(let event)? = entry.value {
+            return switch event {
+            case .started: "Started a trial: \(food.name)"
+            case .given: "\(food.name) (trial)"
+            case .worthWatching: "\(food.name): worth watching"
+            case .ended: "Ended the trial: \(food.name)"
+            }
+        }
         if entry.type == .supplement, let id = entry.routineStepID, let item = planItems[id],
            case .supplement(let event)? = entry.value {
             return event == .taken ? item.text : "\(item.text): \(event.rawValue)"
@@ -375,6 +439,7 @@ final class TodayModel {
         messageLogs = []
         visits = []
         foods = []
+        trialLogs = []
         activePlan = nil
         weekLogs = []
         hasLoaded = true

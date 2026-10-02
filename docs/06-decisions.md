@@ -420,3 +420,15 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - The reminder is a local notification set in the background, so Start never waits on the notification service. It's cancelled once the result is recorded.
   - "Where" is prefilled with "Inner forearm" only when the plan says forearm.
   - A patch-test line in the plan never becomes a daily routine step (`PlanRoutine.isDailyStep`). `PatchTests` is tested.
+
+## Supplements (4.5, October 1, 2026)
+
+- **Owner's choice: a Supplements list in Plan, not the morning routine,** so the app never guesses a time of day the plan didn't give.
+- **A new log type, `supplement`** (value started, taken, or stopped; the plan item's id in `routineStepID`).
+- **`SupplementPlan` (tested)** reads only the plan's own rules:
+  - Supplement items without a dose or schedule are rules and show as notes.
+  - "N–M days apart" gives the shortest gap after the latest start. "Start X N weeks after Y" gives a date once Y has started, and "Starts 2 weeks after … starts" until then.
+  - "Rotate after N weeks" on the item's line gives a date.
+  - "Twice daily" means "0 of 2 today".
+- **The parent always decides.** "Start" isn't blocked by "Can start after"; the date is only shown.
+- **Not built:** reminders at the plan's times. They need the plan to give times, and most plans say "with breakfast" at best. Reassess reminders likewise.

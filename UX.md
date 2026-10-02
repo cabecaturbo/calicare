@@ -170,8 +170,14 @@ Job: follow the care plan without thinking about it.
    check": tap for No reaction / Some redness / A reaction), and "Start a
    patch test" (what, where, reminder after the plan's wait).
 
+8. Supplements (from a started plan): each supplement with the plan's dose
+   and schedule; "Start" (with "Can start after Oct 4" or "Starts 2 weeks
+   after … starts" from the plan's rules), then a tap each time it's taken
+   ("Taken", "0 of 2 today"); "Rotate after Oct 22" when the plan says;
+   press and hold to Stop. The plan's rules sit underneath.
+
 Not built yet:
-- Supplements (4.5) and the Provider section (4.7); then Food (Phase 5).
+- The Provider section (4.7); then Food (Phase 5).
 
 ## 6. Progress
 Job: show whether things are getting better, and share it.

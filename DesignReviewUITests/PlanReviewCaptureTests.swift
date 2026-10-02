@@ -34,6 +34,13 @@ final class PlanReviewCaptureTests: XCTestCase {
         sleep(1)
         Capture.screen("careplan-started-plan-scrolled-\(variant)")
 
+        let herb = app.buttons["Start Antimicrobial herb, Brand C"].firstMatch
+        if herb.waitForExistence(timeout: 3) {
+            herb.tap()
+            sleep(2)
+            Capture.screen("careplan-supplements-\(variant)")
+        }
+
         let start = app.buttons["Start a patch test"].firstMatch
         if start.waitForExistence(timeout: 3) {
             start.tap()

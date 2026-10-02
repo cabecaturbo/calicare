@@ -83,6 +83,14 @@ public actor LogStore: ModelActor {
                    bodyAreas: [], routineStepID: planItemID, loggedBy: loggedBy, at: timestamp)
     }
 
+    /// A plan supplement started, taken, or stopped. `planItemID` says which.
+    @discardableResult
+    public func logSupplement(_ event: SupplementEvent, item planItemID: UUID, child childID: UUID, source: EntrySource,
+                              loggedBy: String = LoggedBy.current(), at timestamp: Date? = nil) async throws -> LogEntry {
+        try insert(.supplement, value: .supplement(event), child: childID, source: source, note: nil,
+                   bodyAreas: [], routineStepID: planItemID, loggedBy: loggedBy, at: timestamp)
+    }
+
     /// Starts a patch test: "what · where" in the note; the result comes later
     /// through `update(_:value:note:timestamp:)`.
     @discardableResult

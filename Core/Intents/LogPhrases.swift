@@ -42,6 +42,8 @@ public struct LogPhrases: Sendable {
         case (.bath, _): "bath"
         case (.patchTest, .patch(let result)?): "patch test: \(result.title.lowercased())"
         case (.patchTest, _): "patch test"
+        case (.supplement, .supplement(let event)?): "supplement \(event.rawValue)"
+        case (.supplement, _): "supplement"
         }
     }
 

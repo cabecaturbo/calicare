@@ -10,9 +10,35 @@ struct FoodListView: View {
     @State private var newStatus: FoodStatus = .safe
     @State private var editing: FoodInfo?
     @State private var problem: String?
+    @State private var loggingMeal = false
 
     var body: some View {
         List {
+            Section {
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("\(model.plantsThisWeek) plant\(model.plantsThisWeek == 1 ? "" : "s") this week")
+                            .textStyle(.body)
+                            .foregroundStyle(palette.ink)
+                        if let goal = model.plantGoal {
+                            Text("Your plan's goal: \(goal.lowerBound == goal.upperBound ? "\(goal.lowerBound)" : "\(goal.lowerBound)–\(goal.upperBound)")")
+                                .textStyle(.meta)
+                                .foregroundStyle(palette.graphite)
+                        }
+                    }
+                    Spacer()
+                    Button("Log a meal") { loggingMeal = true }
+                        .buttonStyle(.textLink)
+                }
+                if let days = model.rotationDays {
+                    NavigationLink {
+                        RotationView(days: days)
+                    } label: {
+                        Text("Rotation · \(days) days").textStyle(.body).foregroundStyle(palette.ink)
+                    }
+                }
+            }
+            .listRowBackground(palette.paper)
             if !fromPlan.isEmpty {
                 Section {
                     Text("Your plan says to avoid: \(fromPlan.joined(separator: ", ")).")
@@ -84,6 +110,10 @@ struct FoodListView: View {
         .navigationTitle("Food list")
         .navigationBarTitleDisplayMode(.inline)
         .tint(palette.indigo)
+        .sheet(isPresented: $loggingMeal) {
+            MealSheet()
+                .nightAwarePalette()
+        }
         .sheet(item: $editing, onDismiss: { Task { await model.load() } }) { food in
             FoodEditor(food: food)
                 .nightAwarePalette()

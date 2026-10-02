@@ -32,6 +32,8 @@ final class TodayModel {
     private(set) var foods: [FoodInfo] = []
     /// The child's food-trial logs (trials can run past the week).
     private(set) var trialLogs: [LogEntry] = []
+    /// The child's meal logs, for the plant counter.
+    private(set) var mealLogs: [LogEntry] = []
     /// The running care plan, its provider visits, and messages sent.
     private(set) var activePlan: CarePlanInfo?
     private(set) var visits: [VisitInfo] = []
@@ -87,7 +89,9 @@ final class TodayModel {
             activePlan = try await plans.activePlan(child: child.id)
             visits = try await plans.visits(child: child.id)
             foods = try await FoodStore(modelContainer: container).foods(child: child.id)
-            trialLogs = try await store.allLive().filter { $0.type == .foodTrial && $0.childID == child.id }
+            let all = try await store.allLive().filter { $0.childID == child.id }
+            trialLogs = all.filter { $0.type == .foodTrial }
+            mealLogs = all.filter { $0.type == .meal }
             if let active = activePlan {
                 planItems = Dictionary(uniqueKeysWithValues: try await plans.items(plan: active.id).map { ($0.id, $0) })
                 let mine = try await store.allLive().filter { $0.childID == child.id }
@@ -208,6 +212,29 @@ final class TodayModel {
     func setPatchResult(_ test: PatchTests.Test, _ result: PatchResult) async {
         PatchReminder.cancel(for: test.entry)
         _ = await update(test.entry, value: .patch(result), note: test.entry.note, timestamp: test.entry.timestamp)
+    }
+
+    /// Different plants eaten this week, and the plan's goal if it gives one.
+    var plantsThisWeek: Int {
+        FoodRotation.plantsThisWeek(meals: mealLogs, foods: foods, now: .now, calendar: calendar).count
+    }
+
+    var plantGoal: ClosedRange<Int>? { FoodRotation.plantGoal(in: Array(planItems.values)) }
+
+    /// The plan's rotation length, if it gives one.
+    var rotationDays: Int? { FoodRotation.days(in: Array(planItems.values)) }
+
+    func logMeal(_ names: [String]) async {
+        guard let child, !names.isEmpty else { return }
+        do {
+            let entry = try await LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+                .logMeal(names, child: child.id, source: .app)
+            confirmation = Confirmation(entry: entry, text: "Logged a meal: \(names.joined(separator: ", ")).")
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't save that. Please try again."
+        }
     }
 
     /// The latest trial for each food.
@@ -398,6 +425,9 @@ final class TodayModel {
         if entry.type == .bath, let id = entry.routineStepID, let item = planItems[id] {
             return item.text
         }
+        if entry.type == .meal, let foods = entry.note {
+            return "Meal: \(foods)"
+        }
         if entry.type == .foodTrial, let id = entry.routineStepID, let food = foods.first(where: { $0.id == id }),
            case .trial(let event)? = entry.value {
             return switch event {
@@ -440,6 +470,7 @@ final class TodayModel {
         visits = []
         foods = []
         trialLogs = []
+        mealLogs = []
         activePlan = nil
         weekLogs = []
         hasLoaded = true

@@ -91,6 +91,14 @@ public actor LogStore: ModelActor {
                    bodyAreas: [], routineStepID: planItemID, loggedBy: loggedBy, at: timestamp)
     }
 
+    /// A meal: the foods' names, from the food list.
+    @discardableResult
+    public func logMeal(_ foods: [String], child childID: UUID, source: EntrySource,
+                        loggedBy: String = LoggedBy.current(), at timestamp: Date? = nil) async throws -> LogEntry {
+        try insert(.meal, value: nil, child: childID, source: source, note: foods.joined(separator: ", "),
+                   bodyAreas: [], routineStepID: nil, loggedBy: loggedBy, at: timestamp)
+    }
+
     /// A food trial event for `foodID`. A start's note says its days and steps ("4 days · 1 tsp, 1 tbsp").
     @discardableResult
     public func logTrial(_ event: FoodTrialEvent, food foodID: UUID, child childID: UUID, note: String? = nil,

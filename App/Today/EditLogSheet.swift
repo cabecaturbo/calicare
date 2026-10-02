@@ -137,7 +137,7 @@ struct EditLogSheet: View {
             return SkinToday.allCases.map { Option(title: $0.title, value: .skin($0)) }
         case .patchTest:
             return [notSet] + PatchResult.allCases.map { Option(title: $0.title, value: .patch($0)) }
-        case .itchEpisode, .flare, .note, .bath, .supplement, .providerMessage, .foodTrial:
+        case .itchEpisode, .flare, .note, .bath, .supplement, .providerMessage, .foodTrial, .meal:
             return []
         }
     }

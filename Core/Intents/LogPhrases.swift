@@ -47,6 +47,7 @@ public struct LogPhrases: Sendable {
         case (.providerMessage, _): "message to the provider"
         case (.foodTrial, .trial(.worthWatching)?): "something worth watching in a food trial"
         case (.foodTrial, _): "food trial"
+        case (.meal, _): "meal"
         }
     }
 

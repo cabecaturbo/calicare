@@ -470,3 +470,13 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
 - **The trial screen** shows "Day 1 of 3 · Today: 1 tsp", "Gave it today", and a one-tap "Something worth watching". Skin and nights show for each trial day plus the day after, because reactions can show up 12–24 hours later.
 - **"End the trial"** asks the parent: Safe, Keep testing, or Paused. Running trials sit at the top of the food list.
 - `FoodTrial` is tested. Daily trial reminders aren't built yet.
+
+## Rotation and plants (5.3, October 1, 2026)
+
+- **A new log type, `meal`**, holds the foods' names in its note, picked from the safe and testing list ("Log a meal").
+- **`FoodRotation` (tested):**
+  - Reads "N-day rotation" and "40–50 plants/week" from the plan's food rules.
+  - Arranges only safe foods by family across the rotation's days. Each family lands on one day, spread evenly. A food with no family counts as its own.
+  - Today's day counts from the plan's start date.
+  - Plants this week are the different non-animal foods logged in meals this calendar week. Animal families (poultry, bovine, fish, pork, lamb and goat) aren't counted. No streaks.
+- **The food list** starts with "N plants this week · Your plan's goal: 40–50", "Log a meal", and "Rotation · 4 days" (when the plan gives one).

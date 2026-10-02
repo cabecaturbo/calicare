@@ -38,6 +38,7 @@ enum DesignReviewLaunch {
         PlanItemDraft(kind: .supplement, text: "Antimicrobial herb, Brand C", dose: "2 drops", frequency: "twice daily", sourcePage: 2, sourceLine: "Antimicrobial herb, Brand C, 2 drops, twice daily, rotate after 3 weeks"),
         PlanItemDraft(kind: .supplement, text: "Start probiotic 2 weeks after antimicrobial", timing: "2 weeks after antimicrobial", sourcePage: 2, sourceLine: "Start probiotic 2 weeks after antimicrobial."),
         PlanItemDraft(kind: .foodRule, text: "Avoid: dairy, eggs, peanuts", sourcePage: 2, sourceLine: "Avoid: dairy, eggs, peanuts"),
+        PlanItemDraft(kind: .foodRule, text: "4-day rotation by food family, 40–50 plants/week", duration: "3–6 months", sourcePage: 2, sourceLine: "4-day rotation by food family, 40–50 plants/week, for 3–6 months"),
         PlanItemDraft(kind: .followUp, text: "Follow-up visit in 4–6 weeks", sourcePage: 2, sourceLine: "Follow-up visit in 4–6 weeks."),
         PlanItemDraft(kind: .followUp, text: "Up to 5 follow-up messages within 8 weeks", sourcePage: 2, sourceLine: "Up to 5 follow-up messages within 8 weeks."),
     ]

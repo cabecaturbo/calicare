@@ -94,7 +94,7 @@ One prompt per session, same rules as docs/prompts/README.md.
 - [x] 4.7 Provider tracker (visits, follow-up window, messages left), Since visit, and the daily journal export (PDF and CSV)
 
 ## Phase 5: Food (docs/prompts/phase-5-food.md)
-- [ ] 5.1 Food list and food families
+- [x] 5.1 Food list and food families (SchemaV4, sync, the plan's avoid list, Plan › Food list)
 - [ ] 5.2 Food trials and reintroduction
 - [ ] 5.3 Rotation planner and plant counter
 - [ ] 5.4 🛑 "What can I make" (AI)

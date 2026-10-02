@@ -105,4 +105,24 @@ struct CarePlanSyncTests {
         #expect(items.first?.isConfirmed == true)
         #expect(try await plans.visits(child: child.id).count == 1)
     }
+
+    @Test func foodsGoUpAndComeDown() async throws {
+        let remote = FakeSyncRemote()
+        let child = try await addChild()
+        let foods = FoodStore(modelContainer: container, now: { [clock] in clock.now })
+        let eggs = try await foods.add(name: "Eggs", status: .paused, decidedBy: .plan, child: child.id)
+        let report = try await engine(remote).sync(userID: user, displayName: "Mom")
+        #expect(report.pushedFoods == 1)
+        #expect(await remote.foods[eggs.id]?.status == "paused")
+        #expect(await remote.foods[eggs.id]?.decidedBy == "plan")
+
+        let household = try #require(settings.householdID)
+        try await remote.upsert(foods: [RemoteFood(
+            id: UUID(), householdID: household, childID: child.id, name: "Oats", family: "Grasses (grains)", status: "safe",
+            statusChangedAt: clock.now, decidedBy: "parent", note: nil, createdAt: clock.now, updatedAt: clock.now, deletedAt: nil
+        )])
+        let second = try await engine(remote).sync(userID: user, displayName: "Mom")
+        #expect(second.appliedFoods == 1)
+        #expect(try await foods.foods(child: child.id).map(\.name) == ["Eggs", "Oats"])
+    }
 }

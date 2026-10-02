@@ -16,7 +16,7 @@ enum DesignReviewLaunch {
         if DesignReview.applyLaunchArgument() {
             WidgetCenter.shared.reloadAllTimelines()
         }
-        if let kind = UserDefaults.standard.string(forKey: "designReviewSeed"), ["YES", "UNRATED", "EMPTY", "MONTHS", "TWO", "SAMPLE", "PLAN"].contains(kind) {
+        if let kind = UserDefaults.standard.string(forKey: "designReviewSeed"), ["YES", "UNRATED", "EMPTY", "MONTHS", "TWO", "SAMPLE", "PLAN", "PLANSTARTED"].contains(kind) {
             UserDefaults.standard.set(true, forKey: OnboardingFlag.key)
             Task { await seed(kind) }
         }
@@ -49,10 +49,14 @@ enum DesignReviewLaunch {
               let cal = try? await children.addChild(name: "Cal", colorTag: "sage")
         else { return }
         CurrentChildSetting().childID = cal.id
-        if kind == "PLAN" {
-            _ = try? await CarePlanStore(modelContainer: container).createDraft(
-                child: cal.id, provider: "Dr. Rivera", items: examplePlan
-            )
+        if kind == "PLAN" || kind == "PLANSTARTED" {
+            let plans = CarePlanStore(modelContainer: container)
+            if let draft = try? await plans.createDraft(child: cal.id, provider: "Dr. Rivera", items: examplePlan),
+               kind == "PLANSTARTED" {
+                for item in (try? await plans.items(plan: draft.id)) ?? [] { try? await plans.setConfirmed(item.id, true) }
+                _ = try? await plans.start(draft.id)
+            }
+            await LogChanges.didChange()
             return
         }
         if kind == "SAMPLE" {

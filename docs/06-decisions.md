@@ -454,3 +454,10 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - `ProviderJournal` (tested) gives one entry per logged day, in the provider's tracking format: what changed (from `CareChanges`), rash and itch (skin answer, itchy spells, flares with areas), bowel movements, sleep (rating and wake-ups), mood, and notes. Days with nothing logged are left out.
   - Shared as a PDF (about 6 days a page, "Not medical advice. Logged by parent." on every page) or a CSV ending with the same line.
   - Found in Plan › Provider ("Journal for your provider", starting at the plan's start date) and in Settings › Your data.
+
+## Food list (5.1, October 1, 2026)
+
+- **SchemaV4** copies V3 unchanged and adds `Food`: name, family, status safe/testing/paused, when the status changed, and who decided (plan or parent), plus a note. The migration is lightweight and tested from V3. It syncs as `foods`, where the database allows only those statuses and deciders.
+- **`FoodFamilies`** is a built-in table of about 25 families for rotation. It only fills in a family when a food is added, and the parent can change it.
+- **`PlanFoods`** reads "Avoid: dairy, eggs, peanuts" from the plan's food rules. The food list offers "Add them as paused" (decided by the plan). The app never moves a food by itself.
+- **Plan's Food section is always shown** (one row: "Food list" with "12 safe · 1 testing · 3 paused"). Hiding it until used would leave no way to start without a plan.

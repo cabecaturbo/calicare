@@ -12,6 +12,7 @@ actor FakeSyncRemote: SyncRemote {
     private(set) var carePlans: [UUID: RemoteCarePlan] = [:]
     private(set) var planItems: [UUID: RemotePlanItem] = [:]
     private(set) var visits: [UUID: RemoteVisit] = [:]
+    private(set) var foods: [UUID: RemoteFood] = [:]
     private(set) var households: Set<UUID> = []
     private var memberHousehold: UUID?
     var members = 1
@@ -87,6 +88,14 @@ actor FakeSyncRemote: SyncRemote {
         }
     }
 
+    func upsert(foods rows: [RemoteFood]) async throws {
+        try check()
+        for var row in rows where isNewer(row.updatedAt, than: foods[row.id]?.updatedAt) {
+            row.serverUpdatedAt = tick()
+            foods[row.id] = row
+        }
+    }
+
     /// A plan item written by another phone.
     func insert(planItem row: RemotePlanItem) {
         var row = row
@@ -117,7 +126,8 @@ actor FakeSyncRemote: SyncRemote {
             routineSteps: routineSteps.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after },
             carePlans: carePlans.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after },
             planItems: planItems.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after },
-            visits: visits.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after }
+            visits: visits.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after },
+            foods: foods.values.filter { $0.householdID == household && $0.serverUpdatedAt! > after }
         )
     }
 

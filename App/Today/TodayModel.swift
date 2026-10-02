@@ -28,6 +28,10 @@ final class TodayModel {
     private(set) var routineSteps: [RoutineStepInfo] = []
     /// The last seven care days' logs, for this week's baths.
     private(set) var weekLogs: [LogEntry] = []
+    /// The running care plan, its provider visits, and messages sent.
+    private(set) var activePlan: CarePlanInfo?
+    private(set) var visits: [VisitInfo] = []
+    private(set) var messageLogs: [LogEntry] = []
     /// Every supplement log for the current child (starts can be weeks back).
     private(set) var supplementLogs: [LogEntry] = []
     /// The running care plan's items, by id: for plan steps' "3–4x/day".
@@ -76,12 +80,17 @@ final class TodayModel {
             hasEverLogged = try await !store.recent(limit: 1).isEmpty
             routineSteps = try await RoutineStore(modelContainer: container).steps(child: child.id, includeInactive: true)
             let plans = CarePlanStore(modelContainer: container)
-            if let active = try await plans.activePlan(child: child.id) {
+            activePlan = try await plans.activePlan(child: child.id)
+            visits = try await plans.visits(child: child.id)
+            if let active = activePlan {
                 planItems = Dictionary(uniqueKeysWithValues: try await plans.items(plan: active.id).map { ($0.id, $0) })
-                supplementLogs = try await store.allLive().filter { $0.type == .supplement && $0.childID == child.id }
+                let mine = try await store.allLive().filter { $0.childID == child.id }
+                supplementLogs = mine.filter { $0.type == .supplement }
+                messageLogs = mine.filter { $0.type == .providerMessage }
             } else {
                 planItems = [:]
                 supplementLogs = []
+                messageLogs = []
             }
             isDaytime = today.isDaytime(now, calendar: calendar)
             myName = AccountSettings().displayName
@@ -193,6 +202,28 @@ final class TodayModel {
     func setPatchResult(_ test: PatchTests.Test, _ result: PatchResult) async {
         PatchReminder.cancel(for: test.entry)
         _ = await update(test.entry, value: .patch(result), note: test.entry.note, timestamp: test.entry.timestamp)
+    }
+
+    /// Next visit, follow-up timing, and messages left, from the plan's words.
+    var providerTracker: ProviderTracker {
+        ProviderTracker(plan: activePlan, items: Array(planItems.values), visits: visits, logs: messageLogs,
+                        now: .now, calendar: calendar)
+    }
+
+    func logProviderMessage() async {
+        await log(.providerMessage)
+    }
+
+    func addVisit(date: Date, provider: String, notes: String?) async {
+        guard let child else { return }
+        do {
+            try await CarePlanStore(modelContainer: try CaliCareModelContainer.shared())
+                .addVisit(child: child.id, date: date, provider: provider, notes: notes)
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't save the visit. Please try again."
+        }
     }
 
     /// The plan's supplements, their rules, and today.
@@ -338,6 +369,9 @@ final class TodayModel {
         routineSteps = []
         planItems = [:]
         supplementLogs = []
+        messageLogs = []
+        visits = []
+        activePlan = nil
         weekLogs = []
         hasLoaded = true
     }

@@ -199,6 +199,14 @@ public struct VisitInfo: Identifiable, Hashable, Sendable {
     public let date: Date
     public let provider: String
     public let notes: String?
+
+    public init(id: UUID, childID: UUID, date: Date, provider: String, notes: String?) {
+        self.id = id
+        self.childID = childID
+        self.date = date
+        self.provider = provider
+        self.notes = notes
+    }
 }
 
 extension VisitInfo {

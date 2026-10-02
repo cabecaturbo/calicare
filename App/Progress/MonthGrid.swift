@@ -8,6 +8,7 @@ struct MonthGrid: View {
     @Environment(\.palette) private var palette
     @Environment(\.dynamicTypeSize) private var typeSize
     let days: [WeekDay]
+    var title = "This month"
     private let calendar = Calendar.autoupdatingCurrent
 
     var body: some View {
@@ -16,7 +17,7 @@ struct MonthGrid: View {
                 ? AnyLayout(VStackLayout(alignment: .leading, spacing: Spacing.x1))
                 : AnyLayout(HStackLayout(alignment: .firstTextBaseline))
             heading {
-                Text("This month")
+                Text(title)
                     .textStyle(.section)
                     .foregroundStyle(palette.ink)
                     .accessibilityAddTraits(.isHeader)

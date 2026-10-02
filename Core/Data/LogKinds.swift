@@ -16,13 +16,15 @@ public enum LogType: String, Codable, Sendable, CaseIterable {
     case patchTest
     /// A care plan supplement started, taken, or stopped. Which one: the plan item's id, in `routineStepID`.
     case supplement
+    /// A message sent to the provider, counted against the plan's allowance.
+    case providerMessage
 
     /// Whether a log of this type must carry a value.
     public var requiresValue: Bool {
         switch self {
         case .nightRating, .mood, .skinToday, .supplement: true
         // A one-tap widget log records that it happened; the kind is optional.
-        case .bowelMovement, .itchEpisode, .flare, .routineDone, .note, .bath, .patchTest: false
+        case .bowelMovement, .itchEpisode, .flare, .routineDone, .note, .bath, .patchTest, .providerMessage: false
         }
     }
 
@@ -172,7 +174,7 @@ public enum LogValue: Hashable, Sendable {
         case .supplement:
             guard let event = SupplementEvent(rawValue: raw) else { return nil }
             self = .supplement(event)
-        case .itchEpisode, .flare, .note, .bath:
+        case .itchEpisode, .flare, .note, .bath, .providerMessage:
             return nil
         }
     }

@@ -57,6 +57,20 @@ final class PlanReviewCaptureTests: XCTestCase {
             sleep(1)
             Capture.screen("careplan-patch-running-\(variant)")
         }
+        app.swipeUp()
+        sleep(1)
+        let messages = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Messages")).firstMatch
+        if messages.waitForExistence(timeout: 3) { messages.tap() }
+        sleep(2)
+        Capture.screen("careplan-provider-\(variant)")
+        let addVisit = app.buttons["Add a visit"].firstMatch
+        if addVisit.waitForExistence(timeout: 3) {
+            addVisit.tap()
+            sleep(1)
+            app.buttons["Save"].firstMatch.tap()
+            sleep(2)
+        }
+
         // The glass tab bar shrinks while scrolled down; scroll back up to show the tabs.
         app.swipeDown()
         app.swipeDown()
@@ -66,5 +80,14 @@ final class PlanReviewCaptureTests: XCTestCase {
         app.swipeUp()
         sleep(1)
         Capture.screen("careplan-changes-\(variant)")
+        app.swipeDown()
+        app.swipeDown()
+        sleep(1)
+        let since = app.buttons["Since visit"].firstMatch
+        if since.waitForExistence(timeout: 3) {
+            since.tap()
+            sleep(2)
+            Capture.screen("careplan-since-visit-\(variant)")
+        }
     }
 }

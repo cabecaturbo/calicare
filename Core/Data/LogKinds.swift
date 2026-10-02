@@ -18,11 +18,14 @@ public enum LogType: String, Codable, Sendable, CaseIterable {
     case supplement
     /// A message sent to the provider, counted against the plan's allowance.
     case providerMessage
+    /// A food trial: started (note "4 days · 1 tsp, 1 tbsp"), given, worth watching, or ended.
+    /// Which food: the food's id, in `routineStepID`.
+    case foodTrial
 
     /// Whether a log of this type must carry a value.
     public var requiresValue: Bool {
         switch self {
-        case .nightRating, .mood, .skinToday, .supplement: true
+        case .nightRating, .mood, .skinToday, .supplement, .foodTrial: true
         // A one-tap widget log records that it happened; the kind is optional.
         case .bowelMovement, .itchEpisode, .flare, .routineDone, .note, .bath, .patchTest, .providerMessage: false
         }
@@ -32,7 +35,7 @@ public enum LogType: String, Codable, Sendable, CaseIterable {
     public func accepts(_ value: LogValue?) -> Bool {
         switch (self, value) {
         case (.nightRating, .night?), (.bowelMovement, .bowel?), (.mood, .mood?), (.routineDone, .routine?),
-             (.skinToday, .skin?), (.patchTest, .patch?), (.supplement, .supplement?): true
+             (.skinToday, .skin?), (.patchTest, .patch?), (.supplement, .supplement?), (.foodTrial, .trial?): true
         case (_, nil): !requiresValue
         default: false
         }
@@ -104,6 +107,11 @@ public enum PatchResult: String, Codable, Sendable, CaseIterable {
     }
 }
 
+/// What happened in a food trial.
+public enum FoodTrialEvent: String, Codable, Sendable, CaseIterable {
+    case started, given, worthWatching, ended
+}
+
 /// What happened with a plan supplement.
 public enum SupplementEvent: String, Codable, Sendable, CaseIterable {
     case started, taken, stopped
@@ -137,6 +145,7 @@ public enum LogValue: Hashable, Sendable {
     case skin(SkinToday)
     case patch(PatchResult)
     case supplement(SupplementEvent)
+    case trial(FoodTrialEvent)
 
     public var rawValue: String {
         switch self {
@@ -147,6 +156,7 @@ public enum LogValue: Hashable, Sendable {
         case .skin(let answer): answer.rawValue
         case .patch(let result): result.rawValue
         case .supplement(let event): event.rawValue
+        case .trial(let event): event.rawValue
         }
     }
 
@@ -174,6 +184,9 @@ public enum LogValue: Hashable, Sendable {
         case .supplement:
             guard let event = SupplementEvent(rawValue: raw) else { return nil }
             self = .supplement(event)
+        case .foodTrial:
+            guard let event = FoodTrialEvent(rawValue: raw) else { return nil }
+            self = .trial(event)
         case .itchEpisode, .flare, .note, .bath, .providerMessage:
             return nil
         }

@@ -461,3 +461,12 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
 - **`FoodFamilies`** is a built-in table of about 25 families for rotation. It only fills in a family when a food is added, and the parent can change it.
 - **`PlanFoods`** reads "Avoid: dairy, eggs, peanuts" from the plan's food rules. The food list offers "Add them as paused" (decided by the plan). The app never moves a food by itself.
 - **Plan's Food section is always shown** (one row: "Food list" with "12 safe · 1 testing · 3 paused"). Hiding it until used would leave no way to start without a plan.
+
+## Food trials (5.2, October 1, 2026)
+
+- **A new log type, `foodTrial`** (started, given, worth watching, or ended; the food's id in `routineStepID`).
+  - The schedule rides in the start log's note ("3 days · 1 tsp, 1 tbsp, 1/4 cup"), so there's no schema change. The parent enters it "as your plan or provider says"; nothing is suggested.
+- **Starting a trial** (from a food's sheet) moves the food to Testing, decided by the parent.
+- **The trial screen** shows "Day 1 of 3 · Today: 1 tsp", "Gave it today", and a one-tap "Something worth watching". Skin and nights show for each trial day plus the day after, because reactions can show up 12–24 hours later.
+- **"End the trial"** asks the parent: Safe, Keep testing, or Paused. Running trials sit at the top of the food list.
+- `FoodTrial` is tested. Daily trial reminders aren't built yet.

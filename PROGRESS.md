@@ -95,7 +95,7 @@ One prompt per session, same rules as docs/prompts/README.md.
 
 ## Phase 5: Food (docs/prompts/phase-5-food.md)
 - [x] 5.1 Food list and food families (SchemaV4, sync, the plan's avoid list, Plan › Food list)
-- [ ] 5.2 Food trials and reintroduction
+- [x] 5.2 Food trials and reintroduction (no daily trial reminder yet)
 - [ ] 5.3 Rotation planner and plant counter
 - [ ] 5.4 🛑 "What can I make" (AI)
 - [ ] 5.5 Leftovers and freezer timers

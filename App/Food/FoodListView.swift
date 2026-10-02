@@ -23,6 +23,28 @@ struct FoodListView: View {
                 }
                 .listRowBackground(palette.oat)
             }
+            let running = model.foodTrials.filter(\.isRunning)
+            if !running.isEmpty {
+                Section {
+                    ForEach(running) { trial in
+                        NavigationLink {
+                            FoodTrialView(foodID: trial.food.id)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(trial.food.name).textStyle(.body).foregroundStyle(palette.ink)
+                                let day = trial.day(at: .now)
+                                Text([day <= trial.days ? "Day \(day) of \(trial.days)" : "Trial days done",
+                                      trial.step(at: .now).map { "today \($0)" }].compactMap { $0 }.joined(separator: " · "))
+                                    .textStyle(.meta)
+                                    .foregroundStyle(palette.graphite)
+                            }
+                        }
+                        .listRowBackground(palette.paper)
+                    }
+                } header: {
+                    Text("Trials").textStyle(.section).foregroundStyle(palette.ink).textCase(nil)
+                }
+            }
             Section {
                 HStack {
                     TextField("Add a food", text: $newName)
@@ -128,6 +150,7 @@ private struct FoodEditor: View {
     @State private var status: FoodStatus
     @State private var family: String
     @State private var note: String
+    @State private var startingTrial = false
 
     init(food: FoodInfo) {
         self.food = food
@@ -157,6 +180,7 @@ private struct FoodEditor: View {
                     TextField("Optional", text: $note, axis: .vertical)
                 }
                 Section {
+                    Button("Start a trial") { startingTrial = true }
                     Button("Remove from the list") { Task { await remove() } }
                 }
             }
@@ -170,6 +194,10 @@ private struct FoodEditor: View {
             }
         }
         .tint(palette.indigo)
+        .sheet(isPresented: $startingTrial, onDismiss: { dismiss() }) {
+            StartTrialSheet(food: food)
+                .nightAwarePalette()
+        }
     }
 
     private var families: [String] {

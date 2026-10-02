@@ -432,3 +432,12 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - "Twice daily" means "0 of 2 today".
 - **The parent always decides.** "Start" isn't blocked by "Can start after"; the date is only shown.
 - **Not built:** reminders at the plan's times. They need the plan to give times, and most plans say "with breakfast" at best. Reassess reminders likewise.
+
+## "Worse since when?" (4.6, October 1, 2026)
+
+- **Progress has a "Changes" list** (the latest 8, newest first) built from the plan's own events: plans started and ended, supplements started and stopped, and new things patch-tested (just what was tested, not where).
+- **"Rougher since Thu, Sep 24"** (in ochre, on an oat card) appears when the last 3 logged days average at least half a level above the 7 logged days before. The level is each day's skin and night on one 0–2 scale.
+  - It lists the changes in the week before, or "Nothing in your plan changed in the week before."
+  - It never says "cause", "trigger", or "likely".
+  - `CareChanges` is tested.
+- Food changes join the list in Phase 5.

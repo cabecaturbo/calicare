@@ -207,6 +207,11 @@ partial month is fair) and a calendar grid: weekday letters, then each
 day's number (today in indigo), skin square, and night dot; dashes for not
 answered. "9 good nights of 28" on the right.
 
+Changes (below the grid): "Rougher since Thu, Sep 24" when skin or nights
+turned rougher, with what changed in the week before (or "Nothing in your
+plan changed in the week before"); then "Changes", the latest 8 plan
+events (plan started or ended, supplement started or stopped, patch tests).
+
 Not built yet:
 - "Since visit" (once visits exist, Phase 4).
 - Itchy wake-ups chart, Photos (Phase 6), day-by-day rows.

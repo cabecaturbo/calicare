@@ -129,6 +129,18 @@ public struct CarePlanInfo: Identifiable, Hashable, Sendable {
     public let status: CarePlanStatus
     public let startedAt: Date?
     public let endedAt: Date?
+
+    public init(id: UUID, childID: UUID, provider: String, planDate: Date?, sourceFileName: String?,
+                status: CarePlanStatus, startedAt: Date?, endedAt: Date?) {
+        self.id = id
+        self.childID = childID
+        self.provider = provider
+        self.planDate = planDate
+        self.sourceFileName = sourceFileName
+        self.status = status
+        self.startedAt = startedAt
+        self.endedAt = endedAt
+    }
 }
 
 extension CarePlanInfo {

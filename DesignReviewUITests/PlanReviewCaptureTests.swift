@@ -57,5 +57,14 @@ final class PlanReviewCaptureTests: XCTestCase {
             sleep(1)
             Capture.screen("careplan-patch-running-\(variant)")
         }
+        // The glass tab bar shrinks while scrolled down; scroll back up to show the tabs.
+        app.swipeDown()
+        app.swipeDown()
+        sleep(1)
+        app.buttons["Progress"].firstMatch.tap()
+        sleep(2)
+        app.swipeUp()
+        sleep(1)
+        Capture.screen("careplan-changes-\(variant)")
     }
 }

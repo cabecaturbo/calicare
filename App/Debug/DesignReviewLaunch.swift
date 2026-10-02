@@ -35,6 +35,8 @@ enum DesignReviewLaunch {
         PlanItemDraft(kind: .supplement, text: "Probiotic, Brand A", dose: "1/4 tsp", frequency: "once daily", timing: "with breakfast", duration: "3 months", sourcePage: 2, sourceLine: "Probiotic, Brand A, 1/4 tsp, once daily, with breakfast, 3 months"),
         PlanItemDraft(kind: .supplement, text: "Vitamin D3, Brand B", frequency: "daily", sourcePage: 2, sourceLine: "Vitamin D3, Brand B, dose at next visit, daily"),
         PlanItemDraft(kind: .supplement, text: "Add one at a time, 3–5 days apart", sourcePage: 2, sourceLine: "Add one at a time, 3–5 days apart. Start with a drop."),
+        PlanItemDraft(kind: .supplement, text: "Antimicrobial herb, Brand C", dose: "2 drops", frequency: "twice daily", sourcePage: 2, sourceLine: "Antimicrobial herb, Brand C, 2 drops, twice daily, rotate after 3 weeks"),
+        PlanItemDraft(kind: .supplement, text: "Start probiotic 2 weeks after antimicrobial", timing: "2 weeks after antimicrobial", sourcePage: 2, sourceLine: "Start probiotic 2 weeks after antimicrobial."),
         PlanItemDraft(kind: .foodRule, text: "Avoid: dairy, eggs, peanuts", sourcePage: 2, sourceLine: "Avoid: dairy, eggs, peanuts"),
         PlanItemDraft(kind: .followUp, text: "Follow-up visit in 4–6 weeks", sourcePage: 2, sourceLine: "Follow-up visit in 4–6 weeks."),
     ]

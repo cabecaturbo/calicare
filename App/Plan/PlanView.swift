@@ -47,6 +47,13 @@ struct PlanView: View {
                                 .padding(.top, Spacing.x6)
                         }
 
+                        let supplements = model.supplementPlan
+                        if !supplements.rows.isEmpty {
+                            SupplementsSection(plan: supplements)
+                                .padding(.horizontal, Spacing.margin)
+                                .padding(.top, Spacing.x6)
+                        }
+
                         let patches = model.patchTests
                         if !patches.isEmpty {
                             PatchTestsSection(tests: patches)

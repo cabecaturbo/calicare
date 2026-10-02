@@ -28,6 +28,8 @@ final class TodayModel {
     private(set) var routineSteps: [RoutineStepInfo] = []
     /// The last seven care days' logs, for this week's baths.
     private(set) var weekLogs: [LogEntry] = []
+    /// Every supplement log for the current child (starts can be weeks back).
+    private(set) var supplementLogs: [LogEntry] = []
     /// The running care plan's items, by id: for plan steps' "3–4x/day".
     private(set) var planItems: [UUID: PlanItemInfo] = [:]
     /// False until anything has been logged for any child: shows the first-run hint.
@@ -76,8 +78,10 @@ final class TodayModel {
             let plans = CarePlanStore(modelContainer: container)
             if let active = try await plans.activePlan(child: child.id) {
                 planItems = Dictionary(uniqueKeysWithValues: try await plans.items(plan: active.id).map { ($0.id, $0) })
+                supplementLogs = try await store.allLive().filter { $0.type == .supplement && $0.childID == child.id }
             } else {
                 planItems = [:]
+                supplementLogs = []
             }
             isDaytime = today.isDaytime(now, calendar: calendar)
             myName = AccountSettings().displayName
@@ -191,6 +195,30 @@ final class TodayModel {
         _ = await update(test.entry, value: .patch(result), note: test.entry.note, timestamp: test.entry.timestamp)
     }
 
+    /// The plan's supplements, their rules, and today.
+    var supplementPlan: SupplementPlan {
+        SupplementPlan(items: Array(planItems.values), logs: supplementLogs, now: .now, calendar: calendar)
+    }
+
+    /// Started, taken, or stopped.
+    func logSupplement(_ event: SupplementEvent, _ item: PlanItemInfo) async {
+        guard let child else { return }
+        do {
+            let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+            let entry = try await store.logSupplement(event, item: item.id, child: child.id, source: .app)
+            let words = switch event {
+            case .started: "Started"
+            case .taken: "Logged"
+            case .stopped: "Stopped"
+            }
+            confirmation = Confirmation(entry: entry, text: "\(words) \(item.text), \(time(entry.timestamp)).")
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't save that. Please try again."
+        }
+    }
+
     /// The running plan's baths and this week's count.
     var bathWeek: BathWeek {
         BathWeek(items: Array(planItems.values).sorted { $0.order < $1.order }, logs: weekLogs, now: .now, calendar: calendar)
@@ -281,6 +309,10 @@ final class TodayModel {
         if entry.type == .bath, let id = entry.routineStepID, let item = planItems[id] {
             return item.text
         }
+        if entry.type == .supplement, let id = entry.routineStepID, let item = planItems[id],
+           case .supplement(let event)? = entry.value {
+            return event == .taken ? item.text : "\(item.text): \(event.rawValue)"
+        }
         return phrases.title(for: entry)
     }
 
@@ -305,6 +337,7 @@ final class TodayModel {
         skin = nil
         routineSteps = []
         planItems = [:]
+        supplementLogs = []
         weekLogs = []
         hasLoaded = true
     }

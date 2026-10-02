@@ -11,6 +11,7 @@ struct FoodListView: View {
     @State private var editing: FoodInfo?
     @State private var problem: String?
     @State private var loggingMeal = false
+    @State private var askingIdeas = false
 
     var body: some View {
         List {
@@ -30,6 +31,8 @@ struct FoodListView: View {
                     Button("Log a meal") { loggingMeal = true }
                         .buttonStyle(.textLink)
                 }
+                Button("What can I make") { askingIdeas = true }
+                    .buttonStyle(.textLink)
                 if let days = model.rotationDays {
                     NavigationLink {
                         RotationView(days: days)
@@ -110,6 +113,10 @@ struct FoodListView: View {
         .navigationTitle("Food list")
         .navigationBarTitleDisplayMode(.inline)
         .tint(palette.indigo)
+        .sheet(isPresented: $askingIdeas) {
+            MealIdeasSheet()
+                .nightAwarePalette()
+        }
         .sheet(isPresented: $loggingMeal) {
             MealSheet()
                 .nightAwarePalette()

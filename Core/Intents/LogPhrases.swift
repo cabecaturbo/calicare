@@ -40,6 +40,8 @@ public struct LogPhrases: Sendable {
         case (.skinToday, .skin(let answer)?): "skin today: \(answer.words)"
         case (.skinToday, _): "skin today"
         case (.bath, _): "bath"
+        case (.patchTest, .patch(let result)?): "patch test: \(result.title.lowercased())"
+        case (.patchTest, _): "patch test"
         }
     }
 

@@ -12,13 +12,15 @@ public enum LogType: String, Codable, Sendable, CaseIterable {
     case skinToday
     /// One of the care plan's baths. Which bath: the plan item's id, in `routineStepID`.
     case bath
+    /// A patch test: what and where in `note`; the result, once checked, in `value`.
+    case patchTest
 
     /// Whether a log of this type must carry a value.
     public var requiresValue: Bool {
         switch self {
         case .nightRating, .mood, .skinToday: true
         // A one-tap widget log records that it happened; the kind is optional.
-        case .bowelMovement, .itchEpisode, .flare, .routineDone, .note, .bath: false
+        case .bowelMovement, .itchEpisode, .flare, .routineDone, .note, .bath, .patchTest: false
         }
     }
 
@@ -26,7 +28,7 @@ public enum LogType: String, Codable, Sendable, CaseIterable {
     public func accepts(_ value: LogValue?) -> Bool {
         switch (self, value) {
         case (.nightRating, .night?), (.bowelMovement, .bowel?), (.mood, .mood?), (.routineDone, .routine?),
-             (.skinToday, .skin?): true
+             (.skinToday, .skin?), (.patchTest, .patch?): true
         case (_, nil): !requiresValue
         default: false
         }
@@ -85,6 +87,19 @@ public enum SkinToday: String, Codable, Sendable, CaseIterable {
     }
 }
 
+/// How a patch test looked when checked. Only what the parent saw.
+public enum PatchResult: String, Codable, Sendable, CaseIterable {
+    case noReaction, someRedness, reaction
+
+    public var title: String {
+        switch self {
+        case .noReaction: "No reaction"
+        case .someRedness: "Some redness"
+        case .reaction: "A reaction"
+        }
+    }
+}
+
 /// Where a flare was. Optional, and never required to log one.
 public enum BodyArea: String, Codable, Sendable, CaseIterable {
     case face, neck, hands, arms, elbowCreases, torso, back, diaperArea, legs, kneeCreases, feet
@@ -111,6 +126,7 @@ public enum LogValue: Hashable, Sendable {
     case mood(Mood)
     case routine(RoutineTime)
     case skin(SkinToday)
+    case patch(PatchResult)
 
     public var rawValue: String {
         switch self {
@@ -119,6 +135,7 @@ public enum LogValue: Hashable, Sendable {
         case .mood(let mood): mood.rawValue
         case .routine(let time): time.rawValue
         case .skin(let answer): answer.rawValue
+        case .patch(let result): result.rawValue
         }
     }
 
@@ -140,6 +157,9 @@ public enum LogValue: Hashable, Sendable {
         case .skinToday:
             guard let answer = SkinToday(rawValue: raw) else { return nil }
             self = .skin(answer)
+        case .patchTest:
+            guard let result = PatchResult(rawValue: raw) else { return nil }
+            self = .patch(result)
         case .itchEpisode, .flare, .note, .bath:
             return nil
         }

@@ -12,6 +12,12 @@ struct PlanRoutineTests {
         #expect(PlanRoutine.times(text: "Apply", timing: nil, frequency: nil) == [.morning, .evening])
     }
 
+    @Test func aPatchTestLineIsNotADailyStep() {
+        #expect(PlanRoutine.isDailyStep(kind: .topicalStep, text: "Seal with plain oil"))
+        #expect(!PlanRoutine.isDailyStep(kind: .topicalStep, text: "Patch test any new product on the inner forearm"))
+        #expect(!PlanRoutine.isDailyStep(kind: .bath, text: "Oat bath"))
+    }
+
     @Test func startingAddsTheStepsAndEndingRemovesThem() async throws {
         let harness = try await TestHarness()
         let clock = harness.clock

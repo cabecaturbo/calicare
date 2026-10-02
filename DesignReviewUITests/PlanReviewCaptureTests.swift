@@ -33,5 +33,22 @@ final class PlanReviewCaptureTests: XCTestCase {
         if oat.waitForExistence(timeout: 3) { oat.tap() }
         sleep(1)
         Capture.screen("careplan-started-plan-scrolled-\(variant)")
+
+        let start = app.buttons["Start a patch test"].firstMatch
+        if start.waitForExistence(timeout: 3) {
+            start.tap()
+            sleep(1)
+            app.textFields.firstMatch.tap()
+            app.textFields.firstMatch.typeText("Calendula balm")
+            Capture.screen("careplan-patch-start-\(variant)")
+            app.buttons["Start"].firstMatch.tap()
+            sleep(2)
+            let allow = XCUIApplication(bundleIdentifier: "com.apple.springboard").buttons["Allow"]
+            if allow.waitForExistence(timeout: 3) { allow.tap() }
+            sleep(2)
+            app.swipeUp()
+            sleep(1)
+            Capture.screen("careplan-patch-running-\(variant)")
+        }
     }
 }

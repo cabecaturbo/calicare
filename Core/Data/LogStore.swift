@@ -83,6 +83,17 @@ public actor LogStore: ModelActor {
                    bodyAreas: [], routineStepID: planItemID, loggedBy: loggedBy, at: timestamp)
     }
 
+    /// Starts a patch test: "what · where" in the note; the result comes later
+    /// through `update(_:value:note:timestamp:)`.
+    @discardableResult
+    public func logPatchTest(what: String, where spot: String, child childID: UUID, source: EntrySource,
+                             loggedBy: String = LoggedBy.current(), at timestamp: Date? = nil) async throws -> LogEntry {
+        let parts = [what, spot].map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+        return try insert(.patchTest, value: nil, child: childID, source: source,
+                          note: parts.isEmpty ? nil : parts.joined(separator: " · "),
+                          bodyAreas: [], routineStepID: nil, loggedBy: loggedBy, at: timestamp)
+    }
+
     /// Sets where a flare was, after the fact ("Add where"). An empty list clears it.
     @discardableResult
     public func setBodyAreas(_ areas: [BodyArea], on id: UUID) async throws -> LogEntry {

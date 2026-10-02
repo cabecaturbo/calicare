@@ -159,6 +159,38 @@ final class TodayModel {
         }
     }
 
+    /// The plan's patch-test wait, and tests running, ready, or checked this week.
+    var patchTests: PatchTests {
+        PatchTests(items: Array(planItems.values), logs: weekLogs, now: .now)
+    }
+
+    /// Starts a patch test and, when the plan says how long to wait, a reminder to check it.
+    func startPatchTest(what: String, where spot: String) async {
+        guard let child else { return }
+        do {
+            let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+            let entry = try await store.logPatchTest(what: what, where: spot, child: child.id, source: .app)
+            if let wait = patchTests.wait {
+                // In the background: the notification service can be slow to answer.
+                Task.detached {
+                    if await NotificationPermission.status() == .notDetermined { _ = await NotificationPermission.request() }
+                    await PatchReminder.schedule(for: entry, at: entry.timestamp.addingTimeInterval(wait))
+                }
+            }
+            confirmation = Confirmation(entry: entry, text: "Patch test started, \(time(entry.timestamp)).")
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't start the patch test. Please try again."
+        }
+    }
+
+    /// Records what the parent saw, and drops the reminder.
+    func setPatchResult(_ test: PatchTests.Test, _ result: PatchResult) async {
+        PatchReminder.cancel(for: test.entry)
+        _ = await update(test.entry, value: .patch(result), note: test.entry.note, timestamp: test.entry.timestamp)
+    }
+
     /// The running plan's baths and this week's count.
     var bathWeek: BathWeek {
         BathWeek(items: Array(planItems.values).sorted { $0.order < $1.order }, logs: weekLogs, now: .now, calendar: calendar)

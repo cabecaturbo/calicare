@@ -47,6 +47,13 @@ struct PlanView: View {
                                 .padding(.top, Spacing.x6)
                         }
 
+                        let patches = model.patchTests
+                        if !patches.isEmpty {
+                            PatchTestsSection(tests: patches)
+                                .padding(.horizontal, Spacing.margin)
+                                .padding(.top, Spacing.x6)
+                        }
+
                         editButton
                             .padding(.horizontal, Spacing.margin)
                             .padding(.top, Spacing.x5)

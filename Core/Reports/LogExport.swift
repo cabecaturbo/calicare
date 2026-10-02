@@ -50,12 +50,14 @@ public enum LogExport {
         case .note: "Note"
         case .skinToday: "Skin today"
         case .bath: "Bath"
+        case .patchTest: "Patch test"
         }
     }
 
     static func words(_ value: LogValue) -> String {
         switch value {
         case .skin(let answer): answer.words
+        case .patch(let result): result.title.lowercased()
         case .bowel(.none): "none"
         default: value.rawValue
         }

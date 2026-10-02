@@ -162,9 +162,16 @@ Job: follow the care plan without thinking about it.
      "Start plan (N)" keeps only checked items; "Later" keeps the draft;
      "Discard" removes it and the file.
 
+7. A started plan in Plan: its routine and skin steps join the morning and
+   evening rows (with the plan's schedule, "3–4x/day", under each);
+   "Baths" lists the plan's baths with "1 of 3 this week" (tap to log one;
+   rules like "rotate, don't combine" underneath); "Patch tests" shows the
+   plan's line, running tests ("Check after Fri 7:11 PM", then "Ready to
+   check": tap for No reaction / Some redness / A reaction), and "Start a
+   patch test" (what, where, reminder after the plan's wait).
+
 Not built yet:
-- What a started plan does in Plan: its steps, baths, patch tests (4.4),
-  supplements (4.5), and the Provider section (4.7); then Food (Phase 5).
+- Supplements (4.5) and the Provider section (4.7); then Food (Phase 5).
 
 ## 6. Progress
 Job: show whether things are getting better, and share it.

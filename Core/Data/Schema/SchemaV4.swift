@@ -1,15 +1,22 @@
 import Foundation
 import SwiftData
 
+// Current model names always point at the latest schema version.
+public typealias Child = SchemaV4.Child
+public typealias LogEvent = SchemaV4.LogEvent
+public typealias RoutineStep = SchemaV4.RoutineStep
+public typealias CarePlan = SchemaV4.CarePlan
+public typealias PlanItem = SchemaV4.PlanItem
+public typealias Visit = SchemaV4.Visit
+public typealias Food = SchemaV4.Food
 
-/// Phase 4: care plans (the provider's plan, its items, and visits). The V2
-/// models are copied unchanged except RoutineStep's optional planItemID, so
-/// the migration from V2 is lightweight.
-public enum SchemaV3: VersionedSchema {
-    public static var versionIdentifier: Schema.Version { Schema.Version(3, 0, 0) }
+/// Phase 5: the food list. The V3 models are copied unchanged; Food is new,
+/// so the migration from V3 is lightweight.
+public enum SchemaV4: VersionedSchema {
+    public static var versionIdentifier: Schema.Version { Schema.Version(4, 0, 0) }
 
     public static var models: [any PersistentModel.Type] {
-        [Child.self, LogEvent.self, RoutineStep.self, CarePlan.self, PlanItem.self, Visit.self]
+        [Child.self, LogEvent.self, RoutineStep.self, CarePlan.self, PlanItem.self, Visit.self, Food.self]
     }
 
     @Model
@@ -276,5 +283,44 @@ public enum SchemaV3: VersionedSchema {
             self.provider = provider
             self.notes = notes
         }
+    }
+
+    /// A food on a child's list, with the status the parent (or the plan) set.
+    @Model
+    public final class Food {
+        @Attribute(.unique) public var id: UUID
+        public var createdAt: Date
+        public var updatedAt: Date
+        public var deletedAt: Date?
+        public var needsSync: Bool
+
+        public var childID: UUID
+        public var name: String
+        /// A food family name (for rotation), or nil when not set.
+        public var family: String?
+        public var statusRaw: String
+        public var statusChangedAt: Date
+        /// Who decided the status: "plan" or "parent".
+        public var decidedByRaw: String
+        public var note: String?
+
+        public init(id: UUID = UUID(), childID: UUID, name: String, family: String?, status: FoodStatus,
+                    decidedBy: FoodDecider, note: String? = nil, now: Date = .now) {
+            self.id = id
+            self.createdAt = now
+            self.updatedAt = now
+            self.deletedAt = nil
+            self.needsSync = true
+            self.childID = childID
+            self.name = name
+            self.family = family
+            self.statusRaw = status.rawValue
+            self.statusChangedAt = now
+            self.decidedByRaw = decidedBy.rawValue
+            self.note = note
+        }
+
+        public var status: FoodStatus? { FoodStatus(rawValue: statusRaw) }
+        public var decidedBy: FoodDecider? { FoodDecider(rawValue: decidedByRaw) }
     }
 }

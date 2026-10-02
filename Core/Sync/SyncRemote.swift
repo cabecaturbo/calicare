@@ -13,6 +13,7 @@ public protocol SyncRemote: Sendable {
     func upsert(carePlans: [RemoteCarePlan]) async throws
     func upsert(planItems: [RemotePlanItem]) async throws
     func upsert(visits: [RemoteVisit]) async throws
+    func upsert(foods: [RemoteFood]) async throws
     /// How many people are in the household now.
     func memberCount(household: UUID) async throws -> Int
     /// Rows whose server_updated_at is after `since` (everything when nil).

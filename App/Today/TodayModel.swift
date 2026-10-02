@@ -28,6 +28,8 @@ final class TodayModel {
     private(set) var routineSteps: [RoutineStepInfo] = []
     /// The last seven care days' logs, for this week's baths.
     private(set) var weekLogs: [LogEntry] = []
+    /// The child's food list.
+    private(set) var foods: [FoodInfo] = []
     /// The running care plan, its provider visits, and messages sent.
     private(set) var activePlan: CarePlanInfo?
     private(set) var visits: [VisitInfo] = []
@@ -82,6 +84,7 @@ final class TodayModel {
             let plans = CarePlanStore(modelContainer: container)
             activePlan = try await plans.activePlan(child: child.id)
             visits = try await plans.visits(child: child.id)
+            foods = try await FoodStore(modelContainer: container).foods(child: child.id)
             if let active = activePlan {
                 planItems = Dictionary(uniqueKeysWithValues: try await plans.items(plan: active.id).map { ($0.id, $0) })
                 let mine = try await store.allLive().filter { $0.childID == child.id }
@@ -371,6 +374,7 @@ final class TodayModel {
         supplementLogs = []
         messageLogs = []
         visits = []
+        foods = []
         activePlan = nil
         weekLogs = []
         hasLoaded = true

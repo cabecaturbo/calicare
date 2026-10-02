@@ -74,6 +74,10 @@ struct PlanView: View {
                                 .padding(.horizontal, Spacing.margin)
                                 .padding(.top, Spacing.x6)
                         }
+
+                        FoodSection()
+                            .padding(.horizontal, Spacing.margin)
+                            .padding(.top, Spacing.x6)
                     }
                 }
                 .padding(.bottom, BottomBar.clearance)
@@ -239,5 +243,45 @@ private struct BathsSection: View {
     /// "1 of 3 this week", or "1 this week" when the plan doesn't say how many.
     private func count(_ row: BathWeek.Row) -> String {
         row.perWeek.map { "\(row.doneThisWeek) of \($0) this week" } ?? "\(row.doneThisWeek) this week"
+    }
+}
+
+/// Plan's Food: a count by status and the way into the food list.
+private struct FoodSection: View {
+    @Environment(\.palette) private var palette
+    @Environment(TodayModel.self) private var model
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.x2) {
+            Text("Food")
+                .textStyle(.section)
+                .foregroundStyle(palette.ink)
+                .accessibilityAddTraits(.isHeader)
+            NavigationLink {
+                FoodListView()
+            } label: {
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Food list").textStyle(.body).foregroundStyle(palette.ink)
+                        Text(summary).textStyle(.meta).foregroundStyle(palette.graphite)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right").font(.footnote).foregroundStyle(palette.graphite)
+                }
+                .frame(minHeight: 52)
+                .contentShape(Rectangle())
+                .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    /// "12 safe · 1 testing · 3 paused", or a line saying what it's for.
+    private var summary: String {
+        guard !model.foods.isEmpty else { return "Safe, testing, and paused foods" }
+        return FoodStatus.allCases.compactMap { status in
+            let count = model.foods.filter { $0.status == status }.count
+            return count > 0 ? "\(count) \(status.title.lowercased())" : nil
+        }.joined(separator: " · ")
     }
 }

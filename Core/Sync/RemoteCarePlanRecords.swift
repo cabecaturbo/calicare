@@ -191,3 +191,66 @@ public struct RemoteVisit: Codable, Equatable, Sendable {
         try c.encode(deletedAt, forKey: .deletedAt)
     }
 }
+
+/// A food on a child's list, as stored in Supabase (`foods`).
+public struct RemoteFood: Codable, Equatable, Sendable {
+    public var id: UUID
+    public var householdID: UUID
+    public var childID: UUID
+    public var name: String
+    public var family: String?
+    public var status: String
+    public var statusChangedAt: Date
+    public var decidedBy: String
+    public var note: String?
+    public var createdAt: Date
+    public var updatedAt: Date
+    public var deletedAt: Date?
+    public var serverUpdatedAt: Date?
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, family, status, note
+        case householdID = "household_id"
+        case childID = "child_id"
+        case statusChangedAt = "status_changed_at"
+        case decidedBy = "decided_by"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+        case deletedAt = "deleted_at"
+        case serverUpdatedAt = "server_updated_at"
+    }
+
+    public init(id: UUID, householdID: UUID, childID: UUID, name: String, family: String?, status: String,
+                statusChangedAt: Date, decidedBy: String, note: String?, createdAt: Date, updatedAt: Date,
+                deletedAt: Date?, serverUpdatedAt: Date? = nil) {
+        self.id = id
+        self.householdID = householdID
+        self.childID = childID
+        self.name = name
+        self.family = family
+        self.status = status
+        self.statusChangedAt = statusChangedAt
+        self.decidedBy = decidedBy
+        self.note = note
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
+        self.serverUpdatedAt = serverUpdatedAt
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(id, forKey: .id)
+        try c.encode(householdID, forKey: .householdID)
+        try c.encode(childID, forKey: .childID)
+        try c.encode(name, forKey: .name)
+        try c.encode(family, forKey: .family)
+        try c.encode(status, forKey: .status)
+        try c.encode(statusChangedAt, forKey: .statusChangedAt)
+        try c.encode(decidedBy, forKey: .decidedBy)
+        try c.encode(note, forKey: .note)
+        try c.encode(createdAt, forKey: .createdAt)
+        try c.encode(updatedAt, forKey: .updatedAt)
+        try c.encode(deletedAt, forKey: .deletedAt)
+    }
+}

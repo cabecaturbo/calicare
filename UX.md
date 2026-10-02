@@ -181,8 +181,14 @@ Job: follow the care plan without thinking about it.
    4 of 5 left · until Nov 26" (tap to log one sent); "Last visit"; "Add a
    visit".
 
+10. Food: "Food list" with counts ("12 safe · 1 testing · 3 paused"). The
+    list: "Your plan says to avoid: …" with "Add them as paused"; "Add a
+    food" with a status; Safe, Testing, Paused groups, each food with its
+    family and "Plan · Oct 1" or "You · Oct 1". Tap a food to change its
+    status, family, or note, or remove it.
+
 Not built yet:
-- Food (Phase 5).
+- Food trials, rotation and the plant counter, meal ideas, leftovers (Phase 5).
 
 ## 6. Progress
 Job: show whether things are getting better, and share it.

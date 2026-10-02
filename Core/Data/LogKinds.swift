@@ -10,13 +10,15 @@ public enum LogType: String, Codable, Sendable, CaseIterable {
     case note
     /// The parent's one daily answer: how was the skin today? The only source of "skin by day".
     case skinToday
+    /// One of the care plan's baths. Which bath: the plan item's id, in `routineStepID`.
+    case bath
 
     /// Whether a log of this type must carry a value.
     public var requiresValue: Bool {
         switch self {
         case .nightRating, .mood, .skinToday: true
         // A one-tap widget log records that it happened; the kind is optional.
-        case .bowelMovement, .itchEpisode, .flare, .routineDone, .note: false
+        case .bowelMovement, .itchEpisode, .flare, .routineDone, .note, .bath: false
         }
     }
 
@@ -138,7 +140,7 @@ public enum LogValue: Hashable, Sendable {
         case .skinToday:
             guard let answer = SkinToday(rawValue: raw) else { return nil }
             self = .skin(answer)
-        case .itchEpisode, .flare, .note:
+        case .itchEpisode, .flare, .note, .bath:
             return nil
         }
     }

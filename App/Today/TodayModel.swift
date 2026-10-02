@@ -26,6 +26,8 @@ final class TodayModel {
     private(set) var skin: SkinToday?
     /// The current child's routine steps, morning and evening, paused ones included.
     private(set) var routineSteps: [RoutineStepInfo] = []
+    /// The last seven care days' logs, for this week's baths.
+    private(set) var weekLogs: [LogEntry] = []
     /// The running care plan's items, by id: for plan steps' "3–4x/day".
     private(set) var planItems: [UUID: PlanItemInfo] = [:]
     /// False until anything has been logged for any child: shows the first-run hint.
@@ -63,6 +65,7 @@ final class TodayModel {
             let previous = DaySummary(day: today.adding(days: -1, calendar: calendar), events: events, calendar: calendar)
 
             entries = events.filter { today.contains($0.timestamp, calendar: calendar) }.reversed()
+            weekLogs = events
             lastNight = LastNightReport.resolve(at: now, today: todaySummary, previous: previous, calendar: calendar)
             week = WeekOverview.days(ending: today, events: events, calendar: calendar)
             let skinDay = SkinDay.day(for: now, calendar: calendar)
@@ -140,6 +143,25 @@ final class TodayModel {
         } catch {
             problem = "Couldn't save that. Please try again."
         }
+    }
+
+    /// Logs one of the plan's baths.
+    func logBath(_ item: PlanItemInfo) async {
+        guard let child else { return }
+        do {
+            let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+            let entry = try await store.logBath(item.id, child: child.id, source: .app)
+            confirmation = Confirmation(entry: entry, text: "Logged \(item.text), \(time(entry.timestamp)).")
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't save that. Please try again."
+        }
+    }
+
+    /// The running plan's baths and this week's count.
+    var bathWeek: BathWeek {
+        BathWeek(items: Array(planItems.values).sorted { $0.order < $1.order }, logs: weekLogs, now: .now, calendar: calendar)
     }
 
     func progress(_ time: RoutineTime) -> RoutineProgress {
@@ -224,6 +246,9 @@ final class TodayModel {
         if let id = entry.routineStepID, let step = routineSteps.first(where: { $0.id == id }) {
             return step.name
         }
+        if entry.type == .bath, let id = entry.routineStepID, let item = planItems[id] {
+            return item.text
+        }
         return phrases.title(for: entry)
     }
 
@@ -248,6 +273,7 @@ final class TodayModel {
         skin = nil
         routineSteps = []
         planItems = [:]
+        weekLogs = []
         hasLoaded = true
     }
 }

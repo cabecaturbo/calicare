@@ -39,6 +39,7 @@ public struct LogPhrases: Sendable {
         case (.note, _): "note"
         case (.skinToday, .skin(let answer)?): "skin today: \(answer.words)"
         case (.skinToday, _): "skin today"
+        case (.bath, _): "bath"
         }
     }
 

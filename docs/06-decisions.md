@@ -408,3 +408,8 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - Morning or evening follows the plan's words: morning words ("morning", "AM", "wake", "breakfast") or evening words ("evening", "night", "bed", "PM", "after bath"). Otherwise both, because "daily" or "3–4x/day" covers both routines. This is `PlanRoutine`, tested.
 - **Ending a plan, or starting another,** soft-deletes those steps. Their history stays.
 - **Plan rows for plan steps** show the plan's schedule ("3–4x/day") under the name.
+- **Baths (4.4, second part):**
+  - A new log type, `bath`. The plan item's id rides in `LogEvent.routineStepID` ("the step or plan item this log was for"), so SchemaV3 stays unchanged and the server needs no change (log types are free text).
+  - Plan's Baths section lists the running plan's baths with their schedule and "1 of 3 this week" (the week starts on the calendar's first weekday). One tap logs a bath, with Undo. Bath items without a schedule (rules like "rotate, don't combine") show as quiet notes.
+  - It never picks which bath to take. `BathWeek` is tested, including reading "3x/week", "twice weekly", and so on.
+  - Today so far and the other lists name a bath by the plan's words ("Oat bath").

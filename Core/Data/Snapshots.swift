@@ -153,6 +153,22 @@ public struct PlanItemInfo: Identifiable, Hashable, Sendable {
     public let sourceLine: String?
     public let isConfirmed: Bool
     public let order: Int
+
+    public init(id: UUID, planID: UUID, kind: PlanItemKind, text: String, dose: String?, frequency: String?,
+                timing: String?, duration: String?, sourcePage: Int?, sourceLine: String?, isConfirmed: Bool, order: Int) {
+        self.id = id
+        self.planID = planID
+        self.kind = kind
+        self.text = text
+        self.dose = dose
+        self.frequency = frequency
+        self.timing = timing
+        self.duration = duration
+        self.sourcePage = sourcePage
+        self.sourceLine = sourceLine
+        self.isConfirmed = isConfirmed
+        self.order = order
+    }
 }
 
 extension PlanItemInfo {

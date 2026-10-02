@@ -75,6 +75,14 @@ public actor LogStore: ModelActor {
         )
     }
 
+    /// Logs one of the care plan's baths for the child. `planItemID` says which bath.
+    @discardableResult
+    public func logBath(_ planItemID: UUID, child childID: UUID, source: EntrySource,
+                        loggedBy: String = LoggedBy.current(), at timestamp: Date? = nil) async throws -> LogEntry {
+        try insert(.bath, value: nil, child: childID, source: source, note: nil,
+                   bodyAreas: [], routineStepID: planItemID, loggedBy: loggedBy, at: timestamp)
+    }
+
     /// Sets where a flare was, after the fact ("Add where"). An empty list clears it.
     @discardableResult
     public func setBodyAreas(_ areas: [BodyArea], on id: UUID) async throws -> LogEntry {

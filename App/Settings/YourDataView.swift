@@ -27,6 +27,11 @@ struct YourDataView: View {
                         } label: {
                             row("Care log PDF, any dates")
                         }
+                        NavigationLink {
+                            JournalExportView(child: child, from: model.activePlan?.startedAt)
+                        } label: {
+                            row("Daily journal for your provider")
+                        }
                     }
                     Text("The spreadsheet opens in Numbers, Excel, or Google Sheets: one row per log, with the child, time, what, note, where it was logged from, and who logged it.")
                         .textStyle(.meta)

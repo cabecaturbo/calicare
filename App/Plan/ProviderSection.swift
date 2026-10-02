@@ -36,6 +36,14 @@ struct ProviderSection: View {
             }
             Button("Add a visit") { addingVisit = true }
                 .buttonStyle(.textLink)
+            if let child = model.child {
+                NavigationLink {
+                    JournalExportView(child: child, from: model.activePlan?.startedAt)
+                } label: {
+                    Text("Journal for your provider").textStyle(.body).foregroundStyle(palette.indigo)
+                }
+                .frame(minHeight: Size.touchTarget)
+            }
         }
         .sheet(isPresented: $addingVisit) {
             AddVisitSheet(provider: model.activePlan?.provider ?? tracker.lastVisit?.provider ?? "")

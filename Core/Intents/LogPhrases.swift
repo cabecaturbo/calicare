@@ -44,6 +44,7 @@ public struct LogPhrases: Sendable {
         case (.patchTest, _): "patch test"
         case (.supplement, .supplement(let event)?): "supplement \(event.rawValue)"
         case (.supplement, _): "supplement"
+        case (.providerMessage, _): "message to the provider"
         }
     }
 

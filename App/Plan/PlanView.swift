@@ -68,6 +68,12 @@ struct PlanView: View {
                         CarePlanSection()
                             .padding(.horizontal, Spacing.margin)
                             .padding(.top, Spacing.section)
+
+                        if model.activePlan != nil || !model.visits.isEmpty {
+                            ProviderSection(tracker: model.providerTracker)
+                                .padding(.horizontal, Spacing.margin)
+                                .padding(.top, Spacing.x6)
+                        }
                     }
                 }
                 .padding(.bottom, BottomBar.clearance)

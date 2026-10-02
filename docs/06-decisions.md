@@ -441,3 +441,12 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - It never says "cause", "trigger", or "likely".
   - `CareChanges` is tested.
 - Food changes join the list in Phase 5.
+
+## Provider tracker and Since visit (4.7, first part, October 1, 2026)
+
+- **Plan's Provider section** (shown with a running plan or any visit):
+  - The next visit if one is booked. Otherwise the plan's follow-up window: "in 4–6 weeks" from the plan's start date gives "Oct 29 – Nov 12".
+  - "Messages 4 of 5 left · until Nov 26", from "Up to 5 follow-up messages within 8 weeks". One tap logs a sent message (new log type `providerMessage`), counted only since the plan started.
+  - The last visit, and "Add a visit" (date, provider, note).
+  - `ProviderTracker` is tested.
+- **Progress "Since visit"** appears once there's a past visit: a summary of good nights since then, the calendar grid since that care day, and Share with provider covering exactly that range.

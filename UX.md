@@ -176,8 +176,13 @@ Job: follow the care plan without thinking about it.
    ("Taken", "0 of 2 today"); "Rotate after Oct 22" when the plan says;
    press and hold to Stop. The plan's rules sit underneath.
 
+9. Provider (with a running plan or any visit): "Next visit Oct 14", or the
+   plan's follow-up window ("Follow-up visit Oct 29 – Nov 12"); "Messages
+   4 of 5 left · until Nov 26" (tap to log one sent); "Last visit"; "Add a
+   visit".
+
 Not built yet:
-- The Provider section (4.7); then Food (Phase 5).
+- Food (Phase 5).
 
 ## 6. Progress
 Job: show whether things are getting better, and share it.
@@ -212,8 +217,8 @@ turned rougher, with what changed in the week before (or "Nothing in your
 plan changed in the week before"); then "Changes", the latest 8 plan
 events (plan started or ended, supplement started or stopped, patch tests).
 
-Not built yet:
-- "Since visit" (once visits exist, Phase 4).
+Since visit (once a past visit is recorded): "Since the Aug 20 visit", good
+nights of days since, and the same calendar grid from that day to today.
 - Itchy wake-ups chart, Photos (Phase 6), day-by-day rows.
 
 ## 7. Settings (sheet)

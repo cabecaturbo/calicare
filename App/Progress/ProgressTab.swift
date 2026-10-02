@@ -7,7 +7,7 @@ import SwiftUI
 /// exist (Phase 4).
 struct ProgressTab: View {
     enum Span: String, CaseIterable {
-        case week = "Week", month = "Month"
+        case week = "Week", month = "Month", sinceVisit = "Since visit"
     }
 
     @Environment(\.palette) private var palette
@@ -16,6 +16,8 @@ struct ProgressTab: View {
     @State private var span: Span = .week
     @State private var showingCaregiverCard = false
     @State private var changes: [CareChange] = []
+    @State private var lastVisit: VisitInfo?
+    @State private var sinceVisitDays: [WeekDay] = []
     @State private var rougherSince: CareDay?
     @State private var report: WeeklyReport?
     @State private var monthReport: MonthlyReport?
@@ -28,13 +30,25 @@ struct ProgressTab: View {
                 VStack(alignment: .leading, spacing: 0) {
                     AppHeader(title: "Progress")
                     Picker("Range", selection: $span) {
-                        ForEach(Span.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                        ForEach(Span.allCases.filter { $0 != .sinceVisit || lastVisit != nil }, id: \.self) { Text($0.rawValue).tag($0) }
                     }
                     .pickerStyle(.segmented)
                     .padding(.horizontal, Spacing.margin)
                     .padding(.top, Spacing.x4)
 
-                    if span == .month, let monthReport {
+                    if span == .sinceVisit, let lastVisit {
+                        SummaryCard(
+                            eyebrow: "Since the \(lastVisit.date.formatted(.dateTime.month(.abbreviated).day())) visit",
+                            title: "\(sinceVisitDays.filter { $0.nightRating == .good }.count) good nights of \(sinceVisitDays.count)",
+                            art: .tree
+                        )
+                        .padding(.horizontal, Spacing.margin)
+                        .padding(.top, Spacing.x5)
+
+                        MonthGrid(days: sinceVisitDays, title: "Since the visit")
+                            .padding(.horizontal, Spacing.margin)
+                            .padding(.top, Spacing.x6)
+                    } else if span == .month, let monthReport {
                         SummaryCard(
                             eyebrow: monthReport.title(),
                             title: monthReport.headline.text,
@@ -129,6 +143,7 @@ struct ProgressTab: View {
         switch span {
         case .week: report.map { DoctorReport.Range(first: $0.weekEnding.adding(days: -6), last: $0.weekEnding) }
         case .month: monthReport?.range
+        case .sinceVisit: lastVisit.map { DoctorReport.Range(first: CareDay.containing($0.date), last: CareDay.containing(.now)) }
         }
     }
 
@@ -148,6 +163,22 @@ struct ProgressTab: View {
         let events = (try? await logs.events(from: today.adding(days: -13), through: today, child: child.id)) ?? []
         let days = (0..<14).reversed().map { WeekDay(summary: DaySummary(day: today.adding(days: -$0), events: events)) }
         rougherSince = CareChanges.rougherSince(days)
+
+        lastVisit = try? await plans.lastVisit(child: child.id)
+        if let lastVisit {
+            let first = CareDay.containing(lastVisit.date)
+            let since = (try? await logs.events(from: first, through: today, child: child.id)) ?? []
+            var all: [WeekDay] = []
+            var day = first
+            while day <= today, all.count < 370 {
+                all.append(WeekDay(summary: DaySummary(day: day, events: since)))
+                day = day.adding(days: 1)
+            }
+            sinceVisitDays = all
+        } else {
+            sinceVisitDays = []
+            if span == .sinceVisit { span = .week }
+        }
     }
 
     private func build() async {

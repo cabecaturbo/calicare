@@ -39,6 +39,7 @@ enum DesignReviewLaunch {
         PlanItemDraft(kind: .supplement, text: "Start probiotic 2 weeks after antimicrobial", timing: "2 weeks after antimicrobial", sourcePage: 2, sourceLine: "Start probiotic 2 weeks after antimicrobial."),
         PlanItemDraft(kind: .foodRule, text: "Avoid: dairy, eggs, peanuts", sourcePage: 2, sourceLine: "Avoid: dairy, eggs, peanuts"),
         PlanItemDraft(kind: .followUp, text: "Follow-up visit in 4–6 weeks", sourcePage: 2, sourceLine: "Follow-up visit in 4–6 weeks."),
+        PlanItemDraft(kind: .followUp, text: "Up to 5 follow-up messages within 8 weeks", sourcePage: 2, sourceLine: "Up to 5 follow-up messages within 8 weeks."),
     ]
 
     private static func seed(_ kind: String) async {

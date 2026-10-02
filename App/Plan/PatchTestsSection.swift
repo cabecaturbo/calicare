@@ -1,0 +1,146 @@
+import Core
+import SwiftUI
+import UserNotifications
+
+/// Plan's Patch tests, when the care plan mentions patch testing: the plan's
+/// own line, tests running (with when to check), and this week's results.
+/// Only what the parent saw is recorded.
+struct PatchTestsSection: View {
+    @Environment(\.palette) private var palette
+    @Environment(TodayModel.self) private var model
+    let tests: PatchTests
+    @State private var starting = false
+    @State private var checking: PatchTests.Test?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.x2) {
+            Text("Patch tests")
+                .textStyle(.section)
+                .foregroundStyle(palette.ink)
+                .accessibilityAddTraits(.isHeader)
+            if let line = tests.planItem?.text {
+                Text(line).textStyle(.meta).foregroundStyle(palette.graphite)
+            }
+            VStack(spacing: 0) {
+                ForEach(tests.running) { test in
+                    Button { checking = test } label: {
+                        row(test.label, status(test), ready: test.isReady(at: .now))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityHint("Record how it looks.")
+                }
+                ForEach(tests.recent) { test in
+                    row(test.label, test.result?.title ?? "", ready: false)
+                }
+            }
+            Button("Start a patch test") { starting = true }
+                .buttonStyle(.textLink)
+        }
+        .sheet(isPresented: $starting) {
+            StartPatchTestSheet(planLine: tests.planItem?.text, wait: tests.wait)
+                .nightAwarePalette()
+        }
+        .confirmationDialog("How does it look?", isPresented: checkingShowing, titleVisibility: .visible, presenting: checking) { test in
+            ForEach(PatchResult.allCases, id: \.self) { result in
+                Button(result.title) { Task { await model.setPatchResult(test, result) } }
+            }
+        } message: { test in
+            Text(test.label)
+        }
+    }
+
+    private var checkingShowing: Binding<Bool> {
+        Binding(get: { checking != nil }, set: { if !$0 { checking = nil } })
+    }
+
+    /// "Check after 7:40 PM", "Check after 7:40 PM Thu", or "Ready to check".
+    private func status(_ test: PatchTests.Test) -> String {
+        guard let checkAt = test.checkAt, !test.isReady(at: .now) else { return "Ready to check" }
+        let sameDay = Calendar.autoupdatingCurrent.isDateInToday(checkAt)
+        return "Check after \(checkAt.formatted(sameDay ? .dateTime.hour().minute() : .dateTime.weekday(.abbreviated).hour().minute()))"
+    }
+
+    private func row(_ title: String, _ detail: String, ready: Bool) -> some View {
+        HStack {
+            Text(title).textStyle(.body).foregroundStyle(palette.ink)
+            Spacer()
+            Text(detail).textStyle(.meta).foregroundStyle(ready ? palette.indigo : palette.graphite)
+        }
+        .frame(minHeight: 52)
+        .contentShape(Rectangle())
+        .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
+    }
+}
+
+/// What's being tested and where, then a reminder after the plan's wait.
+private struct StartPatchTestSheet: View {
+    @Environment(\.palette) private var palette
+    @Environment(\.dismiss) private var dismiss
+    @Environment(TodayModel.self) private var model
+    let planLine: String?
+    let wait: TimeInterval?
+    @State private var what = ""
+    @State private var spot: String
+
+    init(planLine: String?, wait: TimeInterval?) {
+        self.planLine = planLine
+        self.wait = wait
+        _spot = State(initialValue: planLine?.localizedCaseInsensitiveContains("forearm") == true ? "Inner forearm" : "")
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("What (e.g. the product's name)", text: $what)
+                    TextField("Where on the skin", text: $spot)
+                } footer: {
+                    Text(footnote)
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .paperBackground(.oat)
+            .navigationTitle("Start a patch test")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Start") {
+                        let (what, spot) = (what, spot)
+                        dismiss()
+                        Task { await model.startPatchTest(what: what, where: spot) }
+                    }
+                    .disabled(what.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+            }
+        }
+        .tint(palette.indigo)
+        .presentationDetents([.medium])
+    }
+
+    private var footnote: String {
+        guard let wait else { return "Your plan doesn't say how long to wait, so there's no reminder." }
+        let hours = Int(wait / 3600)
+        let span = hours % 24 == 0 && hours >= 48 ? "\(hours / 24) days" : "\(hours) hours"
+        return "We'll remind you to check it in \(span), as your plan says."
+    }
+}
+
+/// The "check the patch test" reminder, one per test.
+enum PatchReminder {
+    private static func id(_ entry: LogEntry) -> String { "calicare.patch.\(entry.id.uuidString)" }
+
+    static func schedule(for entry: LogEntry, at date: Date) async {
+        let content = UNMutableNotificationContent()
+        content.title = "Time to check the patch test"
+        content.body = entry.note ?? "Open Cali Care to record how it looks."
+        let parts = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+        let request = UNNotificationRequest(identifier: id(entry), content: content,
+                                            trigger: UNCalendarNotificationTrigger(dateMatching: parts, repeats: false))
+        try? await UNUserNotificationCenter.current().add(request)
+    }
+
+    static func cancel(for entry: LogEntry) {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id(entry)])
+    }
+}

@@ -29,6 +29,7 @@ enum DesignReviewLaunch {
         PlanItemDraft(kind: .topicalStep, text: "Rinse with lukewarm water", frequency: "3–4x/day", sourcePage: 1, sourceLine: "1. Rinse with lukewarm water"),
         PlanItemDraft(kind: .topicalStep, text: "Apply calendula balm to affected areas", frequency: "3–4x/day", sourcePage: 1, sourceLine: "2. Apply calendula balm to affected areas"),
         PlanItemDraft(kind: .topicalStep, text: "Seal with plain oil", frequency: "3–4x/day", sourcePage: 1, sourceLine: "3. Seal with plain oil"),
+        PlanItemDraft(kind: .topicalStep, text: "Patch test any new product on the inner forearm for 24 hours first.", duration: "24 hours", sourcePage: 1, sourceLine: "Patch test any new product on the inner forearm for 24 hours first."),
         PlanItemDraft(kind: .bath, text: "Oat bath", frequency: "3x/week", duration: "10 minutes", sourcePage: 1, sourceLine: "Oat bath 3x/week, 10 minutes"),
         PlanItemDraft(kind: .bath, text: "Rotate baths, don’t combine", sourcePage: 1, sourceLine: "Baths (rotate, don’t combine)"),
         PlanItemDraft(kind: .supplement, text: "Probiotic, Brand A", dose: "1/4 tsp", frequency: "once daily", timing: "with breakfast", duration: "3 months", sourcePage: 2, sourceLine: "Probiotic, Brand A, 1/4 tsp, once daily, with breakfast, 3 months"),

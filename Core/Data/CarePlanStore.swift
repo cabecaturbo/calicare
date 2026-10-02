@@ -228,7 +228,7 @@ public actor CarePlanStore: ModelActor {
             next[time] = (existing.filter { $0.timeRaw == time.rawValue }.map(\.order).max() ?? -1) + 1
         }
         for item in items {
-            guard let kind = item.kind, PlanRoutine.kinds.contains(kind) else { continue }
+            guard let kind = item.kind, PlanRoutine.isDailyStep(kind: kind, text: item.text) else { continue }
             for time in PlanRoutine.times(text: item.text, timing: item.timing, frequency: item.frequency) {
                 modelContext.insert(RoutineStep(
                     childID: childID, name: String(item.text.prefix(80)), time: time,

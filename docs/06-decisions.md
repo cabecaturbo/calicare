@@ -413,3 +413,10 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - Plan's Baths section lists the running plan's baths with their schedule and "1 of 3 this week" (the week starts on the calendar's first weekday). One tap logs a bath, with Undo. Bath items without a schedule (rules like "rotate, don't combine") show as quiet notes.
   - It never picks which bath to take. `BathWeek` is tested, including reading "3x/week", "twice weekly", and so on.
   - Today so far and the other lists name a bath by the plan's words ("Oat bath").
+- **Patch tests (4.4, third part):**
+  - A new log type, `patchTest`. The note holds "what · where", and the value holds the result once checked (`PatchResult`: no reaction, some redness, a reaction), set with the normal edit.
+  - Plan's Patch tests section appears when the running plan mentions a patch test (or a test is running). It shows the plan's line, running tests with "Check after Fri 7:11 PM" or "Ready to check", and this week's results.
+  - The wait comes only from the plan's words ("24 hours", "2 days"). With no wait in the plan there's no reminder, and the sheet says so.
+  - The reminder is a local notification set in the background, so Start never waits on the notification service. It's cancelled once the result is recorded.
+  - "Where" is prefilled with "Inner forearm" only when the plan says forearm.
+  - A patch-test line in the plan never becomes a daily routine step (`PlanRoutine.isDailyStep`). `PatchTests` is tested.

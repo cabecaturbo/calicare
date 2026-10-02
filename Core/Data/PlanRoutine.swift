@@ -10,6 +10,12 @@ public enum PlanRoutine {
     private static let morningWords = ["morning", "a.m.", " am", "wake", "breakfast"]
     private static let eveningWords = ["evening", "night", "bed", "p.m.", " pm", "dinner", "after bath"]
 
+    /// Whether an item becomes a daily step: routine and skin steps, except a
+    /// patch-test instruction (that's Plan's Patch tests, not a daily step).
+    public static func isDailyStep(kind: PlanItemKind, text: String) -> Bool {
+        kinds.contains(kind) && !text.localizedCaseInsensitiveContains("patch")
+    }
+
     public static func times(text: String, timing: String?, frequency: String?) -> [RoutineTime] {
         let words = " " + [timing, frequency].compactMap { $0 }.joined(separator: " ").lowercased() + " "
         let saysMorning = morningWords.contains { words.contains($0) }

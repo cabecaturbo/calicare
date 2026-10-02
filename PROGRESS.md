@@ -89,7 +89,7 @@ One prompt per session, same rules as docs/prompts/README.md.
 - [x] 4.2 Parse-care-plan Edge Function: live. The example plan reads as 24 items, each traced to its source, with none invented.
 - [ ] 4.3 Import and review flow: built and on the phone, reader live. Waiting on the owner to import a real plan on the phone.
 - [ ] 4.4 Routine, topical steps, baths, patch tests
-      Steps from the plan: done. Baths and patch tests: next.
+      Steps from the plan: done. Baths: done. Patch tests: next.
 - [ ] 4.5 Supplement ramp-up scheduler
 - [ ] 4.6 "Worse since when?" timeline
 - [ ] 4.7 Provider tracker and journal export

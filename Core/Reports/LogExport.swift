@@ -49,6 +49,7 @@ public enum LogExport {
         case .routineDone: "Routine"
         case .note: "Note"
         case .skinToday: "Skin today"
+        case .bath: "Bath"
         }
     }
 

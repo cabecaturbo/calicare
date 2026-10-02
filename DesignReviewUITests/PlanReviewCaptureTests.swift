@@ -29,6 +29,9 @@ final class PlanReviewCaptureTests: XCTestCase {
         Capture.screen("careplan-started-plan-\(variant)")
         app.swipeUp()
         sleep(1)
+        let oat = app.buttons["Log Oat bath"].firstMatch
+        if oat.waitForExistence(timeout: 3) { oat.tap() }
+        sleep(1)
         Capture.screen("careplan-started-plan-scrolled-\(variant)")
     }
 }

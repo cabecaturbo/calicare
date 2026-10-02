@@ -135,7 +135,7 @@ struct EditLogSheet: View {
             return [notSet] + RoutineTime.allCases.map { Option(title: $0.title, value: .routine($0)) }
         case .skinToday:
             return SkinToday.allCases.map { Option(title: $0.title, value: .skin($0)) }
-        case .itchEpisode, .flare, .note:
+        case .itchEpisode, .flare, .note, .bath:
             return []
         }
     }

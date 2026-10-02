@@ -450,3 +450,7 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - The last visit, and "Add a visit" (date, provider, note).
   - `ProviderTracker` is tested.
 - **Progress "Since visit"** appears once there's a past visit: a summary of good nights since then, the calendar grid since that care day, and Share with provider covering exactly that range.
+- **Journal export (4.7, second part):**
+  - `ProviderJournal` (tested) gives one entry per logged day, in the provider's tracking format: what changed (from `CareChanges`), rash and itch (skin answer, itchy spells, flares with areas), bowel movements, sleep (rating and wake-ups), mood, and notes. Days with nothing logged are left out.
+  - Shared as a PDF (about 6 days a page, "Not medical advice. Logged by parent." on every page) or a CSV ending with the same line.
+  - Found in Plan › Provider ("Journal for your provider", starting at the plan's start date) and in Settings › Your data.

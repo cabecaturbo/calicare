@@ -12,11 +12,7 @@ struct MealSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Spacing.x4) {
-                    let foods = model.foods.filter { $0.status != .paused }.map(\.name)
-                    if foods.isEmpty {
-                        Text("Add safe foods to the food list first.").textStyle(.body).foregroundStyle(palette.graphite)
-                    }
-                    FlowChips(items: foods, picked: $picked)
+                    FoodChips(items: model.foods.filter { $0.status != .paused }.map(\.name), picked: $picked)
                 }
                 .padding(.horizontal, Spacing.margin)
                 .padding(.vertical, Spacing.x5)
@@ -38,63 +34,6 @@ struct MealSheet: View {
         }
         .tint(palette.indigo)
         .presentationDetents([.medium, .large])
-    }
-}
-
-/// Tappable food names that wrap onto new lines.
-private struct FlowChips: View {
-    @Environment(\.palette) private var palette
-    let items: [String]
-    @Binding var picked: Set<String>
-
-    var body: some View {
-        WrapLayout(spacing: Spacing.x2) {
-            ForEach(items, id: \.self) { item in
-                let on = picked.contains(item)
-                Button {
-                    if on { picked.remove(item) } else { picked.insert(item) }
-                } label: {
-                    Text(item)
-                        .textStyle(.body)
-                        .foregroundStyle(on ? palette.paper : palette.ink)
-                        .padding(.horizontal, Spacing.x3)
-                        .frame(minHeight: Size.touchTarget)
-                        .background(on ? palette.indigo : palette.paper, in: Capsule())
-                        .overlay(Capsule().strokeBorder(on ? palette.indigo : palette.hairline, lineWidth: 1))
-                }
-                .buttonStyle(.plain)
-                .accessibilityAddTraits(on ? .isSelected : [])
-            }
-        }
-    }
-}
-
-/// Lays children out in rows, wrapping when a row is full.
-private struct WrapLayout: Layout {
-    var spacing: CGFloat
-
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let width = proposal.width ?? .infinity
-        var x: CGFloat = 0, y: CGFloat = 0, rowHeight: CGFloat = 0, widest: CGFloat = 0
-        for view in subviews {
-            let size = view.sizeThatFits(.unspecified)
-            if x > 0, x + size.width > width { x = 0; y += rowHeight + spacing; rowHeight = 0 }
-            x += size.width + spacing
-            rowHeight = max(rowHeight, size.height)
-            widest = max(widest, x - spacing)
-        }
-        return CGSize(width: proposal.width ?? widest, height: y + rowHeight)
-    }
-
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        var x = bounds.minX, y = bounds.minY, rowHeight: CGFloat = 0
-        for view in subviews {
-            let size = view.sizeThatFits(.unspecified)
-            if x > bounds.minX, x + size.width > bounds.maxX { x = bounds.minX; y += rowHeight + spacing; rowHeight = 0 }
-            view.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(size))
-            x += size.width + spacing
-            rowHeight = max(rowHeight, size.height)
-        }
     }
 }
 

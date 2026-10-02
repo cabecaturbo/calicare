@@ -480,3 +480,15 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
   - Today's day counts from the plan's start date.
   - Plants this week are the different non-animal foods logged in meals this calendar week. Animal families (poultry, bovine, fish, pork, lamb and goat) aren't counted. No streaks.
 - **The food list** starts with "N plants this week · Your plan's goal: 40–50", "Log a meal", and "Rotation · 4 days" (when the plan gives one).
+
+## "What can I make" (5.4, October 1, 2026)
+
+- **Edge Function `meal-ideas`:** the parent picks what's in the fridge from the safe and testing list. The app sends those names, the safe list, and everything to avoid (paused foods plus the plan's avoid list). Claude (`claude-sonnet-5`) answers through one tool with up to 4 meals.
+- **`filter.ts` checks every idea before it leaves the server:**
+  - It drops any idea whose title, ingredients, or steps mention an avoided food. Matching is whole-word and plural-tolerant ("egg" catches "eggs" but not "eggplant").
+  - Categories expand: dairy also catches milk, cheese, butter, yogurt, cream, whey, casein, and ghee; likewise eggs, gluten, wheat, nuts, soy, shellfish, fish, corn, citrus, and nightshades.
+  - It also drops ideas using any ingredient not listed (only water and salt are free).
+  - Tested with a 2,000-case fuzz test (7 Deno tests). Live check: 3 ideas, 1 dropped.
+- **Every result shows** "Freshly cooked food is lower in histamine than leftovers or aged foods." (from the research notes, not advice), plus "Paused foods are never used. Not medical advice."
+- **Sign-in is required** (like reading plans), with 20 requests per day (`meal_ideas_usage`). Nothing else is stored.
+- **Free vs premium waits for 7.3.**

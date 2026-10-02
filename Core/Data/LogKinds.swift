@@ -18,6 +18,8 @@ public enum LogType: String, Codable, Sendable, CaseIterable {
     case supplement
     /// A message sent to the provider, counted against the plan's allowance.
     case providerMessage
+    /// A meal: the foods eaten, from the food list, in `note` ("Oats, Blueberries").
+    case meal
     /// A food trial: started (note "4 days · 1 tsp, 1 tbsp"), given, worth watching, or ended.
     /// Which food: the food's id, in `routineStepID`.
     case foodTrial
@@ -27,7 +29,7 @@ public enum LogType: String, Codable, Sendable, CaseIterable {
         switch self {
         case .nightRating, .mood, .skinToday, .supplement, .foodTrial: true
         // A one-tap widget log records that it happened; the kind is optional.
-        case .bowelMovement, .itchEpisode, .flare, .routineDone, .note, .bath, .patchTest, .providerMessage: false
+        case .bowelMovement, .itchEpisode, .flare, .routineDone, .note, .bath, .patchTest, .providerMessage, .meal: false
         }
     }
 
@@ -187,7 +189,7 @@ public enum LogValue: Hashable, Sendable {
         case .foodTrial:
             guard let event = FoodTrialEvent(rawValue: raw) else { return nil }
             self = .trial(event)
-        case .itchEpisode, .flare, .note, .bath, .providerMessage:
+        case .itchEpisode, .flare, .note, .bath, .providerMessage, .meal:
             return nil
         }
     }

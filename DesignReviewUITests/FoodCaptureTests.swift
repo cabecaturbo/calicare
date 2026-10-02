@@ -19,14 +19,33 @@ final class FoodCaptureTests: XCTestCase {
         app.buttons["Add them as paused"].firstMatch.tap()
         sleep(1)
         let field = app.textFields["Add a food"].firstMatch
-        for name in ["Oats", "Blueberries", "Sweet potato"] {
+        for name in ["Oats", "Blueberries", "Sweet potato", "Rice", "Apple", "Kale", "Chicken", "Carrot"] {
             field.tap()
             field.typeText(name + "\n")
             sleep(1)
         }
         Capture.screen("food-list-\(variant)")
+        app.buttons["Log a meal"].firstMatch.tap()
+        sleep(1)
+        for name in ["Oats", "Blueberries", "Chicken"] { app.buttons[name].firstMatch.tap() }
+        Capture.screen("food-meal-\(variant)")
+        app.buttons["Log"].firstMatch.tap()
+        sleep(2)
+        app.swipeDown()
+        sleep(1)
+        Capture.screen("food-list-plants-\(variant)")
+        let rotation = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Rotation")).firstMatch
+        if rotation.waitForExistence(timeout: 3) {
+            rotation.tap()
+            sleep(1)
+            Capture.screen("food-rotation-\(variant)")
+            app.navigationBars.buttons.element(boundBy: 0).tap()
+            sleep(1)
+        }
 
-        app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Eggs")).firstMatch.tap()
+        let eggs = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Eggs")).firstMatch
+        for _ in 0..<6 where !eggs.isHittable { app.swipeUp() }
+        eggs.tap()
         sleep(1)
         app.buttons["Start a trial"].firstMatch.tap()
         sleep(1)

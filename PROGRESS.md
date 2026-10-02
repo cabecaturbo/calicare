@@ -90,7 +90,7 @@ One prompt per session, same rules as docs/prompts/README.md.
 - [ ] 4.3 Import and review flow: built and on the phone, reader live. Waiting on the owner to import a real plan on the phone.
 - [x] 4.4 Routine, topical steps, baths, patch tests (steps from the plan, Baths, Patch tests; check on the phone with a real plan)
 - [x] 4.5 Supplements: plan rules give "can start after" and "rotate after"; start, taken, and stop logs. Time reminders aren't built.
-- [ ] 4.6 "Worse since when?" timeline
+- [x] 4.6 "Worse since when?": Changes list and the "Rougher since" note in Progress
 - [ ] 4.7 Provider tracker and journal export
 
 ## Phase 5: Food (docs/prompts/phase-5-food.md)

@@ -1,4 +1,5 @@
 import Core
+import SwiftData
 import SwiftUI
 
 /// Progress: Week or Month (UX.md §6), each a summary card and a grid, then
@@ -14,6 +15,8 @@ struct ProgressTab: View {
     private var weekEnding: CareDay { CareDay.containing(.now) }
     @State private var span: Span = .week
     @State private var showingCaregiverCard = false
+    @State private var changes: [CareChange] = []
+    @State private var rougherSince: CareDay?
     @State private var report: WeeklyReport?
     @State private var monthReport: MonthlyReport?
     @State private var file: URL?
@@ -55,6 +58,12 @@ struct ProgressTab: View {
                         .padding(.top, Spacing.x5)
 
                         WeekGrid(days: report.days)
+                            .padding(.horizontal, Spacing.margin)
+                            .padding(.top, Spacing.x6)
+                    }
+
+                    if !changes.isEmpty || rougherSince != nil {
+                        ChangesSection(changes: changes, rougherSince: rougherSince)
                             .padding(.horizontal, Spacing.margin)
                             .padding(.top, Spacing.x6)
                     }
@@ -123,6 +132,24 @@ struct ProgressTab: View {
         }
     }
 
+    /// Care changes (plans, supplements, patch tests) and whether the last
+    /// few days turned rougher than the week before them.
+    private func loadChanges(child: ChildInfo, container: ModelContainer, today: CareDay) async {
+        let plans = CarePlanStore(modelContainer: container)
+        let logs = LogStore(modelContainer: container)
+        guard let all = try? await plans.plans(child: child.id).filter({ $0.status != .draft }),
+              let live = try? await logs.allLive()
+        else { return }
+        var items: [UUID: PlanItemInfo] = [:]
+        for plan in all {
+            for item in (try? await plans.items(plan: plan.id)) ?? [] { items[item.id] = item }
+        }
+        changes = CareChanges.list(plans: all, items: items, logs: live.filter { $0.childID == child.id })
+        let events = (try? await logs.events(from: today.adding(days: -13), through: today, child: child.id)) ?? []
+        let days = (0..<14).reversed().map { WeekDay(summary: DaySummary(day: today.adding(days: -$0), events: events)) }
+        rougherSince = CareChanges.rougherSince(days)
+    }
+
     private func build() async {
         guard let child = model.child, let container = try? CaliCareModelContainer.shared() else { return }
         do {
@@ -131,6 +158,7 @@ struct ProgressTab: View {
             let today = CareDay.containing(.now)
             monthReport = try await MonthlyReport.load(child: child, year: today.year, month: today.month, container: container)
             file = try WeeklyCardRenderer.file(for: report)
+            await loadChanges(child: child, container: container, today: today)
             problem = nil
         } catch {
             problem = "Couldn't make the card just now. Try again in a moment."

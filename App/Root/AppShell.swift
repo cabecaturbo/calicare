@@ -82,12 +82,16 @@ struct AppShell: View {
                 TodayView()
                     .modifier(TabChrome(pills: pills))
             }
-            Tab("Plan", systemImage: "list.bullet.clipboard", value: AppTab.plan) {
-                PlanView()
+            Tab("To do", systemImage: "checklist", value: AppTab.todo) {
+                TodoView()
                     .modifier(TabChrome(pills: pills))
             }
             Tab("Progress", systemImage: "chart.line.uptrend.xyaxis", value: AppTab.progress) {
                 ProgressTab()
+                    .modifier(TabChrome(pills: pills))
+            }
+            Tab("Info", systemImage: "book.closed", value: AppTab.info) {
+                InfoView()
                     .modifier(TabChrome(pills: pills))
             }
             if !pills {

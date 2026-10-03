@@ -107,6 +107,7 @@ final class TodayModel {
                 supplementLogs = []
                 messageLogs = []
             }
+            todo = try? await TodoActions(container: container, now: { TodoClock.now() }).day(child: child.id)
             isDaytime = today.isDaytime(now, calendar: calendar)
             myName = AccountSettings().displayName
             householdSize = SyncSettings().householdSize
@@ -156,6 +157,24 @@ final class TodayModel {
             await restore(confirmation.entry)
         } else {
             await delete(confirmation.entry)
+        }
+    }
+
+    /// To do for now: blocks, the skin counter, and which block is open.
+    private(set) var todo: TodoDay?
+
+    /// One tap on a To do circle: ticks it, or (when done) undoes the last tick.
+    func todoTick(_ item: TodoDay.Item, in block: TodoBlock) async {
+        guard let child, let todo else { return }
+        do {
+            let container = try CaliCareModelContainer.shared()
+            let actions = TodoActions(container: container, now: { TodoClock.now() })
+            guard let entry = try await actions.tick(item, in: block, day: todo, child: child.id, source: .app) else { return }
+            confirmation = Confirmation(entry: entry, text: "Done: \(item.label), \(time(entry.timestamp)).")
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't save that. Please try again."
         }
     }
 
@@ -490,6 +509,7 @@ final class TodayModel {
     }
 
     private func clear() {
+        todo = nil
         entries = []
         lastNight = nil
         week = []

@@ -12,11 +12,11 @@ final class HierarchyCaptureTests: XCTestCase {
         sleep(5)
 
         scroll(app, "today-\(variant)")
-        tab(app, "Plan")
+        tab(app, "To do")
         scroll(app, "plan-\(variant)")
 
         // Patch tests: the start sheet.
-        tab(app, "Plan")
+        tab(app, "To do")
         if reveal(app, app.buttons["Start a patch test"].firstMatch) {
             app.buttons["Start a patch test"].firstMatch.tap()
             sleep(1)
@@ -26,7 +26,7 @@ final class HierarchyCaptureTests: XCTestCase {
         }
 
         // Add a visit.
-        tab(app, "Plan")
+        tab(app, "To do")
         if reveal(app, app.buttons["Add a visit"].firstMatch) {
             app.buttons["Add a visit"].firstMatch.tap()
             sleep(1)
@@ -36,7 +36,7 @@ final class HierarchyCaptureTests: XCTestCase {
         }
 
         // Edit routine.
-        tab(app, "Plan")
+        tab(app, "To do")
         if reveal(app, app.buttons["Edit routine"].firstMatch) {
             app.buttons["Edit routine"].firstMatch.tap()
             sleep(1)
@@ -46,7 +46,7 @@ final class HierarchyCaptureTests: XCTestCase {
         }
 
         // Food list.
-        tab(app, "Plan")
+        tab(app, "To do")
         let food = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Food list")).firstMatch
         if reveal(app, food) {
             food.tap()

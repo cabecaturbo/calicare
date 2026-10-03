@@ -16,7 +16,7 @@ final class SampleCaptureTests: XCTestCase {
         app.swipeUp()
         sleep(1)
         Capture.screen("sample-today-scrolled-\(variant)")
-        app.buttons["Plan"].firstMatch.tap()
+        app.buttons["To do"].firstMatch.tap()
         sleep(2)
         Capture.screen("sample-plan-\(variant)")
         app.buttons["Progress"].firstMatch.tap()

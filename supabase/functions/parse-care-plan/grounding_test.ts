@@ -105,3 +105,12 @@ Deno.test("drops a label that adds a dose, a brand, or breaks the rules", () => 
   assertEquals(items.map((i) => i.label), [null, null, null, null, null, "Apply calendula balm"]);
   assertEquals(items[5].category, null);
 });
+
+Deno.test("plain words from the reader are checked against the line", () => {
+  const line = "2. Apply calendula balm to affected areas";
+  const { items } = check([
+    { kind: "topicalStep", text: "Apply calendula balm", source_page: 1, source_line: line, plain: "Put calendula balm on the red spots. This is step 2." },
+    { kind: "topicalStep", text: "Apply calendula balm", source_page: 1, source_line: line, plain: "Put 3 pumps of calendula balm on the red spots. Step 2." },
+  ], plan);
+  assertEquals(items.map((i) => i.plain !== null), [true, false]);
+});

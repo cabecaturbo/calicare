@@ -107,13 +107,13 @@ struct SettingsView: View {
             NavigationLink {
                 AutoSendGuide()
             } label: {
-                SettingsLabel("Send the weekly card automatically")
+                SettingsLabel("Send the weekly card on its own")
             }
         }
     }
 
     private var aboutSection: some View {
-        SettingsSection("About", footnote: "Cali Care organizes the plan your provider gave you. Not medical advice.") {
+        SettingsSection("About", footnote: "Cali Care keeps the plan your provider gave you. Not medical advice.") {
             NavigationLink {
                 AboutView()
             } label: {

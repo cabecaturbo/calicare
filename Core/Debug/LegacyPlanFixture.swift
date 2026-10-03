@@ -37,6 +37,16 @@ public enum LegacyPlanFixture {
         line(.followUp, "A follow up consult after 4-6 weeks is helpful.", text: "Follow up consult after 4-6 weeks"),
     ]
 
+    /// Plain words for some lines, keyed by the start of the provider's line.
+    /// Each keeps every number and brand of its line (they pass `PlainWords.isFaithful`).
+    public static let plain: [String: String] = [
+        "Step 1: Calendula": "This is Step 1. Use it if Cal's skin is OK with it. If Cal doesn't like it, skip to Step 3.",
+        "Step 2: Plain aloe": "This is Step 2. Use one that is 95% pure or more. Brand A or Brand B, from the drug store.",
+        "Step 3: Sunflower": "Start with a 50:50 mix of Sunflower oil and Coconut oil. Use more as the skin allows. Brand C. This is Step 3.",
+        "ADD Brand E": "Give 1 teaspoon (5ml) of Brand E Gut Powder, 2x a day. Start low. Go up slowly. Mix it in water.",
+        "Patch test": "Put a little of the new thing on the inside of the arm. Wait a few hours. Then look at the skin.",
+    ]
+
     /// Foods on the list, for the food counts.
     public static let safeFoods = ["Oats", "Rice", "Carrot", "Apple", "Chicken", "Sweet potato"]
 

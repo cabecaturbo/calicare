@@ -97,7 +97,7 @@ struct ChildDetailsForm: View {
                     Text("Color")
                         .textStyle(.control)
                         .foregroundStyle(palette.ink)
-                    Text("Optional. Helps tell children apart.")
+                    Text("You can skip this. It helps tell kids apart.")
                         .textStyle(.meta)
                         .foregroundStyle(palette.graphite)
                 }

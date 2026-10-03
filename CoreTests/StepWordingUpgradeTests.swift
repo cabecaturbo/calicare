@@ -84,7 +84,7 @@ struct StepWordingUpgradeTests {
         // Cut-off names get their full words back from the plan line.
         let calendula = try #require(steps.first { $0.name.hasPrefix("Step 1: Calendula") })
         #expect(calendula.sourceText == "Step 1: Calendula cream, if tolerated. If Cal doesn’t tolerate this step, move straight to Step 3.")
-        #expect(calendula.label == "Apply calendula cream")
+        #expect(calendula.label == "Put on calendula cream")
         #expect(calendula.detail == "if tolerated. If Cal doesn’t tolerate this step, move straight to Step 3.")
         #expect(steps.first { $0.name.hasPrefix("Support the skin") }?.kindRaw == "note")
 

@@ -9,7 +9,7 @@ final class PlanReviewCaptureTests: XCTestCase {
         app.launchArguments = ScreenTourTests.launchArguments + ["-designReviewSeed", "PLAN"]
         app.launch()
         sleep(3)
-        app.buttons["Plan"].firstMatch.tap()
+        app.buttons["To do"].firstMatch.tap()
         sleep(1)
         app.swipeUp()
         sleep(1)

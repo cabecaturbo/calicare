@@ -29,6 +29,7 @@ struct CaliCareApp: App {
                 .environment(sync)
                 .task {
                     await fillStepWording()
+                    Task.detached { await PlanUpkeep.run() }
                     account.start()
                     sync.start()
                 }
@@ -57,7 +58,7 @@ struct CaliCareApp: App {
     private func fillStepWording() async {
         guard let container = try? CaliCareModelContainer.shared(),
               let result = try? await StepBackfillRunner(modelContainer: container).run(),
-              result.labelled + result.split > 0
+              result.labelled + result.relabelled + result.split > 0
         else { return }
         for name in result.needsReentry { Self.log.notice("Step needs its words re-entered: \(name, privacy: .private)") }
         await LogChanges.didChange()

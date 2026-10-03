@@ -9,7 +9,7 @@ struct AboutView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Spacing.section) {
-                Text("Cali Care organizes the plan your child's provider gave you and keeps a simple log of how things are going, so you can see it and share it. It never recommends treatments and doesn't diagnose anything. Not medical advice.")
+                Text("Cali Care keeps your child's plan and a simple log in one place. You can see how things go and share it. It never suggests treatments. It does not diagnose. Not medical advice.")
                     .textStyle(.body)
                     .foregroundStyle(palette.ink)
                     .fixedSize(horizontal: false, vertical: true)

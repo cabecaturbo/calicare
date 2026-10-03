@@ -47,18 +47,21 @@ Reference apps (study their structure, not their look):
 8. One way to do each thing on a given screen. No duplicate controls.
 
 ## 2. App structure
-Three tabs. Nothing else is top-level.
+Four tabs and the Log button. Nothing else is top-level. Each screen has
+one job, written as a comment at the top of its file; nothing goes on a
+screen that doesn't serve it.
 
 | Tab | Job | SF Symbol |
 |---|---|---|
 | Today | Log, and see how last night and today are going | sun.horizon |
-| Plan | Follow the care plan: routine, supplements, food, baths | list.bullet.clipboard |
+| To do | "What do I do right now?" | checklist |
 | Progress | See whether things are getting better, and share it | chart.line.uptrend.xyaxis |
+| Info | "What does the plan say?" | book.closed |
 
 On every tab (DESIGN.md §5)
 - Header: the child switcher ("Cal ▾") on the left, the Settings gear on
   the right (Settings opens as a large sheet). Below it the tab name as the
-  title: "Today", "Plan", "Progress". Today shows the date under it by day.
+  title: "Today", "To do", "Progress", "Info". Today shows the date under it by day.
 - A bottom bar the app draws itself (the system tab bar is hidden): the
   tab pill, and next to it the log control, "Itchy" (one tap) and "•••"
   (a menu: Flare, Bowel movement, Note). Flare and Bowel movement log right
@@ -128,96 +131,50 @@ Night layout (8 PM – 7 AM):
    Log button stays in the bar too.
 4. Tonight so far.
 
-## 5. Plan
-Job: follow the care plan without thinking about it.
+## 5. To do and Info (replaced Plan, October 3, 2026)
 
-1. Header: "Plan", caption "The routine you set, morning and evening".
-2. Summary card "Up next": the routine due now (morning until 2 PM,
-   evening after) as the title ("Evening · 3 steps", "Evening · 2 left",
-   "Evening · done", or "Evening · not done yet" with no steps), "Done
-   7:40 PM" as the caption, and the sprout (morning) or lamp (evening)
-   drawing.
-3. That routine's rows: one row per step: the check circle, a short label
-   that starts with a verb ("Apply aloe vera"), one meta line (the plan's
-   detail, or "3-4x per day"), and "Done 7:40 PM". Tap the circle to tick;
-   tap it again to untick (Undo in the Logged line). Tap the words for
-   "From your plan": the step's full original words and "Name on Plan" to
-   rename it (the original never changes). Consecutive Apply steps sit
-   under "Skin · 3-4x per day", numbered 1, 2, 3. Lines that only say how
-   often or how long are notes, not steps: "3-4x per day" becomes the Skin
-   badge, and "Continue … 60-90 days past clear" shows under About this
-   plan › How often and how long. With no steps, one row "Evening routine"
-   logs the whole routine.
-4. The other routine under its own header ("Morning"), the same rows.
-5. "Edit routine" (right under the routines; "Add steps" with a line
-   explaining it when there are none) opens the Routine sheet: Morning and
-   Evening lists, each step with its category symbol, its label, and its
-   original words underneath when they differ; "Add a step" at the end of
-   each; tap a step for "From your plan"; swipe left for Pause/Delete
-   (indigo and graphite, never red); touch and hold to move. Paused steps
-   stay in the editor marked "Paused" and leave Plan. Nothing is suggested.
-6. Care plan: "Add your care plan" (with one line saying every item gets
-   checked first), then "Finish reviewing your plan" while a draft waits,
-   or "About this plan" once it's running (who it's from, when it
-   started, every item as written, "Open the original", "End this plan").
-   - Add: sign in once (Sign in with Apple), then scan the pages, choose
-     a PDF or file, or choose photos. The phone reads the words; only the
-     words are sent, and nothing is kept. The file stays on the phone.
-   - Review (kept short): "Check what's right. Only checked items are
-     kept." Items grouped by kind, each a check, the plan's words, the
-     values only ("1/4 tsp · once daily"), and "No dose given, ask at next
-     visit" in ochre when a detail is missing. Tap an item to see its
-     source line and edit it; press and hold to remove; "Check all".
-     "Start plan (N)" keeps only checked items; "Later" keeps the draft;
-     "Discard" removes it and the file.
+### To do: "What do I do right now?"
+1. Header: "To do", with "Edit" (the routine editor) beside the gear. Edit
+   is the only other control.
+2. Time blocks from Settings › Reminders times: Morning, Afternoon (only
+   when something is given then), Bedtime. The open block shows its name
+   (serif title) and "3 of 5 done", then its rows. Other blocks are one row
+   each: the name and its time (or "Done"); tap to open it.
+3. Which block is open: before the morning time, Morning; otherwise the
+   latest block that has started (from an hour before its time); if it's
+   all done, the next one. After Bedtime is done: "All done for tonight.
+   Morning list starts at 7:30 AM."
+4. Rows: a big check circle (its own 56pt target), a verb-first label, at
+   most one short meta line, "Done 7:50". No links, paragraphs, Start
+   buttons, or "New" pills. Tap the circle to tick (again to undo). Tap the
+   label for its sheet: "What to do" in plain words, then "Your provider's
+   words" exactly as written, never cut.
+5. Skin care is one row per day in the open block: "Do skin care" with
+   "2 of 3-4 today" from the plan's count. Each tap logs one round. Its
+   sheet lists the steps, numbered.
+6. Supplements show in the blocks they're given in, as "Give [name]" with
+   the dose as meta. Default times: 1x (or nothing) morning; 2x morning and
+   bedtime; 3x adds afternoon. Changed in Info › Supplements.
+7. "Which of these are you giving now?" asks once per plan (after import,
+   and once for a plan read before this). Unchecked ones wait in Info ›
+   Supplements under "Not giving yet".
+8. Reminders: one per block ("Bedtime: 5 things") with "All done", which
+   ticks the whole block without opening the app. Off by default:
+   Settings › Reminders › Morning list, Afternoon list, Bedtime list.
 
-7. A started plan in Plan: its routine and skin steps join the morning and
-   evening rows (with the plan's schedule, "3–4x/day", under each);
-   "Baths" lists the plan's baths with "1 of 3 this week" (tap to log one;
-   rules like "rotate, don't combine" underneath); "Patch tests" shows the
-   plan's line, running tests ("Check after Fri 7:11 PM", then "Ready to
-   check": tap for No reaction / Some redness / A reaction), and "Start a
-   patch test" (what, where, reminder after the plan's wait).
+### Info: "What does the plan say?"
+Rows only, each opening its own screen: Care plan (add, review, About this
+plan, baths), Supplements (giving now with times and How to give, Not
+giving yet with "Add to To do", the plan's rules, "Your provider
+mentioned"), Patch tests ("What to do", "Your provider's words", one
+"Start a patch test" button, your tests), Visits and journal, Food,
+Products.
 
-8. Supplements (from a started plan): each supplement's name ("ADD" shows
-   as a "New" pill; "Continue A, B" shows as two rows), one meta line (dose
-   · frequency), and "How to give" for the plan's directions. The same pill
-   on the right every time: "Start" (with "Can start after Oct 4" or
-   "Starts 2 weeks after … starts" from the plan's rules), then "0 of 2
-   today" (or "0 today" when the plan doesn't say how often); "Rotate after
-   Oct 22" when the plan says; press and hold to Stop. The plan's rules sit
-   underneath, then "Your provider mentioned": "consider" and "may be
-   indicated" lines, muted, with no actions or links.
-
-9. Provider (with a running plan or any visit): "Next visit Oct 14", or the
-   plan's follow-up window ("Follow-up visit Oct 29 – Nov 12"); "Messages
-   4 of 5 left · until Nov 26" (tap to log one sent); "Last visit"; "Add a
-   visit".
-
-10. Food: "Food list" with counts ("12 safe · 1 testing · 3 paused"). The
-    list starts with its focal point, "6 safe foods" (serif) and "1 testing
-    · 1 paused"; then "Your plan says to avoid", one thing per line, with
-    words like "as much as possible · Buy organic when able" as a meta note,
-    and "Add them as paused"; "Add a
-    food" with a status; Safe, Testing, Paused groups, each food with its
-    family and "Plan · Oct 1" or "You · Oct 1". Tap a food to change its
-    status, family, or note, or remove it.
-
-    Running trials ("Day 2 of 3 · today 1 tbsp") open the trial: Gave it
-    today, Something worth watching, skin and nights through the day after,
-    End the trial (Safe / Keep testing / Paused). Under Paused: what may be
-    less covered, "Worth asking your provider or a dietitian."
-
-    Hidden for version 1 (Features.foodExtras): the plant counter and "Log
-    a meal", "What can I make", "Rotation · 4 days", and Leftovers.
-
-11. Products: "Product diary" with "3 in use · 1 never again". The list:
-    "Add a product" with a kind, guessed from the name (Moisturizer, Wash, Laundry, Clothing,
-    Other); In use, Stopped, and Never again groups, each with "Wash ·
-    since Sep 3" or "Sep 3 – Sep 20", and the parent's reason in quotes.
-    Tap one to rename it, change its kind or start date, Stopped using it,
-    Never again (asks "What happened?"), Using it again, or remove it.
-    Starting, stopping, and "never again" show in Progress › Changes.
+### Words
+All app-written words read at grade 6 or easier (ReadingGradeTests).
+Labels say what to do: "Put on Active Skin Repair", "Give a bath".
+Plain words never change a dose, ratio, brand, or condition; the
+provider's words are always shown in full on the item's sheet.
 
 ## 6. Progress
 Job: show whether things are getting better, and share it.
@@ -268,8 +225,8 @@ A grouped list, in this order:
    shared), and "Add a child".
 2. Family (when accounts are available): "Share logs with your partner"
    (sign in), or "Household" (members and invites) once signed in.
-3. Reminders: Morning check-in, Evening skin check-in, Morning routine,
-   Evening routine, each a switch with a time.
+3. Reminders: Morning check-in, Evening skin check-in, Morning list, Afternoon list, Bedtime list,
+   each a switch with a time. The list times also set To do's blocks.
 4. Quick logging: Home Screen widget, Lock Screen widget, Control Center
    (each opens the full-screen setup guide), Siri, and "Send the weekly
    card automatically" (four numbered steps for a Shortcuts automation

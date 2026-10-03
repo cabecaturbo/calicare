@@ -38,7 +38,7 @@ final class ShellTourTests: XCTestCase {
         sleep(5)  // let the confirmation leave
         Capture.screen("01-today")
 
-        tap(app.tabBars.buttons["Plan"])
+        tap(app.tabBars.buttons["To do"])
         tap(app.buttons["Log morning routine done"])
         sleep(5)
         Capture.screen("02-plan")

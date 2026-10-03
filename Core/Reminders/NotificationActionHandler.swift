@@ -7,6 +7,7 @@ public struct NotificationActionHandler: Sendable {
     public enum Outcome: Equatable, Sendable {
         case logged(LogEntry)
         case snoozed
+        case completed(TodoBlock)
         case ignored
     }
 
@@ -15,10 +16,13 @@ public struct NotificationActionHandler: Sendable {
     private let calendar: Calendar
     private let now: @Sendable () -> Date
     private let onChange: @Sendable () async -> Void
+    /// Ticks a whole To do block; nil logs the routine as done instead.
+    private let completeBlock: (@Sendable (TodoBlock, UUID) async throws -> Int)?
 
     public init(
         quickLog: QuickLog,
         scheduler: ReminderScheduler,
+        completeBlock: (@Sendable (TodoBlock, UUID) async throws -> Int)? = nil,
         calendar: Calendar = .autoupdatingCurrent,
         now: @escaping @Sendable () -> Date = { .now },
         onChange: @escaping @Sendable () async -> Void = {}
@@ -28,13 +32,16 @@ public struct NotificationActionHandler: Sendable {
         self.calendar = calendar
         self.now = now
         self.onChange = onChange
+        self.completeBlock = completeBlock
     }
 
     /// Uses the shared database and the real notification center, and refreshes widgets.
     public static func live() throws -> NotificationActionHandler {
-        NotificationActionHandler(
+        let actions = TodoActions(container: try CaliCareModelContainer.shared())
+        return NotificationActionHandler(
             quickLog: try QuickLog.live(),
             scheduler: try ReminderScheduler.live(),
+            completeBlock: { block, child in try await actions.completeBlock(block, child: child, source: .notification) },
             onChange: { await IntentSupport.reloadWidgets() }
         )
     }
@@ -48,10 +55,17 @@ public struct NotificationActionHandler: Sendable {
             guard payload.kind == .checkIn, let rating = action.nightRating else { return .ignored }
             return try await log(.nightRating, value: .night(rating), payload: payload, at: checkInTime(payload))
         case .done:
+            // "All done": every open thing in that To do block, without opening the app.
+            if let block = payload.kind.todoBlock, let completeBlock, let childID = payload.childID {
+                _ = try await completeBlock(block, childID)
+                await onChange()
+                try await scheduler.refresh()
+                return .completed(block)
+            }
             guard let time = payload.kind.routineTime else { return .ignored }
             return try await log(.routineDone, value: .routine(time), payload: payload, at: nil)
         case .snooze:
-            guard payload.kind.routineTime != nil else { return .ignored }
+            guard payload.kind.todoBlock != nil else { return .ignored }
             try await scheduler.snooze(payload)
             return .snoozed
         case .calm, .littleItchy, .flaring, .veryRough:

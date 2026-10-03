@@ -1,16 +1,6 @@
 import Foundation
 import SwiftData
 
-// Current model names always point at the latest schema version.
-public typealias Child = SchemaV6.Child
-public typealias LogEvent = SchemaV6.LogEvent
-public typealias RoutineStep = SchemaV6.RoutineStep
-public typealias CarePlan = SchemaV6.CarePlan
-public typealias PlanItem = SchemaV6.PlanItem
-public typealias Visit = SchemaV6.Visit
-public typealias Food = SchemaV6.Food
-public typealias Product = SchemaV6.Product
-
 /// Step wording: the V5 models are copied unchanged except new optional
 /// fields on RoutineStep (label, detail, sourceText, category, timesPerDay,
 /// kind) and PlanItem (label, detail, category, parentItemID), so the

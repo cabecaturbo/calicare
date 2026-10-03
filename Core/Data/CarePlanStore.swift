@@ -25,10 +25,13 @@ public struct PlanItemDraft: Equatable, Sendable {
     public var label: String?
     public var detail: String?
     public var category: StepCategory?
+    /// Plain words from the plan reader; kept only if `PlainWords.isFaithful`.
+    public var plain: String?
 
     public init(kind: PlanItemKind, text: String, dose: String? = nil, frequency: String? = nil, timing: String? = nil,
                 duration: String? = nil, sourcePage: Int? = nil, sourceLine: String? = nil, label: String? = nil,
-                detail: String? = nil, category: StepCategory? = nil) {
+                detail: String? = nil, category: StepCategory? = nil, plain: String? = nil) {
+        self.plain = plain
         self.label = label
         self.detail = detail
         self.category = category
@@ -84,6 +87,9 @@ public actor CarePlanStore: ModelActor {
                 item.detail = Self.clean(draft.detail)
             }
             item.categoryRaw = draft.category?.rawValue
+            if let plain = Self.clean(draft.plain), PlainWords.isFaithful(plain, to: item.sourceLine ?? text) {
+                item.plainText = plain
+            }
             modelContext.insert(item)
         }
         try modelContext.save()
@@ -165,6 +171,74 @@ public actor CarePlanStore: ModelActor {
         }
         try modelContext.save()
         return count
+    }
+
+    // MARK: - Supplements and wording (To do + Info)
+
+    /// Whether the parent is giving a supplement now. Works on started plans.
+    public func setGiving(_ itemID: UUID, _ isGiving: Bool) async throws {
+        try changeItem(itemID) { $0.isGiving = isGiving }
+    }
+
+    /// When a supplement is given. An empty list keeps the plan's default.
+    public func setGivingTimes(_ itemID: UUID, _ blocks: [TodoBlock]) async throws {
+        try changeItem(itemID) { $0.givingTimesRaw = blocks.isEmpty ? nil : TodoBlock.raw(blocks) }
+    }
+
+    /// Plain words for an item, kept only if they pass `PlainWords.isFaithful`.
+    @discardableResult
+    public func setPlainText(_ itemID: UUID, _ plain: String) async throws -> Bool {
+        var kept = false
+        try changeItem(itemID) { item in
+            let source = item.sourceParagraph ?? item.sourceLine ?? item.text
+            guard PlainWords.isFaithful(plain, to: source) else { return }
+            item.plainText = plain.trimmingCharacters(in: .whitespacesAndNewlines)
+            kept = true
+        }
+        return kept
+    }
+
+    /// The provider's whole paragraph, when the quoted line was cut short.
+    /// Only ever longer than, and starting with, what's there.
+    public func setSourceParagraph(_ itemID: UUID, _ paragraph: String) async throws {
+        try changeItem(itemID) { item in
+            let line = item.sourceLine ?? item.text
+            guard paragraph.count > line.count, PlainWords.normalize(paragraph).hasPrefix(PlainWords.normalize(line)) else { return }
+            item.sourceParagraph = paragraph
+        }
+    }
+
+    /// Undoes `removeAllPlansAndSteps` for the parent's own steps (no plan
+    /// link): the ones removed at the same moment as a plan. Same ids, so
+    /// their history comes back too. Returns how many came back.
+    @discardableResult
+    public func restoreOwnSteps(child childID: UUID) async throws -> Int {
+        let removedPlans = Set(try modelContext.fetch(FetchDescriptor<CarePlan>(
+            predicate: #Predicate { $0.childID == childID && $0.deletedAt != nil }
+        )).compactMap(\.deletedAt))
+        guard !removedPlans.isEmpty else { return 0 }
+        let steps = try modelContext.fetch(FetchDescriptor<RoutineStep>(
+            predicate: #Predicate { $0.childID == childID && $0.deletedAt != nil && $0.planItemID == nil }
+        ))
+        let current = now()
+        var count = 0
+        for step in steps where step.deletedAt.map(removedPlans.contains) == true {
+            step.deletedAt = nil
+            step.updatedAt = current
+            step.needsSync = true
+            count += 1
+        }
+        try modelContext.save()
+        return count
+    }
+
+    private func changeItem(_ itemID: UUID, _ edit: (PlanItem) -> Void) throws {
+        var descriptor = FetchDescriptor<PlanItem>(predicate: #Predicate { $0.id == itemID && $0.deletedAt == nil })
+        descriptor.fetchLimit = 1
+        guard let item = try modelContext.fetch(descriptor).first else { throw CarePlanStoreError.itemNotFound }
+        edit(item)
+        if item.hasChanges { touch(item, at: now()) }
+        try modelContext.save()
     }
 
     public func end(_ planID: UUID) async throws {

@@ -72,6 +72,7 @@ public struct ReminderPlanner: Sendable {
         child: ChildInfo?,
         ratedDays: Set<CareDay>,
         skinDays: Set<CareDay> = [],
+        things: [TodoBlock: Int]? = nil,
         now: Date
     ) -> [PlannedReminder] {
         guard let child else { return [] }
@@ -82,13 +83,16 @@ public struct ReminderPlanner: Sendable {
         if settings.skinCheckIn.isOn {
             reminders += questions(.skinCheckIn, at: settings.skinCheckIn, child: child, answered: skinDays, now: now)
         }
-        for kind in [ReminderKind.morningRoutine, .eveningRoutine] where settings[kind].isOn {
+        for kind in [ReminderKind.morningRoutine, .afternoonRoutine, .eveningRoutine] where settings[kind].isOn {
             let slot = settings[kind]
+            let count = kind.todoBlock.flatMap { things?[$0] }
+            // Afternoon only shows when it has something in it; so does its reminder.
+            if kind == .afternoonRoutine, (things?[.afternoon] ?? 0) == 0 { continue }
             reminders.append(PlannedReminder(
                 id: ReminderIDs.routine(kind),
                 trigger: .daily(hour: slot.hour, minute: slot.minute),
-                title: ReminderCopy.title(kind, childName: child.name),
-                body: ReminderCopy.body(kind),
+                title: ReminderCopy.title(kind, childName: child.name, things: count),
+                body: ReminderCopy.body(kind, childName: child.name),
                 payload: ReminderPayload(kind: kind, childID: child.id, fireDate: nil)
             ))
         }
@@ -101,7 +105,7 @@ public struct ReminderPlanner: Sendable {
             id: ReminderIDs.snooze(payload.kind),
             trigger: .after(Self.snoozeInterval),
             title: ReminderCopy.title(payload.kind, childName: childName),
-            body: ReminderCopy.body(payload.kind),
+            body: ReminderCopy.body(payload.kind, childName: childName),
             payload: payload
         )
     }
@@ -113,7 +117,7 @@ public struct ReminderPlanner: Sendable {
             id: ReminderIDs.test(kind),
             trigger: .after(delay),
             title: ReminderCopy.title(kind, childName: child.name),
-            body: ReminderCopy.body(kind),
+            body: ReminderCopy.body(kind, childName: child.name),
             payload: ReminderPayload(kind: kind, childID: child.id, fireDate: fireDate)
         )
     }

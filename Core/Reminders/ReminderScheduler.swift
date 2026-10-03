@@ -43,8 +43,12 @@ public struct ReminderScheduler: Sendable {
         let rated = try await ratedDays(child: child, now: current)
         let skin = try await skinDays(child: child, now: current)
         let authorized = await center.isAuthorized()
+        // How many things each To do block holds, for "Bedtime: 5 things".
+        var day: TodoDay?
+        if let child { day = try? await TodoActions(container: container, now: now).day(child: child.id) }
+        let things = day.map { day in Dictionary(day.blocks.map { ($0.block, $0.items.count) }, uniquingKeysWith: { a, _ in a }) }
         let planned = authorized
-            ? planner.plan(settings: settings, child: child, ratedDays: rated, skinDays: skin, now: current)
+            ? planner.plan(settings: settings, child: child, ratedDays: rated, skinDays: skin, things: things, now: current)
             : []
 
         let stale = await center.pendingIDs().filter { id in

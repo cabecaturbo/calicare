@@ -95,9 +95,9 @@ struct ReminderPlannerTests {
         let evening = try #require(plan.first { $0.kind == .eveningRoutine })
         #expect(morning.trigger == .daily(hour: 7, minute: 30))
         #expect(evening.trigger == .daily(hour: 19, minute: 0))
-        #expect(morning.title == "Time for Ada's morning routine")
-        #expect(evening.title == "Time for Ada's evening routine")
-        #expect(morning.body == "Tap Done whenever you're ready.")
+        #expect(morning.title == "Morning list for Ada")
+        #expect(evening.title == "Bedtime list for Ada")
+        #expect(morning.body == "For Ada. Tap All done when it's all done.")
         #expect(morning.payload.fireDate == nil)
     }
 
@@ -122,7 +122,7 @@ struct ReminderPlannerTests {
 
         #expect(snoozed.trigger == .after(30 * 60))
         #expect(snoozed.payload == payload)
-        #expect(snoozed.title == "Time for Ada's morning routine")
+        #expect(snoozed.title == "Morning list for Ada")
         #expect(snoozed.id == "calicare.snooze.morningRoutine")
     }
 

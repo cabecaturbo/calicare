@@ -2,7 +2,7 @@ import AppIntents
 import Core
 import SwiftUI
 
-/// Settings › Quick logging › "Send the weekly card automatically": how to set
+/// Settings › Quick logging › "Send the weekly card on its own": how to set
 /// up a Shortcuts automation with "Get Weekly Card". Numbered steps until the
 /// screens are recorded on a real iPhone; iOS's own Shortcuts button opens the app.
 struct AutoSendGuide: View {
@@ -18,7 +18,7 @@ struct AutoSendGuide: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Spacing.section) {
-                Text("Every Sunday evening, your phone can send this week's card to a partner or grandparent by itself. It takes about a minute to set up in Apple's Shortcuts app.")
+                Text("Each Sunday night, your phone can send this week's card to your partner or a grandparent. It takes a minute to set up in Apple's Shortcuts app.")
                     .textStyle(.body)
                     .foregroundStyle(palette.ink)
                     .fixedSize(horizontal: false, vertical: true)

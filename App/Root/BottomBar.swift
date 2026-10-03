@@ -53,7 +53,7 @@ struct BottomBar: View {
     }
 }
 
-/// Today, Plan, Progress. The active tab is a surface pill with accent text by
+/// Today, To do, Progress, Info. The active tab is a surface pill with accent text by
 /// day, an accent pill at night (the surface pill vanishes into the night bar).
 private struct TabPill: View {
     @Environment(\.palette) private var palette
@@ -61,8 +61,9 @@ private struct TabPill: View {
 
     private let tabs: [(AppTab, String, String)] = [
         (.today, "Today", "sun.horizon"),
-        (.plan, "Plan", "list.bullet.clipboard"),
+        (.todo, "To do", "checklist"),
         (.progress, "Progress", "chart.line.uptrend.xyaxis"),
+        (.info, "Info", "book.closed"),
     ]
 
     var body: some View {

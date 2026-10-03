@@ -9,7 +9,7 @@ Rules:
 - Never suggest treatments, doses, foods, or timing. If a detail isn't written, leave it null.
 - For every item, copy the exact line (or phrase) from the plan into source_line, character for character,
   and give its page number from the "--- Page N ---" markers.
-- text is the item in the plan's own words, as short as the plan allows.
+- text is the whole item in the plan's own words. Never drop a sentence or a condition.
 - dose, frequency, timing, duration: copy them only if the plan states them for that item, exactly as written.
 - kind is one of: ${KINDS.join(", ")}.
   routineStep = a daily-routine step; topicalStep = something applied to the skin; bath = a bath;
@@ -22,6 +22,8 @@ Rules:
   detail = the rest of the item's words, copied exactly ("96% or more pure");
   category = wash, apply, give, feed, or dress.
   Labels and details use only the plan's words: never add a dose, brand, ratio, or condition. If unsure, use null.
+- plain = the item at a 6th-grade reading level: short sentences, everyday words ("cream", not "topical").
+  Keep every number, dose, ratio, brand, and condition exactly. Add nothing. If unsure, use null.
 - If the text isn't a care plan, return no items.`;
 
 export const TOOL = {
@@ -46,6 +48,7 @@ export const TOOL = {
             label: { type: ["string", "null"] },
             detail: { type: ["string", "null"] },
             category: { type: ["string", "null"], enum: [...CATEGORIES, null] },
+            plain: { type: ["string", "null"] },
           },
           required: ["kind", "text", "dose", "frequency", "timing", "duration", "source_page", "source_line"],
         },

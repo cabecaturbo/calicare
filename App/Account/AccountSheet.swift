@@ -59,7 +59,7 @@ struct AccountSheet: View {
                 .textStyle(.body)
                 .foregroundStyle(palette.ink)
                 .padding(.top, Spacing.titleToLede)
-            Text("CaliCare only gets a private relay email from Apple, and never your password.")
+            Text("Cali Care only gets a private email from Apple. It never sees your password.")
                 .textStyle(.meta)
                 .foregroundStyle(palette.graphite)
                 .padding(.top, Spacing.x4)

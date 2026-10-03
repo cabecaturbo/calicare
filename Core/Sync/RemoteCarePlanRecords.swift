@@ -83,6 +83,11 @@ public struct RemotePlanItem: Codable, Equatable, Sendable {
     public var detail: String?
     public var category: String?
     public var parentItemID: UUID?
+    /// To do + Info (SchemaV7).
+    public var isGiving: Bool?
+    public var givingTimes: String?
+    public var plainText: String?
+    public var sourceParagraph: String?
     public var createdAt: Date
     public var updatedAt: Date
     public var deletedAt: Date?
@@ -91,6 +96,10 @@ public struct RemotePlanItem: Codable, Equatable, Sendable {
     enum CodingKeys: String, CodingKey {
         case id, kind, text, dose, frequency, timing, duration, label, detail, category
         case parentItemID = "parent_item_id"
+        case isGiving = "is_giving"
+        case givingTimes = "giving_times"
+        case plainText = "plain_text"
+        case sourceParagraph = "source_paragraph"
         case householdID = "household_id"
         case planID = "plan_id"
         case childID = "child_id"
@@ -145,6 +154,10 @@ public struct RemotePlanItem: Codable, Equatable, Sendable {
         try c.encode(detail, forKey: .detail)
         try c.encode(category, forKey: .category)
         try c.encode(parentItemID, forKey: .parentItemID)
+        try c.encode(isGiving, forKey: .isGiving)
+        try c.encode(givingTimes, forKey: .givingTimes)
+        try c.encode(plainText, forKey: .plainText)
+        try c.encode(sourceParagraph, forKey: .sourceParagraph)
         try c.encode(createdAt, forKey: .createdAt)
         try c.encode(updatedAt, forKey: .updatedAt)
         try c.encode(deletedAt, forKey: .deletedAt)

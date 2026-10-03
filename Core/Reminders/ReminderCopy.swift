@@ -2,19 +2,23 @@ import Foundation
 
 /// Reminder wording: warm, short, never "you missed."
 public enum ReminderCopy {
-    public static func title(_ kind: ReminderKind, childName: String) -> String {
+    /// `things` is how many things are in that To do block ("Bedtime: 5 things").
+    public static func title(_ kind: ReminderKind, childName: String, things: Int? = nil) -> String {
         switch kind {
-        case .checkIn: "How was last night for \(childName)?"
-        case .skinCheckIn: "How was \(childName)'s skin today?"
-        case .morningRoutine: "Time for \(childName)'s morning routine"
-        case .eveningRoutine: "Time for \(childName)'s evening routine"
+        case .checkIn: return "How was last night for \(childName)?"
+        case .skinCheckIn: return "How was \(childName)'s skin today?"
+        case .morningRoutine, .afternoonRoutine, .eveningRoutine:
+            let block = kind.todoBlock?.title ?? ""
+            guard let things, things > 0 else { return "\(block) list for \(childName)" }
+            return "\(block): \(things) thing\(things == 1 ? "" : "s")"
         }
     }
 
-    public static func body(_ kind: ReminderKind) -> String {
+    public static func body(_ kind: ReminderKind, childName: String = "") -> String {
         switch kind {
         case .checkIn, .skinCheckIn: "One tap is enough."
-        case .morningRoutine, .eveningRoutine: "Tap Done whenever you're ready."
+        case .morningRoutine, .afternoonRoutine, .eveningRoutine:
+            childName.isEmpty ? "Tap All done when it's all done." : "For \(childName). Tap All done when it's all done."
         }
     }
 
@@ -23,8 +27,9 @@ public enum ReminderCopy {
         switch kind {
         case .checkIn: "Morning check-in"
         case .skinCheckIn: "Evening skin check-in"
-        case .morningRoutine: "Morning routine"
-        case .eveningRoutine: "Evening routine"
+        case .morningRoutine: "Morning list"
+        case .afternoonRoutine: "Afternoon list"
+        case .eveningRoutine: "Bedtime list"
         }
     }
 }

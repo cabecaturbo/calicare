@@ -14,7 +14,7 @@ final class PlanCaptureTests: XCTestCase {
         app.launchArguments = ScreenTourTests.launchArguments + ["-designReviewSeed", "YES"]
         app.launch()
 
-        tap(app.buttons["Plan"])
+        tap(app.buttons["To do"])
         Capture.screen("plan-empty-\(variant)")
 
         tap(app.buttons["Add steps"])

@@ -18,7 +18,7 @@ public enum StepCategory: String, Codable, Sendable, CaseIterable {
     public var verb: String {
         switch self {
         case .wash: "Wash"
-        case .apply: "Apply"
+        case .apply: "Put on"
         case .give: "Give"
         case .feed: "Feed"
         case .dress: "Put on"
@@ -74,7 +74,7 @@ public enum StepLabeler {
 
     /// Single nouns with a natural verb phrase.
     static let phrases: [String: String] = [
-        "bath": "Take a bath", "shower": "Take a shower", "pajamas": "Put on pajamas", "pyjamas": "Put on pyjamas",
+        "bath": "Give a bath", "shower": "Give a shower", "pajamas": "Put on pajamas", "pyjamas": "Put on pyjamas",
         "mittens": "Put on mittens", "sleeves": "Put on sleeves",
     ]
 
@@ -110,6 +110,16 @@ public enum StepLabeler {
                            timesPerDay: timesPerDay(frequency ?? frequencyPhrase(in: clean)))
     }
 
+    /// What the app would have written for this label before (for refreshing
+    /// its own labels without touching ones the parent changed).
+    public static func olderLabels(for label: String) -> [String] {
+        var older: [String] = []
+        if label.hasPrefix("Put on ") { older.append("Apply " + label.dropFirst("Put on ".count)) }
+        if label == "Give a bath" { older.append("Take a bath") }
+        if label == "Give a shower" { older.append("Take a shower") }
+        return older
+    }
+
     /// The words without a leading "Step 1:" and outer whitespace.
     public static func clean(_ text: String) -> String {
         text.replacingOccurrences(of: #"^\s*step\s*\d+\s*[:.)-]\s*"#, with: "", options: [.regularExpression, .caseInsensitive])
@@ -121,7 +131,8 @@ public enum StepLabeler {
     /// percent, ratio, and capitalised word appears in the source as written.
     public static func isValid(label: String, detail: String?, source: String) -> Bool {
         let words = label.split(separator: " ")
-        guard let first = words.first, words.count <= maxWords,
+        // Symbols like "+" aren't words.
+        guard let first = words.first, words.filter({ $0.contains(where: \.isLetter) }).count <= maxWords,
               verbs.contains(first.lowercased()),
               label.range(of: #"^\s*step\s*\d"#, options: [.regularExpression, .caseInsensitive]) == nil,
               !label.contains(". ")

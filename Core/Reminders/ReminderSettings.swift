@@ -18,12 +18,13 @@ public struct ReminderSettings: Codable, Hashable, Sendable {
     public var checkIn = ReminderSlot(isOn: false, hour: 7, minute: 0)
     public var skinCheckIn = ReminderSlot(isOn: false, hour: 18, minute: 30)
     public var morningRoutine = ReminderSlot(isOn: false, hour: 7, minute: 30)
+    public var afternoonRoutine = ReminderSlot(isOn: false, hour: 12, minute: 30)
     public var eveningRoutine = ReminderSlot(isOn: false, hour: 19, minute: 0)
 
     public init() {}
 
     private enum CodingKeys: String, CodingKey {
-        case checkIn, skinCheckIn, morningRoutine, eveningRoutine
+        case checkIn, skinCheckIn, morningRoutine, afternoonRoutine, eveningRoutine
     }
 
     /// Missing reminders keep their defaults, so settings saved by an older
@@ -34,6 +35,7 @@ public struct ReminderSettings: Codable, Hashable, Sendable {
         checkIn = try container.decodeIfPresent(ReminderSlot.self, forKey: .checkIn) ?? defaults.checkIn
         skinCheckIn = try container.decodeIfPresent(ReminderSlot.self, forKey: .skinCheckIn) ?? defaults.skinCheckIn
         morningRoutine = try container.decodeIfPresent(ReminderSlot.self, forKey: .morningRoutine) ?? defaults.morningRoutine
+        afternoonRoutine = try container.decodeIfPresent(ReminderSlot.self, forKey: .afternoonRoutine) ?? defaults.afternoonRoutine
         eveningRoutine = try container.decodeIfPresent(ReminderSlot.self, forKey: .eveningRoutine) ?? defaults.eveningRoutine
     }
 
@@ -43,6 +45,7 @@ public struct ReminderSettings: Codable, Hashable, Sendable {
             case .checkIn: checkIn
             case .skinCheckIn: skinCheckIn
             case .morningRoutine: morningRoutine
+            case .afternoonRoutine: afternoonRoutine
             case .eveningRoutine: eveningRoutine
             }
         }
@@ -51,6 +54,7 @@ public struct ReminderSettings: Codable, Hashable, Sendable {
             case .checkIn: checkIn = newValue
             case .skinCheckIn: skinCheckIn = newValue
             case .morningRoutine: morningRoutine = newValue
+            case .afternoonRoutine: afternoonRoutine = newValue
             case .eveningRoutine: eveningRoutine = newValue
             }
         }

@@ -136,12 +136,12 @@ struct AboutPlanView: View {
                         }
                     }
                     if let name = plan.sourceFileName, FileManager.default.fileExists(atPath: PlanFiles.url(for: name).path) {
-                        Button("Open the original") { preview = PlanFiles.url(for: name) }
+                        Button("Open the file") { preview = PlanFiles.url(for: name) }
                             .buttonStyle(.textLink)
                     }
                     Button("End this plan") { confirmingEnd = true }
                         .buttonStyle(.textLink)
-                    Text("Cali Care organizes the plan your provider gave you. Not medical advice.")
+                    Text("Cali Care keeps the plan your provider gave you. Not medical advice.")
                         .textStyle(.meta)
                         .foregroundStyle(palette.graphite)
                 }

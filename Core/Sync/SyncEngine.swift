@@ -407,6 +407,10 @@ extension SyncEngine {
         item.detail = remote.detail
         item.categoryRaw = remote.category
         item.parentItemID = remote.parentItemID
+        item.isGiving = remote.isGiving
+        item.givingTimesRaw = remote.givingTimes
+        item.plainText = remote.plainText
+        item.sourceParagraph = remote.sourceParagraph
         item.order = remote.sortOrder
         item.isConfirmed = true
         item.createdAt = remote.createdAt
@@ -535,6 +539,10 @@ extension RemotePlanItem {
         detail = item.detail
         category = item.categoryRaw
         parentItemID = item.parentItemID
+        isGiving = item.isGiving
+        givingTimes = item.givingTimesRaw
+        plainText = item.plainText
+        sourceParagraph = item.sourceParagraph
     }
 }
 

@@ -74,7 +74,7 @@ struct InviteSheet: View {
             .buttonStyle(.primary)
             .padding(.top, Spacing.section)
 
-            Text("They open Cali Care, go to Settings → Household → Join with a code, and type it in.")
+            Text("They open Cali Care. Then they go to Settings, Household, Join with a code. They type it in.")
                 .textStyle(.body)
                 .foregroundStyle(palette.graphite)
                 .padding(.top, Spacing.x4)

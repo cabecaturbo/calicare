@@ -35,7 +35,7 @@ struct RoutineStepTests {
 
         try await routine.rename(b.id, to: "Cream")
         try await routine.setActive(a.id, false)
-        #expect(try await routine.steps(child: harness.child.id).map(\.displayName) == ["Apply wet wraps", "Cream"])
+        #expect(try await routine.steps(child: harness.child.id).map(\.displayName) == ["Put on wet wraps", "Cream"])
         #expect(try await routine.steps(child: harness.child.id, includeInactive: true).count == 3)
 
         try await routine.delete(c.id)

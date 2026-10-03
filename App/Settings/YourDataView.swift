@@ -33,7 +33,7 @@ struct YourDataView: View {
                             row("Daily journal for your provider")
                         }
                     }
-                    Text("The spreadsheet opens in Numbers, Excel, or Google Sheets: one row per log, with the child, time, what, note, where it was logged from, and who logged it.")
+                    Text("The sheet opens in Numbers, Excel, or Google Sheets. Each row is one log. It shows the child, the time, what it was, the note, where it came from, and who logged it.")
                         .textStyle(.meta)
                         .foregroundStyle(palette.graphite)
                         .fixedSize(horizontal: false, vertical: true)

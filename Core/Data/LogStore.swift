@@ -85,9 +85,11 @@ public actor LogStore: ModelActor {
 
     /// A plan supplement started, taken, or stopped. `planItemID` says which.
     @discardableResult
+    /// `block` notes which To do block a dose was given in ("bedtime").
     public func logSupplement(_ event: SupplementEvent, item planItemID: UUID, child childID: UUID, source: EntrySource,
-                              loggedBy: String = LoggedBy.current(), at timestamp: Date? = nil) async throws -> LogEntry {
-        try insert(.supplement, value: .supplement(event), child: childID, source: source, note: nil,
+                              block: TodoBlock? = nil, loggedBy: String = LoggedBy.current(),
+                              at timestamp: Date? = nil) async throws -> LogEntry {
+        try insert(.supplement, value: .supplement(event), child: childID, source: source, note: block?.rawValue,
                    bodyAreas: [], routineStepID: planItemID, loggedBy: loggedBy, at: timestamp)
     }
 

@@ -155,7 +155,7 @@ struct CarePlanSyncTests {
         let step = try await routine.add(name: "Moisturizer", time: .evening, child: child.id)
         _ = try await engine(remote).sync(userID: user, displayName: "Mom")
         let up = await remote.routineSteps[step.id]
-        #expect(up?.label == "Apply moisturizer")
+        #expect(up?.label == "Put on moisturizer")
         #expect(up?.sourceText == "Moisturizer")
         #expect(up?.category == "apply")
         #expect(up?.kind == "task")

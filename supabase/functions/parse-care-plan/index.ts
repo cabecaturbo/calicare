@@ -10,11 +10,20 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { check, type RawItem } from "./grounding.ts";
+import { isFaithful, PLAIN_SYSTEM, PLAIN_TOOL } from "./plain.ts";
 import { SYSTEM, TOOL } from "./prompt.ts";
 
 export const MAX_TEXT = 60_000;
 export const DAILY_LIMIT = 10;
 export const MODEL = "claude-sonnet-5";
+/** Lines per plain-words request. */
+export const MAX_LINES = 60;
+
+/** One line to put in plain words: the app's id and the provider's words. */
+export interface Line {
+  id: string;
+  text: string;
+}
 
 export interface Deps {
   /** The signed-in caller's id, or null. */
@@ -23,6 +32,8 @@ export interface Deps {
   noteUse(authorization: string, apikey: string): Promise<number>;
   /** Asks the model; returns its raw items. */
   extract(text: string): Promise<RawItem[]>;
+  /** Asks the model for plain words; returns {id, plain} pairs. */
+  simplify(lines: Line[]): Promise<{ id: string; plain: string }[]>;
 }
 
 function reply(status: number, body: Record<string, unknown>): Response {
@@ -38,11 +49,14 @@ export async function handle(req: Request, deps: Deps): Promise<Response> {
   if (!(await deps.userID(authorization, apikey))) return reply(401, { error: "Sign in first." });
 
   let text: unknown;
+  let mode: unknown;
+  let lines: unknown;
   try {
-    ({ text } = await req.json());
+    ({ text, mode, lines } = await req.json());
   } catch {
     return reply(400, { error: "Send the plan's text as JSON: {\"text\": \"...\"}." });
   }
+  if (mode === "plain") return plainWords(lines, authorization, apikey, deps);
   if (typeof text !== "string" || text.trim().length === 0) return reply(400, { error: "The plan's text is empty." });
   if (text.length > MAX_TEXT) return reply(413, { error: "That plan is too long to read in one go." });
 
@@ -59,6 +73,34 @@ export async function handle(req: Request, deps: Deps): Promise<Response> {
     return reply(502, { error: "Couldn't read the plan just now. Please try again.", reason });
   }
   return reply(200, { ...check(raw, text) });
+}
+
+/**
+ * Plain words for lines the parent already has (a plan read before plain
+ * words existed). Nothing is stored; each result is checked against its line.
+ */
+async function plainWords(lines: unknown, authorization: string, apikey: string, deps: Deps): Promise<Response> {
+  if (!Array.isArray(lines) || lines.length === 0 || lines.length > MAX_LINES) {
+    return reply(400, { error: `Send 1 to ${MAX_LINES} lines as {"mode": "plain", "lines": [{"id", "text"}]}.` });
+  }
+  const valid = lines.filter((l): l is Line => typeof l?.id === "string" && typeof l?.text === "string" && l.text.length <= 4000);
+  if ((await deps.noteUse(authorization, apikey)) > DAILY_LIMIT) {
+    return reply(429, { error: "That's a lot for one day. Please try again tomorrow." });
+  }
+  let raw: { id: string; plain: string }[];
+  try {
+    raw = await deps.simplify(valid);
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : "unknown";
+    console.error("simplify failed", reason);
+    return reply(502, { error: "Couldn't do that just now. Please try again.", reason });
+  }
+  const byID = new Map(valid.map((l) => [l.id, l.text]));
+  const items = raw
+    .filter((r) => typeof r?.id === "string" && typeof r?.plain === "string" && byID.has(r.id))
+    .filter((r) => isFaithful(r.plain.trim(), byID.get(r.id)!))
+    .map((r) => ({ id: r.id, plain: r.plain.trim() }));
+  return reply(200, { items, rejected: raw.length - items.length });
 }
 
 // MARK: - Live dependencies
@@ -83,6 +125,18 @@ export const live: Deps = {
     return data as number;
   },
   async extract(text) {
+    const input = await callModel(SYSTEM, TOOL, `The care plan's text:\n\n${text}`);
+    return Array.isArray(input?.items) ? input.items : [];
+  },
+  async simplify(lines) {
+    const listing = lines.map((l) => `id ${l.id}: ${l.text}`).join("\n\n");
+    const input = await callModel(PLAIN_SYSTEM, PLAIN_TOOL, `Lines from the care plan:\n\n${listing}`);
+    return Array.isArray(input?.items) ? input.items : [];
+  },
+};
+
+// deno-lint-ignore no-explicit-any
+async function callModel(system: string, tool: { name: string }, content: string): Promise<any> {
     const key = Deno.env.get("ANTHROPIC_API_KEY");
     if (!key) throw new Error("ANTHROPIC_API_KEY isn't set");
     const headers: Record<string, string> = {
@@ -99,10 +153,10 @@ export const live: Deps = {
       body: JSON.stringify({
         model: MODEL,
         max_tokens: 8000,
-        system: SYSTEM,
-        tools: [TOOL],
-        tool_choice: { type: "tool", name: TOOL.name },
-        messages: [{ role: "user", content: `The care plan's text:\n\n${text}` }],
+        system,
+        tools: [tool],
+        tool_choice: { type: "tool", name: tool.name },
+        messages: [{ role: "user", content }],
       }),
     });
     if (!response.ok) {
@@ -111,9 +165,7 @@ export const live: Deps = {
       throw new Error(`model returned ${response.status}: ${detail?.error?.type ?? ""} ${detail?.error?.message ?? ""}`.trim());
     }
     const body = await response.json();
-    const call = body.content?.find((part: { type: string }) => part.type === "tool_use");
-    return Array.isArray(call?.input?.items) ? call.input.items : [];
-  },
-};
+    return body.content?.find((part: { type: string }) => part.type === "tool_use")?.input;
+}
 
 if (import.meta.main) Deno.serve((req) => handle(req, live));

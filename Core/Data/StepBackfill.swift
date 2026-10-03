@@ -9,6 +9,7 @@ public enum StepBackfill {
     /// anywhere: the parent re-enters these.
     public struct Result: Equatable, Sendable {
         public var labelled = 0
+        public var relabelled = 0
         public var split = 0
         public var needsReentry: [String] = []
     }
@@ -43,9 +44,29 @@ public enum StepBackfill {
             result.labelled += 1
         }
 
+        result.relabelled = try refreshAppLabels(in: context, items: byID, now: now)
         result.split = try splitLists(items: items, in: context, now: now)
         if context.hasChanges { try context.save() }
         return result
+    }
+
+    /// Labels the app wrote with older wording ("Apply …", "Take a bath") get
+    /// today's ("Put on …", "Give a bath"). A label the parent changed is left alone.
+    static func refreshAppLabels(in context: ModelContext, items: [UUID: PlanItem], now: Date) throws -> Int {
+        let steps = try context.fetch(FetchDescriptor<RoutineStep>(predicate: #Predicate { $0.deletedAt == nil && $0.label != nil }))
+        var count = 0
+        for step in steps {
+            guard let label = step.label, let source = step.sourceText else { continue }
+            let item = step.planItemID.flatMap { items[$0] }
+            guard item?.label == nil else { continue }
+            let current = StepLabeler.wording(for: source, planKind: item?.kind, frequency: item?.frequency, duration: item?.duration).label
+            guard let current, current != label, StepLabeler.olderLabels(for: current).contains(label) else { continue }
+            step.label = current
+            step.updatedAt = now
+            step.needsSync = true
+            count += 1
+        }
+        return count
     }
 
     /// Fills a step's empty wording fields.

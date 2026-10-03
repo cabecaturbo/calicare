@@ -8,12 +8,18 @@ struct AppHeader: View {
     @Environment(Shell.self) private var shell
     let title: String
     var caption: String?
+    /// "Edit", for the one screen-level action (To do).
+    var onEdit: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 ChildSwitcher(style: .navigationBar)
                 Spacer(minLength: Spacing.x4)
+                if let onEdit {
+                    Button("Edit", action: onEdit)
+                        .buttonStyle(.textLink)
+                }
                 Button {
                     shell.showingSettings = true
                 } label: {

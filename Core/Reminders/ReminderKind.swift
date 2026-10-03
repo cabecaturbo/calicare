@@ -2,14 +2,25 @@ import Foundation
 
 /// The reminders a parent can turn on, in the order Settings lists them.
 public enum ReminderKind: String, Codable, Sendable, CaseIterable {
-    case checkIn, skinCheckIn, morningRoutine, eveningRoutine
+    // Raw values stay as saved; the list reminders were the routine reminders.
+    case checkIn, skinCheckIn, morningRoutine, afternoonRoutine, eveningRoutine
 
-    /// Which routine this reminds about; nil for the check-ins.
+    /// Which routine this reminds about; nil for the check-ins and afternoon.
     public var routineTime: RoutineTime? {
+        switch self {
+        case .checkIn, .skinCheckIn, .afternoonRoutine: nil
+        case .morningRoutine: .morning
+        case .eveningRoutine: .evening
+        }
+    }
+
+    /// Which To do block this reminds about; nil for the check-ins.
+    public var todoBlock: TodoBlock? {
         switch self {
         case .checkIn, .skinCheckIn: nil
         case .morningRoutine: .morning
-        case .eveningRoutine: .evening
+        case .afternoonRoutine: .afternoon
+        case .eveningRoutine: .bedtime
         }
     }
 
@@ -17,7 +28,7 @@ public enum ReminderKind: String, Codable, Sendable, CaseIterable {
         switch self {
         case .checkIn: ReminderIDs.checkInCategory
         case .skinCheckIn: ReminderIDs.skinCategory
-        case .morningRoutine, .eveningRoutine: ReminderIDs.routineCategory
+        case .morningRoutine, .afternoonRoutine, .eveningRoutine: ReminderIDs.routineCategory
         }
     }
 
@@ -44,7 +55,7 @@ public enum ReminderAction: String, Sendable, CaseIterable {
         case .good: "Good"
         case .okay: "Okay"
         case .rough: "Rough"
-        case .done: "Done"
+        case .done: "All done"
         case .snooze: "Snooze 30 min"
         case .calm, .littleItchy, .flaring, .veryRough: skinToday?.title ?? ""
         }
@@ -95,7 +106,7 @@ enum ReminderIDs {
     /// Snoozes and test notifications are left alone.
     static func isPlanned(_ id: String) -> Bool {
         id.hasPrefix(checkInPrefix) || id.hasPrefix(skinPrefix)
-            || id == routine(.morningRoutine) || id == routine(.eveningRoutine)
+            || id == routine(.morningRoutine) || id == routine(.afternoonRoutine) || id == routine(.eveningRoutine)
     }
 
     /// The reminder a snooze request belongs to.

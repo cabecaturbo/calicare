@@ -2,42 +2,54 @@ import Core
 import SwiftUI
 import UserNotifications
 
-/// Plan's Patch tests, when the care plan mentions patch testing: the plan's
-/// own line, tests running (with when to check), and this week's results.
-/// Only what the parent saw is recorded.
-struct PatchTestsSection: View {
+/// Info › Patch tests: "How do I patch test something new?" Plain steps,
+/// the provider's words, one button to start, and tests under way.
+struct PatchTestsScreen: View {
     @Environment(\.palette) private var palette
     @Environment(TodayModel.self) private var model
-    let tests: PatchTests
     @State private var starting = false
     @State private var checking: PatchTests.Test?
 
+    private var tests: PatchTests { model.patchTests }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.x2) {
-            Text("Patch tests")
-                .textStyle(.section)
-                .foregroundStyle(palette.ink)
-                .accessibilityAddTraits(.isHeader)
-            if let line = tests.planItem?.text {
-                Text(line).textStyle(.meta).foregroundStyle(palette.graphite)
-            }
-            VStack(spacing: 0) {
-                ForEach(tests.running) { test in
-                    Button { checking = test } label: {
-                        row(test.label, status(test), ready: test.isReady(at: .now))
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityHint("Record how it looks.")
+        InfoScreen(title: "Patch tests") {
+            if let item = tests.planItem {
+                VStack(alignment: .leading, spacing: Spacing.x2) {
+                    Text("What to do").textStyle(.section).foregroundStyle(palette.ink).accessibilityAddTraits(.isHeader)
+                    Text(item.plainText ?? "Try a little of the new thing on a small spot first. Wait, then look at the skin.")
+                        .textStyle(.body).foregroundStyle(palette.ink).fixedSize(horizontal: false, vertical: true)
                 }
-                ForEach(tests.recent) { test in
-                    row(test.label, test.result?.title ?? "", ready: false)
+                VStack(alignment: .leading, spacing: Spacing.x2) {
+                    Text("Your provider's words").textStyle(.section).foregroundStyle(palette.ink).accessibilityAddTraits(.isHeader)
+                    Text("“\(item.providerWords)”")
+                        .textStyle(.body).foregroundStyle(palette.graphite)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .textSelection(.enabled)
                 }
             }
             Button("Start a patch test") { starting = true }
-                .buttonStyle(.textLink)
+                .buttonStyle(.primary)
+            if !tests.running.isEmpty || !tests.recent.isEmpty {
+                VStack(alignment: .leading, spacing: Spacing.x2) {
+                    Text("Your tests").textStyle(.section).foregroundStyle(palette.ink).accessibilityAddTraits(.isHeader)
+                    VStack(spacing: 0) {
+                        ForEach(tests.running) { test in
+                            Button { checking = test } label: {
+                                row(test.label, status(test), ready: test.isReady(at: .now))
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityHint("Record how it looks.")
+                        }
+                        ForEach(tests.recent) { test in
+                            row(test.label, test.result?.title ?? "", ready: false)
+                        }
+                    }
+                }
+            }
         }
         .sheet(isPresented: $starting) {
-            StartPatchTestSheet(planLine: tests.planItem?.text, wait: tests.wait)
+            StartPatchTestSheet(planLine: tests.planItem?.providerWords, wait: tests.wait)
                 .nightAwarePalette()
         }
         .confirmationDialog("How does it look?", isPresented: checkingShowing, titleVisibility: .visible, presenting: checking) { test in

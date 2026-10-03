@@ -193,10 +193,24 @@ public struct PlanItemInfo: Identifiable, Hashable, Sendable {
     public let category: StepCategory?
     /// Set on items split out of a list ("Continue A, B").
     public let parentItemID: UUID?
+    /// Supplements: giving now (nil until the parent answers).
+    public let isGiving: Bool?
+    /// Supplements: the blocks it's given in; nil means the plan's default.
+    public let givingTimes: [TodoBlock]?
+    /// The provider's words in plain language, when checked and kept.
+    public let plainText: String?
+    /// The provider's whole paragraph, restored from the saved original.
+    public let sourceParagraph: String?
 
     public init(id: UUID, planID: UUID, kind: PlanItemKind, text: String, dose: String?, frequency: String?,
                 timing: String?, duration: String?, sourcePage: Int?, sourceLine: String?, isConfirmed: Bool, order: Int,
-                label: String? = nil, detail: String? = nil, category: StepCategory? = nil, parentItemID: UUID? = nil) {
+                label: String? = nil, detail: String? = nil, category: StepCategory? = nil, parentItemID: UUID? = nil,
+                isGiving: Bool? = nil, givingTimes: [TodoBlock]? = nil, plainText: String? = nil,
+                sourceParagraph: String? = nil) {
+        self.isGiving = isGiving
+        self.givingTimes = givingTimes
+        self.plainText = plainText
+        self.sourceParagraph = sourceParagraph
         self.label = label
         self.detail = detail
         self.category = category
@@ -217,13 +231,24 @@ public struct PlanItemInfo: Identifiable, Hashable, Sendable {
 }
 
 extension PlanItemInfo {
+    /// The provider's exact words, never cut: the whole paragraph when it was
+    /// restored, else the quoted line, else the item's text.
+    public var providerWords: String { sourceParagraph ?? sourceLine ?? text }
+
+    /// When a supplement is given: the parent's choice, or the plan's default.
+    public var blocks: [TodoBlock] { givingTimes ?? TodoBlock.defaults(forFrequency: frequency) }
+}
+
+extension PlanItemInfo {
     init?(_ item: PlanItem) {
         guard let kind = item.kind else { return nil }
         self.init(id: item.id, planID: item.planID, kind: kind, text: item.text, dose: item.dose,
                   frequency: item.frequency, timing: item.timing, duration: item.duration,
                   sourcePage: item.sourcePage, sourceLine: item.sourceLine, isConfirmed: item.isConfirmed, order: item.order,
                   label: item.label, detail: item.detail, category: item.categoryRaw.flatMap(StepCategory.init),
-                  parentItemID: item.parentItemID)
+                  parentItemID: item.parentItemID, isGiving: item.isGiving,
+                  givingTimes: TodoBlock.parse(item.givingTimesRaw), plainText: item.plainText,
+                  sourceParagraph: item.sourceParagraph)
     }
 }
 

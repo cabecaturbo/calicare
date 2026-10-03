@@ -62,7 +62,7 @@ struct EditLogSheet: View {
                     VStack(alignment: .leading, spacing: Spacing.x2) {
                         Button("Delete this log") { confirmingDelete = true }
                             .buttonStyle(.secondary)
-                        Text("Deleted logs disappear from Today, widgets, and reports.")
+                        Text("A deleted log is gone from Today, from widgets, and from reports.")
                             .textStyle(.meta)
                             .foregroundStyle(palette.graphite)
                             .fixedSize(horizontal: false, vertical: true)

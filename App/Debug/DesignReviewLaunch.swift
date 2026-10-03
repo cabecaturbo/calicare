@@ -21,6 +21,11 @@ enum DesignReviewLaunch {
         if UserDefaults.standard.bool(forKey: "clearCarePlanAndSteps") {
             Task { await clearCarePlanAndSteps() }
         }
+        // One-time undo for the parent's own steps the clean slate removed
+        // (launched with `-restoreOwnSteps YES`). Same ids, so history returns.
+        if UserDefaults.standard.bool(forKey: "restoreOwnSteps") {
+            Task { await restoreOwnSteps() }
+        }
         if let kind = UserDefaults.standard.string(forKey: "designReviewSeed"), ["YES", "UNRATED", "EMPTY", "MONTHS", "TWO", "SAMPLE", "PLAN", "PLANSTARTED", "LEGACYPLAN"].contains(kind) {
             UserDefaults.standard.set(true, forKey: OnboardingFlag.key)
             Task { await seed(kind) }
@@ -57,6 +62,15 @@ enum DesignReviewLaunch {
         await LogChanges.didChange()
     }
 
+    private static func restoreOwnSteps() async {
+        guard let container = try? CaliCareModelContainer.shared(),
+              let children = try? await ChildStore(modelContainer: container).activeChildren()
+        else { return }
+        let plans = CarePlanStore(modelContainer: container)
+        for child in children { _ = try? await plans.restoreOwnSteps(child: child.id) }
+        await LogChanges.didChange()
+    }
+
     private static func seed(_ kind: String) async {
         guard let container = try? CaliCareModelContainer.shared() else { return }
         let children = ChildStore(modelContainer: container)
@@ -82,6 +96,26 @@ enum DesignReviewLaunch {
             if let draft = try? await plans.createDraft(child: cal.id, provider: "Dr. Rivera", items: LegacyPlanFixture.items) {
                 for item in (try? await plans.items(plan: draft.id)) ?? [] { try? await plans.setConfirmed(item.id, true) }
                 _ = try? await plans.start(draft.id)
+            }
+            // Supplements answered as given (the shapes the question would make), and plain words.
+            if let plan = try? await plans.activePlan(child: cal.id) {
+                for item in (try? await plans.items(plan: plan.id)) ?? [] {
+                    if item.kind == .supplement, !SupplementDisplay.isMention(item.text),
+                       !UserDefaults.standard.bool(forKey: "todoAsk") {
+                        try? await plans.setGiving(item.id, !item.text.hasPrefix("Transition"))
+                    }
+                    if let plain = LegacyPlanFixture.plain.first(where: { (item.sourceLine ?? item.text).hasPrefix($0.key) })?.value {
+                        _ = try? await plans.setPlainText(item.id, plain)
+                    }
+                }
+            }
+            if UserDefaults.standard.bool(forKey: "todoAllDone") {
+                let actions = TodoActions(container: container, now: { TodoClock.now() })
+                for block in TodoBlock.allCases {
+                    _ = try? await actions.completeBlock(block, child: cal.id, source: .app)
+                    // Skin care is a counter: log the rest of its rounds.
+                    for _ in 0..<3 { _ = try? await actions.completeBlock(block, child: cal.id, source: .app) }
+                }
             }
             let foods = FoodStore(modelContainer: container)
             for name in LegacyPlanFixture.safeFoods { _ = try? await foods.add(name: name, status: .safe, decidedBy: .parent, child: cal.id) }

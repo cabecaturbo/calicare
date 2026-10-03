@@ -550,3 +550,34 @@ The owner's real plan read poorly on Plan: step names were cut mid-word, "Step 1
 - **Type and spacing, whole app (owner's choice):** section headers are Newsreader 20/26 (title3); a new `label` style keeps SF Pro semibold for the child switcher, step numbers, and outlined buttons. Spacing is 4/8/16/24/40, sections 40 apart. Shared cards and PDFs keep their old spacing and sans headings (fixed-size pages).
 - **Food's focal point** is the food counts; the plant counter stays hidden for version 1 (owner's choice).
 - **Status bar and sheet headers** are solid, so content doesn't scroll under the clock or behind a sheet's title.
+
+## To do + Info: Plan split in two (October 3, 2026)
+
+The owner asked for one job per screen. To do answers "What do I do right now?" Info answers "What does the plan say?"
+
+- **Tabs:** Today · To do · Progress · Info · Log. To do replaced Plan.
+- **Time blocks:** Morning, Afternoon (only when something is given then), and Bedtime, at the Settings › Reminders list times.
+  - **Which block is open:** before the morning time, Morning. Otherwise the latest block that has started (from an hour before), and if it's done, the next one. After Bedtime: "All done for tonight."
+  - **Code:** `TodoDay` (Core, pure, tested).
+- **Rows:** a 28pt circle with a 56pt target, a verb-first label, and one meta line.
+  - The label opens "What to do" (plain words), then "Your provider's words" (exact, never cut).
+  - No Start buttons, "New" pills, links, or paragraphs on To do.
+- **Skin care** is one row a day: "2 of 3-4 today", from the plan's own count, and done at the low end (owner: go off the care plan). A round is one log on the first skin step.
+- **Supplements:**
+  - New PlanItem fields `isGiving` and `givingTimesRaw` (SchemaV7, nullable Supabase columns).
+  - Default times: 1x (or none) is morning, 2x adds bedtime, 3x adds afternoon. Times can be changed in Info › Supplements.
+  - Doses are logged with the block in the note. Older doses fill the earliest blocks.
+  - "Which of these are you giving now?" asks once per plan, pre-checked for anything already started. Unchecked ones wait under "Not giving yet" with "Add to To do".
+- **Reminders:** Morning, Afternoon, and Bedtime lists ("Bedtime: 5 things") with "All done", which ticks the whole block in the background (`TodoActions.completeBlock`). Off by default. The old routine reminders became the morning and bedtime lists and kept their times.
+- **Labels go only off the plan's words** (owner): "Put on [what the plan names]", "Give [name]", "Give a bath". No guessing a product's form (spray, gel). Labels the app wrote before ("Apply …", "Take a bath") refresh; labels the parent wrote stay.
+- **Plain words:**
+  - The plan reader returns `plain`, and a `plain` mode fills older plans once (sign-in needed; nothing stored on the server).
+  - Kept only if every number, ratio, unit, and brand is unchanged, nothing is added, and it reads at grade 6 (Flesch-Kincaid). The server (`plain.ts`) and the phone (`PlainWords`) apply the same rule.
+- **Reading grade test** (`ReadingGradeTests`): every literal shown on screen in App/ is scored.
+  - 5+ words: Flesch-Kincaid at grade 6 or below.
+  - Shorter labels: no word over 3 syllables (allowlist: moisturizer, afternoon, everything, notification, caregiver), because Flesch-Kincaid is meaningless on two words.
+  - Provider and parent words aren't scored. Eleven app strings were rewritten to pass.
+- **Fix: patch test lost its last sentence.**
+  - Plan showed `PlanItem.text`, which the reader was told to keep "as short as the plan allows".
+  - Screens now show the provider's words from `sourceLine`, or a restored `sourceParagraph` from the saved original when the quote itself was cut. The reader's prompt now says never drop a sentence.
+- **Fix: Bath, Moisturizer, Pajamas, Wash face missing.** The clean slate the owner chose soft-deleted all routine steps. `restoreOwnSteps` clears `deletedAt` on the parent's own steps removed at that moment: same IDs, so the history comes back. It runs once on the phone with `-restoreOwnSteps YES`.

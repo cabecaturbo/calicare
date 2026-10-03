@@ -1,5 +1,6 @@
 import Core
 import Foundation
+import SwiftData
 import Testing
 
 /// Labels: a verb first, one action, at most 6 words, no "Step N:", and the
@@ -8,20 +9,20 @@ struct StepLabelerTests {
     @Test func labelsFromThePlansWords() {
         let one = StepLabeler.wording(for: "Step 1: Active Skin Repair, if tolerated. If Cal doesn’t tolerate this step, move to Step 3.",
                                       planKind: .topicalStep)
-        #expect(one.label == "Apply Active Skin Repair")
+        #expect(one.label == "Put on Active Skin Repair")
         #expect(one.detail == "if tolerated. If Cal doesn’t tolerate this step, move to Step 3.")
         #expect(one.category == .apply)
         #expect(one.kind == .task)
 
         let three = StepLabeler.wording(for: "Step 3: Jojoba oil + Neem oil. Start with 50:50 ratio and work up, as tolerated. Kate Blanc Brand on Amazon.",
                                         planKind: .topicalStep)
-        #expect(three.label == "Apply Jojoba oil + Neem oil")
+        #expect(three.label == "Put on Jojoba oil + Neem oil")
         #expect(three.detail?.contains("50:50") == true)
 
-        #expect(StepLabeler.wording(for: "Bath").label == "Take a bath")
+        #expect(StepLabeler.wording(for: "Bath").label == "Give a bath")
         #expect(StepLabeler.wording(for: "Bath").category == .wash)
         #expect(StepLabeler.wording(for: "Wash face").label == "Wash face")
-        #expect(StepLabeler.wording(for: "Moisturizer").label == "Apply moisturizer")
+        #expect(StepLabeler.wording(for: "Moisturizer").label == "Put on moisturizer")
         #expect(StepLabeler.wording(for: "Pajamas").label == "Put on pajamas")
         #expect(StepLabeler.wording(for: "Pajamas").category == .dress)
     }
@@ -44,7 +45,7 @@ struct StepLabelerTests {
         for line in lines {
             let wording = StepLabeler.wording(for: line)
             guard let label = wording.label else { continue }
-            let words = label.split(separator: " ")
+            let words = label.split(separator: " ").filter { $0.contains(where: \.isLetter) }
             #expect(words.count <= StepLabeler.maxWords, "\(label)")
             #expect(!label.lowercased().hasPrefix("step"), "\(label)")
             #expect(StepLabeler.isValid(label: label, detail: wording.detail, source: StepLabeler.clean(line)), "\(label)")
@@ -75,7 +76,7 @@ struct StepLabelerTests {
         let routine = RoutineStore(modelContainer: harness.container)
         let step = try await routine.add(name: "Moisturizer", time: .evening, child: harness.child.id)
         #expect(step.sourceText == "Moisturizer")
-        #expect(step.label == "Apply moisturizer")
+        #expect(step.label == "Put on moisturizer")
         try await routine.rename(step.id, to: "Cream on arms")
         let after = try #require(try await routine.steps(child: harness.child.id).first)
         #expect(after.label == "Cream on arms")
@@ -124,7 +125,7 @@ struct StepLabelerTests {
         _ = try await plans.start(draft.id)
         let steps = try await RoutineStore(modelContainer: harness.container).steps(child: harness.child.id)
         #expect(steps.contains { $0.label == "Apply aloe vera" && $0.sourceText == line })
-        #expect(steps.contains { $0.label == "Apply aloe vera" && $0.detail == "96% or more pure. Plant Therapy brand." })
+        #expect(steps.contains { $0.label == "Put on aloe vera" && $0.detail == "96% or more pure. Plant Therapy brand." })
     }
 
     @Test func cleanSlateRemovesPlansAndStepsButKeepsLogs() async throws {
@@ -144,5 +145,24 @@ struct StepLabelerTests {
         #expect(try await plans.plans(child: harness.child.id).isEmpty)
         #expect(try await routine.steps(child: harness.child.id, includeInactive: true).isEmpty)
         #expect(try await logs.allLive().count == before)
+    }
+
+    @Test func appLabelsRefreshButParentLabelsStay() throws {
+        let container = try CaliCareModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let old = RoutineStep(childID: UUID(), name: "Moisturizer", time: .evening, order: 0)
+        old.sourceText = "Moisturizer"
+        old.label = "Apply moisturizer"
+        let mine = RoutineStep(childID: UUID(), name: "Bath", time: .evening, order: 1)
+        mine.sourceText = "Bath"
+        mine.label = "Bath with Grandma"
+        context.insert(old)
+        context.insert(mine)
+        try context.save()
+        let result = try StepBackfill.run(in: context)
+        #expect(result.relabelled == 1)
+        #expect(old.label == "Put on moisturizer")
+        #expect(mine.label == "Bath with Grandma")
+        #expect(old.name == "Moisturizer" && old.sourceText == "Moisturizer")
     }
 }

@@ -3,6 +3,8 @@
 // (dose, frequency, timing, duration) must appear in the plan's text, and
 // anything missing stays blank and is flagged. Nothing is ever filled in.
 
+import { isFaithful } from "./plain.ts";
+
 export const KINDS = [
   "routineStep", "topicalStep", "bath", "supplement", "medication", "foodRule", "fundamental", "followUp",
 ] as const;
@@ -36,6 +38,7 @@ export interface RawItem {
   label?: unknown;
   detail?: unknown;
   category?: unknown;
+  plain?: unknown;
 }
 
 /** A checked item, ready for the phone's review screen. */
@@ -52,6 +55,8 @@ export interface Item {
   label: string | null;
   detail: string | null;
   category: Category | null;
+  /** Plain words, kept only if they change no number or brand and read at grade 6. */
+  plain: string | null;
   /** Details the plan left blank that a parent would expect: "Worth asking at your next visit." */
   blanks: Detail[];
 }
@@ -186,6 +191,9 @@ export function check(raw: RawItem[], source: string): Checked {
       ? r.category as Category
       : null;
 
+    const proposed = clean(r.plain);
+    const plain = proposed && isFaithful(proposed, line) ? proposed : null;
+
     items.push({
       kind,
       text,
@@ -195,6 +203,7 @@ export function check(raw: RawItem[], source: string): Checked {
       label,
       detail,
       category,
+      plain,
       // Only items that give some of the expected details can be missing one:
       // a rule like "rotate after 3 weeks" has no dose to miss. Same rule as
       // PlanItemInfo.blanks.

@@ -91,6 +91,14 @@ public actor LogStore: ModelActor {
                    bodyAreas: [], routineStepID: planItemID, loggedBy: loggedBy, at: timestamp)
     }
 
+    /// A cooked batch: its name and how many days to keep it, in the fridge or freezer.
+    @discardableResult
+    public func logBatch(_ name: String, place: BatchPlace, days: Int, child childID: UUID, source: EntrySource,
+                         loggedBy: String = LoggedBy.current(), at timestamp: Date? = nil) async throws -> LogEntry {
+        try insert(.batch, value: .batch(place), child: childID, source: source, note: LeftoverBatch.note(name: name, days: days),
+                   bodyAreas: [], routineStepID: nil, loggedBy: loggedBy, at: timestamp)
+    }
+
     /// A meal: the foods' names, from the food list.
     @discardableResult
     public func logMeal(_ foods: [String], child childID: UUID, source: EntrySource,

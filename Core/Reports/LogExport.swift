@@ -55,6 +55,7 @@ public enum LogExport {
         case .providerMessage: "Message to provider"
         case .foodTrial: "Food trial"
         case .meal: "Meal"
+        case .batch: "Cooked batch"
         }
     }
 

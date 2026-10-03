@@ -34,6 +34,8 @@ final class TodayModel {
     private(set) var trialLogs: [LogEntry] = []
     /// The child's meal logs, for the plant counter.
     private(set) var mealLogs: [LogEntry] = []
+    /// Cooked batches still in the fridge or freezer, soonest first.
+    private(set) var batches: [LeftoverBatch] = []
     /// The running care plan, its provider visits, and messages sent.
     private(set) var activePlan: CarePlanInfo?
     private(set) var visits: [VisitInfo] = []
@@ -92,6 +94,7 @@ final class TodayModel {
             let all = try await store.allLive().filter { $0.childID == child.id }
             trialLogs = all.filter { $0.type == .foodTrial }
             mealLogs = all.filter { $0.type == .meal }
+            batches = LeftoverBatch.current(from: all)
             if let active = activePlan {
                 planItems = Dictionary(uniqueKeysWithValues: try await plans.items(plan: active.id).map { ($0.id, $0) })
                 let mine = try await store.allLive().filter { $0.childID == child.id }
@@ -235,6 +238,32 @@ final class TodayModel {
         } catch {
             problem = "Couldn't save that. Please try again."
         }
+    }
+
+    /// A cooked batch, with a reminder when the parent's days run out.
+    func addBatch(_ name: String, place: BatchPlace, days: Int) async {
+        guard let child else { return }
+        do {
+            let entry = try await LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+                .logBatch(name, place: place, days: days, child: child.id, source: .app)
+            if let batch = LeftoverBatch(entry) { Task.detached { await BatchReminder.schedule(batch) } }
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't save that. Please try again."
+        }
+    }
+
+    /// Used or tossed: it leaves the list and its reminder goes.
+    func finishBatch(_ batch: LeftoverBatch) async {
+        BatchReminder.cancel(batch)
+        _ = await update(batch.entry, value: .batch(.done), note: batch.entry.note, timestamp: batch.entry.timestamp)
+    }
+
+    /// Moves a fridge batch to the freezer with the parent's new days.
+    func freezeBatch(_ batch: LeftoverBatch, days: Int) async {
+        await finishBatch(batch)
+        await addBatch(batch.name, place: .freezer, days: days)
     }
 
     /// The latest trial for each food.
@@ -471,6 +500,7 @@ final class TodayModel {
         foods = []
         trialLogs = []
         mealLogs = []
+        batches = []
         activePlan = nil
         weekLogs = []
         hasLoaded = true

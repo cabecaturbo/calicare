@@ -18,6 +18,8 @@ public enum LogType: String, Codable, Sendable, CaseIterable {
     case supplement
     /// A message sent to the provider, counted against the plan's allowance.
     case providerMessage
+    /// A cooked batch in the fridge or freezer: "Chicken rice · 3 days" in `note`, where it is in `value`.
+    case batch
     /// A meal: the foods eaten, from the food list, in `note` ("Oats, Blueberries").
     case meal
     /// A food trial: started (note "4 days · 1 tsp, 1 tbsp"), given, worth watching, or ended.
@@ -27,7 +29,7 @@ public enum LogType: String, Codable, Sendable, CaseIterable {
     /// Whether a log of this type must carry a value.
     public var requiresValue: Bool {
         switch self {
-        case .nightRating, .mood, .skinToday, .supplement, .foodTrial: true
+        case .nightRating, .mood, .skinToday, .supplement, .foodTrial, .batch: true
         // A one-tap widget log records that it happened; the kind is optional.
         case .bowelMovement, .itchEpisode, .flare, .routineDone, .note, .bath, .patchTest, .providerMessage, .meal: false
         }
@@ -37,7 +39,7 @@ public enum LogType: String, Codable, Sendable, CaseIterable {
     public func accepts(_ value: LogValue?) -> Bool {
         switch (self, value) {
         case (.nightRating, .night?), (.bowelMovement, .bowel?), (.mood, .mood?), (.routineDone, .routine?),
-             (.skinToday, .skin?), (.patchTest, .patch?), (.supplement, .supplement?), (.foodTrial, .trial?): true
+             (.skinToday, .skin?), (.patchTest, .patch?), (.supplement, .supplement?), (.foodTrial, .trial?), (.batch, .batch?): true
         case (_, nil): !requiresValue
         default: false
         }
@@ -109,6 +111,11 @@ public enum PatchResult: String, Codable, Sendable, CaseIterable {
     }
 }
 
+/// Where a cooked batch is, or that it's done (used, frozen into a new batch, or tossed).
+public enum BatchPlace: String, Codable, Sendable, CaseIterable {
+    case fridge, freezer, done
+}
+
 /// What happened in a food trial.
 public enum FoodTrialEvent: String, Codable, Sendable, CaseIterable {
     case started, given, worthWatching, ended
@@ -148,6 +155,7 @@ public enum LogValue: Hashable, Sendable {
     case patch(PatchResult)
     case supplement(SupplementEvent)
     case trial(FoodTrialEvent)
+    case batch(BatchPlace)
 
     public var rawValue: String {
         switch self {
@@ -159,6 +167,7 @@ public enum LogValue: Hashable, Sendable {
         case .patch(let result): result.rawValue
         case .supplement(let event): event.rawValue
         case .trial(let event): event.rawValue
+        case .batch(let place): place.rawValue
         }
     }
 
@@ -189,6 +198,9 @@ public enum LogValue: Hashable, Sendable {
         case .foodTrial:
             guard let event = FoodTrialEvent(rawValue: raw) else { return nil }
             self = .trial(event)
+        case .batch:
+            guard let place = BatchPlace(rawValue: raw) else { return nil }
+            self = .batch(place)
         case .itchEpisode, .flare, .note, .bath, .providerMessage, .meal:
             return nil
         }

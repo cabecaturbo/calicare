@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lock Screen widgets and control</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width:820px;height:520px;display:flex;flex-direction:column;font-family:var(--sans)">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+<section style="flex-grow:1;box-sizing:border-box;padding:var(--s5) var(--s6);background:{{th.wall}};color:var(--mock-on-wall);display:flex;flex-direction:column;gap:var(--s4)">
+<h2 class="t-label" style="margin:0">{{th.title}}</h2>
+<div style="display:flex;gap:var(--s6);align-items:center">
+<div style="display:flex;flex-direction:column;gap:var(--s2)"><span class="t-caption">Lock Screen · circular</span><dc-import name="WLock" kind="circle" hint-size="72px,72px"></dc-import></div>
+<div style="display:flex;flex-direction:column;gap:var(--s2)"><span class="t-caption">Lock Screen · rectangular</span><dc-import name="WLock" kind="rect" hint-size="160px,72px"></dc-import></div>
+<div style="display:flex;flex-direction:column;gap:var(--s2)"><span class="t-caption">Control · small</span><dc-import name="WLock" kind="control" hint-size="80px,96px"></dc-import></div>
+<div style="display:flex;flex-direction:column;gap:var(--s2)"><span class="t-caption">Control · wide</span><dc-import name="WLock" kind="controlWide" hint-size="148px,68px"></dc-import></div>
+</div>
+</section>
+</sc-for>
+<p class="t-caption" style="margin:0;padding:var(--s3) var(--s6);background:var(--bg);color:var(--muted)">Lock Screen widgets and controls are always monochrome (the system tints them). On iPhones with an Action Button, the Log Itchy control can also be assigned to it in Settings › Action Button › Controls.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":820,"height":520}}'>
+class Component extends DCLogic {
+renderVals() {
+return {
+themes: [
+{ title: 'Day', wall: 'var(--mock-wall)' },
+{ title: 'Night', wall: 'var(--mock-wall-night)' }
+]
+};
+}
+}
+</script>
+</body>
+</html>

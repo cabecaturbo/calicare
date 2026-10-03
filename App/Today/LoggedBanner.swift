@@ -1,41 +1,40 @@
 import Core
 import SwiftUI
 
-/// "Logged itchy spell for Cal, 2:14 PM" with Undo. Fades on its own.
+/// "Logged itchy spell for Cal, 2:14 AM. · Undo" on an oat sheet. Leaves after 4 seconds.
 struct LoggedBanner: View {
     @Environment(\.palette) private var palette
     let confirmation: TodayModel.Confirmation
+    /// Only for a flare: opens the body outline.
+    var onAddWhere: (() -> Void)?
     let onUndo: () -> Void
     let onDismiss: () -> Void
 
     var body: some View {
-        HStack(spacing: Spacing.s) {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.title2)
-                .foregroundStyle(palette.accent)
-                .accessibilityHidden(true)
+        HStack(alignment: .center, spacing: Spacing.x4) {
             Text(confirmation.text)
-                .font(Typography.callout)
+                .textStyle(.body)
                 .foregroundStyle(palette.ink)
                 .fixedSize(horizontal: false, vertical: true)
-            Spacer(minLength: 0)
-            Button(action: onUndo) {
-                Text("Undo")
-                    .font(Typography.button)
-                    .foregroundStyle(palette.sageDark)
-                    .padding(.horizontal, Spacing.m)
-                    .frame(minWidth: TouchTarget.minimum, minHeight: TouchTarget.minimum)
-                    .background(palette.sand, in: Capsule())
+                .frame(maxWidth: .infinity, alignment: .leading)
+            if let onAddWhere {
+                Button("Add where", action: onAddWhere)
+                    .buttonStyle(.textLink)
+                    .accessibilityHint("Mark where the flare was.")
             }
-            .buttonStyle(.plain)
-            .accessibilityHint("Removes what you just logged.")
+            Button("Undo", action: onUndo)
+                .buttonStyle(.textLink)
+                .accessibilityHint("Removes what you just logged.")
         }
-        .padding(Spacing.s)
-        .background(palette.card, in: RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
-        .shadow(color: .black.opacity(palette.isNight ? 0 : 0.08), radius: 12, y: 4)
+        .padding(.horizontal, Spacing.x4)
+        .padding(.vertical, Spacing.x2)
+        .frame(minHeight: Size.row(isNight: palette.isNight))
+        .paperBackground(.oat)
+        .clipShape(RoundedRectangle(cornerRadius: Corner.control))
         .task(id: confirmation.id) {
             AccessibilityNotification.Announcement(confirmation.text).post()
-            try? await Task.sleep(for: .seconds(8))
+            // A little longer when there's "Add where" to reach.
+            try? await Task.sleep(for: .seconds(onAddWhere == nil ? 4 : 6))
             if !Task.isCancelled { onDismiss() }
         }
     }

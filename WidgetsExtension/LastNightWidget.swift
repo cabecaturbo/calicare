@@ -2,7 +2,7 @@ import Core
 import SwiftUI
 import WidgetKit
 
-/// Lock Screen (rectangular): last night's rating.
+/// Lock Screen (rectangular): tonight's (or last night's) wake-ups and the last itch.
 struct LastNightWidget: Widget {
     static let kind = "LastNightWidget"
 
@@ -11,7 +11,7 @@ struct LastNightWidget: Widget {
             LastNightWidgetView(entry: entry)
         }
         .configurationDisplayName("Last night")
-        .description("How last night went, at a glance.")
+        .description("Tonight's wake-ups and the last itch, at a glance.")
         .supportedFamilies([.accessoryRectangular])
     }
 }
@@ -20,18 +20,14 @@ struct LastNightWidgetView: View {
     let entry: CareEntry
 
     var body: some View {
+        let snapshot = entry.snapshot
         VStack(alignment: .leading, spacing: 1) {
-            Text("Last night")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-            Text(WidgetText.night(entry.snapshot.lastNight))
-                .font(.headline)
+            Text("\(snapshot.isNight ? "Tonight" : "Last night"): \(snapshot.nightWakeUps)")
+                .font(TypeStyle.control.font)
                 .widgetAccentable()
-            if let name = entry.snapshot.child?.name {
-                Text(name)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
+            Text(WidgetText.last(snapshot.lastItch, now: entry.date))
+                .font(TypeStyle.meta.font)
+                .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)

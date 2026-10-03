@@ -7,6 +7,12 @@ options:
   createIntermediateGroups: true
   generateEmptyDirectories: true
 
+packages:
+  # Approved exception to the no-packages rule (prompt 2.2). Nothing else.
+  Supabase:
+    url: https://github.com/supabase/supabase-swift
+    from: 2.55.2
+
 settings:
   base:
     SWIFT_VERSION: "6.0"
@@ -23,13 +29,29 @@ targets:
     platform: iOS
     sources:
       - App
+    configFiles:
+      Debug: Config/App.xcconfig
+      Release: Config/App.xcconfig
     dependencies:
       - target: Core
       - target: WidgetsExtension
+      - target: MessagesExtension
+      - package: Supabase
+        product: Supabase
     info:
       path: App/Info.plist
       properties:
-        CFBundleDisplayName: CaliCare
+        CFBundleDisplayName: Cali Care
+        CFBundleName: Cali Care
+        # calicare://note opens the note sheet (the medium widget's Note button).
+        CFBundleURLTypes:
+          - CFBundleURLName: com.cursorkittens.calicare
+            CFBundleURLSchemes: [calicare]
+        # Empty when Config/Supabase.local.xcconfig is missing; accounts are then hidden.
+        SupabaseHost: $(SUPABASE_HOST)
+        SupabasePublishableKey: $(SUPABASE_PUBLISHABLE_KEY)
+        # Lets the app name the shared keychain group extensions will read.
+        AppIdentifierPrefix: $(AppIdentifierPrefix)
         UILaunchScreen:
           UIColorName: LaunchBackground
         UISupportedInterfaceOrientations:
@@ -37,6 +59,13 @@ targets:
         # Portrait-only iPhone app; without this, device builds warn.
         UIRequiresFullScreen: true
         ITSAppUsesNonExemptEncryption: false
+        # Scanning a care plan (Plan › Add your care plan) and progress photos (Progress › Photos).
+        NSCameraUsageDescription: Scan your child’s care plan or take progress photos. The pictures stay on this phone.
+        # Background sync (prompt 2.3).
+        UIBackgroundModes:
+          - fetch
+        BGTaskSchedulerPermittedIdentifiers:
+          - com.cursorkittens.calicare.sync
         # Lets Siri match "Cali Care" (two words) to the app name.
         INAlternativeAppNames:
           - INAlternativeAppName: Cali Care
@@ -46,13 +75,17 @@ targets:
       properties:
         com.apple.security.application-groups:
           - group.com.cursorkittens.calicare
+        com.apple.developer.applesignin:
+          - Default
+        # The Supabase session lives here so extensions can read it later.
+        keychain-access-groups:
+          - $(AppIdentifierPrefix)com.cursorkittens.calicare.shared
     settings:
       base:
         PRODUCT_NAME: CaliCare
         PRODUCT_BUNDLE_IDENTIFIER: com.cursorkittens.calicare
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
-        # No app icon yet; set to AppIcon once one is added.
-        ASSETCATALOG_COMPILER_APPICON_NAME: ""
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
   WidgetsExtension:
     type: app-extension
@@ -67,7 +100,7 @@ targets:
     info:
       path: WidgetsExtension/Info.plist
       properties:
-        CFBundleDisplayName: CaliCare Widgets
+        CFBundleDisplayName: Cali Care Widgets
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     entitlements:
@@ -75,9 +108,40 @@ targets:
       properties:
         com.apple.security.application-groups:
           - group.com.cursorkittens.calicare
+        keychain-access-groups:
+          - $(AppIdentifierPrefix)com.cursorkittens.calicare.shared
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.cursorkittens.calicare.widgets
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
+
+  MessagesExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - MessagesExtension
+    dependencies:
+      - target: Core
+        embed: false
+      - sdk: Messages.framework
+    info:
+      path: MessagesExtension/Info.plist
+      properties:
+        CFBundleDisplayName: Cali Care
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.message-payload-provider
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).MessagesViewController
+    entitlements:
+      path: MessagesExtension/MessagesExtension.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.cursorkittens.calicare
+        keychain-access-groups:
+          - $(AppIdentifierPrefix)com.cursorkittens.calicare.shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cursorkittens.calicare.messages
+        ASSETCATALOG_COMPILER_APPICON_NAME: iMessage App Icon
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
 
   Core:
@@ -105,12 +169,38 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.cursorkittens.calicare.coretests
         GENERATE_INFOPLIST_FILE: YES
 
+  DesignReviewUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - DesignReviewUITests
+    dependencies:
+      - target: App
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cursorkittens.calicare.designreview
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: App
+
 schemes:
+  # Screenshots for design review and the VisualSteps assets. Run on demand;
+  # it drives the simulator's Home Screen and Lock Screen.
+  DesignReview:
+    build:
+      targets:
+        App: all
+        DesignReviewUITests: [test]
+    test:
+      config: Debug
+      targets:
+        - DesignReviewUITests
+
   App:
     build:
       targets:
         App: all
         WidgetsExtension: all
+        MessagesExtension: all
         Core: all
     test:
       config: Debug

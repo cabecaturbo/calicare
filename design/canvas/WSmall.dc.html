@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Small widget</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div class="{{classes}}" style="position:relative;width:158px;height:158px;box-sizing:border-box;padding:var(--s3);border-radius:var(--mock-r-widget);background:var(--w-bg);color:var(--w-fg);font-family:var(--sans);overflow:hidden">
+<sc-if value="{{showNormal}}" hint-placeholder-val="{{true}}">
+<div class="{{normalClass}}" style="position:absolute;inset:var(--s3);display:flex;flex-direction:column;gap:var(--s2)">
+<button type="button" aria-label="Log itching" class="t-title {{pressClass}}" style="flex-grow:1;border:0;border-radius:var(--r);background:var(--w-btn-bg);color:var(--w-btn-fg);display:flex;align-items:flex-end;padding:var(--s3);box-sizing:border-box">Itchy</button>
+<span class="t-caption" style="color:var(--w-muted)">Last: 1:52 AM</span>
+</div>
+</sc-if>
+<sc-if value="{{showLogged}}" hint-placeholder-val="{{false}}">
+<div class="{{loggedClass}}" role="status" style="position:absolute;inset:var(--s3);display:flex;flex-direction:column;justify-content:space-between">
+<div style="display:flex;flex-direction:column;gap:var(--s1);padding:var(--s1) var(--s1) 0">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>
+<span class="t-label">Logged</span>
+<span class="t-caption" style="color:var(--w-muted)">2:14 AM</span>
+</div>
+<button type="button" class="t-label" style="height:var(--tap);border:0;border-radius:var(--r);background:var(--w-soft);color:var(--w-fg)">Undo</button>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"look":{"editor":"enum","options":["full","tinted","clear"],"default":"full"},"theme":{"editor":"enum","options":["day","night"],"default":"day"},"state":{"editor":"enum","options":["normal","logged","loop"],"default":"normal"},"$preview":{"width":158,"height":158}}'>
+class Component extends DCLogic {
+renderVals() {
+const look = this.props.look ?? 'full';
+const theme = this.props.theme === 'night' ? 'night' : 'day';
+const state = this.props.state ?? 'normal';
+const loop = state === 'loop';
+return {
+classes: theme + ' w-' + look,
+showNormal: state !== 'logged',
+showLogged: state !== 'normal',
+normalClass: loop ? 'loop-normal' : '',
+loggedClass: loop ? 'loop-logged' : '',
+pressClass: loop ? 'loop-press' : ''
+};
+}
+}
+</script>
+</body>
+</html>

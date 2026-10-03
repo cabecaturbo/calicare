@@ -1,3 +1,5 @@
+> Replaced by DESIGN.md.
+
 # Design System and Voice
 
 ## Feel

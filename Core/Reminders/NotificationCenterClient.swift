@@ -28,7 +28,13 @@ public struct LiveNotificationCenter: NotificationScheduling {
             intentIdentifiers: [],
             options: []
         )
-        UNUserNotificationCenter.current().setNotificationCategories([checkIn, routine])
+        let skin = UNNotificationCategory(
+            identifier: ReminderIDs.skinCategory,
+            actions: [ReminderAction.calm, .littleItchy, .flaring, .veryRough].map(Self.action),
+            intentIdentifiers: [],
+            options: []
+        )
+        UNUserNotificationCenter.current().setNotificationCategories([checkIn, skin, routine])
     }
 
     public func isAuthorized() async -> Bool {

@@ -2,7 +2,7 @@ import AppIntents
 
 /// The buttons on the widgets.
 public enum WidgetAction: String, CaseIterable, AppEnum {
-    case itchy, roughNight, bowelMovement, routineDone
+    case itchy, roughNight, bowelMovement, routineDone, flare
 
     public static let typeDisplayRepresentation: TypeDisplayRepresentation = "Log"
     public static let caseDisplayRepresentations: [WidgetAction: DisplayRepresentation] = [
@@ -10,6 +10,7 @@ public enum WidgetAction: String, CaseIterable, AppEnum {
         .roughNight: "Rough night",
         .bowelMovement: "Bowel movement",
         .routineDone: "Routine done",
+        .flare: "Flare",
     ]
 
     public var logType: LogType {
@@ -18,6 +19,7 @@ public enum WidgetAction: String, CaseIterable, AppEnum {
         case .roughNight: .nightRating
         case .bowelMovement: .bowelMovement
         case .routineDone: .routineDone
+        case .flare: .flare
         }
     }
 

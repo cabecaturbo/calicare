@@ -10,6 +10,10 @@ public struct LogEntry: Identifiable, Hashable, Sendable {
     public let timestamp: Date
     public let loggedBy: String
     public let source: EntrySource
+    /// Where a flare was, if the parent said.
+    public let bodyAreas: [BodyArea]
+    /// The routine step a `routineDone` log was for, if any.
+    public let routineStepID: UUID?
 
     public init(
         id: UUID = UUID(),
@@ -19,7 +23,9 @@ public struct LogEntry: Identifiable, Hashable, Sendable {
         note: String? = nil,
         timestamp: Date,
         loggedBy: String = "",
-        source: EntrySource = .app
+        source: EntrySource = .app,
+        bodyAreas: [BodyArea] = [],
+        routineStepID: UUID? = nil
     ) {
         self.id = id
         self.childID = childID
@@ -29,6 +35,8 @@ public struct LogEntry: Identifiable, Hashable, Sendable {
         self.timestamp = timestamp
         self.loggedBy = loggedBy
         self.source = source
+        self.bodyAreas = bodyAreas
+        self.routineStepID = routineStepID
     }
 }
 
@@ -39,6 +47,14 @@ public struct ChildInfo: Identifiable, Hashable, Sendable {
     public let birthDate: Date?
     public let colorTag: String
     public let isActive: Bool
+
+    public init(id: UUID, name: String, birthDate: Date?, colorTag: String, isActive: Bool) {
+        self.id = id
+        self.name = name
+        self.birthDate = birthDate
+        self.colorTag = colorTag
+        self.isActive = isActive
+    }
 }
 
 extension LogEntry {
@@ -53,7 +69,9 @@ extension LogEntry {
             note: event.note,
             timestamp: event.timestamp,
             loggedBy: event.loggedBy,
-            source: source
+            source: source,
+            bodyAreas: event.bodyAreas,
+            routineStepID: event.routineStepID
         )
     }
 }
@@ -67,5 +85,132 @@ extension ChildInfo {
             colorTag: child.colorTag,
             isActive: child.isActive
         )
+    }
+}
+
+/// A read-only copy of a routine step.
+public struct RoutineStepInfo: Identifiable, Hashable, Sendable {
+    public let id: UUID
+    public let childID: UUID
+    public let name: String
+    public let time: RoutineTime
+    public let order: Int
+    public let isActive: Bool
+    /// Set when a started care plan made this step.
+    public let planItemID: UUID?
+
+    public init(id: UUID, childID: UUID, name: String, time: RoutineTime, order: Int, isActive: Bool, planItemID: UUID? = nil) {
+        self.id = id
+        self.childID = childID
+        self.name = name
+        self.time = time
+        self.order = order
+        self.isActive = isActive
+        self.planItemID = planItemID
+    }
+}
+
+extension RoutineStepInfo {
+    /// Nil for a step with an unknown time (written by a newer app version).
+    init?(_ step: RoutineStep) {
+        guard let time = step.time else { return nil }
+        self.init(id: step.id, childID: step.childID, name: step.name, time: time, order: step.order,
+                  isActive: step.isActive, planItemID: step.planItemID)
+    }
+}
+
+/// A care plan, copied out of SwiftData.
+public struct CarePlanInfo: Identifiable, Hashable, Sendable {
+    public let id: UUID
+    public let childID: UUID
+    public let provider: String
+    public let planDate: Date?
+    public let sourceFileName: String?
+    public let status: CarePlanStatus
+    public let startedAt: Date?
+    public let endedAt: Date?
+
+    public init(id: UUID, childID: UUID, provider: String, planDate: Date?, sourceFileName: String?,
+                status: CarePlanStatus, startedAt: Date?, endedAt: Date?) {
+        self.id = id
+        self.childID = childID
+        self.provider = provider
+        self.planDate = planDate
+        self.sourceFileName = sourceFileName
+        self.status = status
+        self.startedAt = startedAt
+        self.endedAt = endedAt
+    }
+}
+
+extension CarePlanInfo {
+    init?(_ plan: CarePlan) {
+        guard let status = plan.status else { return nil }
+        self.init(id: plan.id, childID: plan.childID, provider: plan.provider, planDate: plan.planDate,
+                  sourceFileName: plan.sourceFileName, status: status, startedAt: plan.startedAt, endedAt: plan.endedAt)
+    }
+}
+
+/// One plan item, copied out of SwiftData.
+public struct PlanItemInfo: Identifiable, Hashable, Sendable {
+    public let id: UUID
+    public let planID: UUID
+    public let kind: PlanItemKind
+    public let text: String
+    public let dose: String?
+    public let frequency: String?
+    public let timing: String?
+    public let duration: String?
+    public let sourcePage: Int?
+    public let sourceLine: String?
+    public let isConfirmed: Bool
+    public let order: Int
+
+    public init(id: UUID, planID: UUID, kind: PlanItemKind, text: String, dose: String?, frequency: String?,
+                timing: String?, duration: String?, sourcePage: Int?, sourceLine: String?, isConfirmed: Bool, order: Int) {
+        self.id = id
+        self.planID = planID
+        self.kind = kind
+        self.text = text
+        self.dose = dose
+        self.frequency = frequency
+        self.timing = timing
+        self.duration = duration
+        self.sourcePage = sourcePage
+        self.sourceLine = sourceLine
+        self.isConfirmed = isConfirmed
+        self.order = order
+    }
+}
+
+extension PlanItemInfo {
+    init?(_ item: PlanItem) {
+        guard let kind = item.kind else { return nil }
+        self.init(id: item.id, planID: item.planID, kind: kind, text: item.text, dose: item.dose,
+                  frequency: item.frequency, timing: item.timing, duration: item.duration,
+                  sourcePage: item.sourcePage, sourceLine: item.sourceLine, isConfirmed: item.isConfirmed, order: item.order)
+    }
+}
+
+/// A provider visit, copied out of SwiftData.
+public struct VisitInfo: Identifiable, Hashable, Sendable {
+    public let id: UUID
+    public let childID: UUID
+    public let date: Date
+    public let provider: String
+    public let notes: String?
+
+    public init(id: UUID, childID: UUID, date: Date, provider: String, notes: String?) {
+        self.id = id
+        self.childID = childID
+        self.date = date
+        self.provider = provider
+        self.notes = notes
+    }
+}
+
+extension VisitInfo {
+    init(_ visit: Visit) {
+        self.init(id: visit.id, childID: visit.childID, date: visit.date, provider: visit.provider, notes: visit.notes)
     }
 }

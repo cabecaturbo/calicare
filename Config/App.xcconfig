@@ -1,0 +1,5 @@
+// Build settings for the App target. Supabase values come from the
+// gitignored local file when it exists; CI and fresh clones build without it.
+SUPABASE_HOST =
+SUPABASE_PUBLISHABLE_KEY =
+#include? "Supabase.local.xcconfig"

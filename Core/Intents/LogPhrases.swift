@@ -37,6 +37,18 @@ public struct LogPhrases: Sendable {
         case (.routineDone, .routine(let time)?): "\(time.rawValue) routine"
         case (.routineDone, _): "routine"
         case (.note, _): "note"
+        case (.skinToday, .skin(let answer)?): "skin today: \(answer.words)"
+        case (.skinToday, _): "skin today"
+        case (.bath, _): "bath"
+        case (.patchTest, .patch(let result)?): "patch test: \(result.title.lowercased())"
+        case (.patchTest, _): "patch test"
+        case (.supplement, .supplement(let event)?): "supplement \(event.rawValue)"
+        case (.supplement, _): "supplement"
+        case (.providerMessage, _): "message to the provider"
+        case (.foodTrial, .trial(.worthWatching)?): "something worth watching in a food trial"
+        case (.foodTrial, _): "food trial"
+        case (.meal, _): "meal"
+        case (.batch, _): "cooked batch"
         }
     }
 

@@ -9,6 +9,9 @@ public enum LogStoreError: Error, Equatable, Sendable {
     case childNotFound
     /// The log doesn't exist or was already deleted.
     case logNotFound
+    /// Body areas only go on flares.
+    case bodyAreasNotAllowed
+    case routineStepNotFound
 }
 
 /// Reads and writes logs. Every write is saved right away, because widgets
@@ -31,6 +34,9 @@ public actor LogStore: ModelActor {
     }
 
     /// Saves one log. `at` defaults to now; pass it to log something earlier.
+    ///
+    /// A skin answer replaces that day's earlier answer, and one given at night
+    /// counts for the day that just ended (see `SkinDay`).
     @discardableResult
     public func log(
         _ type: LogType,
@@ -38,37 +44,164 @@ public actor LogStore: ModelActor {
         child childID: UUID,
         source: EntrySource,
         note: String? = nil,
-        loggedBy: String = "Me",
+        bodyAreas: [BodyArea] = [],
+        loggedBy: String = LoggedBy.current(),
         at timestamp: Date? = nil
     ) async throws -> LogEntry {
+        try insert(
+            type, value: value, child: childID, source: source, note: note,
+            bodyAreas: bodyAreas, routineStepID: nil, loggedBy: loggedBy, at: timestamp
+        )
+    }
+
+    /// Ticks off one routine step: a `routineDone` log for the step's morning or evening.
+    @discardableResult
+    public func logRoutineStep(
+        _ stepID: UUID,
+        source: EntrySource,
+        loggedBy: String = LoggedBy.current(),
+        at timestamp: Date? = nil
+    ) async throws -> LogEntry {
+        var descriptor = FetchDescriptor<RoutineStep>(
+            predicate: #Predicate { $0.id == stepID && $0.deletedAt == nil }
+        )
+        descriptor.fetchLimit = 1
+        guard let step = try modelContext.fetch(descriptor).first, let time = step.time else {
+            throw LogStoreError.routineStepNotFound
+        }
+        return try insert(
+            .routineDone, value: .routine(time), child: step.childID, source: source, note: nil,
+            bodyAreas: [], routineStepID: step.id, loggedBy: loggedBy, at: timestamp
+        )
+    }
+
+    /// Logs one of the care plan's baths for the child. `planItemID` says which bath.
+    @discardableResult
+    public func logBath(_ planItemID: UUID, child childID: UUID, source: EntrySource,
+                        loggedBy: String = LoggedBy.current(), at timestamp: Date? = nil) async throws -> LogEntry {
+        try insert(.bath, value: nil, child: childID, source: source, note: nil,
+                   bodyAreas: [], routineStepID: planItemID, loggedBy: loggedBy, at: timestamp)
+    }
+
+    /// A plan supplement started, taken, or stopped. `planItemID` says which.
+    @discardableResult
+    public func logSupplement(_ event: SupplementEvent, item planItemID: UUID, child childID: UUID, source: EntrySource,
+                              loggedBy: String = LoggedBy.current(), at timestamp: Date? = nil) async throws -> LogEntry {
+        try insert(.supplement, value: .supplement(event), child: childID, source: source, note: nil,
+                   bodyAreas: [], routineStepID: planItemID, loggedBy: loggedBy, at: timestamp)
+    }
+
+    /// A cooked batch: its name and how many days to keep it, in the fridge or freezer.
+    @discardableResult
+    public func logBatch(_ name: String, place: BatchPlace, days: Int, child childID: UUID, source: EntrySource,
+                         loggedBy: String = LoggedBy.current(), at timestamp: Date? = nil) async throws -> LogEntry {
+        try insert(.batch, value: .batch(place), child: childID, source: source, note: LeftoverBatch.note(name: name, days: days),
+                   bodyAreas: [], routineStepID: nil, loggedBy: loggedBy, at: timestamp)
+    }
+
+    /// A meal: the foods' names, from the food list.
+    @discardableResult
+    public func logMeal(_ foods: [String], child childID: UUID, source: EntrySource,
+                        loggedBy: String = LoggedBy.current(), at timestamp: Date? = nil) async throws -> LogEntry {
+        try insert(.meal, value: nil, child: childID, source: source, note: foods.joined(separator: ", "),
+                   bodyAreas: [], routineStepID: nil, loggedBy: loggedBy, at: timestamp)
+    }
+
+    /// A food trial event for `foodID`. A start's note says its days and steps ("4 days · 1 tsp, 1 tbsp").
+    @discardableResult
+    public func logTrial(_ event: FoodTrialEvent, food foodID: UUID, child childID: UUID, note: String? = nil,
+                         source: EntrySource, loggedBy: String = LoggedBy.current(), at timestamp: Date? = nil) async throws -> LogEntry {
+        try insert(.foodTrial, value: .trial(event), child: childID, source: source, note: note,
+                   bodyAreas: [], routineStepID: foodID, loggedBy: loggedBy, at: timestamp)
+    }
+
+    /// Starts a patch test: "what · where" in the note; the result comes later
+    /// through `update(_:value:note:timestamp:)`.
+    @discardableResult
+    public func logPatchTest(what: String, where spot: String, child childID: UUID, source: EntrySource,
+                             loggedBy: String = LoggedBy.current(), at timestamp: Date? = nil) async throws -> LogEntry {
+        let parts = [what, spot].map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+        return try insert(.patchTest, value: nil, child: childID, source: source,
+                          note: parts.isEmpty ? nil : parts.joined(separator: " · "),
+                          bodyAreas: [], routineStepID: nil, loggedBy: loggedBy, at: timestamp)
+    }
+
+    /// Sets where a flare was, after the fact ("Add where"). An empty list clears it.
+    @discardableResult
+    public func setBodyAreas(_ areas: [BodyArea], on id: UUID) async throws -> LogEntry {
+        guard let event = try fetchLiveEvent(id) else { throw LogStoreError.logNotFound }
+        guard event.type == .flare else { throw LogStoreError.bodyAreasNotAllowed }
+        event.bodyAreaNames = Self.unique(areas).map(\.rawValue)
+        event.updatedAt = now()
+        event.needsSync = true
+        try modelContext.save()
+        guard let entry = LogEntry(event) else { throw LogStoreError.logNotFound }
+        return entry
+    }
+
+    private func insert(
+        _ type: LogType,
+        value: LogValue?,
+        child childID: UUID,
+        source: EntrySource,
+        note: String?,
+        bodyAreas: [BodyArea],
+        routineStepID: UUID?,
+        loggedBy: String,
+        at timestamp: Date?
+    ) throws -> LogEntry {
         guard type.accepts(value) else { throw LogStoreError.invalidValue }
+        if !bodyAreas.isEmpty, type != .flare { throw LogStoreError.bodyAreasNotAllowed }
         let cleanNote = Self.clean(note)
         if type == .note, cleanNote == nil { throw LogStoreError.emptyNote }
         guard let child = try fetchChild(childID) else { throw LogStoreError.childNotFound }
 
         let current = now()
+        var when = timestamp ?? current
+        if type == .skinToday {
+            when = SkinDay.timestamp(for: when, calendar: calendar)
+            try retireSkinAnswers(child: childID, on: CareDay.containing(when, calendar: calendar), at: current)
+        }
         let event = LogEvent(
             child: child,
             type: type,
             value: value,
             note: cleanNote,
-            timestamp: timestamp ?? current,
+            timestamp: when,
             loggedBy: loggedBy,
             entrySource: source,
+            bodyAreas: Self.unique(bodyAreas),
+            routineStepID: routineStepID,
             now: current
         )
         modelContext.insert(event)
         try modelContext.save()
-        return LogEntry(
-            id: event.id,
-            childID: childID,
-            type: type,
-            value: value,
-            note: cleanNote,
-            timestamp: event.timestamp,
-            loggedBy: loggedBy,
-            source: source
+        guard let entry = LogEntry(event) else { throw LogStoreError.logNotFound }
+        return entry
+    }
+
+    /// One skin answer per child per day: earlier answers that day are soft-deleted
+    /// (not edited), so Undo on the new answer leaves the day unanswered.
+    private func retireSkinAnswers(child childID: UUID, on day: CareDay, at current: Date) throws {
+        let interval = day.interval(calendar: calendar)
+        let start = interval.start
+        let end = interval.end
+        let raw = LogType.skinToday.rawValue
+        let optionalChildID: UUID? = childID
+        let descriptor = FetchDescriptor<LogEvent>(
+            predicate: #Predicate { event in
+                event.deletedAt == nil
+                    && event.typeRaw == raw
+                    && event.timestamp >= start
+                    && event.timestamp < end
+                    && event.child?.id == optionalChildID
+            }
         )
+        for event in try modelContext.fetch(descriptor) {
+            event.deletedAt = current
+            event.updatedAt = current
+            event.needsSync = true
+        }
     }
 
     /// Soft-deletes the most recently created log, for any child.
@@ -145,6 +278,19 @@ public actor LogStore: ModelActor {
         return entry
     }
 
+    /// Brings back a log deleted by mistake (Undo after a swipe). Returns nil if it's gone for good.
+    @discardableResult
+    public func restore(_ id: UUID) async throws -> LogEntry? {
+        var descriptor = FetchDescriptor<LogEvent>(predicate: #Predicate { $0.id == id && $0.deletedAt != nil })
+        descriptor.fetchLimit = 1
+        guard let event = try modelContext.fetch(descriptor).first else { return nil }
+        event.deletedAt = nil
+        event.updatedAt = now()
+        event.needsSync = true
+        try modelContext.save()
+        return LogEntry(event)
+    }
+
     /// Summary of the current care day. From 7 PM this already means tonight and tomorrow.
     public func todaySummary(child childID: UUID) async throws -> DaySummary {
         let today = CareDay.containing(now(), calendar: calendar)
@@ -174,6 +320,15 @@ public actor LogStore: ModelActor {
         return try modelContext.fetchCount(descriptor) > 0
     }
 
+    /// Every live log, for every child, oldest first. For "Your data" export.
+    public func allLive() async throws -> [LogEntry] {
+        let descriptor = FetchDescriptor<LogEvent>(
+            predicate: #Predicate { $0.deletedAt == nil },
+            sortBy: [SortDescriptor(\.timestamp)]
+        )
+        return try modelContext.fetch(descriptor).compactMap { LogEntry($0) }
+    }
+
     /// The most recently created live logs, for any child, newest first.
     public func recent(limit: Int = 50) async throws -> [LogEntry] {
         var descriptor = FetchDescriptor<LogEvent>(
@@ -190,6 +345,12 @@ public actor LogStore: ModelActor {
         )
         descriptor.fetchLimit = 1
         return try modelContext.fetch(descriptor).first
+    }
+
+    /// Each area once, in the order given.
+    private static func unique(_ areas: [BodyArea]) -> [BodyArea] {
+        var seen = Set<BodyArea>()
+        return areas.filter { seen.insert($0).inserted }
     }
 
     /// Trimmed, or nil when empty.

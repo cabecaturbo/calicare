@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Welcome</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.sunrise{animation:sunrise 1.6s cubic-bezier(.2,.7,.2,1) .2s both}
+@keyframes sunrise{from{transform:translateY(46px)}to{transform:none}}
+@media (prefers-reduced-motion: reduce){.sunrise{animation:none}}
+</style>
+</helmet>
+<div class="day" style="width:390px;height:844px;box-sizing:border-box;padding:64px var(--gutter) 40px;background:var(--bg);color:var(--ink);font-family:var(--sans);display:flex;flex-direction:column">
+<div class="t-title rise">Cali Care</div>
+
+<svg width="342" height="250" viewBox="0 0 300 220" style="margin-top:var(--s5)" aria-hidden="true">
+<defs><clipPath id="sky"><rect x="0" y="0" width="300" height="160"/></clipPath></defs>
+<g class="loop">
+<g clip-path="url(#sky)"><g class="sunrise">
+<path class="ink draw" pathLength="1" d="M150 88 C168 87 181 101 180 119 C179 136 165 148 148 147 C131 146 119 133 120 116 C121 100 134 89 150 88 Z"/>
+<path class="ink draw" pathLength="1" style="animation-delay:1s" d="M150 72 L150 58 M183 84 L193 74 M196 116 L210 115 M117 84 L107 75 M104 117 L90 116"/>
+</g></g>
+<path class="ink draw" pathLength="1" d="M10 160 C60 154 110 164 160 159 C210 154 250 162 292 157"/>
+<path class="ink draw" pathLength="1" style="animation-delay:.4s" d="M40 180 C90 176 140 184 200 179"/>
+<path class="ink draw" pathLength="1" style="animation-delay:.7s" d="M90 198 C120 195 160 200 190 197"/>
+</g>
+</svg>
+
+<div style="margin-top:var(--s2);display:flex;flex-direction:column;gap:var(--s3)">
+<h1 class="t-display rise" style="margin:0;animation-delay:.8s">Your child’s skin, kept in one calm place.</h1>
+<p class="t-body muted rise" style="margin:0;animation-delay:1s">Log itchy nights in a tap, keep your provider’s plan in one place, and see how things are going.</p>
+</div>
+<div style="flex-grow:1"></div>
+<div class="rise" style="display:flex;flex-direction:column;gap:var(--s3);animation-delay:1.2s">
+<a href="OnbName.dc.html" class="btn-primary t-label">Add your child</a>
+<p class="t-caption muted" style="margin:0">No ads. Photos never leave your phone.</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

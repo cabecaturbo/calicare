@@ -7,32 +7,26 @@ import UserNotifications
 /// Go to the Home Screen (or lock the simulator) before it arrives.
 struct TryNotificationSection: View {
     @Environment(ReminderController.self) private var reminders
-    @Environment(\.palette) private var palette
     @State private var message: String?
 
     var body: some View {
-        Section {
+        SettingsSection("Try a notification", footnote: footnote) {
             ForEach(ReminderKind.allCases, id: \.self) { kind in
-                Button("\(ReminderCopy.settingsTitle(kind)) in 5 seconds") {
+                Button {
                     Task { await send(kind) }
+                } label: {
+                    SettingsLabel("\(ReminderCopy.settingsTitle(kind)) in 5 seconds")
                 }
-                .font(Typography.body)
-                .frame(minHeight: TouchTarget.minimum)
                 .disabled(reminders.status != .authorized)
             }
-            if let message {
-                Text(message)
-                    .font(Typography.caption)
-                    .foregroundStyle(palette.muted)
-            }
-        } header: {
-            Text("Try a notification")
-        } footer: {
-            Text(reminders.status == .authorized
-                ? "Then go to the Home Screen, long-press the notification, and tap a button."
-                : "Turn on a reminder first so notifications are allowed.")
         }
-        .listRowBackground(palette.card)
+    }
+
+    private var footnote: String {
+        if let message { return message }
+        return reminders.status == .authorized
+            ? "Then go to the Home Screen, long-press the notification, and tap a button."
+            : "Turn on a reminder first so notifications are allowed."
     }
 
     private func send(_ kind: ReminderKind) async {

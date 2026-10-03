@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>iPhone (iOS 27)</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.jig-a{transform:rotate(-1.4deg)}
+.jig-b{transform:rotate(1.2deg)}
+</style>
+</helmet>
+<div role="img" aria-label="{{label}}" style="width:417px;height:876px;box-sizing:border-box;padding:12px;border-radius:var(--mock-r-phone);background:var(--mock-frame)">
+<div class="day" style="position:relative;width:393px;height:852px;border-radius:var(--mock-r-display);overflow:hidden;background:{{wallColor}};font-family:var(--sans);color:var(--mock-on-wall)">
+
+<svg width="393" height="852" viewBox="0 0 393 852" style="position:absolute;inset:0" aria-hidden="true">
+<path d="M-20 520 C80 430 170 470 250 400 C320 340 360 250 420 230 L420 900 L-20 900 Z" style="fill:{{wallShape}}"/>
+<path d="M-20 700 C90 640 200 690 300 640 C350 615 390 600 420 610 L420 900 L-20 900 Z" style="fill:{{wallShape2}}"/>
+</svg>
+
+<sc-if value="{{homeGrid}}" hint-placeholder-val="{{true}}">
+<div style="position:absolute;left:24px;top:72px;width:345px">
+<div style="position:absolute;left:0;top:0;width:158px">
+<div class="{{jigA}}"><dc-import name="WSmall" look="{{look}}" theme="{{theme}}" state="{{widgetState}}" hint-size="158px,158px"></dc-import></div>
+<div class="mock-label" style="margin-top:5px;text-align:center">CaliCare</div>
+<sc-if value="{{jiggle}}" hint-placeholder-val="{{false}}"><span style="position:absolute;left:-7px;top:-7px;width:22px;height:22px;border-radius:var(--r-pill);background:var(--mock-badge);display:flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 5h8" style="stroke:var(--mock-sheet-text);stroke-width:2;stroke-linecap:round"/></svg></span></sc-if>
+</div>
+<sc-for list="{{icons}}" as="ic" hint-placeholder-count="12">
+<div style="position:absolute;left:{{ic.x}};top:{{ic.y}};width:64px;display:flex;flex-direction:column;align-items:center;gap:5px">
+<div class="{{ic.jig}}" style="position:relative;width:64px;height:64px;border-radius:var(--mock-r-icon);background:{{ic.bg}};display:flex;align-items:center;justify-content:center">
+<svg width="30" height="30" viewBox="0 0 24 24" fill="none" style="stroke:var(--mock-icon-glyph)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ic.glyph}}"/></svg>
+<sc-if value="{{jiggle}}" hint-placeholder-val="{{false}}"><span style="position:absolute;left:-7px;top:-7px;width:22px;height:22px;border-radius:var(--r-pill);background:var(--mock-badge);display:flex;align-items:center;justify-content:center"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 5h8" style="stroke:var(--mock-sheet-text);stroke-width:2;stroke-linecap:round"/></svg></span></sc-if>
+</div>
+<span class="mock-label">{{ic.name}}</span>
+</div>
+</sc-for>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:118px;display:flex;justify-content:center;gap:8px" aria-hidden="true"><span style="width:7px;height:7px;border-radius:var(--r-pill);background:var(--mock-on-wall)"></span><span style="width:7px;height:7px;border-radius:var(--r-pill);background:var(--mock-glass-strong)"></span></div>
+<div style="position:absolute;left:12px;right:12px;bottom:14px;height:92px;border-radius:var(--mock-r-dock);background:var(--mock-glass);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;justify-items:center;padding:0 10px">
+<sc-for list="{{dock}}" as="d" hint-placeholder-count="4">
+<div class="{{d.jig}}" style="width:64px;height:64px;border-radius:var(--mock-r-icon);background:{{d.bg}};display:flex;align-items:center;justify-content:center"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" style="stroke:var(--mock-icon-glyph)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{d.glyph}}"/></svg></div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{jiggle}}" hint-placeholder-val="{{false}}">
+<span class="t-label" style="position:absolute;left:20px;top:58px;height:34px;padding:0 16px;border-radius:var(--r-pill);background:var(--mock-glass-strong);display:flex;align-items:center">Edit</span>
+<span style="position:absolute;right:20px;top:58px;width:58px;height:34px;border-radius:var(--r-pill);background:var(--mock-glass-strong);display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></span>
+</sc-if>
+
+<sc-if value="{{editMenu}}" hint-placeholder-val="{{false}}">
+<div style="position:absolute;left:20px;top:100px;width:250px;border-radius:var(--mock-r-menu);background:var(--mock-sheet);color:var(--mock-sheet-text);padding:8px 0">
+<sc-for list="{{menu}}" as="m" hint-placeholder-count="4"><div class="mock-sheet-body" style="height:48px;display:flex;align-items:center;gap:14px;padding:0 20px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{m.glyph}}"/></svg>{{m.name}}</div></sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{sheetLight}}" hint-placeholder-val="{{false}}">
+<div style="position:absolute;inset:0;background:var(--mock-dim)"></div>
+<div style="position:absolute;left:0;right:0;top:{{sheetTop}};bottom:0;border-radius:var(--mock-r-sheet) var(--mock-r-sheet) 0 0;background:var(--mock-sheet);color:var(--mock-sheet-text)">
+<div style="margin:8px auto 0;width:36px;height:5px;border-radius:var(--r-pill);background:var(--mock-badge)"></div>
+<sc-if value="{{gallery}}" hint-placeholder-val="{{false}}">
+<div class="mock-sheet-body" style="margin:14px 16px 0;height:40px;border-radius:var(--mock-r-field);background:var(--mock-sheet-field);display:flex;align-items:center;gap:8px;padding:0 12px;color:var(--mock-sheet-text)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>CaliCare<span style="width:2px;height:20px;background:var(--mock-system-blue)"></span></div>
+<div class="mock-sheet-body" style="margin:18px 16px 0;height:56px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid var(--mock-badge)"><span style="width:36px;height:36px;border-radius:var(--mock-r-app-s);background:var(--mock-app-icon);color:var(--mock-sheet-text);display:flex;align-items:center;justify-content:center;font-family:var(--serif)">c</span>CaliCare</div>
+</sc-if>
+<sc-if value="{{sizePicker}}" hint-placeholder-val="{{false}}">
+<div style="margin:14px 20px 0;display:flex;align-items:center;gap:10px"><span style="width:32px;height:32px;border-radius:var(--mock-r-app-xs);background:var(--mock-app-icon);display:flex;align-items:center;justify-content:center;font-family:var(--serif)">c</span><span class="mock-sheet-body" style="flex-grow:1;font-weight:600">CaliCare</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></div>
+<div class="mock-sheet-title" style="margin-top:34px;text-align:center">Itchy</div>
+<div class="mock-sheet-body" style="margin-top:6px;text-align:center;color:var(--mock-sheet-muted)">One tap logs an itchy moment.</div>
+<div style="margin:56px auto 0;width:158px"><dc-import name="WSmall" look="full" theme="day" state="normal" hint-size="158px,158px"></dc-import></div>
+<div style="margin-top:44px;display:flex;justify-content:center;gap:8px" aria-hidden="true"><span style="width:7px;height:7px;border-radius:var(--r-pill);background:var(--mock-sheet-text)"></span><span style="width:7px;height:7px;border-radius:var(--r-pill);background:var(--mock-badge)"></span></div>
+<div class="mock-sheet-body" style="position:absolute;left:18px;right:18px;bottom:44px;height:52px;border-radius:var(--r-pill);background:var(--mock-system-blue);color:var(--mock-key);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600">+ Add Widget</div>
+</sc-if>
+<sc-if value="{{lockList}}" hint-placeholder-val="{{false}}">
+<sc-for list="{{lockApps}}" as="la" hint-placeholder-count="5"><div class="mock-sheet-body" style="margin:0 16px;height:56px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid var(--mock-badge)"><span style="width:36px;height:36px;border-radius:var(--mock-r-app-s);background:{{la.bg}};display:flex;align-items:center;justify-content:center;font-family:var(--serif)">{{la.mark}}</span>{{la.name}}</div></sc-for>
+</sc-if>
+<sc-if value="{{lockPicker}}" hint-placeholder-val="{{false}}">
+<div style="margin:14px 20px 0;display:flex;align-items:center;gap:10px"><span style="width:32px;height:32px;border-radius:var(--mock-r-app-xs);background:var(--mock-app-icon);display:flex;align-items:center;justify-content:center;font-family:var(--serif)">c</span><span class="mock-sheet-body" style="flex-grow:1;font-weight:600">CaliCare</span></div>
+<div class="mock-sheet-title" style="margin-top:34px;text-align:center">Itchy</div>
+<div class="mock-sheet-body" style="margin-top:6px;text-align:center;color:var(--mock-sheet-muted)">One tap logs an itchy moment.</div>
+<div style="margin:48px auto 0;width:96px;height:96px;border-radius:var(--mock-r-menu);background:var(--mock-wall);display:flex;align-items:center;justify-content:center"><dc-import name="WLock" kind="circle" hint-size="72px,72px"></dc-import></div>
+<div class="mock-sheet-body" style="margin-top:28px;text-align:center;color:var(--mock-sheet-muted)">Tap or drag to add widget.</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{keyboard}}" hint-placeholder-val="{{false}}">
+<div style="position:absolute;left:0;right:0;bottom:0;height:290px;background:{{kbBg}};padding:10px 4px 0;box-sizing:border-box;display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{keys}}" as="row" hint-placeholder-count="3">
+<div style="display:flex;justify-content:center;gap:6px">
+<sc-for list="{{row}}" as="k" hint-placeholder-count="10"><span class="mock-key-t" style="width:33px;height:44px;border-radius:var(--mock-r-key);background:{{kbKey}};color:{{kbText}};display:flex;align-items:center;justify-content:center">{{k}}</span></sc-for>
+</div>
+</sc-for>
+<div style="display:flex;gap:6px;padding:0 3px"><span class="mock-sheet-body" style="width:88px;height:44px;border-radius:var(--mock-r-key);background:{{kbKey}};color:{{kbText}};display:flex;align-items:center;justify-content:center">123</span><span style="flex-grow:1;height:44px;border-radius:var(--mock-r-key);background:{{kbKey}}"></span><span style="width:88px;height:44px;border-radius:var(--mock-r-key);background:var(--mock-system-blue)"></span></div>
+</div>
+</sc-if>
+
+<sc-if value="{{lockBase}}" hint-placeholder-val="{{false}}">
+<div style="position:absolute;inset:0">
+<div class="mock-lock-date" style="position:absolute;top:84px;left:0;right:0;text-align:center">Monday, September 28</div>
+<div class="mock-lock-clock" style="position:absolute;top:108px;left:0;right:0;text-align:center">9:41</div>
+<div style="position:absolute;top:222px;left:0;right:0;display:flex;justify-content:center;gap:12px">
+<sc-if value="{{lockWidgets}}" hint-placeholder-val="{{true}}">
+<dc-import name="WLock" kind="circle" hint-size="72px,72px"></dc-import>
+<dc-import name="WLock" kind="rect" hint-size="160px,72px"></dc-import>
+</sc-if>
+<sc-if value="{{lockReticle}}" hint-placeholder-val="{{false}}">
+<span class="mock-sheet-body" style="width:244px;height:72px;border-radius:var(--r);border:1.5px dashed var(--mock-on-wall);display:flex;align-items:center;justify-content:center;gap:8px">+ Add Widgets</span>
+</sc-if>
+</div>
+<sc-if value="{{lockEditing}}" hint-placeholder-val="{{false}}">
+<span class="mock-sheet-body" style="position:absolute;left:20px;top:58px;height:34px;padding:0 16px;border-radius:var(--r-pill);background:var(--mock-glass-strong);display:flex;align-items:center">Cancel</span>
+<span class="mock-sheet-body" style="position:absolute;right:20px;top:58px;height:34px;padding:0 16px;border-radius:var(--r-pill);background:var(--mock-glass-strong);display:flex;align-items:center;font-weight:600">Done</span>
+</sc-if>
+<sc-if value="{{lockIdle}}" hint-placeholder-val="{{true}}">
+<span style="position:absolute;left:46px;bottom:48px;width:50px;height:50px;border-radius:var(--r-pill);background:var(--mock-glass)"></span>
+<span style="position:absolute;right:46px;bottom:48px;width:50px;height:50px;border-radius:var(--r-pill);background:var(--mock-glass)"></span>
+</sc-if>
+</div>
+<sc-if value="{{lockHold}}" hint-placeholder-val="{{false}}">
+<span class="mock-sheet-body" style="position:absolute;left:50%;bottom:64px;transform:translateX(-50%);height:44px;padding:0 26px;border-radius:var(--r-pill);background:var(--mock-glass-strong);display:flex;align-items:center;font-weight:600">Customize</span>
+</sc-if>
+</sc-if>
+
+<sc-if value="{{ccLayer}}" hint-placeholder-val="{{false}}">
+<div style="position:absolute;inset:0;background:var(--mock-dim)"></div>
+<span style="position:absolute;left:26px;top:58px;width:34px;height:34px;border-radius:var(--r-pill);background:var(--mock-glass-strong);display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+<div style="position:absolute;left:34px;right:34px;top:120px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));row-gap:22px;justify-items:center">
+<sc-for list="{{ccTiles}}" as="t" hint-placeholder-count="24">
+<sc-if value="{{t.ours}}" hint-placeholder-val="{{false}}"><span style="position:relative;width:68px;height:68px;border-radius:var(--r-pill);background:var(--mock-glass-strong);display:flex;align-items:center;justify-content:center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v6M10 10.5V6a2 2 0 0 0-4 0v8a8 8 0 0 0 16 0v-2a2 2 0 0 0-4 0"/></svg></span></sc-if>
+<sc-if value="{{t.empty}}" hint-placeholder-val="{{true}}"><span style="width:68px;height:68px;border-radius:var(--r-pill);background:var(--mock-glass)"></span></sc-if>
+</sc-for>
+</div>
+<sc-if value="{{ccEdit}}" hint-placeholder-val="{{false}}">
+<span class="mock-sheet-body" style="position:absolute;left:50%;bottom:52px;transform:translateX(-50%);height:40px;padding:0 18px;border-radius:var(--r-pill);background:var(--mock-glass-strong);display:flex;align-items:center;gap:8px;font-weight:600;white-space:nowrap">+ Add a Control</span>
+</sc-if>
+</sc-if>
+
+<sc-if value="{{ccGallery}}" hint-placeholder-val="{{false}}">
+<div style="position:absolute;left:0;right:0;top:64px;bottom:0;border-radius:var(--mock-r-sheet) var(--mock-r-sheet) 0 0;background:var(--mock-sheet-dark);color:var(--mock-on-wall)">
+<div style="margin:8px auto 0;width:36px;height:5px;border-radius:var(--r-pill);background:var(--mock-key-dark)"></div>
+<div style="margin:14px 16px 0;display:flex;gap:10px;align-items:center">
+<div class="mock-sheet-body" style="flex-grow:1;height:44px;border-radius:var(--r-pill);background:var(--mock-key-dark);display:flex;align-items:center;gap:8px;padding:0 14px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>CaliCare<span style="width:2px;height:20px;background:var(--mock-system-blue)"></span></div>
+<span style="width:44px;height:44px;border-radius:var(--r-pill);background:var(--mock-key-dark);display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></span>
+</div>
+<div class="mock-sheet-body" style="margin:26px 20px 0;display:flex;align-items:center;gap:10px"><span style="width:30px;height:30px;border-radius:var(--mock-r-app-xs);background:var(--mock-app-icon);color:var(--mock-sheet-text);display:flex;align-items:center;justify-content:center;font-family:var(--serif)">c</span>CaliCare</div>
+<div style="margin:16px 0 0 20px;width:80px"><dc-import name="WLock" kind="control" hint-size="80px,96px"></dc-import></div>
+</div>
+</sc-if>
+
+<sc-if value="{{swipe}}" hint-placeholder-val="{{false}}">
+<svg width="120" height="180" viewBox="0 0 120 180" style="position:absolute;right:14px;top:10px" aria-hidden="true">
+<path d="M70 14 C72 60 70 110 66 150" style="fill:none;stroke:var(--mock-on-wall);stroke-width:3;stroke-linecap:round"/>
+<path d="M54 136 L66 152 L78 138" style="fill:none;stroke:var(--mock-on-wall);stroke-width:3;stroke-linecap:round;stroke-linejoin:round"/>
+</svg>
+</sc-if>
+
+<div class="mock-status" style="position:absolute;left:0;top:14px;width:130px;text-align:center">9:41</div>
+<div style="position:absolute;right:30px;top:19px;display:flex;align-items:center;gap:6px" aria-hidden="true">
+<svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" style="fill:var(--mock-on-wall)"/><rect x="5" y="5.5" width="3" height="6.5" rx="1" style="fill:var(--mock-on-wall)"/><rect x="10" y="3" width="3" height="9" rx="1" style="fill:var(--mock-on-wall)"/><rect x="15" y="0" width="3" height="12" rx="1" style="fill:var(--mock-on-wall)"/></svg>
+<svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0Z M3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.5 1.5a4.4 4.4 0 0 0-6.2 0Z M1 4.4a9.9 9.9 0 0 1 14 0l-1.5 1.5a7.7 7.7 0 0 0-11 0Z" style="fill:var(--mock-on-wall)"/></svg>
+<svg width="27" height="13" viewBox="0 0 27 13"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" style="fill:none;stroke:var(--mock-on-wall);opacity:.5"/><rect x="2" y="2" width="20" height="9" rx="2" style="fill:var(--mock-on-wall)"/><rect x="24.5" y="4.5" width="1.5" height="4" rx=".75" style="fill:var(--mock-on-wall);opacity:.5"/></svg>
+</div>
+<div style="position:absolute;left:50%;top:11px;width:126px;height:37px;margin-left:-63px;border-radius:var(--r-pill);background:var(--mock-island)"></div>
+<div style="position:absolute;left:50%;bottom:8px;width:134px;height:5px;margin-left:-67px;border-radius:var(--r-pill);background:var(--mock-on-wall)"></div>
+
+<sc-if value="{{hasRing}}" hint-placeholder-val="{{false}}"><span class="guide-ring" style="left:{{ringL}};top:{{ringT}};width:{{ringW}};height:{{ringH}};border-radius:{{ringR}};border-width:3px;border-color:var(--mock-on-wall);outline:2px solid var(--accent)"></span></sc-if>
+<sc-if value="{{hasTap}}" hint-placeholder-val="{{false}}"><span class="guide-tap" style="left:{{tapX}};top:{{tapY}}"></span></sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"surface":{"editor":"enum","options":["home","lock","control"],"default":"home"},"mode":{"editor":"text","default":"normal"},"look":{"editor":"enum","options":["full","tinted","clear"],"default":"full"},"theme":{"editor":"enum","options":["day","night"],"default":"day"},"loop":{"editor":"boolean","default":false},"ring":{"editor":"text","default":""},"tap":{"editor":"text","default":""},"$preview":{"width":417,"height":876}}'>
+class Component extends DCLogic {
+renderVals() {
+const surface = this.props.surface ?? 'home';
+const mode = this.props.mode ?? 'normal';
+const night = this.props.theme === 'night';
+const loop = this.props.loop === true || this.props.loop === 'true';
+const home = surface === 'home' || (surface === 'control' && mode === 'home');
+const jiggle = surface === 'home' && ['jiggle', 'editMenu', 'placed'].includes(mode);
+const glyphs = {
+calendar: 'M4 6h16v14H4zM4 10h16M9 3v4M15 3v4',
+weather: 'M7 17h10a4 4 0 0 0 0-8 5 5 0 0 0-9.6 1.5A3.3 3.3 0 0 0 7 17z',
+notes: 'M6 3h12v18H6zM9 8h6M9 12h6M9 16h4',
+camera: 'M4 8h4l2-3h4l2 3h4v11H4zM12 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
+mail: 'M3 6h18v12H3zM3 7l9 6 9-6',
+music: 'M9 18V6l10-2v12M9 18a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM19 16a2 2 0 1 1-4 0 2 2 0 0 1 4 0z',
+clock: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2',
+books: 'M5 4h5v16H5zM10 4h4v16h-4zM15 5l4 1-3 14-4-1',
+files: 'M3 7h7l2 2h9v10H3z',
+home: 'M4 11l8-7 8 7v9H4zM10 20v-5h4v5',
+phone: 'M6 3h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 4 5a2 2 0 0 1 2-2z',
+message: 'M4 5h16v11H9l-5 4z',
+compass: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM15 9l-2 5-4 1 2-5z',
+photos: 'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4'
+};
+const bgs = ['var(--mock-icon-1)', 'var(--mock-icon-2)', 'var(--mock-icon-3)', 'var(--mock-icon-4)'];
+const col = i => (i * 93.67).toFixed(1) + 'px';
+const spots = [
+[2, 0, 'Calendar', 'calendar'], [3, 0, 'Weather', 'weather'],
+[2, 94, 'Notes', 'notes'], [3, 94, 'Camera', 'camera'],
+[0, 196, 'Mail', 'mail'], [1, 196, 'Music', 'music'], [2, 196, 'Clock', 'clock'], [3, 196, 'Books', 'books'],
+[0, 290, 'Files', 'files'], [1, 290, 'Home', 'home'], [2, 290, 'Photos', 'photos'], [3, 290, 'Compass', 'compass']
+];
+const icons = spots.map((s, i) => ({ x: col(s[0]), y: s[1] + 'px', name: s[2], glyph: glyphs[s[3]], bg: bgs[i % 4], jig: jiggle ? (i % 2 ? 'jig-a' : 'jig-b') : '' }));
+const dock = ['phone', 'message', 'compass', 'music'].map((g, i) => ({ glyph: glyphs[g], bg: bgs[(i + 1) % 4], jig: jiggle ? (i % 2 ? 'jig-b' : 'jig-a') : '' }));
+const menu = [
+{ name: 'Add Widget', glyph: 'M4 4h7v7H4zM13 13h7v7h-7zM16.5 4v7M13 7.5h7M4 13h7v7H4z' },
+{ name: 'Customize', glyph: 'M4 20l4-1 10-10-3-3L5 16zM14 6l3 3' },
+{ name: 'Edit Wallpaper', glyph: 'M4 4h16v16H4zM4 15l5-5 5 5 3-3 3 3' },
+{ name: 'Edit Pages', glyph: 'M7 3h10v18H7zM10 7h4' }
+];
+const lockApps = [
+{ name: 'Batteries', mark: '', bg: 'var(--mock-icon-2)' },
+{ name: 'Calendar', mark: '', bg: 'var(--mock-icon-3)' },
+{ name: 'CaliCare', mark: 'c', bg: 'var(--mock-app-icon)' },
+{ name: 'Clock', mark: '', bg: 'var(--mock-icon-4)' },
+{ name: 'Weather', mark: '', bg: 'var(--mock-icon-1)' }
+];
+const ccOurs = surface === 'control' && ['added', 'inUse'].includes(mode);
+const ccTiles = Array.from({ length: 24 }, (_, i) => ({ ours: ccOurs && i === 0, empty: !(ccOurs && i === 0) }));
+const kbDark = surface === 'control';
+const parse = (s) => (s || '').split(',').map(Number).filter(n => !Number.isNaN(n));
+const r = parse(this.props.ring);
+const t = parse(this.props.tap);
+const labels = {
+home: 'An iPhone Home Screen with the Cali Care widget',
+lock: 'An iPhone Lock Screen with Cali Care widgets',
+control: 'iPhone Control Center'
+};
+return {
+label: labels[surface] + ' (' + mode + ')',
+wallColor: night ? 'var(--mock-wall-night)' : 'var(--mock-wall)',
+wallShape: night ? 'var(--mock-wall-night-shape)' : 'var(--mock-wall-shape)',
+wallShape2: night ? 'var(--mock-wall-night)' : 'var(--mock-wall-shape-2)',
+look: this.props.look ?? 'full',
+theme: night ? 'night' : 'day',
+widgetState: loop ? 'loop' : 'normal',
+homeGrid: home,
+jiggle,
+jigA: jiggle ? 'jig-a' : '',
+editMenu: surface === 'home' && mode === 'editMenu',
+sheetLight: (surface === 'home' && ['gallerySearch', 'sizePicker'].includes(mode)) || (surface === 'lock' && ['list', 'picker'].includes(mode)),
+gallery: surface === 'home' && mode === 'gallerySearch',
+sheetTop: surface === 'lock' ? '420px' : '64px',
+sizePicker: surface === 'home' && mode === 'sizePicker',
+lockList: surface === 'lock' && mode === 'list',
+lockPicker: surface === 'lock' && mode === 'picker',
+keyboard: (surface === 'home' && mode === 'gallerySearch') || (surface === 'control' && mode === 'gallery'),
+kbBg: kbDark ? 'var(--mock-keyboard-dark)' : 'var(--mock-keyboard)',
+kbKey: kbDark ? 'var(--mock-key-dark)' : 'var(--mock-key)',
+kbText: kbDark ? 'var(--mock-on-wall)' : 'var(--mock-sheet-text)',
+keys: [['Q','W','E','R','T','Y','U','I','O','P'], ['A','S','D','F','G','H','J','K','L'], ['Z','X','C','V','B','N','M']],
+icons, dock, menu, lockApps,
+lockBase: surface === 'lock',
+lockWidgets: surface === 'lock' && ['normal', 'hold', 'added'].includes(mode),
+lockReticle: surface === 'lock' && ['editor', 'list', 'picker'].includes(mode),
+lockEditing: surface === 'lock' && ['editor', 'added'].includes(mode),
+lockIdle: surface === 'lock' && mode === 'normal',
+lockHold: surface === 'lock' && mode === 'hold',
+ccLayer: surface === 'control' && ['open', 'edit', 'added', 'inUse'].includes(mode),
+ccEdit: surface === 'control' && ['edit', 'added'].includes(mode),
+ccGallery: surface === 'control' && mode === 'gallery',
+ccTiles,
+swipe: surface === 'control' && mode === 'home',
+hasRing: r.length === 4,
+ringL: (r[0] || 0) + 'px', ringT: (r[1] || 0) + 'px', ringW: (r[2] || 0) + 'px', ringH: (r[3] || 0) + 'px',
+ringR: (Math.min(r[2] || 0, r[3] || 0) >= 60 ? 22 : 999) + 'px',
+hasTap: t.length === 2,
+tapX: (t[0] || 0) + 'px', tapY: (t[1] || 0) + 'px'
+};
+}
+}
+</script>
+</body>
+</html>

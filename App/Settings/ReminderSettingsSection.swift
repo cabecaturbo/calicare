@@ -10,57 +10,55 @@ struct ReminderSettingsSection: View {
     @Environment(\.openURL) private var openURL
 
     var body: some View {
-        Section {
+        SettingsSection(
+            "Reminders",
+            footnote: "Answer right from the notification. If you skip one, nothing else happens."
+        ) {
             if reminders.status == .denied {
-                VStack(alignment: .leading, spacing: Spacing.xs) {
+                VStack(alignment: .leading, spacing: Spacing.x2) {
                     Text("Notifications are off for CaliCare. You can turn them on in iOS Settings whenever you like.")
-                        .font(Typography.callout)
-                        .foregroundStyle(palette.muted)
+                        .textStyle(.body)
+                        .foregroundStyle(palette.graphite)
+                        .fixedSize(horizontal: false, vertical: true)
                     Button("Open Settings") {
                         if let url = URL(string: UIApplication.openNotificationSettingsURLString) {
                             openURL(url)
                         }
                     }
-                    .font(Typography.button)
-                    .frame(minHeight: TouchTarget.minimum)
+                    .buttonStyle(.textLink)
                 }
+                .padding(.vertical, Spacing.x2)
             }
             ForEach(ReminderKind.allCases, id: \.self) { kind in
                 row(for: kind)
             }
-        } header: {
-            Text("Reminders")
-        } footer: {
-            Text("Answer right from the notification. If you skip one, nothing else happens.")
         }
-        .listRowBackground(palette.card)
     }
 
+    @ViewBuilder
     private func row(for kind: ReminderKind) -> some View {
-        VStack(alignment: .leading, spacing: Spacing.xs) {
-            Toggle(isOn: Binding(
-                get: { reminders.settings[kind].isOn },
-                set: { reminders.setOn($0, for: kind) }
-            )) {
-                Text(ReminderCopy.settingsTitle(kind))
-                    .font(Typography.body)
-                    .foregroundStyle(palette.ink)
-            }
-            .frame(minHeight: TouchTarget.minimum)
+        Toggle(isOn: Binding(
+            get: { reminders.settings[kind].isOn },
+            set: { reminders.setOn($0, for: kind) }
+        )) {
+            SettingsLabel(ReminderCopy.settingsTitle(kind))
+        }
+        .tint(palette.indigo)
 
-            if reminders.settings[kind].isOn {
-                DatePicker(
-                    "Time",
-                    selection: Binding(
-                        get: { reminders.time(for: kind) },
-                        set: { reminders.setTime($0, for: kind) }
-                    ),
-                    displayedComponents: .hourAndMinute
-                )
-                .font(Typography.callout)
-                .foregroundStyle(palette.muted)
-                .frame(minHeight: TouchTarget.minimum)
+        if reminders.settings[kind].isOn {
+            DatePicker(
+                selection: Binding(
+                    get: { reminders.time(for: kind) },
+                    set: { reminders.setTime($0, for: kind) }
+                ),
+                displayedComponents: .hourAndMinute
+            ) {
+                Text("Time")
+                    .textStyle(.meta)
+                    .foregroundStyle(palette.graphite)
             }
+            .accessibilityLabel("\(ReminderCopy.settingsTitle(kind)) time")
+            .tint(palette.indigo)
         }
     }
 }

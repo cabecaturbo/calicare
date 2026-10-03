@@ -38,6 +38,15 @@ struct CaliCareShortcuts: AppShortcutsProvider {
             systemImageName: "toilet"
         )
         AppShortcut(
+            intent: LogSkinTodayIntent(),
+            phrases: [
+                "Log skin in \(.applicationName)",
+                "Log skin today in \(.applicationName)",
+            ],
+            shortTitle: "Skin Today",
+            systemImageName: "circle.lefthalf.filled"
+        )
+        AppShortcut(
             intent: UndoLastIntent(),
             phrases: [
                 "Undo the last log in \(.applicationName)",
@@ -45,6 +54,22 @@ struct CaliCareShortcuts: AppShortcutsProvider {
             ],
             shortTitle: "Undo Last Log",
             systemImageName: "arrow.uturn.backward"
+        )
+        AppShortcut(
+            intent: GetWeeklyCardIntent(),
+            phrases: [
+                "Get the weekly card from \(.applicationName)",
+            ],
+            shortTitle: "Weekly Card",
+            systemImageName: "rectangle.portrait.on.rectangle.portrait"
+        )
+        AppShortcut(
+            intent: GetCareLogIntent(),
+            phrases: [
+                "Get the care log from \(.applicationName)",
+            ],
+            shortTitle: "Care Log",
+            systemImageName: "doc.text"
         )
     }
 }

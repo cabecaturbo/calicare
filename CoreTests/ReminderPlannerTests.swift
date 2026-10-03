@@ -18,6 +18,7 @@ struct ReminderPlannerTests {
     @Test func defaultsAreOffAtTheUsualTimes() {
         let settings = ReminderSettings()
         #expect(settings.checkIn == ReminderSlot(isOn: false, hour: 7, minute: 0))
+        #expect(settings.skinCheckIn == ReminderSlot(isOn: false, hour: 18, minute: 30))
         #expect(settings.morningRoutine == ReminderSlot(isOn: false, hour: 7, minute: 30))
         #expect(settings.eveningRoutine == ReminderSlot(isOn: false, hour: 19, minute: 0))
     }

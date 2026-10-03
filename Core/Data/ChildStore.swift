@@ -4,6 +4,7 @@ import SwiftData
 public enum ChildStoreError: Error, Equatable, Sendable {
     /// A child needs a name.
     case emptyName
+    case childNotFound
 }
 
 /// Adds, lists, and removes children.
@@ -25,6 +26,23 @@ public actor ChildStore: ModelActor {
         guard !trimmed.isEmpty else { throw ChildStoreError.emptyName }
         let child = Child(name: trimmed, birthDate: birthDate, colorTag: colorTag, now: now())
         modelContext.insert(child)
+        try modelContext.save()
+        return ChildInfo(child)
+    }
+
+    /// Changes a child's name, birth date, and color. The name can't be empty.
+    @discardableResult
+    public func updateChild(_ id: UUID, name: String, birthDate: Date?, colorTag: String) async throws -> ChildInfo {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { throw ChildStoreError.emptyName }
+        var descriptor = FetchDescriptor<Child>(predicate: #Predicate { $0.id == id && $0.deletedAt == nil })
+        descriptor.fetchLimit = 1
+        guard let child = try modelContext.fetch(descriptor).first else { throw ChildStoreError.childNotFound }
+        child.name = trimmed
+        child.birthDate = birthDate
+        child.colorTag = colorTag
+        child.updatedAt = now()
+        child.needsSync = true
         try modelContext.save()
         return ChildInfo(child)
     }

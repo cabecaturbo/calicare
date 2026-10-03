@@ -23,6 +23,7 @@
       "Bash(gh run view *)",
       "Bash(gh pr view *)",
       "Bash(gh pr list *)",
+      "Bash(gh pr merge *)",
       "Bash(supabase projects list)",
       "Bash(vercel whoami)",
       "Bash(asc auth doctor)"

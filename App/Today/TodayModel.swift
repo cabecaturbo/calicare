@@ -11,6 +11,8 @@ final class TodayModel {
     struct Confirmation: Identifiable, Equatable {
         let entry: LogEntry
         let text: String
+        /// Undo brings a deleted log back instead of removing a new one.
+        var wasDeleted = false
         var id: UUID { entry.id }
     }
 
@@ -20,9 +22,36 @@ final class TodayModel {
     private(set) var entries: [LogEntry] = []
     private(set) var lastNight: LastNightReport?
     private(set) var week: [WeekDay] = []
+    /// The skin answer for the day a skin answer given now would be about.
+    private(set) var skin: SkinToday?
+    /// The current child's routine steps, morning and evening, paused ones included.
+    private(set) var routineSteps: [RoutineStepInfo] = []
+    /// The last seven care days' logs, for this week's baths.
+    private(set) var weekLogs: [LogEntry] = []
+    /// The child's food list.
+    private(set) var foods: [FoodInfo] = []
+    /// The child's food-trial logs (trials can run past the week).
+    private(set) var trialLogs: [LogEntry] = []
+    /// The child's meal logs, for the plant counter.
+    private(set) var mealLogs: [LogEntry] = []
+    /// Cooked batches still in the fridge or freezer, soonest first.
+    private(set) var batches: [LeftoverBatch] = []
+    /// The running care plan, its provider visits, and messages sent.
+    private(set) var activePlan: CarePlanInfo?
+    private(set) var visits: [VisitInfo] = []
+    private(set) var messageLogs: [LogEntry] = []
+    /// Every supplement log for the current child (starts can be weeks back).
+    private(set) var supplementLogs: [LogEntry] = []
+    /// The running care plan's items, by id: for plan steps' "3–4x/day".
+    private(set) var planItems: [UUID: PlanItemInfo] = [:]
+    /// False until anything has been logged for any child: shows the first-run hint.
+    private(set) var hasEverLogged = true
     /// False from 7 PM, when the care day is tonight's.
     private(set) var isDaytime = true
     private(set) var hasLoaded = false
+    /// For "by Dad" on the timeline.
+    private(set) var myName: String?
+    private(set) var householdSize = 1
     var confirmation: Confirmation?
     var problem: String?
 
@@ -43,17 +72,47 @@ final class TodayModel {
             if setting.childID != child.id { setting.childID = child.id }
 
             let today = CareDay.containing(now, calendar: calendar)
-            let events = try await LogStore(modelContainer: container, calendar: calendar)
+            let store = LogStore(modelContainer: container, calendar: calendar)
+            let events = try await store
                 .events(from: today.adding(days: -6, calendar: calendar), through: today, child: child.id)
             let todaySummary = DaySummary(day: today, events: events, calendar: calendar)
             let previous = DaySummary(day: today.adding(days: -1, calendar: calendar), events: events, calendar: calendar)
 
             entries = events.filter { today.contains($0.timestamp, calendar: calendar) }.reversed()
+            weekLogs = events
             lastNight = LastNightReport.resolve(at: now, today: todaySummary, previous: previous, calendar: calendar)
             week = WeekOverview.days(ending: today, events: events, calendar: calendar)
+            let skinDay = SkinDay.day(for: now, calendar: calendar)
+            skin = events.last { $0.type == .skinToday && skinDay.contains($0.timestamp, calendar: calendar) }
+                .flatMap { if case .skin(let answer)? = $0.value { answer } else { nil } }
+            hasEverLogged = try await !store.recent(limit: 1).isEmpty
+            routineSteps = try await RoutineStore(modelContainer: container).steps(child: child.id, includeInactive: true)
+            let plans = CarePlanStore(modelContainer: container)
+            activePlan = try await plans.activePlan(child: child.id)
+            visits = try await plans.visits(child: child.id)
+            foods = try await FoodStore(modelContainer: container).foods(child: child.id)
+            let all = try await store.allLive().filter { $0.childID == child.id }
+            trialLogs = all.filter { $0.type == .foodTrial }
+            mealLogs = all.filter { $0.type == .meal }
+            batches = LeftoverBatch.current(from: all)
+            if let active = activePlan {
+                planItems = Dictionary(uniqueKeysWithValues: try await plans.items(plan: active.id).map { ($0.id, $0) })
+                let mine = try await store.allLive().filter { $0.childID == child.id }
+                supplementLogs = mine.filter { $0.type == .supplement }
+                messageLogs = mine.filter { $0.type == .providerMessage }
+            } else {
+                planItems = [:]
+                supplementLogs = []
+                messageLogs = []
+            }
             isDaytime = today.isDaytime(now, calendar: calendar)
+            myName = AccountSettings().displayName
+            householdSize = SyncSettings().householdSize
             hasLoaded = true
         } catch {
+            #if DEBUG
+            print("CaliCare load failed: \(error)")
+            #endif
             problem = "Couldn't load today just now."
             hasLoaded = true
         }
@@ -71,9 +130,285 @@ final class TodayModel {
         }
     }
 
+    /// Saves a note for the current child. Returns false (with `problem` set) if it wasn't saved.
+    func logNote(_ text: String) async -> Bool {
+        guard let child else { return false }
+        do {
+            let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+            let entry = try await store.log(.note, child: child.id, source: .app, note: text)
+            confirmation = Confirmation(entry: entry, text: phrases.logged(entry, childName: child.name))
+            await afterChange()
+            return true
+        } catch LogStoreError.emptyNote {
+            problem = "A note needs a few words."
+            return false
+        } catch {
+            problem = "Couldn't save that. Please try again."
+            return false
+        }
+    }
+
     func undo(_ confirmation: Confirmation) async {
         if self.confirmation == confirmation { self.confirmation = nil }
-        await delete(confirmation.entry)
+        if confirmation.wasDeleted {
+            await restore(confirmation.entry)
+        } else {
+            await delete(confirmation.entry)
+        }
+    }
+
+    /// Ticks off one routine step.
+    func tick(_ step: RoutineStepInfo) async {
+        guard child != nil else { return }
+        do {
+            let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+            let entry = try await store.logRoutineStep(step.id, source: .app)
+            confirmation = Confirmation(entry: entry, text: "Done: \(step.name), \(time(entry.timestamp)).")
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't save that. Please try again."
+        }
+    }
+
+    /// Logs one of the plan's baths.
+    func logBath(_ item: PlanItemInfo) async {
+        guard let child else { return }
+        do {
+            let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+            let entry = try await store.logBath(item.id, child: child.id, source: .app)
+            confirmation = Confirmation(entry: entry, text: "Logged \(item.text), \(time(entry.timestamp)).")
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't save that. Please try again."
+        }
+    }
+
+    /// The plan's patch-test wait, and tests running, ready, or checked this week.
+    var patchTests: PatchTests {
+        PatchTests(items: Array(planItems.values), logs: weekLogs, now: .now)
+    }
+
+    /// Starts a patch test and, when the plan says how long to wait, a reminder to check it.
+    func startPatchTest(what: String, where spot: String) async {
+        guard let child else { return }
+        do {
+            let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+            let entry = try await store.logPatchTest(what: what, where: spot, child: child.id, source: .app)
+            if let wait = patchTests.wait {
+                // In the background: the notification service can be slow to answer.
+                Task.detached {
+                    if await NotificationPermission.status() == .notDetermined { _ = await NotificationPermission.request() }
+                    await PatchReminder.schedule(for: entry, at: entry.timestamp.addingTimeInterval(wait))
+                }
+            }
+            confirmation = Confirmation(entry: entry, text: "Patch test started, \(time(entry.timestamp)).")
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't start the patch test. Please try again."
+        }
+    }
+
+    /// Records what the parent saw, and drops the reminder.
+    func setPatchResult(_ test: PatchTests.Test, _ result: PatchResult) async {
+        PatchReminder.cancel(for: test.entry)
+        _ = await update(test.entry, value: .patch(result), note: test.entry.note, timestamp: test.entry.timestamp)
+    }
+
+    /// Different plants eaten this week, and the plan's goal if it gives one.
+    var plantsThisWeek: Int {
+        FoodRotation.plantsThisWeek(meals: mealLogs, foods: foods, now: .now, calendar: calendar).count
+    }
+
+    var plantGoal: ClosedRange<Int>? { FoodRotation.plantGoal(in: Array(planItems.values)) }
+
+    /// The plan's rotation length, if it gives one.
+    var rotationDays: Int? { FoodRotation.days(in: Array(planItems.values)) }
+
+    func logMeal(_ names: [String]) async {
+        guard let child, !names.isEmpty else { return }
+        do {
+            let entry = try await LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+                .logMeal(names, child: child.id, source: .app)
+            confirmation = Confirmation(entry: entry, text: "Logged a meal: \(names.joined(separator: ", ")).")
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't save that. Please try again."
+        }
+    }
+
+    /// A cooked batch, with a reminder when the parent's days run out.
+    func addBatch(_ name: String, place: BatchPlace, days: Int) async {
+        guard let child else { return }
+        do {
+            let entry = try await LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+                .logBatch(name, place: place, days: days, child: child.id, source: .app)
+            if let batch = LeftoverBatch(entry) { Task.detached { await BatchReminder.schedule(batch) } }
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't save that. Please try again."
+        }
+    }
+
+    /// Used or tossed: it leaves the list and its reminder goes.
+    func finishBatch(_ batch: LeftoverBatch) async {
+        BatchReminder.cancel(batch)
+        _ = await update(batch.entry, value: .batch(.done), note: batch.entry.note, timestamp: batch.entry.timestamp)
+    }
+
+    /// Moves a fridge batch to the freezer with the parent's new days.
+    func freezeBatch(_ batch: LeftoverBatch, days: Int) async {
+        await finishBatch(batch)
+        await addBatch(batch.name, place: .freezer, days: days)
+    }
+
+    /// The latest trial for each food.
+    var foodTrials: [FoodTrial] {
+        FoodTrial.trials(foods: foods, logs: trialLogs)
+    }
+
+    /// Starts a trial: the food moves to Testing (the parent decided).
+    func startTrial(_ food: FoodInfo, days: Int, steps: [String]) async {
+        guard let child else { return }
+        do {
+            let container = try CaliCareModelContainer.shared()
+            try await LogStore(modelContainer: container, calendar: calendar)
+                .logTrial(.started, food: food.id, child: child.id, note: FoodTrial.note(days: days, steps: steps), source: .app)
+            if food.status != .testing {
+                try await FoodStore(modelContainer: container).setStatus(food.id, .testing, decidedBy: .parent)
+            }
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't start the trial. Please try again."
+        }
+    }
+
+    /// "Gave it today" or "Worth watching", with Undo.
+    func logTrial(_ event: FoodTrialEvent, _ food: FoodInfo, note: String? = nil) async {
+        guard let child else { return }
+        do {
+            let entry = try await LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+                .logTrial(event, food: food.id, child: child.id, note: note, source: .app)
+            let text = event == .worthWatching ? "Noted for \(food.name): worth watching." : "Logged \(food.name), \(time(entry.timestamp))."
+            confirmation = Confirmation(entry: entry, text: text)
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't save that. Please try again."
+        }
+    }
+
+    /// Ends a trial with the parent's choice for the food.
+    func endTrial(_ trial: FoodTrial, as status: FoodStatus) async {
+        guard let child else { return }
+        do {
+            let container = try CaliCareModelContainer.shared()
+            try await LogStore(modelContainer: container, calendar: calendar)
+                .logTrial(.ended, food: trial.food.id, child: child.id, note: status.rawValue, source: .app)
+            try await FoodStore(modelContainer: container).setStatus(trial.food.id, status, decidedBy: .parent)
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't end the trial. Please try again."
+        }
+    }
+
+    /// Next visit, follow-up timing, and messages left, from the plan's words.
+    var providerTracker: ProviderTracker {
+        ProviderTracker(plan: activePlan, items: Array(planItems.values), visits: visits, logs: messageLogs,
+                        now: .now, calendar: calendar)
+    }
+
+    func logProviderMessage() async {
+        await log(.providerMessage)
+    }
+
+    func addVisit(date: Date, provider: String, notes: String?) async {
+        guard let child else { return }
+        do {
+            try await CarePlanStore(modelContainer: try CaliCareModelContainer.shared())
+                .addVisit(child: child.id, date: date, provider: provider, notes: notes)
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't save the visit. Please try again."
+        }
+    }
+
+    /// The plan's supplements, their rules, and today.
+    var supplementPlan: SupplementPlan {
+        SupplementPlan(items: Array(planItems.values), logs: supplementLogs, now: .now, calendar: calendar)
+    }
+
+    /// Started, taken, or stopped.
+    func logSupplement(_ event: SupplementEvent, _ item: PlanItemInfo) async {
+        guard let child else { return }
+        do {
+            let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+            let entry = try await store.logSupplement(event, item: item.id, child: child.id, source: .app)
+            let words = switch event {
+            case .started: "Started"
+            case .taken: "Logged"
+            case .stopped: "Stopped"
+            }
+            confirmation = Confirmation(entry: entry, text: "\(words) \(item.text), \(time(entry.timestamp)).")
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't save that. Please try again."
+        }
+    }
+
+    /// The running plan's baths and this week's count.
+    var bathWeek: BathWeek {
+        BathWeek(items: Array(planItems.values).sorted { $0.order < $1.order }, logs: weekLogs, now: .now, calendar: calendar)
+    }
+
+    func progress(_ time: RoutineTime) -> RoutineProgress {
+        RoutineProgress(time: time, steps: routineSteps, entries: entries)
+    }
+
+    /// Swipe to delete: soft delete, with Undo in the Logged line.
+    func deleteWithUndo(_ entry: LogEntry) async {
+        do {
+            let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+            try await store.delete(entry.id)
+            entries.removeAll { $0.id == entry.id }
+            // Undo shows at once; widgets and reminders refresh after.
+            confirmation = Confirmation(entry: entry, text: phrases.removed(entry), wasDeleted: true)
+            Task { await afterChange() }
+        } catch {
+            problem = "Couldn't delete that. Please try again."
+        }
+    }
+
+    /// Where a flare was ("Add where"). Returns false (with `problem` set) if it wasn't saved.
+    func setBodyAreas(_ areas: [BodyArea], on entry: LogEntry) async -> Bool {
+        do {
+            let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+            try await store.setBodyAreas(areas, on: entry.id)
+            // The sheet closes as soon as it's saved; the refresh follows.
+            Task { await afterChange() }
+            return true
+        } catch {
+            problem = "Couldn't save where. Please try again."
+            return false
+        }
+    }
+
+    private func restore(_ entry: LogEntry) async {
+        do {
+            let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
+            try await store.restore(entry.id)
+            await afterChange()
+        } catch {
+            problem = "Couldn't bring that back. Please try again."
+        }
     }
 
     func update(_ entry: LogEntry, value: LogValue?, note: String?, timestamp: Date) async -> Bool {
@@ -111,8 +446,36 @@ final class TodayModel {
         await afterChange()
     }
 
+    /// A ticked routine step shows its own name ("Bath"); everything else its usual title.
     func title(for entry: LogEntry) -> String {
-        phrases.title(for: entry)
+        if let id = entry.routineStepID, let step = routineSteps.first(where: { $0.id == id }) {
+            return step.name
+        }
+        if entry.type == .bath, let id = entry.routineStepID, let item = planItems[id] {
+            return item.text
+        }
+        if entry.type == .meal, let foods = entry.note {
+            return "Meal: \(foods)"
+        }
+        if entry.type == .foodTrial, let id = entry.routineStepID, let food = foods.first(where: { $0.id == id }),
+           case .trial(let event)? = entry.value {
+            return switch event {
+            case .started: "Started a trial: \(food.name)"
+            case .given: "\(food.name) (trial)"
+            case .worthWatching: "\(food.name): worth watching"
+            case .ended: "Ended the trial: \(food.name)"
+            }
+        }
+        if entry.type == .supplement, let id = entry.routineStepID, let item = planItems[id],
+           case .supplement(let event)? = entry.value {
+            return event == .taken ? item.text : "\(item.text): \(event.rawValue)"
+        }
+        return phrases.title(for: entry)
+    }
+
+    /// "by Dad", or nil when it's just one person.
+    func byline(for entry: LogEntry) -> String? {
+        LoggedBy.byline(entry.loggedBy, myName: myName, householdSize: householdSize)
     }
 
     func time(_ date: Date) -> String {
@@ -128,6 +491,18 @@ final class TodayModel {
         entries = []
         lastNight = nil
         week = []
+        skin = nil
+        routineSteps = []
+        planItems = [:]
+        supplementLogs = []
+        messageLogs = []
+        visits = []
+        foods = []
+        trialLogs = []
+        mealLogs = []
+        batches = []
+        activePlan = nil
+        weekLogs = []
         hasLoaded = true
     }
 }

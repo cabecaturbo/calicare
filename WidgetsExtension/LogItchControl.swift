@@ -10,10 +10,11 @@ struct LogItchControl: ControlWidget {
     var body: some ControlWidgetConfiguration {
         StaticControlConfiguration(kind: Self.kind) {
             ControlWidgetButton(action: LogItchIntent()) {
-                Label("Log itch", systemImage: "hand.raised")
+                Label("Log", systemImage: "hand.raised.fill")
             }
         }
-        .displayName("Log itch")
+        // Found by searching "Cali Care" in Control Center; the guide says "tap Log".
+        .displayName("Log")
         .description("Logs an itchy moment for your current child.")
     }
 }

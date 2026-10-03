@@ -9,6 +9,12 @@ public struct WidgetSnapshot: Hashable, Sendable {
     public let routinesDone: Int
     public let lastNight: NightRating?
     public let lastItch: Date?
+    /// "by Dad" when more than one person shares the household.
+    public let lastItchBy: String?
+    /// Itchy wake-ups in the night being shown: last night by day, tonight from 7 PM.
+    public let nightWakeUps: Int
+    /// True from 7 PM to 7 AM, when the widget talks about tonight.
+    public let isNight: Bool
 
     public init(
         child: ChildInfo?,
@@ -16,7 +22,10 @@ public struct WidgetSnapshot: Hashable, Sendable {
         bowelMovementCount: Int = 0,
         routinesDone: Int = 0,
         lastNight: NightRating? = nil,
-        lastItch: Date? = nil
+        lastItch: Date? = nil,
+        lastItchBy: String? = nil,
+        nightWakeUps: Int = 0,
+        isNight: Bool = false
     ) {
         self.child = child
         self.itchCount = itchCount
@@ -24,6 +33,9 @@ public struct WidgetSnapshot: Hashable, Sendable {
         self.routinesDone = routinesDone
         self.lastNight = lastNight
         self.lastItch = lastItch
+        self.lastItchBy = lastItchBy
+        self.nightWakeUps = nightWakeUps
+        self.isNight = isNight
     }
 
     /// Nothing to show yet: no child.
@@ -42,7 +54,8 @@ public struct WidgetSnapshot: Hashable, Sendable {
         bowelMovementCount: 1,
         routinesDone: 1,
         lastNight: .okay,
-        lastItch: nil
+        lastItch: nil,
+        nightWakeUps: 2
     )
 
     /// The night a parent means by "last night" at `date`.

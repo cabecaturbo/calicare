@@ -8,6 +8,18 @@ Where CaliCare stands at the end of Phase 1, for the local Claude Code session t
 - **Verified on the Mac (Xcode, iPhone 17 simulator):** clean build with no warnings, all 125 tests pass, and the app launches into onboarding.
 - **CI:** `.github/workflows/ios.yml` runs on every push to this branch. It generates the project, builds, runs the tests, and fails on any warning in our sources.
 
+## Notebook redesign (September 26, 2026)
+- **DESIGN.md** (repo root) is now the design system. Newsreader replaced Fraunces and DM Sans; paper, ink, and indigo replaced cream and sage.
+- **New pieces in Core:** `DesignSystem.swift` (tokens, the six type styles, spacing, corners), `LedgerRow`/`LedgerSection`, button styles, and the paper grain. `ContrastTests` checks every text/background pair.
+- **Restyled:** Today, onboarding, Settings, the debug list, the sheets, all widgets, and the log confirmation. The leaf is gone; the app icon is an ink "c" on paper.
+- **VisualSteps:** onboarding and Settings show real iOS 27 screenshots for the Home Screen and Lock Screen widgets. Action Button and Control Center are placeholders until they're recorded on a real iPhone.
+- **Design review:** the `DesignReview` scheme captures step assets and screenshots; results are in `design-review/redesign/`.
+
+## UX rebuild (September 27, 2026)
+- **U1 app shell is built** (branch `ux/u1-app-shell`): Today, Plan, and Progress tabs; the child's name in display type on Today and as a small switcher in the navigation bar on Plan and Progress; Settings as a large sheet (native List) from every tab; the quick log bar on Plan and Progress. The weekly card and doctor report now live in Progress. Screenshots: `design-review/ux/u1/`.
+- **U2 measures are built** (branch `ux/u2-measures`): skinToday, flare body areas, and routine steps in the data model (SchemaV2, tested migration), on the server (migration applied to calicare), and in sync; the evening skin check-in notification; "Log skin in Cali Care". Skin by day now comes only from the daily answer.
+- **Next:** U3 (Today layouts, including the skin question and "Add where").
+
 ## What's built (by prompt)
 1. **Scaffold:** XcodeGen `project.yml` with App, WidgetsExtension, Core (framework), and CoreTests. Fraunces and DM Sans are bundled in Core with their OFL licenses. `DesignSystem.swift` holds the day and night palettes, type, spacing, and radii.
 2. **Data:** SwiftData in the App Group: `Child`, `LogEvent` (`SchemaV1` plus a migration plan), `LogStore`, `ChildStore`, and `CurrentChildSetting`. `CareDay` runs 7 PM to 7 PM.
@@ -39,6 +51,8 @@ Where CaliCare stands at the end of Phase 1, for the local Claude Code session t
 - **After that:** do the Apple tooling setup (see below), then TestFlight.
 
 ## Open items
+- **Apple token revocation on account deletion** (needed before App Store review): create a Sign in with Apple key on the Apple Developer site, store it as a Supabase secret, and have `delete-account` call Apple's revoke endpoint.
+- **Two-phone test** for 2.4 (join with a code) and 2.5 ("by Dad" names).
 - **No app icon:** `ASSETCATALOG_COMPILER_APPICON_NAME` is empty in `project.yml`. One is needed before TestFlight.
 
 ## Manual tests to do (the simulator can't cover these)
@@ -65,7 +79,7 @@ Test device: iPhone 15 Pro (has an Action Button).
 
 CLIs on the Mac (all installed with Homebrew): `asc`, `supabase`, `vercel`, and `gh`.
 - **Signed in:** `gh` (as cabecaturbo) and `asc`. Still to do: `supabase login` and `vercel login` (not needed until Phase 2).
-- **Hold off:** don't run `supabase init`/`link` until Phase 2, or `vercel link` until Phase 7. Either would add scaffolding early.
+- **Supabase (Phase 2 started):** `supabase/` is set up and linked to the **calicare** project in *cabecaturbo's Org* (ref `sbzuoqxgtbpobnrqqmhw`, US West / Oregon, Postgres 17). The 2.1 schema (households, members, children, log events, RLS) is applied; see `supabase/README.md`. Don't run `vercel link` until Phase 7.
 
 ## Next steps
 1. Use the app with the family for a few days and note what felt good or annoying (per the build plan).

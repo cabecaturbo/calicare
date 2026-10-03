@@ -54,6 +54,9 @@ public struct NotificationActionHandler: Sendable {
             guard payload.kind.routineTime != nil else { return .ignored }
             try await scheduler.snooze(payload)
             return .snoozed
+        case .calm, .littleItchy, .flaring, .veryRough:
+            guard payload.kind == .skinCheckIn, let answer = action.skinToday else { return .ignored }
+            return try await log(.skinToday, value: .skin(answer), payload: payload, at: skinTime(payload))
         }
     }
 
@@ -68,6 +71,15 @@ public struct NotificationActionHandler: Sendable {
         await onChange()
         try await scheduler.refresh()
         return .logged(saved.entry)
+    }
+
+    /// Now, unless the skin check-in is answered on a later day (say, the next
+    /// morning). Then it's logged at the check-in's own time, for the day it asked about.
+    private func skinTime(_ payload: ReminderPayload) -> Date? {
+        guard let fireDate = payload.fireDate else { return nil }
+        let answeredDay = SkinDay.day(for: now(), calendar: calendar)
+        let reminderDay = SkinDay.day(for: fireDate, calendar: calendar)
+        return answeredDay == reminderDay ? nil : fireDate
     }
 
     /// Now, unless the check-in is answered on a later care day. Then it's logged

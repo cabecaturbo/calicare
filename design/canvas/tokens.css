@@ -1,0 +1,190 @@
+/* Cali Care tokens: the only place colors, type, spacing, radii and motion are defined. */
+
+.day, :root {
+  --bg: #F6F1E8;
+  --surface: #ECE4D6;
+  --ink: #1E1B18;
+  --muted: #5C554D;
+  --line: #D8CFC0;
+  --accent: #34466A;
+  --on-accent: #F6F1E8;
+  --bar-bg: rgba(246, 241, 232, 0.96);
+  --calm: #E3E7EE;
+  --little-itchy: #C2CBDB;
+  --flaring: #56698F;
+  --very-rough: #2E3E5E;
+}
+.night {
+  --bg: #14161C;
+  --surface: #1E2129;
+  --ink: #EAE3D6;
+  --muted: #A8A093;
+  --line: #2C303A;
+  --accent: #9FB0D0;
+  --on-accent: #14161C;
+  --bar-bg: rgba(30, 33, 41, 0.96);
+  /* Night ramp: on a dark ground, rougher is brighter, so it still stands out most. */
+  --calm: #2A3142;
+  --little-itchy: #3C4760;
+  --flaring: #8497BD;
+  --very-rough: #B7C5E0;
+}
+
+/* One scale for skin answers and nights. Rule in both themes: rougher always
+   stands out more. Day: deeper is rougher. Night (.night above): brighter is rougher. */
+:root {
+  /* Only inside the drawn phones in onboarding. */
+  --mock-bezel: #1E1B18;
+  --mock-home: #CFC6B8;
+  --mock-app: #B9B0A1;
+  --mock-lock: #2A2F3A;
+  --mock-lock-text: #EAE3D6;
+  --mock-r-device: 40px;
+  --mock-r-screen: 31px;
+  --r-none: 0;
+
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px;
+  --gutter: 24px;
+  --r: 12px;
+  --r-pill: 999px;
+  --r-mark: 3px;
+  --hairline: 0.5px;
+  --tap: 44px;
+
+  --serif: Newsreader, 'New York', Georgia, serif;
+  --sans: -apple-system, 'SF Pro Text', system-ui, sans-serif;
+}
+
+/* Every swatch and chart mark: a visible 1px border so calm never vanishes. */
+.swatch { border: 1px solid var(--muted); border-radius: var(--r-mark); box-sizing: border-box; }
+.swatch.empty { background: transparent; border-style: dashed; }
+.sw-calm { background: var(--calm); }
+.sw-little-itchy { background: var(--little-itchy); }
+.sw-flaring { background: var(--flaring); }
+.sw-very-rough { background: var(--very-rough); }
+
+/* Type: five sizes, plus tab labels. Serif only for headlines and hero words. */
+.t-display { font-family: var(--serif); font-weight: 500; font-size: 34px; line-height: 40px; }
+.t-title   { font-family: var(--serif); font-weight: 500; font-size: 24px; line-height: 30px; }
+.t-body    { font-family: var(--sans); font-weight: 400; font-size: 17px; line-height: 24px; }
+.t-label   { font-family: var(--sans); font-weight: 600; font-size: 15px; line-height: 20px; }
+.t-caption { font-family: var(--sans); font-weight: 400; font-size: 13px; line-height: 18px; }
+.t-tab     { font-family: var(--sans); font-weight: 500; font-size: 12px; line-height: 16px; }
+.muted { color: var(--muted); }
+
+/* Controls */
+button, a, input { font: inherit; color: inherit; }
+.btn-primary { display: flex; align-items: center; justify-content: center; height: 56px; border: 0; border-radius: var(--r); background: var(--accent); color: var(--on-accent); text-decoration: none; }
+.btn-secondary { display: flex; align-items: center; justify-content: center; height: 52px; border: 1px solid var(--ink); border-radius: var(--r); background: transparent; color: var(--ink); text-decoration: none; }
+.btn-text { display: flex; align-items: center; justify-content: center; min-height: var(--tap); border: 0; background: none; color: var(--accent); text-decoration: none; }
+.card { background: var(--surface); border-radius: var(--r); }
+.divider { height: var(--hairline); background: var(--line); }
+.row { min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: var(--s3); border: 0; border-bottom: var(--hairline) solid var(--line); background: none; padding: 0; width: 100%; text-align: left; }
+.row:last-child { border-bottom: 0; }
+
+/* Hand-drawn ink illustrations: draw once, about a second, then stop. */
+.ink { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1s ease-out forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+/* Onboarding only: a gentle hand-drawn wobble. */
+.loop { transform-origin: center; animation: boil 1.8s steps(1) infinite; }
+@keyframes boil { 0% { transform: rotate(-0.6deg); } 33% { transform: rotate(0.4deg) translate(0.4px, -0.3px); } 66% { transform: rotate(0) translate(-0.3px, 0.4px); } }
+.rise { animation: rise 0.6s ease-out both; }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .draw { stroke-dashoffset: 0; }
+}
+
+/* Skin check-in: four card buttons, never mistaken for a chart. */
+.choice { min-height: 64px; display: flex; align-items: center; gap: var(--s3); padding: 0 var(--s4); border: 1px solid var(--line); border-radius: var(--r); background: var(--bg); color: var(--ink); box-sizing: border-box; text-align: left; }
+.choice.selected { border: 2px solid var(--accent); background: var(--surface); }
+.choice .swatch { width: 24px; height: 24px; flex-shrink: 0; }
+
+/* Onboarding progress: equal steps. */
+.progress-track { height: 4px; border-radius: var(--r-pill); background: var(--line); overflow: hidden; }
+.progress-fill { height: 4px; border-radius: var(--r-pill); background: var(--accent); }
+
+/* Text inside the drawn phones only (illustration, not UI). */
+.mock-xs { font-family: var(--sans); font-size: 10px; line-height: 13px; }
+.mock-s { font-family: var(--sans); font-size: 12px; line-height: 16px; }
+.mock-word { font-family: var(--serif); font-size: 28px; line-height: 32px; }
+.mock-clock { font-family: var(--sans); font-size: 52px; line-height: 60px; font-weight: 300; }
+
+/* ---------- Widgets (inside the system's widget shape) ----------
+   Looks the current iOS (27.0) supports: full color, tinted, clear.
+   Lock Screen widgets and controls are always monochrome. */
+.w-full   { --w-bg: var(--bg); --w-fg: var(--ink); --w-muted: var(--muted); --w-btn-bg: var(--accent); --w-btn-fg: var(--on-accent); --w-soft: var(--surface); }
+.w-tinted { --w-bg: rgba(38, 54, 86, 0.55); --w-fg: #F1F5FC; --w-muted: #D9E2F1; --w-btn-bg: rgba(241, 245, 252, 0.18); --w-btn-fg: #FFFFFF; --w-soft: rgba(241, 245, 252, 0.12); }
+.w-clear  { --w-bg: rgba(20, 22, 28, 0.30); --w-fg: #FFFFFF; --w-muted: #E6E8EC; --w-btn-bg: rgba(255, 255, 255, 0.16); --w-btn-fg: #FFFFFF; --w-soft: rgba(255, 255, 255, 0.10); }
+.w-mono   { --w-bg: rgba(20, 22, 28, 0.30); --w-fg: #FFFFFF; --w-muted: #E6E8EC; --w-btn-bg: rgba(255, 255, 255, 0.16); --w-btn-fg: #FFFFFF; --w-soft: rgba(255, 255, 255, 0.10); }
+/* The one widget-only type exception: "Itchy" in the small Lock Screen circle. */
+.t-itchy-s { font-family: var(--serif); font-weight: 500; font-size: 17px; line-height: 20px; }
+
+/* ---------- Drawn iPhone (current iOS 27, 393 × 852 pt screen) ---------- */
+:root {
+  --mock-frame: #2C2C2E;
+  --mock-island: #000000;
+  --mock-r-phone: 67px;
+  --mock-r-display: 55px;
+  --mock-wall: #5E6878;
+  --mock-wall-shape: #6E7889;
+  --mock-wall-shape-2: #535D6C;
+  --mock-wall-night: #232833;
+  --mock-wall-night-shape: #2C3240;
+  --mock-on-wall: #FFFFFF;
+  --mock-icon-1: #E6E0D5;
+  --mock-icon-2: #CBD3DD;
+  --mock-icon-3: #DDD6C9;
+  --mock-icon-4: #B9C3CF;
+  --mock-icon-glyph: #4A5260;
+  --mock-glass: rgba(255, 255, 255, 0.18);
+  --mock-glass-strong: rgba(255, 255, 255, 0.30);
+  --mock-dim: rgba(10, 12, 16, 0.45);
+  --mock-sheet: #F2F2F4;
+  --mock-sheet-dark: #1C1C1E;
+  --mock-sheet-text: #1C1C1E;
+  --mock-sheet-muted: #6C6C70;
+  --mock-sheet-field: #E3E3E8;
+  --mock-system-blue: #0A7AFF;
+  --mock-key: #FFFFFF;
+  --mock-keyboard: #D1D3D9;
+  --mock-badge: #D9D9DE;
+  --mock-key-dark: #4A4A4E;
+  --mock-keyboard-dark: #2B2B2E;
+  --mock-app-icon: #F6F1E8;
+  --mock-r-icon: 15px;
+  --mock-r-dock: 36px;
+  --mock-r-widget: 22px;
+  --mock-r-sheet: 38px;
+  --mock-r-control: 999px;
+  --mock-r-menu: 24px;
+  --mock-r-field: 12px;
+  --mock-r-app-s: 9px;
+  --mock-r-app-xs: 8px;
+  --mock-r-key: 6px;
+}
+.mock-status { font-family: var(--sans); font-size: 17px; line-height: 22px; font-weight: 600; }
+.mock-label { font-family: var(--sans); font-size: 11px; line-height: 13px; font-weight: 500; }
+.mock-lock-clock { font-family: var(--sans); font-size: 92px; line-height: 96px; font-weight: 600; letter-spacing: -2px; }
+.mock-lock-date { font-family: var(--sans); font-size: 20px; line-height: 24px; font-weight: 500; }
+.mock-sheet-title { font-family: var(--sans); font-size: 28px; line-height: 34px; font-weight: 700; }
+.mock-sheet-body { font-family: var(--sans); font-size: 17px; line-height: 22px; }
+.mock-key-t { font-family: var(--sans); font-size: 22px; line-height: 26px; }
+
+/* Guide markers: a highlight ring and a finger tap. */
+.guide-ring { position: absolute; border: 2px solid var(--accent); border-radius: var(--r-pill); box-sizing: border-box; pointer-events: none; }
+.guide-tap { position: absolute; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: var(--r-pill); background: rgba(52, 70, 106, 0.35); border: 2px solid var(--mock-on-wall); box-sizing: border-box; animation: tap-pulse 1.6s ease-out infinite; pointer-events: none; }
+@keyframes tap-pulse { 0% { transform: scale(0.8); opacity: 0.9; } 70% { transform: scale(1.15); opacity: 0.5; } 100% { transform: scale(0.8); opacity: 0.9; } }
+/* The widget loop: tap, "Logged", back to normal. */
+.loop-normal { animation: loop-a 5s linear 1s infinite; }
+.loop-logged { animation: loop-b 5s linear 1s infinite; opacity: 0; }
+.loop-press { animation: loop-press 5s ease-out 1s infinite; }
+@keyframes loop-a { 0%, 20% { opacity: 1; } 24%, 90% { opacity: 0; } 94%, 100% { opacity: 1; } }
+@keyframes loop-b { 0%, 20% { opacity: 0; } 24%, 90% { opacity: 1; } 94%, 100% { opacity: 0; } }
+@keyframes loop-press { 0%, 16% { transform: scale(1); } 20% { transform: scale(0.95); } 26%, 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .loop-normal { opacity: 1; } .loop-logged { opacity: 0; }
+  .guide-tap { transform: none; }
+}

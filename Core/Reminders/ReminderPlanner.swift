@@ -65,17 +65,22 @@ public struct ReminderPlanner: Sendable {
     }
 
     /// Every reminder that should be pending for `child`.
-    /// Skips the check-in on any care day in `ratedDays` (a night rating is already logged).
+    /// Skips the morning check-in on any care day in `ratedDays` (a night rating is
+    /// already logged), and the skin check-in on any day in `skinDays` (already answered).
     public func plan(
         settings: ReminderSettings,
         child: ChildInfo?,
         ratedDays: Set<CareDay>,
+        skinDays: Set<CareDay> = [],
         now: Date
     ) -> [PlannedReminder] {
         guard let child else { return [] }
         var reminders: [PlannedReminder] = []
         if settings.checkIn.isOn {
-            reminders += checkIns(at: settings.checkIn, child: child, ratedDays: ratedDays, now: now)
+            reminders += questions(.checkIn, at: settings.checkIn, child: child, answered: ratedDays, now: now)
+        }
+        if settings.skinCheckIn.isOn {
+            reminders += questions(.skinCheckIn, at: settings.skinCheckIn, child: child, answered: skinDays, now: now)
         }
         for kind in [ReminderKind.morningRoutine, .eveningRoutine] where settings[kind].isOn {
             let slot = settings[kind]
@@ -103,7 +108,7 @@ public struct ReminderPlanner: Sendable {
 
     /// A real reminder that arrives in a few seconds, for trying the buttons.
     public func test(_ kind: ReminderKind, child: ChildInfo, now: Date, delay: TimeInterval = 5) -> PlannedReminder {
-        let fireDate = kind == .checkIn ? now.addingTimeInterval(delay) : nil
+        let fireDate = kind.isDailyQuestion ? now.addingTimeInterval(delay) : nil
         return PlannedReminder(
             id: ReminderIDs.test(kind),
             trigger: .after(delay),
@@ -113,10 +118,20 @@ public struct ReminderPlanner: Sendable {
         )
     }
 
-    private func checkIns(
+    /// The day a daily question is about. A skin answer given in the evening counts
+    /// for the day that just ended, so a late skin check-in belongs to that day too.
+    func questionDay(_ kind: ReminderKind, firing fireDate: Date) -> CareDay {
+        kind == .skinCheckIn
+            ? SkinDay.day(for: fireDate, calendar: calendar)
+            : CareDay.containing(fireDate, calendar: calendar)
+    }
+
+    /// One-off reminders for the next 14 days, skipping days already answered.
+    private func questions(
+        _ kind: ReminderKind,
         at slot: ReminderSlot,
         child: ChildInfo,
-        ratedDays: Set<CareDay>,
+        answered: Set<CareDay>,
         now: Date
     ) -> [PlannedReminder] {
         let today = calendar.startOfDay(for: now)
@@ -129,15 +144,15 @@ public struct ReminderPlanner: Sendable {
             .prefix(Self.checkInDays)
 
         return upcoming.compactMap { fireDate in
-            let careDay = CareDay.containing(fireDate, calendar: calendar)
-            guard !ratedDays.contains(careDay) else { return nil }
+            let careDay = questionDay(kind, firing: fireDate)
+            guard !answered.contains(careDay) else { return nil }
             let parts = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: fireDate)
             return PlannedReminder(
-                id: ReminderIDs.checkIn(for: careDay),
+                id: ReminderIDs.question(kind, for: careDay),
                 trigger: .once(parts),
-                title: ReminderCopy.title(.checkIn, childName: child.name),
-                body: ReminderCopy.body(.checkIn),
-                payload: ReminderPayload(kind: .checkIn, childID: child.id, fireDate: fireDate)
+                title: ReminderCopy.title(kind, childName: child.name),
+                body: ReminderCopy.body(kind),
+                payload: ReminderPayload(kind: kind, childID: child.id, fireDate: fireDate)
             )
         }
     }

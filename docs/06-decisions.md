@@ -500,3 +500,12 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
 - **A reminder at 9 AM on the last day:** "Last day for the chicken rice · Use it or freeze it today", set in the background and cancelled when the batch is done.
 - **Swipe left for Used, Freeze, or Toss.** Freeze asks for freezer days and starts a new freezer batch.
 - **Sheets now live on the food list screen**, not on a List section, where they didn't always open. `LeftoverBatch` is tested.
+
+## Food and skin, and what may be less covered (5.6, October 2, 2026)
+
+- **"Changes" in Progress now includes food:** paused foods (on the day they were paused), trials started and ended, and "worth watching" notes.
+  - When a food change falls in the week before "Rougher since…", the card adds "Food reactions can show up 12–24 hours later."
+  - `CareChange.isFood` marks food changes.
+- **`NutrientCoverage` (tested):** under the Paused foods it says, for example, "With dairy and eggs paused, calcium, vitamin D, protein, and choline may be less covered. Worth asking your provider or a dietitian."
+  - The groups are a small conservative table. It never names a supplement or a food to add; a test checks the sentence never contains "supplement", "take", "add", "try", "cause", "trigger", or "likely".
+- **The food list order** is: plants, ideas, and rotation; "Add a food"; trials; Safe, Testing, Paused; Leftovers last.

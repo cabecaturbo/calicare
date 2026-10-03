@@ -7,19 +7,28 @@ public struct CareChange: Hashable, Sendable, Identifiable {
     public let date: Date
     /// "Started Antimicrobial herb, Brand C"
     public let text: String
+    /// Food changes: reactions can show up 12–24 hours later.
+    public let isFood: Bool
     public var id: String { "\(date.timeIntervalSince1970)-\(text)" }
 
-    public init(date: Date, text: String) {
+    public init(date: Date, text: String, isFood: Bool = false) {
         self.date = date
         self.text = text
+        self.isFood = isFood
     }
 }
 
 public enum CareChanges {
     /// Every change, newest first: plans started and ended, supplements
-    /// started and stopped, and new things patch-tested.
-    public static func list(plans: [CarePlanInfo], items: [UUID: PlanItemInfo], logs: [LogEntry]) -> [CareChange] {
+    /// started and stopped, new things patch-tested, and food changes
+    /// (paused foods, trials started and ended, anything worth watching).
+    public static func list(plans: [CarePlanInfo], items: [UUID: PlanItemInfo], logs: [LogEntry],
+                            foods: [FoodInfo] = []) -> [CareChange] {
         var changes: [CareChange] = []
+        for food in foods where food.status == .paused {
+            changes.append(CareChange(date: food.statusChangedAt, text: "Paused \(food.name)", isFood: true))
+        }
+        let foodNames = Dictionary(foods.map { ($0.id, $0.name) }, uniquingKeysWith: { a, _ in a })
         for plan in plans {
             let from = plan.provider.isEmpty ? "the care plan" : "\(plan.provider)’s plan"
             if let started = plan.startedAt { changes.append(CareChange(date: started, text: "Started \(from)")) }
@@ -31,6 +40,15 @@ public enum CareChanges {
                 changes.append(CareChange(date: log.timestamp, text: "Started \(name(log, items))"))
             case (.supplement, .supplement(.stopped)?):
                 changes.append(CareChange(date: log.timestamp, text: "Stopped \(name(log, items))"))
+            case (.foodTrial, .trial(let event)?):
+                let name = log.routineStepID.flatMap { foodNames[$0] } ?? "a food"
+                let text: String? = switch event {
+                case .started: "Started a trial: \(name)"
+                case .ended: "Ended the trial: \(name)"
+                case .worthWatching: "\(name): worth watching"
+                case .given: nil
+                }
+                if let text { changes.append(CareChange(date: log.timestamp, text: text, isFood: true)) }
             case (.patchTest, _):
                 // What was tested, not where: "Patch test: Calendula balm".
                 let what = log.note?.components(separatedBy: " · ").first ?? "something new"

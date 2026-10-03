@@ -150,8 +150,10 @@ public enum TypeStyle: CaseIterable, Sendable {
     case title
     /// Same as title (the old summary-sentence style).
     case lede
-    /// SF Pro 600, 15/20: section labels, the child switcher, primary buttons.
+    /// Newsreader 500, 20/26: section headers ("Evening", "Supplements").
     case section
+    /// SF Pro 600, 15/20: the child switcher, step numbers, outlined button labels.
+    case label
     /// SF Pro 400, 17/24: all body copy and row labels.
     case body
     /// Same as body (the old control style).
@@ -163,7 +165,8 @@ public enum TypeStyle: CaseIterable, Sendable {
         switch self {
         case .display: .custom(Self.displayCut, size: 34, relativeTo: .largeTitle)
         case .title, .lede: .custom(Self.displayCut, size: 24, relativeTo: .title2)
-        case .section: .system(.subheadline, weight: .semibold)
+        case .section: .custom(Self.displayCut, size: 20, relativeTo: .title3)
+        case .label: .system(.subheadline, weight: .semibold)
         case .body, .control: .system(.body)
         case .meta: .system(.footnote)
         }
@@ -174,7 +177,8 @@ public enum TypeStyle: CaseIterable, Sendable {
         switch self {
         case .display: 34
         case .title, .lede: 24
-        case .section: 15
+        case .section: 20
+        case .label: 15
         case .body, .control: 17
         case .meta: 13
         }
@@ -184,7 +188,8 @@ public enum TypeStyle: CaseIterable, Sendable {
         switch self {
         case .display: 40
         case .title, .lede: 30
-        case .section: 20
+        case .section: 26
+        case .label: 20
         case .body, .control: 24
         case .meta: 18
         }
@@ -194,7 +199,8 @@ public enum TypeStyle: CaseIterable, Sendable {
         switch self {
         case .display: .largeTitle
         case .title, .lede: .title2
-        case .section: .subheadline
+        case .section: .title3
+        case .label: .subheadline
         case .body, .control: .body
         case .meta: .footnote
         }
@@ -208,20 +214,29 @@ public enum TypeStyle: CaseIterable, Sendable {
 
 // MARK: - Space, corners, sizes
 
-/// 4pt base.
+/// One scale: 4 / 8 / 16 / 24 / 40 (DESIGN.md §5). Space inside a group is
+/// always smaller than space between groups: headers sit 8 above their rows
+/// and 40 below the section before.
 public enum Spacing {
     public static let x1: CGFloat = 4
     public static let x2: CGFloat = 8
-    public static let x3: CGFloat = 12
     public static let x4: CGFloat = 16
     public static let x5: CGFloat = 24
-    public static let x6: CGFloat = 32
+    /// Between sections.
+    public static let x7: CGFloat = 40
     /// Screen margins.
     public static let margin: CGFloat = 24
     public static let titleToLede: CGFloat = 8
-    public static let ledeToSection: CGFloat = 32
+    public static let ledeToSection: CGFloat = 40
     /// Between sections (DESIGN.md §5).
-    public static let section: CGFloat = 32
+    public static let section: CGFloat = 40
+}
+
+/// Shared cards and PDFs (weekly card, caregiver card) are fixed-size
+/// pictures and pages; they keep their own spacing so nothing reflows.
+public enum CardSpacing {
+    public static let row: CGFloat = 12
+    public static let block: CGFloat = 32
 }
 
 public enum Corner {

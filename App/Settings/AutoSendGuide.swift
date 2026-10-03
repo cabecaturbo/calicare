@@ -25,9 +25,9 @@ struct AutoSendGuide: View {
 
                 VStack(alignment: .leading, spacing: Spacing.x4) {
                     ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
-                        HStack(alignment: .firstTextBaseline, spacing: Spacing.x3) {
+                        HStack(alignment: .firstTextBaseline, spacing: Spacing.x4) {
                             Text("\(index + 1)")
-                                .textStyle(.section)
+                                .textStyle(.label)
                                 .foregroundStyle(palette.indigo)
                                 .frame(width: 20, alignment: .leading)
                             Text(step)

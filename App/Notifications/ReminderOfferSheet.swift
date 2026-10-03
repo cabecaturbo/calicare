@@ -22,7 +22,7 @@ struct ReminderOfferSheet: View {
                 Text("Skip one anytime. Change times or turn them off in Settings.")
                     .textStyle(.meta)
                     .foregroundStyle(palette.graphite)
-                    .padding(.top, Spacing.x3)
+                    .padding(.top, Spacing.x4)
             }
             .fixedSize(horizontal: false, vertical: true)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -38,7 +38,7 @@ struct ReminderOfferSheet: View {
                     .buttonStyle(.textLink)
             }
             .padding(.horizontal, Spacing.margin)
-            .padding(.top, Spacing.x3)
+            .padding(.top, Spacing.x4)
             .padding(.bottom, Spacing.x2)
             .paperBackground(.oat)
         }

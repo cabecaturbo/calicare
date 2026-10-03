@@ -25,7 +25,7 @@ public struct LedgerRow<Label: View, Trailing: View>: View {
             trailing
         }
         .padding(.horizontal, Spacing.margin)
-        .padding(.vertical, Spacing.x3)
+        .padding(.vertical, Spacing.x2)
         .frame(maxWidth: .infinity, minHeight: Size.row(isNight: palette.isNight), alignment: .leading)
         .overlay(alignment: .bottom) { Hairline() }
         .contentShape(Rectangle())
@@ -93,7 +93,7 @@ public struct LedgerSection<Content: View>: View {
                     .foregroundStyle(palette.ink)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, Spacing.margin)
-                    .padding(.bottom, Spacing.x3)
+                    .padding(.bottom, Spacing.x2)
                     .accessibilityAddTraits(.isHeader)
             }
             Hairline()

@@ -18,6 +18,7 @@ struct MealSheet: View {
                 .padding(.vertical, Spacing.x5)
             }
             .paperBackground(.oat)
+            .solidNavigationBar()
             .navigationTitle("Log a meal")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -75,6 +76,7 @@ struct RotationView: View {
         }
         .scrollContentBackground(.hidden)
         .paperBackground()
+        .solidNavigationBar(.paper)
         .navigationTitle("Rotation")
         .navigationBarTitleDisplayMode(.inline)
     }

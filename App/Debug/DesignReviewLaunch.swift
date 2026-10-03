@@ -16,7 +16,12 @@ enum DesignReviewLaunch {
         if DesignReview.applyLaunchArgument() {
             WidgetCenter.shared.reloadAllTimelines()
         }
-        if let kind = UserDefaults.standard.string(forKey: "designReviewSeed"), ["YES", "UNRATED", "EMPTY", "MONTHS", "TWO", "SAMPLE", "PLAN", "PLANSTARTED"].contains(kind) {
+        // One-time clean slate on a test phone (launched with `-clearCarePlanAndSteps YES`):
+        // removes plans and routine steps, keeps logs, foods, products, and photos.
+        if UserDefaults.standard.bool(forKey: "clearCarePlanAndSteps") {
+            Task { await clearCarePlanAndSteps() }
+        }
+        if let kind = UserDefaults.standard.string(forKey: "designReviewSeed"), ["YES", "UNRATED", "EMPTY", "MONTHS", "TWO", "SAMPLE", "PLAN", "PLANSTARTED", "LEGACYPLAN"].contains(kind) {
             UserDefaults.standard.set(true, forKey: OnboardingFlag.key)
             Task { await seed(kind) }
         }
@@ -43,6 +48,15 @@ enum DesignReviewLaunch {
         PlanItemDraft(kind: .followUp, text: "Up to 5 follow-up messages within 8 weeks", sourcePage: 2, sourceLine: "Up to 5 follow-up messages within 8 weeks."),
     ]
 
+    private static func clearCarePlanAndSteps() async {
+        guard let container = try? CaliCareModelContainer.shared(),
+              let children = try? await ChildStore(modelContainer: container).activeChildren()
+        else { return }
+        let plans = CarePlanStore(modelContainer: container)
+        for child in children { _ = try? await plans.removeAllPlansAndSteps(child: child.id) }
+        await LogChanges.didChange()
+    }
+
     private static func seed(_ kind: String) async {
         guard let container = try? CaliCareModelContainer.shared() else { return }
         let children = ChildStore(modelContainer: container)
@@ -57,6 +71,23 @@ enum DesignReviewLaunch {
                 for item in (try? await plans.items(plan: draft.id)) ?? [] { try? await plans.setConfirmed(item.id, true) }
                 _ = try? await plans.start(draft.id)
             }
+            await LogChanges.didChange()
+            return
+        }
+        if kind == "LEGACYPLAN" {
+            // Steps first, then the plan, the way the owner's phone got them.
+            let routine = RoutineStore(modelContainer: container)
+            for step in LegacyPlanFixture.steps { _ = try? await routine.add(name: step.name, time: step.time, child: cal.id) }
+            let plans = CarePlanStore(modelContainer: container)
+            if let draft = try? await plans.createDraft(child: cal.id, provider: "Dr. Rivera", items: LegacyPlanFixture.items) {
+                for item in (try? await plans.items(plan: draft.id)) ?? [] { try? await plans.setConfirmed(item.id, true) }
+                _ = try? await plans.start(draft.id)
+            }
+            let foods = FoodStore(modelContainer: container)
+            for name in LegacyPlanFixture.safeFoods { _ = try? await foods.add(name: name, status: .safe, decidedBy: .parent, child: cal.id) }
+            _ = try? await foods.add(name: "Eggs", status: .paused, decidedBy: .plan, child: cal.id)
+            _ = try? await foods.add(name: "Strawberries", status: .testing, decidedBy: .parent, child: cal.id)
+            _ = try? await plans.addVisit(child: cal.id, date: .now.addingTimeInterval(-86_400 * 12), provider: "Dr. Rivera")
             await LogChanges.didChange()
             return
         }

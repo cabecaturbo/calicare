@@ -31,14 +31,14 @@ struct WeekStrip: View {
     /// Side by side, with row labels on the left.
     private var columns: some View {
         HStack(alignment: .top, spacing: 0) {
-            VStack(alignment: .leading, spacing: Spacing.x3) {
+            VStack(alignment: .leading, spacing: Spacing.x4) {
                 Text(" ").textStyle(.meta)
                 rowLabel("Night")
                 rowLabel("Skin")
             }
             .accessibilityHidden(true)
             ForEach(days) { day in
-                VStack(spacing: Spacing.x3) {
+                VStack(spacing: Spacing.x4) {
                     Text(weekdayLetter(day))
                         .textStyle(.meta)
                         .foregroundStyle(isToday(day) ? palette.indigo : palette.graphite)
@@ -58,7 +58,7 @@ struct WeekStrip: View {
     private var rows: some View {
         VStack(alignment: .leading, spacing: Spacing.x4) {
             ForEach(days) { day in
-                HStack(alignment: .center, spacing: Spacing.x3) {
+                HStack(alignment: .center, spacing: Spacing.x4) {
                     LevelMark(fill: day.night.map(palette.color(for:)), shape: .circle)
                     LevelMark(fill: day.skin.map(palette.color(for:)), shape: .square)
                     Text(description(day))

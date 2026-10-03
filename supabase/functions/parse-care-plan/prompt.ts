@@ -1,6 +1,6 @@
 // The extraction instructions and the tool the model must answer with.
 
-import { KINDS } from "./grounding.ts";
+import { CATEGORIES, KINDS } from "./grounding.ts";
 
 export const SYSTEM = `You extract a care plan that a child's provider wrote, so a parent can review it.
 
@@ -17,6 +17,11 @@ Rules:
   fundamental = everyday basics (air, sleep, hydration, movement, bowel movements);
   followUp = visits, messages, tests, or reassessments.
 - Rules such as "one at a time, 3 to 5 days apart" or "don't combine" are items too, quoted exactly.
+- For routine steps, topicals, baths, supplements, and medications, also propose:
+  label = what to do, starting with a verb, one action, 6 words or fewer, no "Step 1:" ("Apply aloe vera");
+  detail = the rest of the item's words, copied exactly ("96% or more pure");
+  category = wash, apply, give, feed, or dress.
+  Labels and details use only the plan's words: never add a dose, brand, ratio, or condition. If unsure, use null.
 - If the text isn't a care plan, return no items.`;
 
 export const TOOL = {
@@ -38,6 +43,9 @@ export const TOOL = {
             duration: { type: ["string", "null"] },
             source_page: { type: "integer" },
             source_line: { type: "string" },
+            label: { type: ["string", "null"] },
+            detail: { type: ["string", "null"] },
+            category: { type: ["string", "null"], enum: [...CATEGORIES, null] },
           },
           required: ["kind", "text", "dose", "frequency", "timing", "duration", "source_page", "source_line"],
         },

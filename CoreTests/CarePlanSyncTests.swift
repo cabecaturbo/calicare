@@ -147,4 +147,28 @@ struct CarePlanSyncTests {
         #expect(second.appliedProducts == 1)
         #expect(try await products.products(child: child.id).map(\.name) == ["Lavender wash", "Oat cream"])
     }
+
+    @Test func stepWordingGoesUpAndComesDown() async throws {
+        let remote = FakeSyncRemote()
+        let child = try await addChild()
+        let routine = RoutineStore(modelContainer: container, now: { [clock] in clock.now })
+        let step = try await routine.add(name: "Moisturizer", time: .evening, child: child.id)
+        _ = try await engine(remote).sync(userID: user, displayName: "Mom")
+        let up = await remote.routineSteps[step.id]
+        #expect(up?.label == "Apply moisturizer")
+        #expect(up?.sourceText == "Moisturizer")
+        #expect(up?.category == "apply")
+        #expect(up?.kind == "task")
+
+        var changed = try #require(up)
+        changed.label = "Cream on arms"
+        changed.updatedAt = clock.now.addingTimeInterval(60)
+        try await remote.upsert(routineSteps: [changed])
+        let second = try await engine(remote).sync(userID: user, displayName: "Mom")
+        #expect(second.appliedRoutineSteps == 1)
+        let down = try #require(try await routine.steps(child: child.id).first)
+        #expect(down.label == "Cream on arms")
+        #expect(down.sourceText == "Moisturizer")
+        #expect(down.name == "Moisturizer")
+    }
 }

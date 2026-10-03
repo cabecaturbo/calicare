@@ -1,16 +1,6 @@
 import Foundation
 import SwiftData
 
-// Current model names always point at the latest schema version.
-public typealias Child = SchemaV5.Child
-public typealias LogEvent = SchemaV5.LogEvent
-public typealias RoutineStep = SchemaV5.RoutineStep
-public typealias CarePlan = SchemaV5.CarePlan
-public typealias PlanItem = SchemaV5.PlanItem
-public typealias Visit = SchemaV5.Visit
-public typealias Food = SchemaV5.Food
-public typealias Product = SchemaV5.Product
-
 /// Phase 6: the product diary. The V4 models are copied unchanged; Product is
 /// new, so the migration from V4 is lightweight.
 public enum SchemaV5: VersionedSchema {

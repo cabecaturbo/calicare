@@ -28,6 +28,7 @@ struct TodayView: View {
             }
             .paperBackground()
             .refreshable { await model.load() }
+            .statusBarBackground()
             .toolbar(.hidden, for: .navigationBar)
             .sheet(item: $editing, onDismiss: reload) { entry in
                 EditLogSheet(entry: entry, model: model)
@@ -50,7 +51,7 @@ struct TodayView: View {
                 .foregroundStyle(palette.indigo)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, Spacing.margin)
-                .padding(.top, Spacing.x3)
+                .padding(.top, Spacing.x4)
         }
 
         if asksSkin {
@@ -59,19 +60,19 @@ struct TodayView: View {
                 Task { await model.log(.skinToday, value: .skin(answer)) }
             }
             .padding(.horizontal, Spacing.margin)
-            .padding(.top, Spacing.x6)
+            .padding(.top, Spacing.x7)
         }
 
         summary
             .padding(.horizontal, Spacing.margin)
-            .padding(.top, asksSkin ? Spacing.x6 : Spacing.x5)
+            .padding(.top, asksSkin ? Spacing.x7 : Spacing.x5)
 
         if !night, model.isDaytime, let report = model.lastNight, report.rating == nil, !report.isTonight {
             NightRatingChoices { rating in
                 Task { await model.log(.nightRating, value: .night(rating)) }
             }
             .padding(.horizontal, Spacing.margin)
-            .padding(.top, Spacing.x3)
+            .padding(.top, Spacing.x4)
         }
 
         if !night, let skin, !changingSkin {
@@ -89,7 +90,7 @@ struct TodayView: View {
                     .frame(minHeight: Size.touchTarget)
             }
             .padding(.horizontal, Spacing.margin)
-            .padding(.top, Spacing.x3)
+            .padding(.top, Spacing.x4)
         }
 
         if night {
@@ -116,7 +117,7 @@ struct TodayView: View {
         }
 
         TodaySoFar(entries: model.entries, isNight: night) { editing = $0 }
-            .padding(.top, Spacing.x6)
+            .padding(.top, Spacing.x7)
     }
 
     /// "Last night: A good night" by day; "So far tonight: Two wake-ups" at night.
@@ -155,7 +156,7 @@ struct TodayView: View {
                 .buttonStyle(.primary)
         }
         .padding(.horizontal, Spacing.margin)
-        .padding(.top, Spacing.x6)
+        .padding(.top, Spacing.x7)
     }
 
     private func reload() {
@@ -190,7 +191,7 @@ struct SkinCheckIn: View {
                 ForEach(SkinToday.allCases, id: \.self) { answer in
                     let isSelected = answer == selected
                     Button { onAnswer(answer) } label: {
-                        HStack(spacing: Spacing.x3) {
+                        HStack(spacing: Spacing.x4) {
                             SkinSwatch(answer: answer, size: 24)
                             Text(answer.title)
                                 .textStyle(.body)
@@ -222,7 +223,7 @@ struct SkinCheckIn: View {
                     .accessibilityAddTraits(isSelected ? [.isSelected] : [])
                 }
             }
-            .padding(.top, Spacing.x3)
+            .padding(.top, Spacing.x4)
         }
     }
 }

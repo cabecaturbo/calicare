@@ -28,7 +28,7 @@ struct LeftoversSection: View {
                 .buttonStyle(.textLink)
                 .listRowBackground(palette.paper)
         } header: {
-            Text("Leftovers").textStyle(.section).foregroundStyle(palette.ink).textCase(nil)
+            FormHeader("Leftovers")
         } footer: {
             if !model.batches.isEmpty {
                 Text("Swipe left for Used, Freeze, or Toss.").textStyle(.meta).foregroundStyle(palette.graphite)
@@ -78,6 +78,7 @@ struct AddBatchSheet: View {
             }
             .scrollContentBackground(.hidden)
             .paperBackground(.oat)
+            .solidNavigationBar()
             .navigationTitle("Cooked batch")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

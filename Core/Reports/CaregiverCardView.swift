@@ -27,7 +27,7 @@ public struct CaregiverCardView: View {
                 .foregroundStyle(palette.ink)
                 .lineLimit(2)
                 .minimumScaleFactor(0.7)
-                .padding(.top, Spacing.ledeToSection)
+                .padding(.top, CardSpacing.block)
             Text("From \(card.childName)’s family. Thank you.")
                 .font(TypeStyle.meta.font)
                 .foregroundStyle(palette.graphite)
@@ -37,7 +37,7 @@ public struct CaregiverCardView: View {
                 ForEach(card.sections, id: \.title) { section in
                     VStack(alignment: .leading, spacing: Spacing.x1) {
                         Text(section.title)
-                            .font(TypeStyle.section.font)
+                            .font(TypeStyle.label.font)
                             .foregroundStyle(palette.ink)
                         palette.hairline.frame(height: Rule.width)
                         ForEach(Array(section.lines.enumerated()), id: \.offset) { _, line in
@@ -50,7 +50,7 @@ public struct CaregiverCardView: View {
                     }
                 }
             }
-            .padding(.top, Spacing.ledeToSection)
+            .padding(.top, CardSpacing.block)
 
             Spacer(minLength: 0)
             Text("Cali Care · Not medical advice.")

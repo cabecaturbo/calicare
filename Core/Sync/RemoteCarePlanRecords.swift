@@ -78,13 +78,19 @@ public struct RemotePlanItem: Codable, Equatable, Sendable {
     public var sourcePage: Int?
     public var sourceLine: String?
     public var sortOrder: Int
+    /// Wording (SchemaV6).
+    public var label: String?
+    public var detail: String?
+    public var category: String?
+    public var parentItemID: UUID?
     public var createdAt: Date
     public var updatedAt: Date
     public var deletedAt: Date?
     public var serverUpdatedAt: Date?
 
     enum CodingKeys: String, CodingKey {
-        case id, kind, text, dose, frequency, timing, duration
+        case id, kind, text, dose, frequency, timing, duration, label, detail, category
+        case parentItemID = "parent_item_id"
         case householdID = "household_id"
         case planID = "plan_id"
         case childID = "child_id"
@@ -135,6 +141,10 @@ public struct RemotePlanItem: Codable, Equatable, Sendable {
         try c.encode(sourcePage, forKey: .sourcePage)
         try c.encode(sourceLine, forKey: .sourceLine)
         try c.encode(sortOrder, forKey: .sortOrder)
+        try c.encode(label, forKey: .label)
+        try c.encode(detail, forKey: .detail)
+        try c.encode(category, forKey: .category)
+        try c.encode(parentItemID, forKey: .parentItemID)
         try c.encode(createdAt, forKey: .createdAt)
         try c.encode(updatedAt, forKey: .updatedAt)
         try c.encode(deletedAt, forKey: .deletedAt)

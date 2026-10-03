@@ -54,19 +54,66 @@ public enum FoodFamilies {
 /// Foods a care plan names to avoid ("Avoid: dairy, eggs, peanuts"), so the
 /// parent can add them as paused in one tap. Only what the plan wrote.
 public enum PlanFoods {
-    public static func avoided(in items: [PlanItemInfo]) -> [String] {
-        var names: [String] = []
+    /// One thing to avoid, as the plan wrote it, and any softening words
+    /// ("as much as possible", "Buy organic when able") kept apart.
+    public struct AvoidLine: Equatable, Sendable, Identifiable {
+        public let name: String
+        public let qualifier: String?
+        /// False for groups that aren't one food ("Confirmed allergens and triggers").
+        public let isFood: Bool
+        public var id: String { name }
+    }
+
+    /// Words that soften a line rather than name a food.
+    static let qualifiers = ["as much as possible", "when possible", "if possible", "where possible", "when able", "if able"]
+    /// Lines naming a group, not foods: kept whole.
+    static let groupOpeners = ["confirmed", "known", "any ", "all "]
+
+    public static func avoidedLines(in items: [PlanItemInfo]) -> [AvoidLine] {
+        var lines: [AvoidLine] = []
         for item in items where item.kind == .foodRule {
-            let text = item.text
-            guard let range = text.range(of: "avoid", options: .caseInsensitive) else { continue }
-            let rest = text[range.upperBound...].trimmingCharacters(in: CharacterSet(charactersIn: ": ").union(.whitespaces))
-            for part in rest.replacingOccurrences(of: " and ", with: ", ").split(whereSeparator: { ",;".contains($0) }) {
-                let name = part.trimmingCharacters(in: .whitespacesAndNewlines.union(CharacterSet(charactersIn: ".")))
-                if !name.isEmpty, !names.contains(where: { $0.caseInsensitiveCompare(name) == .orderedSame }) {
-                    names.append(name.prefix(1).uppercased() + name.dropFirst())
+            guard let range = item.text.range(of: "avoid", options: .caseInsensitive) else { continue }
+            var rest = item.text[range.upperBound...].trimmingCharacters(in: CharacterSet(charactersIn: ": ").union(.whitespaces))
+            // A second sentence ("Buy organic when able") is a note, not a food.
+            var notes: [String] = []
+            if let stop = rest.range(of: ". ") {
+                notes.append(String(rest[stop.upperBound...]).trimmingCharacters(in: CharacterSet(charactersIn: ". ")))
+                rest = String(rest[..<stop.lowerBound])
+            }
+            rest = rest.trimmingCharacters(in: CharacterSet(charactersIn: ". "))
+            for phrase in qualifiers {
+                if let found = rest.range(of: phrase, options: .caseInsensitive) {
+                    notes.insert(String(rest[found]), at: 0)
+                    rest.removeSubrange(found)
+                    rest = rest.trimmingCharacters(in: CharacterSet(charactersIn: ", ").union(.whitespaces))
                 }
             }
+            // "inflammatory foods including dairy, gluten" → the named foods.
+            for lead in [" including ", " like ", " such as "] {
+                if let found = rest.range(of: lead, options: .caseInsensitive) { rest = String(rest[found.upperBound...]) }
+            }
+            let qualifier = notes.filter { !$0.isEmpty }.joined(separator: " · ")
+            let lower = rest.lowercased()
+            let parts: [String]
+            if groupOpeners.contains(where: lower.hasPrefix) {
+                parts = [rest]
+            } else {
+                parts = rest.replacingOccurrences(of: " and ", with: ", ").replacingOccurrences(of: " or ", with: ", ")
+                    .split(whereSeparator: { ",;".contains($0) }).map(String.init)
+            }
+            let isFood = !groupOpeners.contains(where: lower.hasPrefix)
+            for part in parts {
+                let name = part.trimmingCharacters(in: .whitespacesAndNewlines.union(CharacterSet(charactersIn: ".")))
+                guard !name.isEmpty, !lines.contains(where: { $0.name.caseInsensitiveCompare(name) == .orderedSame }) else { continue }
+                lines.append(AvoidLine(name: name.prefix(1).uppercased() + name.dropFirst(),
+                                       qualifier: qualifier.isEmpty ? nil : qualifier, isFood: isFood))
+            }
         }
-        return names
+        return lines
+    }
+
+    /// The foods to avoid, for "Add them as paused".
+    public static func avoided(in items: [PlanItemInfo]) -> [String] {
+        avoidedLines(in: items).filter(\.isFood).map(\.name)
     }
 }

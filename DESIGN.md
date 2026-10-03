@@ -117,7 +117,8 @@ Two families.
 |---|---|---|---|
 | display | Newsreader Display, weight 500 | 34/40 | The tab title ("Today", "Plan", "Progress") |
 | title (also lede) | Newsreader Display, weight 500 | 24/30 | Summary card titles ("A good night"), the skin question, the night Itchy button |
-| section | SF Pro semibold | 15/20 | The child switcher, section labels ("Today so far", "This week"), secondary button labels |
+| section | Newsreader Display, weight 500 | 20/26 (title3) | Section headers ("Evening", "Supplements", "This week", Settings groups) |
+| label | SF Pro semibold | 15/20 | The child switcher, step numbers, outlined button labels ("Share with provider") |
 | body (also control) | SF Pro regular | 17/24 | Row labels, answers, body text, buttons |
 | meta | SF Pro regular | 13/18 | The date, eyebrows ("Last night"), captions, times |
 Tab labels are SF Pro 12 (medium, semibold when active). The Itchy pill
@@ -125,8 +126,14 @@ label is SF Pro 13 semibold.
 
 - Newsreader Display 500 is cut from the Google Fonts variable font and
   bundled (Newsreader Display 400 and Text 400 are bundled too).
-- The serif is only for the tab title, card titles, and the skin question.
-  Everything else is SF Pro.
+- Four levels on every screen: screen title (display), section header
+  (section, serif), row (body), meta (footnote, graphite). The serif is for
+  those titles and headers, card titles, and the skin question; everything
+  else is SF Pro.
+- One focal point per screen, at the top: Today and Plan, the summary card;
+  Food, the food counts ("6 safe foods"). Nothing else matches it in size.
+- Shared cards and PDFs (weekly card, caregiver card, journal) keep SF Pro
+  semibold (label) for their headings, since they're fixed-size pages.
 - Sentence case, left-aligned. Every style scales with Dynamic Type.
 - At accessibility sizes (AX1 and up): the skin answers go to one column,
   Good / Okay / Rough stack, summary cards drop their drawing so the title
@@ -143,8 +150,12 @@ Every tab, top to bottom:
 3. **Everything else:** a section label, then rows with 0.5pt dividers.
 4. **The bottom bar:** Apple's glass tab bar with the round Log button.
 
-Spacing: 4 / 8 / 12 / 16 / 24 / 32. Page margins 24. Sections 32 apart.
-Content scrolls with 120pt of room at the bottom for the bar.
+Spacing: 4 / 8 / 16 / 24 / 40. Page margins 24. Sections 40 apart; a
+header sits 8 above its rows. Space inside a group is always smaller than
+space between groups. Content scrolls with 120pt of room at the bottom for
+the bar. A paper strip sits behind the status bar so nothing scrolls under
+the clock; sheet and pushed-screen headers are solid (oat or paper).
+Shared cards keep 12 and 32 (CardSpacing) so their fixed pages don't reflow.
 
 Corners: 12pt on summary cards, choice cards, buttons, and the "Logged"
 line. Pills (fully round) for the tab bar and the log control. 3pt on
@@ -166,6 +177,20 @@ itchy", and "Change" in indigo.
 
 **Rows ("Today so far", Plan's routines):** at least 52pt, 0.5pt hairline
 below, label in body, time or status in meta on the right.
+
+**Routine steps:** a check circle (24pt, its own 44pt target), the label
+(verb first, at most 6 words), and one meta line (the plan's detail, or how
+often). Tapping the words shows the plan's original line. Consecutive Apply
+steps sit under "Skin" (hand symbol, graphite) with a hairline pill for how
+often ("3-4x per day"), numbered 1, 2, 3. Step categories each have a verb
+and a regular-weight SF Symbol: Wash `drop`, Apply `hand.point.up.left`,
+Give `pills`, Feed `fork.knife`, Dress `tshirt`.
+
+**Supplements:** the name (no "ADD"; a small indigo outlined "New" pill
+instead), one meta line (dose · frequency), "How to give" in indigo with a
+chevron for the plan's directions, and the same outlined pill on the right
+every time: "Start", then "0 of 2 today". "Your provider mentioned" lines
+sit underneath in meta graphite, with no actions.
 
 **Night Today:** a large Log button right under the summary card: indigo
 fill, paper text, 96pt tall, 12pt corners, the palm and "Log" in title

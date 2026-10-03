@@ -38,15 +38,20 @@ public actor RoutineStore: ModelActor {
         let raw = time.rawValue
         let last = try fetchSteps(child: childID).filter { $0.timeRaw == raw }.map(\.order).max() ?? -1
         let step = RoutineStep(childID: childID, name: trimmed, time: time, order: last + 1, now: now())
+        let full = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        step.sourceText = full
+        StepBackfill.apply(StepLabeler.wording(for: full), to: step)
         modelContext.insert(step)
         try modelContext.save()
         guard let info = RoutineStepInfo(step) else { throw RoutineStoreError.stepNotFound }
         return info
     }
 
+    /// Renaming changes what the screen shows (the label). The step's original
+    /// words (`sourceText`) and its saved name never change.
     public func rename(_ id: UUID, to name: String) async throws {
         let trimmed = try Self.clean(name)
-        try change(id) { $0.name = trimmed }
+        try change(id) { $0.label = trimmed }
     }
 
     /// Paused steps keep their place and history but aren't shown as today's steps.

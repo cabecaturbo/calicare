@@ -10,7 +10,7 @@ struct ChangesSection: View {
     let rougherSince: CareDay?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.x3) {
+        VStack(alignment: .leading, spacing: Spacing.x4) {
             if let rougherSince {
                 let before = CareChanges.before(rougherSince, in: changes)
                 VStack(alignment: .leading, spacing: Spacing.x1) {

@@ -57,7 +57,7 @@ private struct SpotRow: View {
 
     var body: some View {
         let photos = (try? library.photos(spot: spot.id)) ?? []
-        HStack(spacing: Spacing.x3) {
+        HStack(spacing: Spacing.x4) {
             Thumbnail(url: photos.last.map(library.url(for:)))
                 .frame(width: 52, height: 52)
             VStack(alignment: .leading, spacing: 2) {

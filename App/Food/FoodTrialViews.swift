@@ -34,6 +34,7 @@ struct FoodTrialView: View {
             }
         }
         .paperBackground()
+        .solidNavigationBar(.paper)
         .navigationTitle(trial?.food.name ?? "Trial")
         .navigationBarTitleDisplayMode(.inline)
         .confirmationDialog("How did it go?", isPresented: $ending, titleVisibility: .visible) {
@@ -66,7 +67,7 @@ struct FoodTrialView: View {
     @ViewBuilder
     private func actions(_ trial: FoodTrial) -> some View {
         if trial.isRunning {
-            VStack(alignment: .leading, spacing: Spacing.x3) {
+            VStack(alignment: .leading, spacing: Spacing.x4) {
                 Button(trial.givenToday(at: .now) ? "Given today" : "Gave it today") {
                     Task { await model.logTrial(.given, trial.food) }
                 }
@@ -89,7 +90,7 @@ struct FoodTrialView: View {
                 let interval = day.day.interval()
                 let given = trial.given.contains { interval.contains($0) }
                 let noted = trial.worthWatching.contains { interval.contains($0.timestamp) }
-                HStack(spacing: Spacing.x3) {
+                HStack(spacing: Spacing.x4) {
                     Text(day.day.noon().formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day()))
                         .textStyle(.body)
                         .foregroundStyle(palette.ink)
@@ -150,6 +151,7 @@ struct StartTrialSheet: View {
             }
             .scrollContentBackground(.hidden)
             .paperBackground(.oat)
+            .solidNavigationBar()
             .navigationTitle("Trial: \(food.name)")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

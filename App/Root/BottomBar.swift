@@ -24,7 +24,7 @@ struct BottomBar: View {
                 }
                 .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
             }
-            HStack(spacing: Spacing.x3) {
+            HStack(spacing: Spacing.x4) {
                 TabPill()
                 LogPill(showsItchy: !(shell.tab == .today && palette.isNight))
             }

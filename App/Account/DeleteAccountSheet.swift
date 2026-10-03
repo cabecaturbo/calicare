@@ -46,7 +46,7 @@ struct DeleteAccountSheet: View {
                         }
                     }
 
-                    VStack(alignment: .leading, spacing: Spacing.x3) {
+                    VStack(alignment: .leading, spacing: Spacing.x4) {
                         Button("Delete account") { confirming = true }
                             .buttonStyle(.secondary)
                             .disabled(account.isWorking || lastOwner == nil)

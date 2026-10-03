@@ -26,6 +26,9 @@ enum PlanReader {
             let duration: String?
             let source_page: Int
             let source_line: String
+            let label: String?
+            let detail: String?
+            let category: String?
         }
 
         let items: [Item]
@@ -43,7 +46,8 @@ enum PlanReader {
                 guard let kind = PlanItemKind(rawValue: item.kind) else { return nil }
                 return PlanItemDraft(
                     kind: kind, text: item.text, dose: item.dose, frequency: item.frequency, timing: item.timing,
-                    duration: item.duration, sourcePage: item.source_page, sourceLine: item.source_line
+                    duration: item.duration, sourcePage: item.source_page, sourceLine: item.source_line,
+                    label: item.label, detail: item.detail, category: item.category.flatMap(StepCategory.init)
                 )
             }
         } catch let FunctionsError.httpError(code, _) where code == 401 {

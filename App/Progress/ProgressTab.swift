@@ -47,7 +47,7 @@ struct ProgressTab: View {
 
                         MonthGrid(days: sinceVisitDays, title: "Since the visit")
                             .padding(.horizontal, Spacing.margin)
-                            .padding(.top, Spacing.x6)
+                            .padding(.top, Spacing.x7)
                     } else if span == .month, let monthReport {
                         SummaryCard(
                             eyebrow: monthReport.title(),
@@ -60,7 +60,7 @@ struct ProgressTab: View {
 
                         MonthGrid(days: monthReport.days)
                             .padding(.horizontal, Spacing.margin)
-                            .padding(.top, Spacing.x6)
+                            .padding(.top, Spacing.x7)
                     } else if span == .week, let report {
                         SummaryCard(
                             eyebrow: report.dateRange(),
@@ -73,19 +73,19 @@ struct ProgressTab: View {
 
                         WeekGrid(days: report.days)
                             .padding(.horizontal, Spacing.margin)
-                            .padding(.top, Spacing.x6)
+                            .padding(.top, Spacing.x7)
                     }
 
                     if let child = model.child {
                         PhotosSection(child: child)
                             .padding(.horizontal, Spacing.margin)
-                            .padding(.top, Spacing.x6)
+                            .padding(.top, Spacing.x7)
                     }
 
                     if !changes.isEmpty || rougherSince != nil {
                         ChangesSection(changes: changes, rougherSince: rougherSince)
                             .padding(.horizontal, Spacing.margin)
-                            .padding(.top, Spacing.x6)
+                            .padding(.top, Spacing.x7)
                     }
 
                     if let child = model.child {
@@ -94,7 +94,7 @@ struct ProgressTab: View {
                                 DoctorReportView(child: child, range: shareRange)
                             } label: {
                                 Text("Share with provider")
-                                    .font(TypeStyle.section.font)
+                                    .font(TypeStyle.label.font)
                                     .foregroundStyle(palette.ink)
                                     .frame(maxWidth: .infinity, minHeight: 52)
                                     .overlay(RoundedRectangle(cornerRadius: Corner.card).strokeBorder(palette.ink, lineWidth: 1))
@@ -118,7 +118,7 @@ struct ProgressTab: View {
                             }
                         }
                         .padding(.horizontal, Spacing.margin)
-                        .padding(.top, Spacing.x6)
+                        .padding(.top, Spacing.x7)
                     }
                     if let problem {
                         Text(problem)
@@ -130,6 +130,7 @@ struct ProgressTab: View {
                 .padding(.bottom, BottomBar.clearance)
             }
             .paperBackground()
+            .statusBarBackground()
             .toolbar(.hidden, for: .navigationBar)
         }
         .task(id: "\(model.child?.id.uuidString ?? "")-\(weekEnding)") { await build() }

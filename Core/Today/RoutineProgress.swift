@@ -3,8 +3,10 @@ import Foundation
 /// How far along one routine (morning or evening) is today, for Plan.
 public struct RoutineProgress: Hashable, Sendable {
     public let time: RoutineTime
-    /// Active steps, in order. Empty when the parent hasn't set any.
+    /// Active steps to tick off, in order. Empty when the parent hasn't set any.
     public let steps: [RoutineStepInfo]
+    /// Active notes ("3-4x per day"): information, never ticked or counted.
+    public let notes: [RoutineStepInfo]
     /// Today's log for each ticked-off step.
     public let doneLogs: [UUID: LogEntry]
     /// Today's latest "routine done" without a step (one tap, widget, Siri).
@@ -13,7 +15,9 @@ public struct RoutineProgress: Hashable, Sendable {
     /// `entries` are the care day's logs, any order.
     public init(time: RoutineTime, steps: [RoutineStepInfo], entries: [LogEntry]) {
         self.time = time
-        self.steps = steps.filter { $0.time == time && $0.isActive }.sorted { $0.order < $1.order }
+        let mine = steps.filter { $0.time == time && $0.isActive }.sorted { $0.order < $1.order }
+        self.steps = mine.filter { $0.kind == .task }
+        self.notes = mine.filter { $0.kind == .note }
         let routineLogs = entries
             .filter { $0.type == .routineDone && $0.value == .routine(time) }
             .sorted { $0.timestamp > $1.timestamp }

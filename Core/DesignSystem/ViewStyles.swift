@@ -55,6 +55,43 @@ private struct TextStyleModifier: ViewModifier {
     }
 }
 
+extension View {
+    /// Paper behind the status bar, so a screen with a hidden navigation bar
+    /// doesn't scroll its content under the clock.
+    public func statusBarBackground() -> some View {
+        modifier(StatusBarBackgroundModifier())
+    }
+
+    /// A solid sheet or pushed-screen header, so content never shows behind it.
+    public func solidNavigationBar(_ surface: Surface = .oat) -> some View {
+        modifier(SolidNavigationBarModifier(surface: surface))
+    }
+}
+
+private struct StatusBarBackgroundModifier: ViewModifier {
+    @Environment(\.palette) private var palette
+
+    func body(content: Content) -> some View {
+        content.overlay(alignment: .top) {
+            palette.paper
+                .frame(height: 0)
+                .background(palette.paper.ignoresSafeArea(edges: .top))
+                .accessibilityHidden(true)
+        }
+    }
+}
+
+private struct SolidNavigationBarModifier: ViewModifier {
+    @Environment(\.palette) private var palette
+    let surface: Surface
+
+    func body(content: Content) -> some View {
+        content
+            .toolbarBackground(surface == .paper ? palette.paper : palette.oat, for: .navigationBar)
+            .toolbarBackgroundVisibility(.visible, for: .navigationBar)
+    }
+}
+
 private struct PaperBackgroundModifier: ViewModifier {
     @Environment(\.palette) private var palette
     let surface: Surface

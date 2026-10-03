@@ -1,4 +1,5 @@
 import Core
+import OSLog
 import SwiftUI
 
 @main
@@ -27,6 +28,7 @@ struct CaliCareApp: App {
                 .environment(account)
                 .environment(sync)
                 .task {
+                    await fillStepWording()
                     account.start()
                     sync.start()
                 }
@@ -49,6 +51,19 @@ struct CaliCareApp: App {
             await sync.syncNow()
         }
     }
+
+    /// Fills the wording added in SchemaV6 (labels and full original words)
+    /// once; afterwards it finds nothing to do. Never changes existing fields.
+    private func fillStepWording() async {
+        guard let container = try? CaliCareModelContainer.shared(),
+              let result = try? await StepBackfillRunner(modelContainer: container).run(),
+              result.labelled + result.split > 0
+        else { return }
+        for name in result.needsReentry { Self.log.notice("Step needs its words re-entered: \(name, privacy: .private)") }
+        await LogChanges.didChange()
+    }
+
+    private static let log = Logger(subsystem: "com.cursorkittens.calicare", category: "wording")
 
     /// Keeps reminders current: a new day, a changed child, or permission changed in iOS Settings.
     private func refreshReminders() async {

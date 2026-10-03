@@ -10,7 +10,7 @@ struct WeekGrid: View {
     let days: [WeekDay]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.x3) {
+        VStack(alignment: .leading, spacing: Spacing.x2) {
             let heading = typeSize.isAccessibilitySize
                 ? AnyLayout(VStackLayout(alignment: .leading, spacing: Spacing.x1))
                 : AnyLayout(HStackLayout(alignment: .firstTextBaseline))
@@ -73,7 +73,7 @@ struct WeekGrid: View {
                 Text("Calm")
                 ForEach(SkinToday.allCases, id: \.self) { SkinSwatch(answer: $0, size: 12) }
                 Text("Very rough")
-                Capsule().fill(palette.graphite).frame(width: 12, height: 2).padding(.leading, Spacing.x3)
+                Capsule().fill(palette.graphite).frame(width: 12, height: 2).padding(.leading, Spacing.x2)
                 Text("Not answered")
             }
             .textStyle(.meta)

@@ -58,12 +58,13 @@ struct PlanReviewView: View {
                 .padding(.bottom, 120)
             }
             .paperBackground()
+            .solidNavigationBar(.paper)
             .safeAreaInset(edge: .bottom) {
                 Button(confirmed == 0 ? "Check items to start" : "Start plan (\(confirmed))") { Task { await start() } }
                     .buttonStyle(.primary)
                     .disabled(confirmed == 0)
                     .padding(.horizontal, Spacing.margin)
-                    .padding(.vertical, Spacing.x3)
+                    .padding(.vertical, Spacing.x2)
                     .background(palette.paper)
             }
             .navigationTitle("Review \(model.child?.name ?? "the")’s plan")
@@ -157,9 +158,15 @@ private struct ItemRow: View {
 
             Button(action: onEdit) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(item.text)
+                    Text(item.label ?? StepLabeler.clean(item.text))
                         .textStyle(.body)
                         .foregroundStyle(palette.ink)
+                    if item.label != nil {
+                        // The plan's own words, so the parent can check the short name.
+                        Text("“\(item.text)”")
+                            .textStyle(.meta)
+                            .foregroundStyle(palette.graphite)
+                    }
                     // Just the values, no labels ("1/4 tsp · once daily · with breakfast"),
                     // skipping any already in the item's name.
                     let details = PlanDetail.allCases.compactMap { item.value($0) }
@@ -182,7 +189,7 @@ private struct ItemRow: View {
             .buttonStyle(.plain)
             .accessibilityHint("Shows where it's from in the plan, and lets you edit it.")
         }
-        .padding(.vertical, Spacing.x3)
+        .padding(.vertical, Spacing.x2)
         .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
     }
 }
@@ -231,6 +238,7 @@ private struct PlanItemEditor: View {
             }
             .scrollContentBackground(.hidden)
             .paperBackground(.oat)
+            .solidNavigationBar()
             .navigationTitle("Edit item")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

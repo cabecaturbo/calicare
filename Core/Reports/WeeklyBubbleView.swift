@@ -24,7 +24,7 @@ public struct WeeklyBubbleView: View {
                 .minimumScaleFactor(0.8)
                 .padding(.top, Spacing.x1)
             palette.ink.frame(height: Rule.width)
-                .padding(.top, Spacing.x3)
+                .padding(.top, CardSpacing.row)
 
             if card.hasSummary {
                 HStack(alignment: .top, spacing: 0) {

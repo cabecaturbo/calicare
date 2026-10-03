@@ -58,7 +58,7 @@ struct SettingsView: View {
                 NavigationLink {
                     EditChildView(child: child)
                 } label: {
-                    HStack(spacing: Spacing.x3) {
+                    HStack(spacing: Spacing.x4) {
                         if model.children.count > 1 {
                             ChildDot(color: ChildColor(tag: child.colorTag), size: 12)
                         }

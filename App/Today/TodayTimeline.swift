@@ -21,7 +21,7 @@ struct TodayTimeline: View {
                     .foregroundStyle(palette.graphite)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, Spacing.margin)
-                    .padding(.top, Spacing.x3)
+                    .padding(.top, Spacing.x4)
             } else {
                 ForEach(model.entries) { entry in
                     row(entry)

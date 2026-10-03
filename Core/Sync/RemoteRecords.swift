@@ -167,6 +167,13 @@ public struct RemoteRoutineStep: Codable, Equatable, Sendable {
     public var isActive: Bool
     /// The care plan item that made this step, if any.
     public var planItemID: UUID?
+    /// Wording (SchemaV6): what the screen shows, and the original words.
+    public var label: String?
+    public var detail: String?
+    public var sourceText: String?
+    public var category: String?
+    public var timesPerDay: Int?
+    public var kind: String?
     public var createdAt: Date
     public var updatedAt: Date
     public var deletedAt: Date?
@@ -179,6 +186,9 @@ public struct RemoteRoutineStep: Codable, Equatable, Sendable {
         case sortOrder = "sort_order"
         case isActive = "is_active"
         case planItemID = "plan_item_id"
+        case label, detail, category, kind
+        case sourceText = "source_text"
+        case timesPerDay = "times_per_day"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
         case deletedAt = "deleted_at"
@@ -214,6 +224,12 @@ public struct RemoteRoutineStep: Codable, Equatable, Sendable {
         try c.encode(sortOrder, forKey: .sortOrder)
         try c.encode(isActive, forKey: .isActive)
         try c.encode(planItemID, forKey: .planItemID)
+        try c.encode(label, forKey: .label)
+        try c.encode(detail, forKey: .detail)
+        try c.encode(sourceText, forKey: .sourceText)
+        try c.encode(category, forKey: .category)
+        try c.encode(timesPerDay, forKey: .timesPerDay)
+        try c.encode(kind, forKey: .kind)
         try c.encode(createdAt, forKey: .createdAt)
         try c.encode(updatedAt, forKey: .updatedAt)
         try c.encode(deletedAt, forKey: .deletedAt)

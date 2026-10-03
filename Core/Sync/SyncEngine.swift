@@ -344,6 +344,12 @@ public actor SyncEngine: ModelActor {
         step.order = remote.sortOrder
         step.isActive = remote.isActive
         step.planItemID = remote.planItemID
+        step.label = remote.label
+        step.detail = remote.detail
+        step.sourceText = remote.sourceText
+        step.categoryRaw = remote.category
+        step.timesPerDay = remote.timesPerDay
+        step.kindRaw = remote.kind
         step.createdAt = remote.createdAt
         step.updatedAt = remote.updatedAt
         step.deletedAt = remote.deletedAt
@@ -397,6 +403,10 @@ extension SyncEngine {
         item.duration = remote.duration
         item.sourcePage = remote.sourcePage
         item.sourceLine = remote.sourceLine
+        item.label = remote.label
+        item.detail = remote.detail
+        item.categoryRaw = remote.category
+        item.parentItemID = remote.parentItemID
         item.order = remote.sortOrder
         item.isConfirmed = true
         item.createdAt = remote.createdAt
@@ -521,6 +531,10 @@ extension RemotePlanItem {
             sourcePage: item.sourcePage, sourceLine: item.sourceLine, sortOrder: item.order,
             createdAt: item.createdAt, updatedAt: item.updatedAt, deletedAt: item.deletedAt
         )
+        label = item.label
+        detail = item.detail
+        category = item.categoryRaw
+        parentItemID = item.parentItemID
     }
 }
 
@@ -562,6 +576,12 @@ extension RemoteRoutineStep {
             time: step.timeRaw, sortOrder: step.order, isActive: step.isActive, planItemID: step.planItemID,
             createdAt: step.createdAt, updatedAt: step.updatedAt, deletedAt: step.deletedAt
         )
+        label = step.label
+        detail = step.detail
+        sourceText = step.sourceText
+        category = step.categoryRaw
+        timesPerDay = step.timesPerDay
+        kind = step.kindRaw
     }
 }
 

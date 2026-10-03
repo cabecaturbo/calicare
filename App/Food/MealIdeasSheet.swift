@@ -40,7 +40,7 @@ struct MealIdeasSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: Spacing.section) {
                     if isSignedIn {
-                        VStack(alignment: .leading, spacing: Spacing.x3) {
+                        VStack(alignment: .leading, spacing: Spacing.x4) {
                             Text("What's in the fridge?").textStyle(.section).foregroundStyle(palette.ink)
                             FoodChips(items: model.foods.filter { $0.status != .paused }.map(\.name), picked: $fridge)
                             Button(working ? "Thinking…" : "Get ideas") { Task { await getIdeas() } }
@@ -137,7 +137,7 @@ struct FoodChips: View {
                     Text(item)
                         .textStyle(.body)
                         .foregroundStyle(on ? palette.paper : palette.ink)
-                        .padding(.horizontal, Spacing.x3)
+                        .padding(.horizontal, Spacing.x4)
                         .frame(minHeight: Size.touchTarget)
                         .background(on ? palette.indigo : palette.paper, in: Capsule())
                         .overlay(Capsule().strokeBorder(on ? palette.indigo : palette.hairline, lineWidth: 1))

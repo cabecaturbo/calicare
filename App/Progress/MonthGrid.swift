@@ -12,7 +12,7 @@ struct MonthGrid: View {
     private let calendar = Calendar.autoupdatingCurrent
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.x3) {
+        VStack(alignment: .leading, spacing: Spacing.x2) {
             let heading = typeSize.isAccessibilitySize
                 ? AnyLayout(VStackLayout(alignment: .leading, spacing: Spacing.x1))
                 : AnyLayout(HStackLayout(alignment: .firstTextBaseline))

@@ -31,14 +31,14 @@ public struct WeeklyCardView: View {
                 .foregroundStyle(palette.ink)
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
-                .padding(.top, Spacing.ledeToSection)
+                .padding(.top, CardSpacing.block)
             Text("\(card.childName) · \(card.dateRange)")
                 .font(TypeStyle.meta.font)
                 .foregroundStyle(palette.graphite)
                 .padding(.top, Spacing.x1)
 
             WeekChart(days: card.days, palette: palette)
-                .padding(.top, Spacing.ledeToSection)
+                .padding(.top, CardSpacing.block)
 
             if card.hasSummary {
                 VStack(spacing: 0) {
@@ -80,7 +80,7 @@ public struct WeeklyCardView: View {
     }
 
     private func row(_ label: String, _ value: String, detail: String?) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: Spacing.x3) {
+        HStack(alignment: .firstTextBaseline, spacing: CardSpacing.row) {
             Text(label)
                 .font(TypeStyle.control.font)
                 .foregroundStyle(palette.ink)
@@ -110,14 +110,14 @@ private struct WeekChart: View {
 
     var body: some View {
         HStack(alignment: .bottom, spacing: 0) {
-            VStack(alignment: .leading, spacing: Spacing.x3) {
+            VStack(alignment: .leading, spacing: CardSpacing.row) {
                 label("Nights").frame(height: 18)
                 label("Skin").frame(height: 40, alignment: .bottom)
                 label(" ")
             }
             .frame(width: 72, alignment: .leading)
             ForEach(Array(days.enumerated()), id: \.offset) { _, day in
-                VStack(spacing: Spacing.x3) {
+                VStack(spacing: CardSpacing.row) {
                     mark(Circle(), level: day.night.flatMap(CareLevel.init(rawValue:))).frame(width: 18, height: 18)
                     bar(step: day.skin).frame(height: 40, alignment: .bottom)
                     label(day.letter)

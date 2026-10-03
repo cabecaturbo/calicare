@@ -30,6 +30,7 @@ final class TodayModel {
     private(set) var weekLogs: [LogEntry] = []
     /// The child's food list.
     private(set) var foods: [FoodInfo] = []
+    private(set) var products: [ProductInfo] = []
     /// The child's food-trial logs (trials can run past the week).
     private(set) var trialLogs: [LogEntry] = []
     /// The child's meal logs, for the plant counter.
@@ -91,6 +92,7 @@ final class TodayModel {
             activePlan = try await plans.activePlan(child: child.id)
             visits = try await plans.visits(child: child.id)
             foods = try await FoodStore(modelContainer: container).foods(child: child.id)
+            products = try await ProductStore(modelContainer: container).products(child: child.id)
             let all = try await store.allLive().filter { $0.childID == child.id }
             trialLogs = all.filter { $0.type == .foodTrial }
             mealLogs = all.filter { $0.type == .meal }
@@ -498,6 +500,7 @@ final class TodayModel {
         messageLogs = []
         visits = []
         foods = []
+        products = []
         trialLogs = []
         mealLogs = []
         batches = []

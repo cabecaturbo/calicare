@@ -10,6 +10,7 @@ public struct SyncReport: Equatable, Sendable {
     public var pushedPlanItems = 0
     public var pushedVisits = 0
     public var pushedFoods = 0
+    public var pushedProducts = 0
     /// Rows from the server that changed something on this phone.
     public var appliedChildren = 0
     public var appliedLogs = 0
@@ -18,11 +19,13 @@ public struct SyncReport: Equatable, Sendable {
     public var appliedPlanItems = 0
     public var appliedVisits = 0
     public var appliedFoods = 0
+    public var appliedProducts = 0
 
     public init() {}
 
     public var changedLocalData: Bool {
-        appliedChildren + appliedLogs + appliedRoutineSteps + appliedPlans + appliedPlanItems + appliedVisits + appliedFoods > 0
+        appliedChildren + appliedLogs + appliedRoutineSteps + appliedPlans + appliedPlanItems + appliedVisits + appliedFoods
+            + appliedProducts > 0
     }
 }
 
@@ -117,6 +120,7 @@ public actor SyncEngine: ModelActor {
         for item in try modelContext.fetch(FetchDescriptor<PlanItem>()) { item.needsSync = true }
         for visit in try modelContext.fetch(FetchDescriptor<Visit>()) { visit.needsSync = true }
         for food in try modelContext.fetch(FetchDescriptor<Food>()) { food.needsSync = true }
+        for product in try modelContext.fetch(FetchDescriptor<Product>()) { product.needsSync = true }
         for event in try modelContext.fetch(FetchDescriptor<LogEvent>()) {
             if LoggedBy.legacyNames.contains(event.loggedBy) {
                 event.loggedBy = displayName
@@ -171,6 +175,14 @@ public actor SyncEngine: ModelActor {
             try await remote.upsert(foods: batch.map { RemoteFood($0, household: household) })
             try clearFlags(Food.self, sent)
             report.pushedFoods += batch.count
+        }
+
+        let products = try modelContext.fetch(FetchDescriptor<Product>(predicate: #Predicate { $0.needsSync }))
+        for batch in products.chunked(Self.batchSize) {
+            let sent = batch.map { (id: $0.id, updatedAt: $0.updatedAt) }
+            try await remote.upsert(products: batch.map { RemoteProduct($0, household: household) })
+            try clearFlags(Product.self, sent)
+            report.pushedProducts += batch.count
         }
     }
 
@@ -253,6 +265,9 @@ public actor SyncEngine: ModelActor {
         }
         for remoteFood in changes.foods {
             if try merge(remoteFood) { report.appliedFoods += 1 }
+        }
+        for remoteProduct in changes.products {
+            if try merge(remoteProduct) { report.appliedProducts += 1 }
         }
         try modelContext.save()
         if let latest = changes.latestServerTime, latest > (settings.cursor ?? .distantPast) {
@@ -447,6 +462,45 @@ extension RemoteFood {
     }
 }
 
+extension SyncEngine {
+    private func merge(_ remote: RemoteProduct) throws -> Bool {
+        let id = remote.id
+        let local = try modelContext.fetch(FetchDescriptor<Product>(predicate: #Predicate { $0.id == id })).first
+        if let local, local.updatedAt >= remote.updatedAt { return false }
+        let product = local ?? {
+            let new = Product(id: remote.id, childID: remote.childID, name: remote.name, category: .other, startedAt: remote.startedAt)
+            modelContext.insert(new)
+            return new
+        }()
+        product.childID = remote.childID
+        product.name = remote.name
+        product.categoryRaw = remote.category
+        product.startedAt = remote.startedAt
+        product.stoppedAt = remote.stoppedAt
+        product.neverAgain = remote.neverAgain
+        product.reason = remote.reason
+        product.restockEveryDays = remote.restockEveryDays
+        product.restockedAt = remote.restockedAt
+        product.createdAt = remote.createdAt
+        product.updatedAt = remote.updatedAt
+        product.deletedAt = remote.deletedAt
+        product.needsSync = false
+        return true
+    }
+}
+
+extension RemoteProduct {
+    init(_ product: Product, household: UUID) {
+        self.init(
+            id: product.id, householdID: household, childID: product.childID, name: product.name,
+            category: product.categoryRaw, startedAt: product.startedAt, stoppedAt: product.stoppedAt,
+            neverAgain: product.neverAgain, reason: product.reason, restockEveryDays: product.restockEveryDays,
+            restockedAt: product.restockedAt, createdAt: product.createdAt, updatedAt: product.updatedAt,
+            deletedAt: product.deletedAt
+        )
+    }
+}
+
 // MARK: - Mapping
 
 extension RemoteCarePlan {
@@ -557,6 +611,12 @@ extension Visit: SyncedModel {
 
 extension Food: SyncedModel {
     static func descriptor(ids: [UUID]) -> FetchDescriptor<Food> {
+        FetchDescriptor(predicate: #Predicate { ids.contains($0.id) })
+    }
+}
+
+extension Product: SyncedModel {
+    static func descriptor(ids: [UUID]) -> FetchDescriptor<Product> {
         FetchDescriptor(predicate: #Predicate { ids.contains($0.id) })
     }
 }

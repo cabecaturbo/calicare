@@ -1,13 +1,23 @@
 import Foundation
 import SwiftData
 
-/// Phase 5: the food list. The V3 models are copied unchanged; Food is new,
-/// so the migration from V3 is lightweight.
-public enum SchemaV4: VersionedSchema {
-    public static var versionIdentifier: Schema.Version { Schema.Version(4, 0, 0) }
+// Current model names always point at the latest schema version.
+public typealias Child = SchemaV5.Child
+public typealias LogEvent = SchemaV5.LogEvent
+public typealias RoutineStep = SchemaV5.RoutineStep
+public typealias CarePlan = SchemaV5.CarePlan
+public typealias PlanItem = SchemaV5.PlanItem
+public typealias Visit = SchemaV5.Visit
+public typealias Food = SchemaV5.Food
+public typealias Product = SchemaV5.Product
+
+/// Phase 6: the product diary. The V4 models are copied unchanged; Product is
+/// new, so the migration from V4 is lightweight.
+public enum SchemaV5: VersionedSchema {
+    public static var versionIdentifier: Schema.Version { Schema.Version(5, 0, 0) }
 
     public static var models: [any PersistentModel.Type] {
-        [Child.self, LogEvent.self, RoutineStep.self, CarePlan.self, PlanItem.self, Visit.self, Food.self]
+        [Child.self, LogEvent.self, RoutineStep.self, CarePlan.self, PlanItem.self, Visit.self, Food.self, Product.self]
     }
 
     @Model
@@ -313,5 +323,48 @@ public enum SchemaV4: VersionedSchema {
 
         public var status: FoodStatus? { FoodStatus(rawValue: statusRaw) }
         public var decidedBy: FoodDecider? { FoodDecider(rawValue: decidedByRaw) }
+    }
+
+    /// A product a child uses (moisturizer, wash, laundry, clothing), with
+    /// when it started, when it stopped, and the parent's "never again".
+    @Model
+    public final class Product {
+        @Attribute(.unique) public var id: UUID
+        public var createdAt: Date
+        public var updatedAt: Date
+        public var deletedAt: Date?
+        public var needsSync: Bool
+
+        public var childID: UUID
+        public var name: String
+        public var categoryRaw: String
+        public var startedAt: Date
+        public var stoppedAt: Date?
+        /// The parent marked it "never again"; `reason` is their words.
+        public var neverAgain: Bool
+        public var reason: String?
+        /// Restock reminders (6.3): every N days from `restockedAt`.
+        public var restockEveryDays: Int?
+        public var restockedAt: Date?
+
+        public init(id: UUID = UUID(), childID: UUID, name: String, category: ProductCategory, startedAt: Date,
+                    now: Date = .now) {
+            self.id = id
+            self.createdAt = now
+            self.updatedAt = now
+            self.deletedAt = nil
+            self.needsSync = true
+            self.childID = childID
+            self.name = name
+            self.categoryRaw = category.rawValue
+            self.startedAt = startedAt
+            self.stoppedAt = nil
+            self.neverAgain = false
+            self.reason = nil
+            self.restockEveryDays = nil
+            self.restockedAt = nil
+        }
+
+        public var category: ProductCategory { ProductCategory(rawValue: categoryRaw) ?? .other }
     }
 }

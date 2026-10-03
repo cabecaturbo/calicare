@@ -125,4 +125,26 @@ struct CarePlanSyncTests {
         #expect(second.appliedFoods == 1)
         #expect(try await foods.foods(child: child.id).map(\.name) == ["Eggs", "Oats"])
     }
+
+    @Test func productsGoUpAndComeDown() async throws {
+        let remote = FakeSyncRemote()
+        let child = try await addChild()
+        let products = ProductStore(modelContainer: container, now: { [clock] in clock.now })
+        let wash = try await products.add(name: "Lavender wash", category: .wash, startedAt: clock.now, child: child.id)
+        try await products.neverAgain(wash.id, reason: "Red cheeks")
+        let report = try await engine(remote).sync(userID: user, displayName: "Mom")
+        #expect(report.pushedProducts == 1)
+        #expect(await remote.products[wash.id]?.neverAgain == true)
+        #expect(await remote.products[wash.id]?.reason == "Red cheeks")
+
+        let household = try #require(settings.householdID)
+        try await remote.upsert(products: [RemoteProduct(
+            id: UUID(), householdID: household, childID: child.id, name: "Oat cream", category: "moisturizer",
+            startedAt: clock.now, stoppedAt: nil, neverAgain: false, reason: nil, restockEveryDays: nil, restockedAt: nil,
+            createdAt: clock.now, updatedAt: clock.now, deletedAt: nil
+        )])
+        let second = try await engine(remote).sync(userID: user, displayName: "Mom")
+        #expect(second.appliedProducts == 1)
+        #expect(try await products.products(child: child.id).map(\.name) == ["Lavender wash", "Oat cream"])
+    }
 }

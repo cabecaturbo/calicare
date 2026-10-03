@@ -197,6 +197,14 @@ Job: follow the care plan without thinking about it.
     asking your provider or a dietitian." Leftovers last: cooked batches
     with "Until Mon" (swipe: Used / Freeze / Toss) and "Add a cooked batch".
 
+11. Products: "Product diary" with "3 in use · 1 never again". The list:
+    "Add a product" with a kind, guessed from the name (Moisturizer, Wash, Laundry, Clothing,
+    Other); In use, Stopped, and Never again groups, each with "Wash ·
+    since Sep 3" or "Sep 3 – Sep 20", and the parent's reason in quotes.
+    Tap one to rename it, change its kind or start date, Stopped using it,
+    Never again (asks "What happened?"), Using it again, or remove it.
+    Starting, stopping, and "never again" show in Progress › Changes.
+
 ## 6. Progress
 Job: show whether things are getting better, and share it.
 

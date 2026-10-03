@@ -55,7 +55,6 @@ struct FoodListView: View {
                 }
                 .listRowBackground(palette.oat)
             }
-            LeftoversSection(onAdd: { addingBatch = true }, onFreeze: { freezing = $0 })
             let running = model.foodTrials.filter(\.isRunning)
             if !running.isEmpty {
                 Section {
@@ -108,9 +107,14 @@ struct FoodListView: View {
                             .textStyle(.section)
                             .foregroundStyle(palette.ink)
                             .textCase(nil)
+                    } footer: {
+                        if status == .paused, let line = NutrientCoverage.sentence(paused: group.map(\.name)) {
+                            Text(line).textStyle(.meta).foregroundStyle(palette.graphite)
+                        }
                     }
                 }
             }
+            LeftoversSection(onAdd: { addingBatch = true }, onFreeze: { freezing = $0 })
         }
         .scrollContentBackground(.hidden)
         .paperBackground()

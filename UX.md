@@ -187,8 +187,15 @@ Job: follow the care plan without thinking about it.
     family and "Plan · Oct 1" or "You · Oct 1". Tap a food to change its
     status, family, or note, or remove it.
 
-Not built yet:
-- Food trials, rotation and the plant counter, meal ideas, leftovers (Phase 5).
+    The list starts with "N plants this week · Your plan's goal: 40–50"
+    and "Log a meal", "What can I make" (sign in once; meal ideas from what's
+    in the fridge, paused foods never used), and "Rotation · 4 days" (safe
+    foods by family per day, today marked). Running trials ("Day 2 of 3 ·
+    today 1 tbsp") open the trial: Gave it today, Something worth
+    watching, skin and nights through the day after, End the trial (Safe /
+    Keep testing / Paused). Under Paused: what may be less covered, "Worth
+    asking your provider or a dietitian." Leftovers last: cooked batches
+    with "Until Mon" (swipe: Used / Freeze / Toss) and "Add a cooked batch".
 
 ## 6. Progress
 Job: show whether things are getting better, and share it.

@@ -25,6 +25,11 @@ struct ChangesSection: View {
                             .textStyle(.meta)
                             .foregroundStyle(palette.ink)
                     }
+                    if before.contains(where: \.isFood) {
+                        Text("Food reactions can show up 12–24 hours later.")
+                            .textStyle(.meta)
+                            .foregroundStyle(palette.graphite)
+                    }
                 }
                 .padding(Spacing.x4)
                 .frame(maxWidth: .infinity, alignment: .leading)

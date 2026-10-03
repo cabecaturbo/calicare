@@ -99,7 +99,7 @@ One prompt per session, same rules as docs/prompts/README.md.
 - [x] 5.3 Rotation planner and plant counter
 - [x] 5.4 "What can I make" (AI): live; the paused-food filter is fuzz-tested. Check it on the phone (needs sign-in). Premium gating waits for 7.3.
 - [x] 5.5 Leftovers and freezer timers
-- [ ] 5.6 Food-to-skin timeline and nutrient coverage
+- [x] 5.6 Food-to-skin timeline and nutrient coverage
 
 ## Phase 6: Photos, products, home (docs/prompts/phase-6-photos-products-home.md)
 - [ ] 6.1 On-device photo timeline with ghost overlay

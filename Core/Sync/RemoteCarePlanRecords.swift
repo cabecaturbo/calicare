@@ -254,3 +254,75 @@ public struct RemoteFood: Codable, Equatable, Sendable {
         try c.encode(deletedAt, forKey: .deletedAt)
     }
 }
+
+/// A product in a child's diary, as stored in Supabase (`products`).
+public struct RemoteProduct: Codable, Equatable, Sendable {
+    public var id: UUID
+    public var householdID: UUID
+    public var childID: UUID
+    public var name: String
+    public var category: String
+    public var startedAt: Date
+    public var stoppedAt: Date?
+    public var neverAgain: Bool
+    public var reason: String?
+    public var restockEveryDays: Int?
+    public var restockedAt: Date?
+    public var createdAt: Date
+    public var updatedAt: Date
+    public var deletedAt: Date?
+    public var serverUpdatedAt: Date?
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, category, reason
+        case householdID = "household_id"
+        case childID = "child_id"
+        case startedAt = "started_at"
+        case stoppedAt = "stopped_at"
+        case neverAgain = "never_again"
+        case restockEveryDays = "restock_every_days"
+        case restockedAt = "restocked_at"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+        case deletedAt = "deleted_at"
+        case serverUpdatedAt = "server_updated_at"
+    }
+
+    public init(id: UUID, householdID: UUID, childID: UUID, name: String, category: String, startedAt: Date,
+                stoppedAt: Date?, neverAgain: Bool, reason: String?, restockEveryDays: Int?, restockedAt: Date?,
+                createdAt: Date, updatedAt: Date, deletedAt: Date?, serverUpdatedAt: Date? = nil) {
+        self.id = id
+        self.householdID = householdID
+        self.childID = childID
+        self.name = name
+        self.category = category
+        self.startedAt = startedAt
+        self.stoppedAt = stoppedAt
+        self.neverAgain = neverAgain
+        self.reason = reason
+        self.restockEveryDays = restockEveryDays
+        self.restockedAt = restockedAt
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
+        self.serverUpdatedAt = serverUpdatedAt
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(id, forKey: .id)
+        try c.encode(householdID, forKey: .householdID)
+        try c.encode(childID, forKey: .childID)
+        try c.encode(name, forKey: .name)
+        try c.encode(category, forKey: .category)
+        try c.encode(startedAt, forKey: .startedAt)
+        try c.encode(stoppedAt, forKey: .stoppedAt)
+        try c.encode(neverAgain, forKey: .neverAgain)
+        try c.encode(reason, forKey: .reason)
+        try c.encode(restockEveryDays, forKey: .restockEveryDays)
+        try c.encode(restockedAt, forKey: .restockedAt)
+        try c.encode(createdAt, forKey: .createdAt)
+        try c.encode(updatedAt, forKey: .updatedAt)
+        try c.encode(deletedAt, forKey: .deletedAt)
+    }
+}

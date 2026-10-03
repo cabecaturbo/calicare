@@ -77,6 +77,11 @@ struct SupabaseSyncRemote: SyncRemote {
         try await client.from("foods").upsert(foods, onConflict: "id", returning: .minimal).execute()
     }
 
+    func upsert(products: [RemoteProduct]) async throws {
+        guard !products.isEmpty else { return }
+        try await client.from("products").upsert(products, onConflict: "id", returning: .minimal).execute()
+    }
+
     func memberCount(household: UUID) async throws -> Int {
         try await client.from("household_members")
             .select("id", head: true, count: .exact)
@@ -94,7 +99,8 @@ struct SupabaseSyncRemote: SyncRemote {
             carePlans: try await pages(of: "care_plans", household: household, since: since),
             planItems: try await pages(of: "plan_items", household: household, since: since),
             visits: try await pages(of: "visits", household: household, since: since),
-            foods: try await pages(of: "foods", household: household, since: since)
+            foods: try await pages(of: "foods", household: household, since: since),
+            products: try await pages(of: "products", household: household, since: since)
         )
     }
 

@@ -50,7 +50,8 @@ struct JournalExportView: View {
         for plan in all {
             for item in (try? await plans.items(plan: plan.id)) ?? [] { items[item.id] = item }
         }
-        let changes = CareChanges.list(plans: all, items: items, logs: events)
+        let products = (try? await ProductStore(modelContainer: container).products(child: child.id)) ?? []
+        let changes = CareChanges.list(plans: all, items: items, logs: events, products: products)
         let journal = ProviderJournal(childName: child.name, range: range, events: events, changes: changes)
         days = journal.days.count
         files = try? ProviderJournalPDF.files(for: journal)

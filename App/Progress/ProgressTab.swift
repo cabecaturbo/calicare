@@ -166,7 +166,9 @@ struct ProgressTab: View {
             for item in (try? await plans.items(plan: plan.id)) ?? [] { items[item.id] = item }
         }
         let foods = (try? await FoodStore(modelContainer: container).foods(child: child.id)) ?? []
-        changes = CareChanges.list(plans: all, items: items, logs: live.filter { $0.childID == child.id }, foods: foods)
+        let products = (try? await ProductStore(modelContainer: container).products(child: child.id)) ?? []
+        changes = CareChanges.list(plans: all, items: items, logs: live.filter { $0.childID == child.id }, foods: foods,
+                                   products: products)
         let events = (try? await logs.events(from: today.adding(days: -13), through: today, child: child.id)) ?? []
         let days = (0..<14).reversed().map { WeekDay(summary: DaySummary(day: today.adding(days: -$0), events: events)) }
         rougherSince = CareChanges.rougherSince(days)

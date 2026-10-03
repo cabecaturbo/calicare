@@ -517,3 +517,12 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
 - **Spots, not body maps:** the parent names a spot ("Left elbow") and adds photos to it, by camera or from the library.
 - **Ghost overlay:** the camera shows the spot's last photo at 35% so the next one lines up. No comparisons or scores are drawn from photos.
 - **The camera permission text** now covers both care plans and progress photos.
+
+## Product diary (6.2, October 2, 2026)
+
+- **A new `Product` model (SchemaV5, lightweight migration) and a `products` table** with RLS, synced like foods. Categories: moisturizer, wash, laundry, clothing, other; the database refuses anything else (no "treatment").
+- **The kind is guessed from the name** ("detergent" is laundry, "pajamas" clothing); the parent can change it.
+- **Slim on purpose:** in use, stopped, and "never again" with the parent's reason in their own words. Nothing is suggested or rated.
+- **Starting, stopping, and "never again" join Progress › Changes** and the provider journal, as plain events, never as causes.
+- **Restock fields exist in the table** (restock_every_days, restocked_at) but nothing uses them yet (6.3).
+

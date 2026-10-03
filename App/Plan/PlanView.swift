@@ -78,6 +78,10 @@ struct PlanView: View {
                         FoodSection()
                             .padding(.horizontal, Spacing.margin)
                             .padding(.top, Spacing.x6)
+
+                        ProductsSection()
+                            .padding(.horizontal, Spacing.margin)
+                            .padding(.top, Spacing.x6)
                     }
                 }
                 .padding(.bottom, BottomBar.clearance)

@@ -21,10 +21,17 @@ public struct CareChange: Hashable, Sendable, Identifiable {
 public enum CareChanges {
     /// Every change, newest first: plans started and ended, supplements
     /// started and stopped, new things patch-tested, and food changes
-    /// (paused foods, trials started and ended, anything worth watching).
+    /// (paused foods, trials started and ended, anything worth watching), and
+    /// products started, stopped, or marked "never again".
     public static func list(plans: [CarePlanInfo], items: [UUID: PlanItemInfo], logs: [LogEntry],
-                            foods: [FoodInfo] = []) -> [CareChange] {
+                            foods: [FoodInfo] = [], products: [ProductInfo] = []) -> [CareChange] {
         var changes: [CareChange] = []
+        for product in products {
+            changes.append(CareChange(date: product.startedAt, text: "Started \(product.name)"))
+            if let stopped = product.stoppedAt {
+                changes.append(CareChange(date: stopped, text: product.neverAgain ? "Never again: \(product.name)" : "Stopped \(product.name)"))
+            }
+        }
         for food in foods where food.status == .paused {
             changes.append(CareChange(date: food.statusChangedAt, text: "Paused \(food.name)", isFood: true))
         }

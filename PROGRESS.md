@@ -103,10 +103,11 @@ One prompt per session, same rules as docs/prompts/README.md.
 
 ## Phase 6: Photos, products, home (docs/prompts/phase-6-photos-products-home.md)
 - [x] 6.1 On-device photo timeline with ghost overlay (try Take a photo on the phone)
-- [ ] 6.2 Product diary
+- [x] 6.2 Product diary (slim: in use, stopped, never again with a reason; in Progress › Changes)
 - [ ] 6.3 Restock reminders and labeled affiliate links
 - [ ] 6.4 Home checklist
 - [ ] 6.5 Rx, prior-auth, copay reminders and insurance history report
+
 
 ## Phase 7: Launch (docs/prompts/phase-7-launch.md)
 - [ ] 7.1 🛑 Apple Watch app

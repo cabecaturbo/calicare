@@ -12,6 +12,9 @@ struct FoodListView: View {
     @State private var problem: String?
     @State private var loggingMeal = false
     @State private var askingIdeas = false
+    @State private var addingBatch = false
+    @State private var freezing: LeftoverBatch?
+    @State private var freezerDays = 30
 
     var body: some View {
         List {
@@ -52,6 +55,7 @@ struct FoodListView: View {
                 }
                 .listRowBackground(palette.oat)
             }
+            LeftoversSection(onAdd: { addingBatch = true }, onFreeze: { freezing = $0 })
             let running = model.foodTrials.filter(\.isRunning)
             if !running.isEmpty {
                 Section {
@@ -113,6 +117,18 @@ struct FoodListView: View {
         .navigationTitle("Food list")
         .navigationBarTitleDisplayMode(.inline)
         .tint(palette.indigo)
+        .sheet(isPresented: $addingBatch) {
+            AddBatchSheet().nightAwarePalette()
+        }
+        .alert("Freeze \(freezing?.name ?? "")", isPresented: Binding(get: { freezing != nil }, set: { if !$0 { freezing = nil } })) {
+            TextField("Days", value: $freezerDays, format: .number).keyboardType(.numberPad)
+            Button("Cancel", role: .cancel) {}
+            Button("Freeze") {
+                if let batch = freezing { Task { await model.freezeBatch(batch, days: max(freezerDays, 1)) } }
+            }
+        } message: {
+            Text("How many days to keep it in the freezer?")
+        }
         .sheet(isPresented: $askingIdeas) {
             MealIdeasSheet()
                 .nightAwarePalette()

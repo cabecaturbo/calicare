@@ -48,6 +48,7 @@ public struct LogPhrases: Sendable {
         case (.foodTrial, .trial(.worthWatching)?): "something worth watching in a food trial"
         case (.foodTrial, _): "food trial"
         case (.meal, _): "meal"
+        case (.batch, _): "cooked batch"
         }
     }
 

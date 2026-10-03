@@ -492,3 +492,11 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
 - **Every result shows** "Freshly cooked food is lower in histamine than leftovers or aged foods." (from the research notes, not advice), plus "Paused foods are never used. Not medical advice."
 - **Sign-in is required** (like reading plans), with 20 requests per day (`meal_ideas_usage`). Nothing else is stored.
 - **Free vs premium waits for 7.3.**
+
+## Leftovers (5.5, October 2, 2026)
+
+- **A new log type, `batch`:** "Chicken rice · 3 days" in the note, and fridge, freezer, or done in the value.
+  - The parent picks the days. The stepper starts at 3 for the fridge and 30 for the freezer, as a starting point only, with no food-safety claims.
+- **A reminder at 9 AM on the last day:** "Last day for the chicken rice · Use it or freeze it today", set in the background and cancelled when the batch is done.
+- **Swipe left for Used, Freeze, or Toss.** Freeze asks for freezer days and starts a new freezer batch.
+- **Sheets now live on the food list screen**, not on a List section, where they didn't always open. `LeftoverBatch` is tested.

@@ -526,3 +526,11 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
 - **Starting, stopping, and "never again" join Progress › Changes** and the provider journal, as plain events, never as causes.
 - **Restock fields exist in the table** (restock_every_days, restocked_at) but nothing uses them yet (6.3).
 
+
+## The launch version (October 2, 2026)
+
+The owner asked what to cut, then asked for "the tried and true, solid launch version". The test: does a tired parent need it in the first month, and does it work every time?
+- **Kept:** one-tap logging everywhere, Today and the routine, Progress and "Rougher since…", the doctor PDF, the care plan reader, photos, family sharing, the food list and trials, the product diary, and the caregiver card.
+- **Hidden (code kept, `Features.foodExtras`):** the plant counter and meal logging, "What can I make", the rotation planner, and leftovers. Turning the flag on brings them back.
+- **Not in version 1:** 6.3 restock and affiliate links (no partners yet), 6.4 home checklist, 6.5 Rx and insurance, 7.2 keyboard, and 7.4 monthly recap (Progress › Month covers it). The Apple Watch app (7.1) waits until after launch.
+- **Support email for now:** msmccartin@gmail.com ("Contact support" in Settings › About), until the landing page brings its own address.

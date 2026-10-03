@@ -18,6 +18,7 @@ struct FoodListView: View {
 
     var body: some View {
         List {
+            if Features.foodExtras {
             Section {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
@@ -45,6 +46,7 @@ struct FoodListView: View {
                 }
             }
             .listRowBackground(palette.paper)
+            }
             if !fromPlan.isEmpty {
                 Section {
                     Text("Your plan says to avoid: \(fromPlan.joined(separator: ", ")).")
@@ -114,7 +116,9 @@ struct FoodListView: View {
                     }
                 }
             }
-            LeftoversSection(onAdd: { addingBatch = true }, onFreeze: { freezing = $0 })
+            if Features.foodExtras {
+                LeftoversSection(onAdd: { addingBatch = true }, onFreeze: { freezing = $0 })
+            }
         }
         .scrollContentBackground(.hidden)
         .paperBackground()

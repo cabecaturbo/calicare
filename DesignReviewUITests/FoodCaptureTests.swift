@@ -25,15 +25,18 @@ final class FoodCaptureTests: XCTestCase {
             sleep(1)
         }
         Capture.screen("food-list-\(variant)")
-        app.buttons["Log a meal"].firstMatch.tap()
-        sleep(1)
-        for name in ["Oats", "Blueberries", "Chicken"] { app.buttons[name].firstMatch.tap() }
-        Capture.screen("food-meal-\(variant)")
-        app.buttons["Log"].firstMatch.tap()
-        sleep(2)
-        app.swipeDown()
-        sleep(1)
-        Capture.screen("food-list-plants-\(variant)")
+        // Meals, plants, and rotation are hidden in version 1 (Features.foodExtras).
+        if app.buttons["Log a meal"].firstMatch.exists {
+            app.buttons["Log a meal"].firstMatch.tap()
+            sleep(1)
+            for name in ["Oats", "Blueberries", "Chicken"] { app.buttons[name].firstMatch.tap() }
+            Capture.screen("food-meal-\(variant)")
+            app.buttons["Log"].firstMatch.tap()
+            sleep(2)
+            app.swipeDown()
+            sleep(1)
+            Capture.screen("food-list-plants-\(variant)")
+        }
         let rotation = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Rotation")).firstMatch
         if rotation.waitForExistence(timeout: 3) {
             rotation.tap()

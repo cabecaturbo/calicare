@@ -44,6 +44,7 @@ struct ProductListView: View {
         }
         .scrollContentBackground(.hidden)
         .paperBackground()
+        .solidNavigationBar(.paper)
         .navigationTitle("Products")
         .navigationBarTitleDisplayMode(.inline)
         .tint(palette.indigo)

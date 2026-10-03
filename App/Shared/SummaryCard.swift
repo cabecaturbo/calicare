@@ -12,7 +12,7 @@ struct SummaryCard: View {
     var art: Illustration.Kind?
 
     var body: some View {
-        HStack(alignment: .center, spacing: Spacing.x3) {
+        HStack(alignment: .center, spacing: Spacing.x4) {
             VStack(alignment: .leading, spacing: Spacing.x1) {
                 Text(eyebrow)
                     .textStyle(.meta)

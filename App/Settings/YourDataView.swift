@@ -70,7 +70,7 @@ struct YourDataView: View {
     }
 
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: Spacing.x3) {
+        VStack(alignment: .leading, spacing: Spacing.x4) {
             Text(title)
                 .textStyle(.section)
                 .foregroundStyle(palette.ink)

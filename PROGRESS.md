@@ -112,6 +112,7 @@ Version 1 shows only the food list and trials; 5.3, 5.4 and 5.5 are hidden (Feat
 ## Launch version (October 2, 2026)
 The owner wants "the tried and true, solid launch version". `[-]` means
 not in version 1; the code stays. Next:
+- [x] V1.0 Hierarchy and step wording: short verb-first labels with the plan's full words on tap, Skin groups, New pills, "Your provider mentioned", serif headers, 4/8/16/24/40 spacing (SchemaV6, additive)
 - [ ] V1.1 🛑 Phone check: a real plan import, the doctor PDF, photos, products
 - [ ] V1.2 🛑 Two-phone sync test (2.4 and 2.5)
 - [ ] Then 7.3 paywall, 7.5 landing page and privacy policy, 7.6 TestFlight

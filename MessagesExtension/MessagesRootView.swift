@@ -48,7 +48,7 @@ struct MessagesRootView: View {
 
     private func fullCard(_ card: WeeklyCard) -> some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: Spacing.x3) {
+            VStack(alignment: .leading, spacing: Spacing.x4) {
                 Button("This week's cards", action: onBack)
                     .buttonStyle(.textLink)
                 Scaled(size: WeeklyCardView.size) { WeeklyCardView(card: card) }

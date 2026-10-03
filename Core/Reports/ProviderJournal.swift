@@ -145,7 +145,7 @@ private struct JournalPage: View {
             ForEach(days, id: \.day) { day in
                 VStack(alignment: .leading, spacing: 2) {
                     Text(day.day.noon().formatted(.dateTime.weekday(.wide).month(.wide).day()))
-                        .font(TypeStyle.section.font)
+                        .font(TypeStyle.label.font)
                         .foregroundStyle(palette.ink)
                     palette.hairline.frame(height: Rule.width)
                     line("Changes", day.changes.isEmpty ? nil : day.changes.joined(separator: "; "))

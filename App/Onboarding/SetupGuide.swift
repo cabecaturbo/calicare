@@ -107,7 +107,7 @@ struct SetupGuide: View {
     }
 
     private var topBar: some View {
-        VStack(spacing: Spacing.x3) {
+        VStack(spacing: Spacing.x4) {
             HStack {
                 Text(path.title)
                     .textStyle(.section)

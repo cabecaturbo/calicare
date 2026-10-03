@@ -81,3 +81,27 @@ Deno.test("a rule with only a duration isn't missing a dose", () => {
   ], plan);
   assertEquals(items[0].blanks, []);
 });
+
+Deno.test("keeps a label made of the plan's words", () => {
+  const { items, rejectedLabels } = check([
+    { kind: "topicalStep", text: "Apply calendula balm to affected areas", source_page: 1,
+      source_line: "2. Apply calendula balm to affected areas", label: "Apply calendula balm", detail: "to affected areas", category: "apply" },
+  ], plan);
+  assertEquals(rejectedLabels, 0);
+  assertEquals([items[0].label, items[0].detail, items[0].category], ["Apply calendula balm", "to affected areas", "apply"]);
+});
+
+Deno.test("drops a label that adds a dose, a brand, or breaks the rules", () => {
+  const line = "2. Apply calendula balm to affected areas";
+  const { items, rejectedLabels } = check([
+    { kind: "topicalStep", text: "Apply calendula balm", source_page: 1, source_line: line, label: "Apply 3 pumps calendula balm", detail: null, category: "apply" },
+    { kind: "topicalStep", text: "Apply calendula balm", source_page: 1, source_line: line, label: "Apply Weleda calendula balm", detail: null, category: "apply" },
+    { kind: "topicalStep", text: "Apply calendula balm", source_page: 1, source_line: line, label: "Calendula balm", detail: null, category: "apply" },
+    { kind: "topicalStep", text: "Apply calendula balm", source_page: 1, source_line: line, label: "Apply calendula balm gently to every affected area", detail: null, category: "apply" },
+    { kind: "topicalStep", text: "Apply calendula balm", source_page: 1, source_line: line, label: "Apply calendula balm", detail: "twice daily", category: "apply" },
+    { kind: "topicalStep", text: "Apply calendula balm", source_page: 1, source_line: line, label: "Apply calendula balm", detail: null, category: "treat" },
+  ], plan);
+  assertEquals(rejectedLabels, 5);
+  assertEquals(items.map((i) => i.label), [null, null, null, null, null, "Apply calendula balm"]);
+  assertEquals(items[5].category, null);
+});

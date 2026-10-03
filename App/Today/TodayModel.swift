@@ -165,7 +165,7 @@ final class TodayModel {
         do {
             let store = LogStore(modelContainer: try CaliCareModelContainer.shared(), calendar: calendar)
             let entry = try await store.logRoutineStep(step.id, source: .app)
-            confirmation = Confirmation(entry: entry, text: "Done: \(step.name), \(time(entry.timestamp)).")
+            confirmation = Confirmation(entry: entry, text: "Done: \(step.displayName), \(time(entry.timestamp)).")
             await load()
             Task { await LogChanges.didChange() }
         } catch {
@@ -451,7 +451,7 @@ final class TodayModel {
     /// A ticked routine step shows its own name ("Bath"); everything else its usual title.
     func title(for entry: LogEntry) -> String {
         if let id = entry.routineStepID, let step = routineSteps.first(where: { $0.id == id }) {
-            return step.name
+            return step.displayName
         }
         if entry.type == .bath, let id = entry.routineStepID, let item = planItems[id] {
             return item.text

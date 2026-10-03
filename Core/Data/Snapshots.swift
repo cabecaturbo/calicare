@@ -98,8 +98,18 @@ public struct RoutineStepInfo: Identifiable, Hashable, Sendable {
     public let isActive: Bool
     /// Set when a started care plan made this step.
     public let planItemID: UUID?
+    /// Short, verb-first wording for the screen, when set.
+    public let label: String?
+    public let detail: String?
+    /// The step's original wording, full length.
+    public let sourceText: String?
+    public let category: StepCategory?
+    public let timesPerDay: Int?
+    public let kind: StepKind
 
-    public init(id: UUID, childID: UUID, name: String, time: RoutineTime, order: Int, isActive: Bool, planItemID: UUID? = nil) {
+    public init(id: UUID, childID: UUID, name: String, time: RoutineTime, order: Int, isActive: Bool, planItemID: UUID? = nil,
+                label: String? = nil, detail: String? = nil, sourceText: String? = nil, category: StepCategory? = nil,
+                timesPerDay: Int? = nil, kind: StepKind = .task) {
         self.id = id
         self.childID = childID
         self.name = name
@@ -107,7 +117,18 @@ public struct RoutineStepInfo: Identifiable, Hashable, Sendable {
         self.order = order
         self.isActive = isActive
         self.planItemID = planItemID
+        self.label = label
+        self.detail = detail
+        self.sourceText = sourceText
+        self.category = category
+        self.timesPerDay = timesPerDay
+        self.kind = kind
     }
+
+    /// What the row says: the label, or the original wording without "Step 1:".
+    public var displayName: String { label ?? StepLabeler.clean(sourceText ?? name) }
+    /// The full original wording, for "From your plan".
+    public var original: String { sourceText ?? name }
 }
 
 extension RoutineStepInfo {
@@ -115,7 +136,9 @@ extension RoutineStepInfo {
     init?(_ step: RoutineStep) {
         guard let time = step.time else { return nil }
         self.init(id: step.id, childID: step.childID, name: step.name, time: time, order: step.order,
-                  isActive: step.isActive, planItemID: step.planItemID)
+                  isActive: step.isActive, planItemID: step.planItemID, label: step.label, detail: step.detail,
+                  sourceText: step.sourceText, category: step.categoryRaw.flatMap(StepCategory.init),
+                  timesPerDay: step.timesPerDay, kind: step.kindRaw.flatMap(StepKind.init) ?? .task)
     }
 }
 
@@ -165,9 +188,19 @@ public struct PlanItemInfo: Identifiable, Hashable, Sendable {
     public let sourceLine: String?
     public let isConfirmed: Bool
     public let order: Int
+    public let label: String?
+    public let detail: String?
+    public let category: StepCategory?
+    /// Set on items split out of a list ("Continue A, B").
+    public let parentItemID: UUID?
 
     public init(id: UUID, planID: UUID, kind: PlanItemKind, text: String, dose: String?, frequency: String?,
-                timing: String?, duration: String?, sourcePage: Int?, sourceLine: String?, isConfirmed: Bool, order: Int) {
+                timing: String?, duration: String?, sourcePage: Int?, sourceLine: String?, isConfirmed: Bool, order: Int,
+                label: String? = nil, detail: String? = nil, category: StepCategory? = nil, parentItemID: UUID? = nil) {
+        self.label = label
+        self.detail = detail
+        self.category = category
+        self.parentItemID = parentItemID
         self.id = id
         self.planID = planID
         self.kind = kind
@@ -188,7 +221,9 @@ extension PlanItemInfo {
         guard let kind = item.kind else { return nil }
         self.init(id: item.id, planID: item.planID, kind: kind, text: item.text, dose: item.dose,
                   frequency: item.frequency, timing: item.timing, duration: item.duration,
-                  sourcePage: item.sourcePage, sourceLine: item.sourceLine, isConfirmed: item.isConfirmed, order: item.order)
+                  sourcePage: item.sourcePage, sourceLine: item.sourceLine, isConfirmed: item.isConfirmed, order: item.order,
+                  label: item.label, detail: item.detail, category: item.categoryRaw.flatMap(StepCategory.init),
+                  parentItemID: item.parentItemID)
     }
 }
 

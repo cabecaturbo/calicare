@@ -534,3 +534,19 @@ The owner asked what to cut, then asked for "the tried and true, solid launch ve
 - **Hidden (code kept, `Features.foodExtras`):** the plant counter and meal logging, "What can I make", the rotation planner, and leftovers. Turning the flag on brings them back.
 - **Not in version 1:** 6.3 restock and affiliate links (no partners yet), 6.4 home checklist, 6.5 Rx and insurance, 7.2 keyboard, and 7.4 monthly recap (Progress › Month covers it). The Apple Watch app (7.1) waits until after launch.
 - **Support email for now:** msmccartin@gmail.com ("Contact support" in Settings › About), until the landing page brings its own address.
+
+## Hierarchy and step wording (October 2, 2026)
+
+The owner's real plan read poorly on Plan: step names were cut mid-word, "Step 1:" and "ADD" showed, frequency lines were steps to tick, headers were small sans, and spacing was uneven.
+
+- **Why names were cut:** the step name was capped at 80 characters on the phone (`CarePlanStore`, `RoutineStore`) and on the server (`routine_steps.name`). That column stays as it is.
+- **Additive data only:** SchemaV6 adds optional `label`, `detail`, `sourceText`, `category`, `timesPerDay`, and `kind` to RoutineStep, and `label`, `detail`, `category`, and `parentItemID` to PlanItem. The Supabase migration only adds nullable columns. Nothing existing is renamed, dropped, or rewritten. IDs stay, so done-history stays attached.
+- **Full words come back** from each step's plan line (`PlanItem.sourceLine`) when the saved name is a cut-off start of it. On the owner's phone, every cut step had its full line; none needed re-entering.
+- **Labels** (`StepLabeler`): a verb first, one action, at most 6 words, no "Step N:", and every number, percent, ratio, and capitalised word copied from the plan, never added. Details must appear in the plan's line as written. The plan reader proposes labels too; the server (`grounding.ts`) and the phone check them with the same rule and drop any that add words.
+- **Renaming** changes the label only; `sourceText` never changes.
+- **Notes, not steps:** lines that start with Support, Continue, Aim, Keep, or Repeat and give a frequency or duration. "3-4x per day" becomes the Skin badge; durations go under About this plan.
+- **Supplements:** "ADD" shows as a "New" pill (stored text unchanged); "Continue A, B" becomes two new items pointing to the original, which stays; "consider" / "may be indicated" lines go under "Your provider mentioned" with no actions; "Transition to X" is a normal row (owner's choice).
+- **Rows:** the circle ticks (44pt target); tapping the words shows the plan's line (owner's choice).
+- **Type and spacing, whole app (owner's choice):** section headers are Newsreader 20/26 (title3); a new `label` style keeps SF Pro semibold for the child switcher, step numbers, and outlined buttons. Spacing is 4/8/16/24/40, sections 40 apart. Shared cards and PDFs keep their old spacing and sans headings (fixed-size pages).
+- **Food's focal point** is the food counts; the plant counter stays hidden for version 1 (owner's choice).
+- **Status bar and sheet headers** are solid, so content doesn't scroll under the clock or behind a sheet's title.

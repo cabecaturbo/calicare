@@ -52,9 +52,9 @@ struct ProviderSection: View {
     }
 
     private func row(_ title: String, _ value: String) -> some View {
-        HStack {
+        AdaptiveStack {
             Text(title).textStyle(.body).foregroundStyle(palette.ink)
-            Spacer()
+            Spacer(minLength: 0)
             Text(value).textStyle(.meta).foregroundStyle(palette.graphite)
         }
         .frame(minHeight: 52)
@@ -79,12 +79,28 @@ private struct AddVisitSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                DatePicker("Date", selection: $date)
-                TextField("Provider", text: $provider)
-                TextField("Note (optional)", text: $notes, axis: .vertical)
+                Section {
+                    DatePicker("Date", selection: $date)
+                        .textStyle(.body)
+                } header: {
+                    FormHeader("When")
+                }
+                Section {
+                    TextField("Provider", text: $provider)
+                        .textStyle(.body)
+                } header: {
+                    FormHeader("Who")
+                }
+                Section {
+                    TextField("Optional", text: $notes, axis: .vertical)
+                        .textStyle(.body)
+                } header: {
+                    FormHeader("Note")
+                }
             }
             .scrollContentBackground(.hidden)
             .paperBackground(.oat)
+            .solidNavigationBar()
             .navigationTitle("Add a visit")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -99,6 +115,6 @@ private struct AddVisitSheet: View {
             }
         }
         .tint(palette.indigo)
-        .presentationDetents([.medium])
+        .presentationDetents([.medium, .large])
     }
 }

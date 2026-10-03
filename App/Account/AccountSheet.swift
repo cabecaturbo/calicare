@@ -62,7 +62,7 @@ struct AccountSheet: View {
             Text("CaliCare only gets a private relay email from Apple, and never your password.")
                 .textStyle(.meta)
                 .foregroundStyle(palette.graphite)
-                .padding(.top, Spacing.x3)
+                .padding(.top, Spacing.x4)
 
             SignInWithAppleButton(.signIn) { request in
                 nonce = AppleSignInNonce()

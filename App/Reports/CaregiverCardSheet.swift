@@ -33,7 +33,7 @@ struct CaregiverCardSheet: View {
                     contacts
 
                     if !card.isEmpty {
-                        VStack(alignment: .leading, spacing: Spacing.x3) {
+                        VStack(alignment: .leading, spacing: Spacing.x4) {
                             Text("The card")
                                 .textStyle(.section)
                                 .foregroundStyle(palette.ink)
@@ -77,7 +77,7 @@ struct CaregiverCardSheet: View {
             TextField(hint, text: text, axis: .vertical)
                 .textStyle(.body)
                 .lineLimit(2...8)
-                .padding(Spacing.x3)
+                .padding(Spacing.x4)
                 .background(palette.oat, in: RoundedRectangle(cornerRadius: Corner.control))
         }
     }
@@ -94,7 +94,7 @@ struct CaregiverCardSheet: View {
                         .keyboardType(.phonePad)
                 }
                 .textStyle(.body)
-                .padding(Spacing.x3)
+                .padding(Spacing.x4)
                 .background(palette.oat, in: RoundedRectangle(cornerRadius: Corner.control))
             }
             Button("Add a contact") { card.contacts.append(.init()) }

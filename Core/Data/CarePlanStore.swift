@@ -21,9 +21,17 @@ public struct PlanItemDraft: Equatable, Sendable {
     public var duration: String?
     public var sourcePage: Int?
     public var sourceLine: String?
+    /// Proposed by the plan reader; kept only if it follows StepLabeler's rules.
+    public var label: String?
+    public var detail: String?
+    public var category: StepCategory?
 
     public init(kind: PlanItemKind, text: String, dose: String? = nil, frequency: String? = nil, timing: String? = nil,
-                duration: String? = nil, sourcePage: Int? = nil, sourceLine: String? = nil) {
+                duration: String? = nil, sourcePage: Int? = nil, sourceLine: String? = nil, label: String? = nil,
+                detail: String? = nil, category: StepCategory? = nil) {
+        self.label = label
+        self.detail = detail
+        self.category = category
         self.kind = kind
         self.text = text
         self.dose = dose
@@ -63,12 +71,20 @@ public actor CarePlanStore: ModelActor {
         modelContext.insert(plan)
         for (index, draft) in items.enumerated() {
             guard let text = Self.clean(draft.text) else { throw CarePlanStoreError.emptyText }
-            modelContext.insert(PlanItem(
+            let item = PlanItem(
                 planID: plan.id, childID: childID, kind: draft.kind, text: text,
                 dose: Self.clean(draft.dose), frequency: Self.clean(draft.frequency), timing: Self.clean(draft.timing),
                 duration: Self.clean(draft.duration), sourcePage: draft.sourcePage, sourceLine: Self.clean(draft.sourceLine),
                 order: index, now: current
-            ))
+            )
+            // A proposed label stays only if it's made of the plan's own words.
+            if let label = Self.clean(draft.label),
+               StepLabeler.isValid(label: label, detail: Self.clean(draft.detail), source: item.sourceLine ?? text) {
+                item.label = label
+                item.detail = Self.clean(draft.detail)
+            }
+            item.categoryRaw = draft.category?.rawValue
+            modelContext.insert(item)
         }
         try modelContext.save()
         guard let info = CarePlanInfo(plan) else { throw CarePlanStoreError.planNotFound }
@@ -118,8 +134,37 @@ public actor CarePlanStore: ModelActor {
         touch(plan, at: current)
         try addRoutineSteps(for: items.filter(\.isConfirmed), child: plan.childID, at: current)
         try modelContext.save()
+        // Full wording, labels, and split lists for the new steps and items.
+        try StepBackfill.run(in: modelContext, now: current)
         guard let info = CarePlanInfo(plan) else { throw CarePlanStoreError.planNotFound }
         return info
+    }
+
+    /// A clean slate for one child: every plan and plan item, and every
+    /// routine step, is removed (soft delete, so it syncs). Logs, foods,
+    /// products, and photos stay. Returns how many rows were removed.
+    @discardableResult
+    public func removeAllPlansAndSteps(child childID: UUID) async throws -> Int {
+        let current = now()
+        var count = 0
+        for plan in try modelContext.fetch(FetchDescriptor<CarePlan>(predicate: #Predicate { $0.childID == childID && $0.deletedAt == nil })) {
+            plan.deletedAt = current
+            touch(plan, at: current)
+            count += 1
+        }
+        for item in try modelContext.fetch(FetchDescriptor<PlanItem>(predicate: #Predicate { $0.childID == childID && $0.deletedAt == nil })) {
+            item.deletedAt = current
+            touch(item, at: current)
+            count += 1
+        }
+        for step in try modelContext.fetch(FetchDescriptor<RoutineStep>(predicate: #Predicate { $0.childID == childID && $0.deletedAt == nil })) {
+            step.deletedAt = current
+            step.updatedAt = current
+            step.needsSync = true
+            count += 1
+        }
+        try modelContext.save()
+        return count
     }
 
     public func end(_ planID: UUID) async throws {

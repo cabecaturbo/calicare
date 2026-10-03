@@ -34,7 +34,7 @@ public enum CaliCareModelContainer {
 
     /// A new container. Use `inMemory` for tests and previews.
     public static func make(inMemory: Bool = false) throws -> ModelContainer {
-        let schema = Schema(versionedSchema: SchemaV5.self)
+        let schema = Schema(versionedSchema: SchemaV6.self)
         let configuration = inMemory
             ? ModelConfiguration(UUID().uuidString, schema: schema, isStoredInMemoryOnly: true)
             : ModelConfiguration(
@@ -52,7 +52,7 @@ public enum CaliCareModelContainer {
 
     /// A container stored at `url`, for migration tests.
     public static func make(url: URL) throws -> ModelContainer {
-        let schema = Schema(versionedSchema: SchemaV5.self)
+        let schema = Schema(versionedSchema: SchemaV6.self)
         return try ModelContainer(
             for: schema,
             migrationPlan: CaliCareMigrationPlan.self,

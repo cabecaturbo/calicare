@@ -18,6 +18,10 @@ struct FoodListView: View {
 
     var body: some View {
         List {
+            Section {
+                FoodCounts(foods: model.foods)
+                    .listRowBackground(palette.paper)
+            }
             if Features.foodExtras {
             Section {
                 HStack {
@@ -47,15 +51,29 @@ struct FoodListView: View {
             }
             .listRowBackground(palette.paper)
             }
-            if !fromPlan.isEmpty {
+            let avoid = PlanFoods.avoidedLines(in: Array(model.planItems.values).sorted { $0.order < $1.order })
+            if !avoid.isEmpty {
                 Section {
-                    Text("Your plan says to avoid: \(fromPlan.joined(separator: ", ")).")
-                        .textStyle(.body)
-                        .foregroundStyle(palette.ink)
-                    Button("Add them as paused") { Task { await addFromPlan() } }
-                        .buttonStyle(.textLink)
+                    ForEach(Array(avoid.enumerated()), id: \.element.id) { index, line in
+                        // The qualifier shows once, under the last line it belongs to.
+                        let next = index + 1 < avoid.count ? avoid[index + 1] : nil
+                        let showsNote = line.qualifier != nil && next?.qualifier != line.qualifier
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(line.name).textStyle(.body).foregroundStyle(palette.ink)
+                            if showsNote, let note = line.qualifier {
+                                Text(note.prefix(1).uppercased() + note.dropFirst()).textStyle(.meta).foregroundStyle(palette.graphite)
+                            }
+                        }
+                        .listRowBackground(palette.paper)
+                    }
+                    if !fromPlan.isEmpty {
+                        Button("Add them as paused") { Task { await addFromPlan() } }
+                            .buttonStyle(.textLink)
+                            .listRowBackground(palette.paper)
+                    }
+                } header: {
+                    FormHeader("Your plan says to avoid")
                 }
-                .listRowBackground(palette.oat)
             }
             let running = model.foodTrials.filter(\.isRunning)
             if !running.isEmpty {
@@ -76,7 +94,7 @@ struct FoodListView: View {
                         .listRowBackground(palette.paper)
                     }
                 } header: {
-                    Text("Trials").textStyle(.section).foregroundStyle(palette.ink).textCase(nil)
+                    FormHeader("Trials")
                 }
             }
             Section {
@@ -105,10 +123,7 @@ struct FoodListView: View {
                                 .listRowBackground(palette.paper)
                         }
                     } header: {
-                        Text("\(status.title) · \(group.count)")
-                            .textStyle(.section)
-                            .foregroundStyle(palette.ink)
-                            .textCase(nil)
+                        FormHeader("\(status.title) · \(group.count)")
                     } footer: {
                         if status == .paused, let line = NutrientCoverage.sentence(paused: group.map(\.name)) {
                             Text(line).textStyle(.meta).foregroundStyle(palette.graphite)
@@ -122,6 +137,7 @@ struct FoodListView: View {
         }
         .scrollContentBackground(.hidden)
         .paperBackground()
+        .solidNavigationBar(.paper)
         .navigationTitle("Food list")
         .navigationBarTitleDisplayMode(.inline)
         .tint(palette.indigo)
@@ -159,14 +175,14 @@ struct FoodListView: View {
     }
 
     private func row(_ food: FoodInfo) -> some View {
-        HStack {
+        AdaptiveStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text(food.name).textStyle(.body).foregroundStyle(palette.ink)
                 if let family = food.family {
                     Text(family).textStyle(.meta).foregroundStyle(palette.graphite)
                 }
             }
-            Spacer()
+            Spacer(minLength: 0)
             Text("\(food.decidedBy == .plan ? "Plan" : "You") · \(food.statusChangedAt.formatted(.dateTime.month(.abbreviated).day()))")
                 .textStyle(.meta)
                 .foregroundStyle(palette.graphite)
@@ -200,6 +216,30 @@ struct FoodListView: View {
         }
         await model.load()
         Task { await LogChanges.didChange() }
+    }
+}
+
+/// The food list's focal point: how many safe foods, then testing and paused.
+private struct FoodCounts: View {
+    @Environment(\.palette) private var palette
+    let foods: [FoodInfo]
+
+    var body: some View {
+        let safe = foods.filter { $0.status == .safe }.count
+        let others = [FoodStatus.testing, .paused].compactMap { status -> String? in
+            let count = foods.filter { $0.status == status }.count
+            return count > 0 ? "\(count) \(status.title.lowercased())" : nil
+        }
+        VStack(alignment: .leading, spacing: Spacing.x1) {
+            Text(foods.isEmpty ? "No foods yet" : "\(safe) safe food\(safe == 1 ? "" : "s")")
+                .textStyle(.title)
+                .foregroundStyle(palette.ink)
+            Text(foods.isEmpty ? "Add what's safe, being tested, or paused." : (others.isEmpty ? "Nothing testing or paused" : others.joined(separator: " · ")))
+                .textStyle(.meta)
+                .foregroundStyle(palette.graphite)
+        }
+        .padding(.vertical, Spacing.x2)
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -247,6 +287,7 @@ private struct FoodEditor: View {
             }
             .scrollContentBackground(.hidden)
             .paperBackground(.oat)
+            .solidNavigationBar()
             .navigationTitle(food.name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

@@ -61,9 +61,9 @@ struct PatchTestsSection: View {
     }
 
     private func row(_ title: String, _ detail: String, ready: Bool) -> some View {
-        HStack {
+        AdaptiveStack {
             Text(title).textStyle(.body).foregroundStyle(palette.ink)
-            Spacer()
+            Spacer(minLength: 0)
             Text(detail).textStyle(.meta).foregroundStyle(ready ? palette.indigo : palette.graphite)
         }
         .frame(minHeight: 52)
@@ -92,14 +92,23 @@ private struct StartPatchTestSheet: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("What (e.g. the product's name)", text: $what)
+                    TextField("The product's name", text: $what)
+                        .textStyle(.body)
+                } header: {
+                    FormHeader("What")
+                }
+                Section {
                     TextField("Where on the skin", text: $spot)
+                        .textStyle(.body)
+                } header: {
+                    FormHeader("Where")
                 } footer: {
-                    Text(footnote)
+                    Text(footnote).textStyle(.meta)
                 }
             }
             .scrollContentBackground(.hidden)
             .paperBackground(.oat)
+            .solidNavigationBar()
             .navigationTitle("Start a patch test")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -115,7 +124,7 @@ private struct StartPatchTestSheet: View {
             }
         }
         .tint(palette.indigo)
-        .presentationDetents([.medium])
+        .presentationDetents([.medium, .large])
     }
 
     private var footnote: String {

@@ -10,8 +10,8 @@ struct RoutineEditor: View {
     @State private var steps: [RoutineStepInfo] = []
     @State private var drafts: [RoutineTime: String] = [:]
     @State private var renaming: RoutineStepInfo?
-    @State private var newName = ""
     @State private var problem: String?
+    @ScaledMetric(relativeTo: .body) private var iconWidth: CGFloat = 24
 
     var body: some View {
         NavigationStack {
@@ -22,6 +22,7 @@ struct RoutineEditor: View {
             }
             .settingsListStyle(palette)
             .paperBackground(.oat)
+            .solidNavigationBar()
             .navigationTitle("Routine")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -29,12 +30,9 @@ struct RoutineEditor: View {
                     Button("Done") { dismiss() }
                 }
             }
-            .alert("Rename step", isPresented: renameShowing) {
-                TextField("Step", text: $newName)
-                Button("Cancel", role: .cancel) {}
-                Button("Save") {
-                    if let step = renaming { run { try await $0.rename(step.id, to: newName) } }
-                }
+            .sheet(item: $renaming, onDismiss: { Task { await reload() } }) { step in
+                StepSourceSheet(step: step)
+                    .nightAwarePalette()
             }
             .alert(problem ?? "", isPresented: problemShowing) {
                 Button("OK", role: .cancel) {}
@@ -48,25 +46,30 @@ struct RoutineEditor: View {
         let list = steps.filter { $0.time == time }
         return Section {
             ForEach(list) { step in
-                HStack {
-                    Text(step.name)
-                        .textStyle(.body)
-                        .foregroundStyle(step.isActive ? palette.ink : palette.graphite)
-                    Spacer()
-                    if !step.isActive {
-                        Text("Paused")
-                            .textStyle(.meta)
-                            .foregroundStyle(palette.graphite)
+                HStack(alignment: .firstTextBaseline, spacing: Spacing.x2) {
+                    Image(systemName: step.category?.symbol ?? "circle")
+                        .font(.body)
+                        .foregroundStyle(step.category == nil ? .clear : palette.graphite)
+                        .frame(minWidth: iconWidth)
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(step.kind == .note ? StepLabeler.clean(step.original) : step.displayName)
+                            .textStyle(.body)
+                            .foregroundStyle(step.isActive && step.kind == .task ? palette.ink : palette.graphite)
+                        if let meta = meta(step) {
+                            Text(meta)
+                                .textStyle(.meta)
+                                .foregroundStyle(palette.graphite)
+                        }
                     }
+                    .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
                 }
                 .contentShape(Rectangle())
-                .onTapGesture {
-                    newName = step.name
-                    renaming = step
-                }
+                .onTapGesture { renaming = step }
                 .listRowBackground(palette.paper)
                 .accessibilityAddTraits(.isButton)
-                .accessibilityHint("Rename")
+                .accessibilityHint("Shows the plan's words and lets you rename it.")
                 .swipeActions(edge: .trailing) {
                     Button("Delete") { run { try await $0.delete(step.id) } }
                         .tint(palette.graphite)
@@ -94,16 +97,23 @@ struct RoutineEditor: View {
                 .listRowBackground(palette.paper)
                 .accessibilityLabel(time == .morning ? "Add a morning step" : "Add an evening step")
         } header: {
-            Text(time == .morning ? "Morning" : "Evening")
-                .textStyle(.section)
-                .foregroundStyle(palette.ink)
+            FormHeader(time == .morning ? "Morning" : "Evening")
         } footer: {
             if time == .evening {
-                Text("Tap a step to rename it. Swipe left to pause or delete. Touch and hold to move it. Paused steps keep their history.")
+                Text("Tap a step to see the plan's words or rename it. Swipe left to pause or delete. Touch and hold to move it. Paused steps keep their history.")
                     .textStyle(.meta)
                     .foregroundStyle(palette.graphite)
             }
         }
+    }
+
+    /// "Paused", "Note · not ticked off", or the original words when the label differs.
+    private func meta(_ step: RoutineStepInfo) -> String? {
+        if !step.isActive { return "Paused" }
+        if step.kind == .note { return "Note · not ticked off" }
+        let original = StepLabeler.clean(step.original)
+        // "Moisturizer" under "Apply moisturizer" says nothing new.
+        return step.displayName.localizedCaseInsensitiveContains(original) ? nil : original
     }
 
     private func add(_ time: RoutineTime) {
@@ -132,10 +142,6 @@ struct RoutineEditor: View {
               let loaded = try? await store.steps(child: child.id, includeInactive: true)
         else { return }
         steps = loaded
-    }
-
-    private var renameShowing: Binding<Bool> {
-        Binding(get: { renaming != nil }, set: { if !$0 { renaming = nil } })
     }
 
     private var problemShowing: Binding<Bool> {

@@ -27,12 +27,24 @@ public struct SupplementPlan: Equatable, Sendable {
     public let rows: [Row]
     /// The plan's supplement rules in its own words.
     public let rules: [String]
+    /// "Consider adding…" and "…may be indicated" lines: shown muted, with no actions.
+    public let mentioned: [PlanItemInfo]
 
     public init(items: [PlanItemInfo], logs: [LogEntry], now: Date, calendar: Calendar = .autoupdatingCurrent) {
-        let supplements = items.filter { $0.kind == .supplement }.sorted { $0.order < $1.order }
-        // Items with no dose or schedule are rules ("Add one at a time, 3–5 days apart").
-        let products = supplements.filter { $0.dose != nil || $0.frequency != nil }
-        let ruleItems = supplements.filter { $0.dose == nil && $0.frequency == nil }
+        let all = items.filter { $0.kind == .supplement }.sorted { $0.order < $1.order }
+        // A list split into its own items ("Continue A, B") shows as those items.
+        let parents = Set(all.compactMap(\.parentItemID))
+        let supplements = all.filter { !parents.contains($0.id) }
+        mentioned = supplements.filter { $0.dose == nil && $0.frequency == nil && SupplementDisplay.isMention($0.text) }
+        let mentionIDs = Set(mentioned.map(\.id))
+        // Items with a dose or schedule, split items, and "ADD X" or "Transition
+        // to X" lines are supplements; the rest are rules ("one at a time, 3–5 days apart").
+        let products = supplements.filter {
+            !mentionIDs.contains($0.id)
+                && ($0.dose != nil || $0.frequency != nil || $0.parentItemID != nil || SupplementDisplay.isDirective($0.text))
+        }
+        let productIDs = Set(products.map(\.id))
+        let ruleItems = supplements.filter { !productIDs.contains($0.id) && !mentionIDs.contains($0.id) }
         rules = ruleItems.map(\.text)
         let ruleText = (ruleItems.map(\.text) + supplements.compactMap(\.sourceLine)).joined(separator: "\n").lowercased()
 

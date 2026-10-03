@@ -27,7 +27,7 @@ struct PlanView: View {
 
                         RoutineRows(progress: up)
                             .padding(.horizontal, Spacing.margin)
-                            .padding(.top, Spacing.x3)
+                            .padding(.top, Spacing.x4)
 
                         let other = model.progress(next == .morning ? .evening : .morning)
                         VStack(alignment: .leading, spacing: Spacing.x2) {
@@ -38,32 +38,32 @@ struct PlanView: View {
                             RoutineRows(progress: other)
                         }
                         .padding(.horizontal, Spacing.margin)
-                        .padding(.top, Spacing.x6)
+                        .padding(.top, Spacing.x7)
+
+                        editButton
+                            .padding(.horizontal, Spacing.margin)
+                            .padding(.top, Spacing.x2)
 
                         let baths = model.bathWeek
                         if !baths.rows.isEmpty {
                             BathsSection(week: baths)
                                 .padding(.horizontal, Spacing.margin)
-                                .padding(.top, Spacing.x6)
+                                .padding(.top, Spacing.x7)
                         }
 
                         let supplements = model.supplementPlan
-                        if !supplements.rows.isEmpty {
+                        if !supplements.rows.isEmpty || !supplements.mentioned.isEmpty {
                             SupplementsSection(plan: supplements)
                                 .padding(.horizontal, Spacing.margin)
-                                .padding(.top, Spacing.x6)
+                                .padding(.top, Spacing.x7)
                         }
 
                         let patches = model.patchTests
                         if !patches.isEmpty {
                             PatchTestsSection(tests: patches)
                                 .padding(.horizontal, Spacing.margin)
-                                .padding(.top, Spacing.x6)
+                                .padding(.top, Spacing.x7)
                         }
-
-                        editButton
-                            .padding(.horizontal, Spacing.margin)
-                            .padding(.top, Spacing.x5)
 
                         CarePlanSection()
                             .padding(.horizontal, Spacing.margin)
@@ -72,21 +72,22 @@ struct PlanView: View {
                         if model.activePlan != nil || !model.visits.isEmpty {
                             ProviderSection(tracker: model.providerTracker)
                                 .padding(.horizontal, Spacing.margin)
-                                .padding(.top, Spacing.x6)
+                                .padding(.top, Spacing.x7)
                         }
 
                         FoodSection()
                             .padding(.horizontal, Spacing.margin)
-                            .padding(.top, Spacing.x6)
+                            .padding(.top, Spacing.x7)
 
                         ProductsSection()
                             .padding(.horizontal, Spacing.margin)
-                            .padding(.top, Spacing.x6)
+                            .padding(.top, Spacing.x7)
                     }
                 }
                 .padding(.bottom, BottomBar.clearance)
             }
             .paperBackground()
+            .statusBarBackground()
             .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $editing, onDismiss: { Task { await model.load() } }) {
                 RoutineEditor()
@@ -113,92 +114,6 @@ struct PlanView: View {
     }
 }
 
-/// One routine's rows: a check row per step, or one row for the whole routine.
-private struct RoutineRows: View {
-    @Environment(\.palette) private var palette
-    @Environment(TodayModel.self) private var model
-    let progress: RoutineProgress
-
-    var body: some View {
-        VStack(spacing: 0) {
-            if progress.steps.isEmpty {
-                let done = progress.wholeRoutineLog
-                CheckRow(
-                    title: progress.time == .morning ? "Morning routine" : "Evening routine",
-                    done: done.map { model.time($0.timestamp) },
-                    label: progress.time == .morning ? "Log morning routine done" : "Log evening routine done"
-                ) {
-                    Task { await model.log(.routineDone, value: .routine(progress.time)) }
-                }
-            } else {
-                ForEach(progress.steps) { step in
-                    let done = progress.doneLogs[step.id]
-                    // A plan step shows how often the plan says, e.g. "3–4x/day".
-                    let often = step.planItemID.flatMap { model.planItems[$0]?.frequency }
-                    CheckRow(title: step.name, detail: often, done: done.map { model.time($0.timestamp) }, label: step.name) {
-                        if let done {
-                            Task { await model.deleteWithUndo(done) }
-                        } else {
-                            Task { await model.tick(step) }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-/// A circle that fills with a check, the name, and the time it was done.
-private struct CheckRow: View {
-    @Environment(\.palette) private var palette
-    let title: String
-    var detail: String?
-    let done: String?
-    let label: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: Spacing.x3) {
-                ZStack {
-                    if done != nil {
-                        Circle().fill(palette.indigo)
-                        Image(systemName: "checkmark")
-                            .font(.caption.weight(.bold))
-                            .foregroundStyle(palette.paper)
-                    } else {
-                        Circle().strokeBorder(palette.ink, lineWidth: 1)
-                    }
-                }
-                .frame(width: 24, height: 24)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .textStyle(.body)
-                        .foregroundStyle(done == nil ? palette.ink : palette.graphite)
-                    if let detail {
-                        Text(detail)
-                            .textStyle(.meta)
-                            .foregroundStyle(palette.graphite)
-                    }
-                }
-                Spacer()
-                if let done {
-                    Text("Done \(done)")
-                        .textStyle(.meta)
-                        .foregroundStyle(palette.graphite)
-                }
-            }
-            .frame(minHeight: 52)
-            .contentShape(Rectangle())
-            .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(label)
-        .accessibilityValue(done.map { "Done \($0)" } ?? "Not done")
-        .accessibilityHint(done == nil ? "Marks it done." : "Marks it not done.")
-    }
-}
-
 /// The plan's baths: one tap logs one, with this week's count. Never picks a
 /// bath; the plan's own rules ("rotate, don't combine") sit underneath.
 private struct BathsSection: View {
@@ -215,7 +130,7 @@ private struct BathsSection: View {
             VStack(spacing: 0) {
                 ForEach(week.rows) { row in
                     Button { Task { await model.logBath(row.item) } } label: {
-                        HStack {
+                        AdaptiveStack {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(row.item.text).textStyle(.body).foregroundStyle(palette.ink)
                                 let details = [row.item.frequency, row.item.duration].compactMap { $0 }
@@ -224,7 +139,7 @@ private struct BathsSection: View {
                                     Text(details.joined(separator: " · ")).textStyle(.meta).foregroundStyle(palette.graphite)
                                 }
                             }
-                            Spacer()
+                            Spacer(minLength: 0)
                             Text(count(row))
                                 .textStyle(.meta)
                                 .foregroundStyle(palette.graphite)

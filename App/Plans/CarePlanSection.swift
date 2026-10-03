@@ -107,11 +107,22 @@ struct AboutPlanView: View {
                                 .foregroundStyle(palette.graphite)
                         }
                     }
+                    if !notes.isEmpty {
+                        VStack(alignment: .leading, spacing: Spacing.x2) {
+                            Text("How often and how long").textStyle(.section).foregroundStyle(palette.ink)
+                                .accessibilityAddTraits(.isHeader)
+                            ForEach(notes) { item in
+                                Text(item.text).textStyle(.body).foregroundStyle(palette.ink)
+                            }
+                        }
+                    }
                     ForEach(PlanItemKind.allCases, id: \.self) { kind in
-                        let group = items.filter { $0.kind == kind }
+                        let parents = Set(items.compactMap(\.parentItemID))
+                        let group = items.filter { $0.kind == kind && !parents.contains($0.id) }
                         if !group.isEmpty {
                             VStack(alignment: .leading, spacing: Spacing.x2) {
                                 Text(kind.title).textStyle(.section).foregroundStyle(palette.ink)
+                                    .accessibilityAddTraits(.isHeader)
                                 ForEach(group) { item in
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(item.text).textStyle(.body).foregroundStyle(palette.ink)
@@ -138,6 +149,7 @@ struct AboutPlanView: View {
                 .padding(.vertical, Spacing.x5)
             }
             .paperBackground()
+            .solidNavigationBar(.paper)
             .navigationTitle("About this plan")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -159,6 +171,15 @@ struct AboutPlanView: View {
         .tint(palette.indigo)
         .task {
             items = (try? await CarePlanStore(modelContainer: CaliCareModelContainer.shared()).items(plan: plan.id)) ?? []
+        }
+    }
+
+    /// Routine lines that say how often or how long ("Continue … for 60-90
+    /// days past when the skin is clear"): notes, not steps to tick.
+    private var notes: [PlanItemInfo] {
+        items.filter { item in
+            (item.kind == .routineStep || item.kind == .topicalStep)
+                && StepLabeler.wording(for: item.text, planKind: item.kind, frequency: item.frequency, duration: item.duration).kind == .note
         }
     }
 }

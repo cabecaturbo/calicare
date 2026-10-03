@@ -40,12 +40,12 @@ struct AddPlanSheet: View {
                     case .choose:
                         if isSignedIn { choices } else { signInFirst }
                     case .reading(let step):
-                        HStack(spacing: Spacing.x3) {
+                        HStack(spacing: Spacing.x4) {
                             ProgressView()
                             Text(step).textStyle(.body).foregroundStyle(palette.ink)
                         }
                     case .failed(let message):
-                        VStack(alignment: .leading, spacing: Spacing.x3) {
+                        VStack(alignment: .leading, spacing: Spacing.x4) {
                             Text(message)
                                 .textStyle(.body)
                                 .foregroundStyle(palette.ink)
@@ -64,6 +64,7 @@ struct AddPlanSheet: View {
                 .padding(.vertical, Spacing.x5)
             }
             .paperBackground()
+            .solidNavigationBar(.paper)
             .navigationTitle("Add your care plan")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -109,7 +110,7 @@ struct AddPlanSheet: View {
                 TextField("Name (optional)", text: $provider)
                     .textStyle(.body)
                     .textContentType(.name)
-                    .padding(Spacing.x3)
+                    .padding(Spacing.x4)
                     .background(palette.oat, in: RoundedRectangle(cornerRadius: Corner.control))
             }
             if VNDocumentCameraViewController.isSupported {
@@ -126,7 +127,7 @@ struct AddPlanSheet: View {
     }
 
     private var signInFirst: some View {
-        VStack(alignment: .leading, spacing: Spacing.x3) {
+        VStack(alignment: .leading, spacing: Spacing.x4) {
             Text("Sign in once to read plans.")
                 .textStyle(.body)
                 .foregroundStyle(palette.ink)
@@ -216,7 +217,7 @@ private struct ChoiceLabel: View {
     let symbol: String
 
     var body: some View {
-        HStack(spacing: Spacing.x3) {
+        HStack(spacing: Spacing.x4) {
             Image(systemName: symbol)
                 .font(.body)
                 .foregroundStyle(palette.indigo)

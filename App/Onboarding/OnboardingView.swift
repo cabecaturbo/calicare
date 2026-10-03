@@ -47,7 +47,7 @@ struct OnboardingView: View {
 
     /// Back, and a thin progress line for the three steps after Welcome.
     private var topBar: some View {
-        HStack(spacing: Spacing.x3) {
+        HStack(spacing: Spacing.x4) {
             Button {
                 if let previous = Step(rawValue: step.rawValue - 1) { go(to: previous) }
             } label: {
@@ -68,7 +68,7 @@ struct OnboardingView: View {
             .accessibilityLabel("Step \(step.rawValue) of \(Step.allCases.count - 1)")
             Color.clear.frame(width: Size.touchTarget, height: 1)
         }
-        .padding(.horizontal, Spacing.x3)
+        .padding(.horizontal, Spacing.x4)
         .padding(.top, Spacing.x2)
     }
 
@@ -141,7 +141,7 @@ struct Wordmark: View {
     @Environment(\.palette) private var palette
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.x3) {
+        VStack(alignment: .leading, spacing: Spacing.x4) {
             Text("Cali Care")
                 .textStyle(.display)
                 .foregroundStyle(palette.ink)
@@ -224,7 +224,7 @@ struct OnboardingPage<Content: View, Footer: View>: View {
                 footer
             }
             .padding(.horizontal, Spacing.margin)
-            .padding(.top, Spacing.x3)
+            .padding(.top, Spacing.x4)
             .padding(.bottom, Spacing.x2)
             .paperBackground()
         }

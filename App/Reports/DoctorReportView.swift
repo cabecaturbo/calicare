@@ -51,7 +51,7 @@ struct DoctorReportView: View {
                     }
                 }
 
-                VStack(alignment: .leading, spacing: Spacing.x3) {
+                VStack(alignment: .leading, spacing: Spacing.x4) {
                     if let file {
                         if let report {
                             Text("\(report.daysWithLogs) days with logs, \(report.rows.count) logs in all.")

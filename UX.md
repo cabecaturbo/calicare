@@ -137,16 +137,25 @@ Job: follow the care plan without thinking about it.
    "Evening · done", or "Evening · not done yet" with no steps), "Done
    7:40 PM" as the caption, and the sprout (morning) or lamp (evening)
    drawing.
-3. That routine's rows: one check row per step (circle, the parent's own
-   words, "Done 7:40 PM"). Tap to tick; tap a ticked step to untick (Undo
-   in the Logged line). With no steps, one row "Evening routine" logs the
-   whole routine.
-4. The other routine under its own label ("Morning"), the same rows.
-5. "Edit routine" (or "Add steps" with a line explaining it when there are
-   none) opens the Routine sheet: Morning and Evening lists, "Add a step"
-   at the end of each, tap to rename, swipe left for Pause/Delete (indigo
-   and graphite, never red), touch and hold to move. Paused steps stay in
-   the editor marked "Paused" and leave Plan. Nothing is suggested.
+3. That routine's rows: one row per step: the check circle, a short label
+   that starts with a verb ("Apply aloe vera"), one meta line (the plan's
+   detail, or "3-4x per day"), and "Done 7:40 PM". Tap the circle to tick;
+   tap it again to untick (Undo in the Logged line). Tap the words for
+   "From your plan": the step's full original words and "Name on Plan" to
+   rename it (the original never changes). Consecutive Apply steps sit
+   under "Skin · 3-4x per day", numbered 1, 2, 3. Lines that only say how
+   often or how long are notes, not steps: "3-4x per day" becomes the Skin
+   badge, and "Continue … 60-90 days past clear" shows under About this
+   plan › How often and how long. With no steps, one row "Evening routine"
+   logs the whole routine.
+4. The other routine under its own header ("Morning"), the same rows.
+5. "Edit routine" (right under the routines; "Add steps" with a line
+   explaining it when there are none) opens the Routine sheet: Morning and
+   Evening lists, each step with its category symbol, its label, and its
+   original words underneath when they differ; "Add a step" at the end of
+   each; tap a step for "From your plan"; swipe left for Pause/Delete
+   (indigo and graphite, never red); touch and hold to move. Paused steps
+   stay in the editor marked "Paused" and leave Plan. Nothing is suggested.
 6. Care plan: "Add your care plan" (with one line saying every item gets
    checked first), then "Finish reviewing your plan" while a draft waits,
    or "About this plan" once it's running (who it's from, when it
@@ -170,11 +179,15 @@ Job: follow the care plan without thinking about it.
    check": tap for No reaction / Some redness / A reaction), and "Start a
    patch test" (what, where, reminder after the plan's wait).
 
-8. Supplements (from a started plan): each supplement with the plan's dose
-   and schedule; "Start" (with "Can start after Oct 4" or "Starts 2 weeks
-   after … starts" from the plan's rules), then a tap each time it's taken
-   ("Taken", "0 of 2 today"); "Rotate after Oct 22" when the plan says;
-   press and hold to Stop. The plan's rules sit underneath.
+8. Supplements (from a started plan): each supplement's name ("ADD" shows
+   as a "New" pill; "Continue A, B" shows as two rows), one meta line (dose
+   · frequency), and "How to give" for the plan's directions. The same pill
+   on the right every time: "Start" (with "Can start after Oct 4" or
+   "Starts 2 weeks after … starts" from the plan's rules), then "0 of 2
+   today" (or "0 today" when the plan doesn't say how often); "Rotate after
+   Oct 22" when the plan says; press and hold to Stop. The plan's rules sit
+   underneath, then "Your provider mentioned": "consider" and "may be
+   indicated" lines, muted, with no actions or links.
 
 9. Provider (with a running plan or any visit): "Next visit Oct 14", or the
    plan's follow-up window ("Follow-up visit Oct 29 – Nov 12"); "Messages
@@ -182,7 +195,10 @@ Job: follow the care plan without thinking about it.
    visit".
 
 10. Food: "Food list" with counts ("12 safe · 1 testing · 3 paused"). The
-    list: "Your plan says to avoid: …" with "Add them as paused"; "Add a
+    list starts with its focal point, "6 safe foods" (serif) and "1 testing
+    · 1 paused"; then "Your plan says to avoid", one thing per line, with
+    words like "as much as possible · Buy organic when able" as a meta note,
+    and "Add them as paused"; "Add a
     food" with a status; Safe, Testing, Paused groups, each food with its
     family and "Plan · Oct 1" or "You · Oct 1". Tap a food to change its
     status, family, or note, or remove it.

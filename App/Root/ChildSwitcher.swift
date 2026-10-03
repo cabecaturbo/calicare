@@ -68,7 +68,7 @@ struct ChildSwitcher: View {
         case .navigationBar:
             HStack(alignment: .firstTextBaseline, spacing: Spacing.x1) {
                 Text(child.name)
-                    .textStyle(.section)
+                    .textStyle(.label)
                     .foregroundStyle(palette.ink)
                     .lineLimit(1)
                 chevron

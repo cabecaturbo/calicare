@@ -54,6 +54,7 @@ struct ProductEditor: View {
             }
             .scrollContentBackground(.hidden)
             .paperBackground(.oat)
+            .solidNavigationBar()
             .navigationTitle(product.name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

@@ -102,7 +102,7 @@ One prompt per session, same rules as docs/prompts/README.md.
 - [x] 5.6 Food-to-skin timeline and nutrient coverage
 
 ## Phase 6: Photos, products, home (docs/prompts/phase-6-photos-products-home.md)
-- [ ] 6.1 On-device photo timeline with ghost overlay
+- [x] 6.1 On-device photo timeline with ghost overlay (try Take a photo on the phone)
 - [ ] 6.2 Product diary
 - [ ] 6.3 Restock reminders and labeled affiliate links
 - [ ] 6.4 Home checklist

@@ -232,7 +232,12 @@ events (plan started or ended, supplement started or stopped, patch tests).
 
 Since visit (once a past visit is recorded): "Since the Aug 20 visit", good
 nights of days since, and the same calendar grid from that day to today.
-- Itchy wake-ups chart, Photos (Phase 6), day-by-day rows.
+Photos (above Changes): each spot ("Left elbow") with its latest photo
+and count, "Add a spot", and "Photos stay on this phone. They're never
+synced, sent, or put in reports." A spot opens its timeline: "Take a
+photo" (the camera shows the last photo faintly to line it up) and
+"Choose a photo", then a grid, newest first; press and hold to delete.
+- Itchy wake-ups chart, day-by-day rows.
 
 ## 7. Settings (sheet)
 A grouped list, in this order:

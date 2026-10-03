@@ -76,6 +76,12 @@ struct ProgressTab: View {
                             .padding(.top, Spacing.x6)
                     }
 
+                    if let child = model.child {
+                        PhotosSection(child: child)
+                            .padding(.horizontal, Spacing.margin)
+                            .padding(.top, Spacing.x6)
+                    }
+
                     if !changes.isEmpty || rougherSince != nil {
                         ChangesSection(changes: changes, rougherSince: rougherSince)
                             .padding(.horizontal, Spacing.margin)

@@ -509,3 +509,11 @@ From the owner's widget brief, designed on the canvas under "Widgets & setup".
 - **`NutrientCoverage` (tested):** under the Paused foods it says, for example, "With dairy and eggs paused, calcium, vitamin D, protein, and choline may be less covered. Worth asking your provider or a dietitian."
   - The groups are a small conservative table. It never names a supplement or a food to add; a test checks the sentence never contains "supplement", "take", "add", "try", "cause", "trigger", or "likely".
 - **The food list order** is: plants, ideas, and rotation; "Add a food"; trials; Safe, Testing, Paused; Leftovers last.
+
+## Photo timeline (6.1, October 2, 2026)
+
+- **Photos live only on the phone,** in Application Support/Photos/<child>, one folder per child with an index file and JPEGs. They're excluded from iCloud backup and use complete file protection.
+- **No SwiftData model for photos,** so nothing about them can sync. A test checks the schema has no photo model and a sync pushes only the child. They're never sent to AI or put in reports.
+- **Spots, not body maps:** the parent names a spot ("Left elbow") and adds photos to it, by camera or from the library.
+- **Ghost overlay:** the camera shows the spot's last photo at 35% so the next one lines up. No comparisons or scores are drawn from photos.
+- **The camera permission text** now covers both care plans and progress photos.

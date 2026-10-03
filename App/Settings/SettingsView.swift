@@ -119,6 +119,9 @@ struct SettingsView: View {
             } label: {
                 SettingsLabel("How Cali Care works")
             }
+            Link(destination: Self.supportURL) {
+                SettingsLabel("Contact support")
+            }
             LabeledContent {
                 Text(Self.version)
                     .textStyle(.meta)
@@ -147,6 +150,9 @@ struct SettingsView: View {
         }
     }
     #endif
+
+    /// Support email for now (owner, October 2, 2026); a support address comes with the landing page.
+    static let supportURL = URL(string: "mailto:msmccartin@gmail.com?subject=Cali%20Care")!
 
     /// "1.0 (12)"
     private static var version: String {

@@ -187,15 +187,13 @@ Job: follow the care plan without thinking about it.
     family and "Plan · Oct 1" or "You · Oct 1". Tap a food to change its
     status, family, or note, or remove it.
 
-    The list starts with "N plants this week · Your plan's goal: 40–50"
-    and "Log a meal", "What can I make" (sign in once; meal ideas from what's
-    in the fridge, paused foods never used), and "Rotation · 4 days" (safe
-    foods by family per day, today marked). Running trials ("Day 2 of 3 ·
-    today 1 tbsp") open the trial: Gave it today, Something worth
-    watching, skin and nights through the day after, End the trial (Safe /
-    Keep testing / Paused). Under Paused: what may be less covered, "Worth
-    asking your provider or a dietitian." Leftovers last: cooked batches
-    with "Until Mon" (swipe: Used / Freeze / Toss) and "Add a cooked batch".
+    Running trials ("Day 2 of 3 · today 1 tbsp") open the trial: Gave it
+    today, Something worth watching, skin and nights through the day after,
+    End the trial (Safe / Keep testing / Paused). Under Paused: what may be
+    less covered, "Worth asking your provider or a dietitian."
+
+    Hidden for version 1 (Features.foodExtras): the plant counter and "Log
+    a meal", "What can I make", "Rotation · 4 days", and Leftovers.
 
 11. Products: "Product diary" with "3 in use · 1 never again". The list:
     "Add a product" with a kind, guessed from the name (Moisturizer, Wash, Laundry, Clothing,
@@ -266,11 +264,11 @@ A grouped list, in this order:
    never leave the phone.
 6. Account (signed in only): Shown as, Sign out, Delete account.
 7. About: "How Cali Care works" (what each log means, how Progress
-   compares, the 7 PM day), Version, and "Not medical advice" under it.
+   compares, the 7 PM day), "Contact support" (opens Mail), Version, and "Not medical advice" under it.
 8. Debug (debug builds only): Recent logs, Try a notification.
 
 Not built yet:
-- A support email and the privacy policy link in About (the policy comes
+- The privacy policy link in About (the policy comes
   with the landing page, Phase 7).
 - Removing a child in a shared family (needs the owner check).
 - The Action Button guide (until it's recorded on a real iPhone).

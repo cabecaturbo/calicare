@@ -94,6 +94,7 @@ One prompt per session, same rules as docs/prompts/README.md.
 - [x] 4.7 Provider tracker (visits, follow-up window, messages left), Since visit, and the daily journal export (PDF and CSV)
 
 ## Phase 5: Food (docs/prompts/phase-5-food.md)
+Version 1 shows only the food list and trials; 5.3, 5.4 and 5.5 are hidden (Features.foodExtras).
 - [x] 5.1 Food list and food families (SchemaV4, sync, the plan's avoid list, Plan › Food list)
 - [x] 5.2 Food trials and reintroduction (no daily trial reminder yet)
 - [x] 5.3 Rotation planner and plant counter
@@ -104,15 +105,23 @@ One prompt per session, same rules as docs/prompts/README.md.
 ## Phase 6: Photos, products, home (docs/prompts/phase-6-photos-products-home.md)
 - [x] 6.1 On-device photo timeline with ghost overlay (try Take a photo on the phone)
 - [x] 6.2 Product diary (slim: in use, stopped, never again with a reason; in Progress › Changes)
-- [ ] 6.3 Restock reminders and labeled affiliate links
-- [ ] 6.4 Home checklist
-- [ ] 6.5 Rx, prior-auth, copay reminders and insurance history report
+- [-] 6.3 Restock reminders and labeled affiliate links (not in version 1)
+- [-] 6.4 Home checklist (not in version 1)
+- [-] 6.5 Rx, prior-auth, copay reminders and insurance history report (not in version 1)
+
+## Launch version (October 2, 2026)
+The owner wants "the tried and true, solid launch version". `[-]` means
+not in version 1; the code stays. Next:
+- [ ] V1.1 🛑 Phone check: a real plan import, the doctor PDF, photos, products
+- [ ] V1.2 🛑 Two-phone sync test (2.4 and 2.5)
+- [ ] Then 7.3 paywall, 7.5 landing page and privacy policy, 7.6 TestFlight
+      with 5–10 eczema parents
 
 
 ## Phase 7: Launch (docs/prompts/phase-7-launch.md)
-- [ ] 7.1 🛑 Apple Watch app
-- [ ] 7.2 Keyboard extension
+- [-] 7.1 🛑 Apple Watch app (after launch)
+- [-] 7.2 Keyboard extension (not in version 1)
 - [ ] 7.3 🛑 Premium paywall
-- [ ] 7.4 Monthly recap
+- [-] 7.4 Monthly recap (Progress › Month covers it)
 - [ ] 7.5 🛑 Vercel landing page and privacy policy
 - [ ] 7.6 🛑 Launch readiness and TestFlight

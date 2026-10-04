@@ -33,7 +33,7 @@ struct JournalExportView: View {
         }
         .scrollContentBackground(.hidden)
         .paperBackground()
-        .navigationTitle("Notes for your doctor")
+        .navigationTitle("Journal for your provider")
         .navigationBarTitleDisplayMode(.inline)
         .tint(palette.indigo)
         .task(id: "\(from)-\(to)") { await build() }

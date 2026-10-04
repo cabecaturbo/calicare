@@ -1,138 +1,162 @@
 import Core
 import SwiftUI
 
-/// Today (Today v2 on the canvas). By day: one big statement about last night,
-/// the week in skin colors, and the four skin bands. At night: how many
-/// wake-ups so far tonight; Itchy is the biggest thing on screen (the dock).
+/// Today (UX.md §4). By day: the skin question until it's answered, then last
+/// night, then today's logs. At night: tonight so far, a big Itchy, tonight's logs.
 struct TodayView: View {
     @Environment(\.palette) private var palette
     @Environment(TodayModel.self) private var model
     @Environment(Shell.self) private var shell
+    @State private var editing: LogEntry?
     @State private var changingSkin = false
-    @State private var showingLogs = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    AppHeader(title: "Today", why: why)
+                    AppHeader(
+                        title: "Today",
+                        caption: palette.isNight ? nil : Date.now.formatted(.dateTime.weekday(.wide).month(.wide).day())
+                    )
                     if model.child != nil {
                         content
                     } else if model.hasLoaded {
                         noChild
                     }
                 }
-                .padding(.bottom, Spacing.x5)
+                .padding(.bottom, BottomBar.clearance)
             }
             .paperBackground()
             .refreshable { await model.load() }
             .statusBarBackground()
             .toolbar(.hidden, for: .navigationBar)
-            .sheet(isPresented: $showingLogs, onDismiss: reload) {
-                TodayLogsSheet(isNight: palette.isNight)
+            .sheet(item: $editing, onDismiss: reload) { entry in
+                EditLogSheet(entry: entry, model: model)
+                    .presentationDetents([.medium, .large])
                     .nightAwarePalette()
             }
         }
     }
 
-    private var name: String { model.child?.name ?? "your child" }
-
-    private var why: String? {
-        guard model.child != nil else { return nil }
-        return palette.isNight ? "Tap Itchy when \(name) wakes up." : "Tap how \(name)’s skin is doing."
-    }
-
     @ViewBuilder
     private var content: some View {
         let night = palette.isNight
-        let statement = TodayStatement(
-            isNight: night,
-            hasEverLogged: model.hasEverLogged,
-            report: model.lastNight,
-            wakeUpTimes: wakeUpTimes
-        )
-        BigStatement(text: statement.text, line: statement.line)
-            .padding(.horizontal, Spacing.margin)
-            .padding(.top, Spacing.x6)
+        let skin = model.skin
+        let asksSkin = !night && (changingSkin || TodayPrompts.asksSkin(at: .now, answered: skin != nil))
+        let name = model.child?.name ?? "your child"
 
-        if !night {
-            if model.hasEverLogged, !model.week.isEmpty {
-                WeekStrip(days: model.week)
-                    .padding(.horizontal, Spacing.margin)
-                    .padding(.top, Spacing.x6)
-            }
-            skinSection
+        if let hint = TodayPrompts.firstRunHint(hasEverLogged: model.hasEverLogged, isNight: night, asksSkin: asksSkin, childName: name) {
+            Text(hint)
+                .textStyle(.body)
+                .foregroundStyle(palette.indigo)
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, Spacing.margin)
-                .padding(.top, Spacing.x6)
+                .padding(.top, Spacing.x4)
         }
 
-        if !model.entries.isEmpty {
-            Button { showingLogs = true } label: {
+        if asksSkin {
+            SkinCheckIn(childName: model.child?.name ?? "their", selected: skin) { answer in
+                changingSkin = false
+                Task { await model.log(.skinToday, value: .skin(answer)) }
+            }
+            .padding(.horizontal, Spacing.margin)
+            .padding(.top, Spacing.x7)
+        }
+
+        summary
+            .padding(.horizontal, Spacing.margin)
+            .padding(.top, asksSkin ? Spacing.x7 : Spacing.x5)
+
+        if !night, model.isDaytime, let report = model.lastNight, report.rating == nil, !report.isTonight {
+            NightRatingChoices { rating in
+                Task { await model.log(.nightRating, value: .night(rating)) }
+            }
+            .padding(.horizontal, Spacing.margin)
+            .padding(.top, Spacing.x4)
+        }
+
+        if !night, let skin, !changingSkin {
+            HStack {
                 HStack(spacing: Spacing.x2) {
-                    Text(night ? "Tonight’s logs" : "Today’s logs")
+                    SkinSwatch(answer: skin, size: 16)
+                    Text("Skin today: \(skin.words)")
                         .textStyle(.body)
                         .foregroundStyle(palette.ink)
-                    Spacer(minLength: 0)
-                    Text("\(model.entries.count)")
-                        .textStyle(.meta)
-                        .foregroundStyle(palette.graphite)
-                    Image(systemName: "chevron.right")
-                        .font(.footnote)
-                        .foregroundStyle(palette.graphite)
-                        .accessibilityHidden(true)
                 }
-                .frame(minHeight: 56)
-                .contentShape(Rectangle())
-                .overlay(alignment: .top) { palette.hairline.frame(height: Rule.width) }
-                .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
+                Spacer()
+                Button("Change") { changingSkin = true }
+                    .font(.body)
+                    .foregroundStyle(palette.indigo)
+                    .frame(minHeight: Size.touchTarget)
+            }
+            .padding(.horizontal, Spacing.margin)
+            .padding(.top, Spacing.x4)
+        }
+
+        if night {
+            Button {
+                Task { await model.log(.itchEpisode) }
+            } label: {
+                VStack(alignment: .leading, spacing: 2) {
+                    Label("Log", systemImage: "hand.raised.fill").textStyle(.title)
+                    if let last = model.entries.first(where: { $0.type == .itchEpisode }) {
+                        Text("Last at \(model.time(last.timestamp))")
+                            .textStyle(.meta)
+                            .opacity(0.8)
+                    }
+                }
+                .foregroundStyle(palette.paper)
+                .frame(maxWidth: .infinity, minHeight: 96, alignment: .leading)
+                .padding(.horizontal, Spacing.x5)
+                .background(palette.indigo, in: RoundedRectangle(cornerRadius: Corner.card))
             }
             .buttonStyle(.plain)
-            .accessibilityHint("See, change, or delete what you logged.")
+            .accessibilityLabel("Log itching")
             .padding(.horizontal, Spacing.margin)
-            .padding(.top, Spacing.x6)
+            .padding(.top, Spacing.x4)
         }
+
+        TodaySoFar(entries: model.entries, isNight: night) { editing = $0 }
+            .padding(.top, Spacing.x7)
     }
 
-    /// "How is Cal's skin today?" with the four bands, or the one band with Change.
-    @ViewBuilder
-    private var skinSection: some View {
-        let skin = model.skin
-        let answered = skin != nil && !changingSkin
-        VStack(alignment: .leading, spacing: Spacing.x3) {
-            Text(answered ? "\(name)’s skin today" : "How is \(name)’s skin today?")
-                .textStyle(.title)
-                .foregroundStyle(palette.ink)
-                .fixedSize(horizontal: false, vertical: true)
-                .accessibilityAddTraits(.isHeader)
-            if answered, let skin {
-                AnsweredBand(answer: skin) { changingSkin = true }
-            } else {
-                SkinBands(selected: skin) { answer in
-                    changingSkin = false
-                    Task { await model.log(.skinToday, value: .skin(answer)) }
-                }
-            }
-        }
-    }
-
-    /// Itchy wake-up times for the statement: last night by day, tonight at night.
-    private var wakeUpTimes: [String] {
-        model.entries
+    /// "Last night: A good night" by day; "So far tonight: Two wake-ups" at night.
+    private var summary: some View {
+        let report = model.lastNight
+        let wakeUps = report?.itchyWakeUps ?? 0
+        let times = model.entries
             .filter { $0.type == .itchEpisode && CareDay.containing($0.timestamp).nightInterval().contains($0.timestamp) }
-            .sorted { $0.timestamp < $1.timestamp }
             .map { model.time($0.timestamp) }
+        if palette.isNight {
+            return SummaryCard(
+                eyebrow: "So far tonight",
+                title: wakeUps == 0 ? "A quiet night" : "\(wakeUps) wake-up\(wakeUps == 1 ? "" : "s")",
+                caption: times.isEmpty ? nil : times.reversed().joined(separator: " and "),
+                art: .moon
+            )
+        }
+        let title = switch report?.rating {
+        case .good?: "A good night"
+        case .okay?: "An okay night"
+        case .rough?: "A rough night"
+        case nil: wakeUps > 0 ? "Not rated yet" : "Nothing logged"
+        }
+        let caption: String? = wakeUps == 0
+            ? (report?.rating == nil ? nil : "No itchy wake-ups.")
+            : "\(wakeUps == 1 ? "One itchy wake-up" : "\(wakeUps) itchy wake-ups")\(times.isEmpty ? "" : ", at \(times.reversed().joined(separator: " and "))")"
+        return SummaryCard(eyebrow: "Last night", title: title, caption: caption, art: .sun)
     }
 
     private var noChild: some View {
         VStack(alignment: .leading, spacing: Spacing.x4) {
-            Text("Add your child to start.")
+            Text("Add your child to start logging.")
                 .textStyle(.body)
                 .foregroundStyle(palette.ink)
             Button("Add a child") { shell.showingAddChild = true }
                 .buttonStyle(.primary)
         }
         .padding(.horizontal, Spacing.margin)
-        .padding(.top, Spacing.x6)
+        .padding(.top, Spacing.x7)
     }
 
     private func reload() {
@@ -140,131 +164,102 @@ struct TodayView: View {
     }
 }
 
-/// The words for Today's big statement and its one line.
-struct TodayStatement {
-    let text: String
-    let line: String?
-
-    init(isNight: Bool, hasEverLogged: Bool, report: LastNightReport?, wakeUpTimes: [String]) {
-        let count = wakeUpTimes.count
-        let times = Self.list(wakeUpTimes)
-        if isNight {
-            if count == 0 {
-                text = "Nothing logged tonight."
-                line = "Each tap of Itchy shows up here."
-            } else {
-                text = count == 1 ? "1 wake-up tonight." : "\(count) wake-ups tonight."
-                line = "At \(times)."
-            }
-            return
-        }
-        guard hasEverLogged else {
-            text = "Start with one tap."
-            line = "One tap a day is all it takes."
-            return
-        }
-        let wakeUps = max(report?.itchyWakeUps ?? 0, count)
-        switch report?.rating {
-        case .good?: text = "Last night was good."
-        case .okay?: text = "Last night was okay."
-        case .rough?: text = "Last night was rough."
-        case nil: text = wakeUps == 0 ? "Last night was quiet." : (wakeUps == 1 ? "1 wake-up last night." : "\(wakeUps) wake-ups last night.")
-        }
-        switch wakeUps {
-        case 0: line = "No itchy wake-ups logged."
-        case 1: line = count == 1 ? "Woke up once, at \(times)." : "Woke up once."
-        default: line = count == wakeUps && count <= 3 ? "Woke up \(wakeUps) times, at \(times)." : "Woke up \(wakeUps) times."
-        }
-    }
-
-    /// "2:14 AM", "1:10 AM and 3:20 AM", "11:40 PM, 1:52 AM, and 2:14 AM".
-    static func list(_ items: [String]) -> String {
-        switch items.count {
-        case 0: ""
-        case 1: items[0]
-        case 2: "\(items[0]) and \(items[1])"
-        default: items.dropLast().joined(separator: ", ") + ", and " + items.last!
-        }
-    }
-}
-
-/// The skin scale as the answer: four full-width bands in their own colors.
-/// The picked one gets a check and a 2pt ink outline just outside it.
-struct SkinBands: View {
+/// "How was Cal's skin today?": four card buttons (DESIGN.md §5). The primary
+/// element on Today until it's answered.
+struct SkinCheckIn: View {
     @Environment(\.palette) private var palette
+    @Environment(\.dynamicTypeSize) private var typeSize
+    let childName: String
     let selected: SkinToday?
     let onAnswer: (SkinToday) -> Void
 
     var body: some View {
-        let all = SkinToday.allCases
-        VStack(spacing: 0) {
-            ForEach(Array(all.enumerated()), id: \.element) { index, answer in
-                let isSelected = answer == selected
-                let shape = UnevenRoundedRectangle(
-                    topLeadingRadius: index == 0 ? Corner.control : 0,
-                    bottomLeadingRadius: index == all.count - 1 ? Corner.control : 0,
-                    bottomTrailingRadius: index == all.count - 1 ? Corner.control : 0,
-                    topTrailingRadius: index == 0 ? Corner.control : 0
-                )
-                Button { onAnswer(answer) } label: {
-                    HStack {
-                        Text(answer.title)
-                            .textStyle(.band)
-                            .fontWeight(isSelected ? .semibold : .medium)
-                        Spacer(minLength: 0)
-                        if isSelected {
-                            Image(systemName: "checkmark").font(.title3.weight(.bold))
+        VStack(alignment: .leading, spacing: Spacing.x1) {
+            Text("How was \(childName)’s skin today?")
+                .textStyle(.title)
+                .foregroundStyle(palette.ink)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityAddTraits(.isHeader)
+            Text("One tap. You can change it later.")
+                .textStyle(.meta)
+                .foregroundStyle(palette.graphite)
+            // One column at accessibility sizes, so the answers never cut off.
+            let columns = typeSize.isAccessibilitySize
+                ? [GridItem(.flexible())]
+                : [GridItem(.flexible(), spacing: Spacing.x2), GridItem(.flexible())]
+            LazyVGrid(columns: columns, spacing: Spacing.x2) {
+                ForEach(SkinToday.allCases, id: \.self) { answer in
+                    let isSelected = answer == selected
+                    Button { onAnswer(answer) } label: {
+                        HStack(spacing: Spacing.x4) {
+                            SkinSwatch(answer: answer, size: 24)
+                            Text(answer.title)
+                                .textStyle(.body)
+                                .foregroundStyle(palette.ink)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.85)
+                            Spacer(minLength: 0)
+                        }
+                        .padding(.horizontal, Spacing.x4)
+                        .frame(minHeight: 64)
+                        .background(isSelected ? palette.oat : palette.paper, in: RoundedRectangle(cornerRadius: Corner.card))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: Corner.card)
+                                .strokeBorder(isSelected ? palette.indigo : palette.hairline, lineWidth: isSelected ? 2 : 1)
+                        )
+                        .overlay(alignment: .topTrailing) {
+                            if isSelected {
+                                Image(systemName: "checkmark")
+                                    .font(.caption.weight(.bold))
+                                    .foregroundStyle(palette.paper)
+                                    .frame(width: 22, height: 22)
+                                    .background(palette.indigo, in: Circle())
+                                    .offset(x: 8, y: -8)
+                            }
                         }
                     }
-                    .foregroundStyle(palette.text(onSkin: answer))
-                    .padding(.horizontal, Spacing.x5)
-                    .frame(maxWidth: .infinity, minHeight: 64)
-                    .background(palette.color(for: answer), in: shape)
-                    .contentShape(shape)
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(answer.title)
+                    .accessibilityAddTraits(isSelected ? [.isSelected] : [])
                 }
-                .buttonStyle(.plain)
-                .overlay {
-                    if isSelected {
-                        RoundedRectangle(cornerRadius: Corner.control + 2)
-                            .stroke(palette.ink, lineWidth: 2)
-                            .padding(-4)
-                    }
-                }
-                .zIndex(isSelected ? 1 : 0)
-                .accessibilityLabel(answer.title)
-                .accessibilityAddTraits(isSelected ? [.isSelected] : [])
             }
+            .padding(.top, Spacing.x4)
         }
-        .overlay(RoundedRectangle(cornerRadius: Corner.control).strokeBorder(palette.graphite, lineWidth: 1))
     }
 }
 
-/// After answering: one band with the answer and "Change".
-struct AnsweredBand: View {
+/// Good / Okay / Rough under the Last night card while last night isn't rated.
+/// Same cards as the skin check-in; one tap logs it.
+struct NightRatingChoices: View {
     @Environment(\.palette) private var palette
-    let answer: SkinToday
-    let onChange: () -> Void
+    @Environment(\.dynamicTypeSize) private var typeSize
+    let onRate: (NightRating) -> Void
 
     var body: some View {
-        let shape = RoundedRectangle(cornerRadius: Corner.control)
-        HStack(spacing: Spacing.x2) {
-            Image(systemName: "checkmark").font(.body.weight(.bold)).accessibilityHidden(true)
-            Text(answer.title).textStyle(.band).fontWeight(.semibold)
-            Spacer(minLength: 0)
-            Button("Change", action: onChange)
-                .font(.body)
-                .underline()
-                .frame(minWidth: Size.touchTarget, minHeight: Size.touchTarget)
-                .contentShape(Rectangle())
-                .accessibilityLabel("Change skin answer")
+        VStack(alignment: .leading, spacing: Spacing.x2) {
+            Text("How was the night?")
+                .textStyle(.meta)
+                .foregroundStyle(palette.graphite)
+            let layout = typeSize.isAccessibilitySize
+                ? AnyLayout(VStackLayout(spacing: Spacing.x2))
+                : AnyLayout(HStackLayout(spacing: Spacing.x2))
+            layout {
+                ForEach(NightRating.allCases, id: \.self) { rating in
+                    Button { onRate(rating) } label: {
+                        Text(rating.title)
+                            .textStyle(.body)
+                            .foregroundStyle(palette.ink)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.85)
+                            .frame(maxWidth: .infinity, minHeight: 56)
+                            .background(palette.paper, in: RoundedRectangle(cornerRadius: Corner.card))
+                            .overlay(RoundedRectangle(cornerRadius: Corner.card).strokeBorder(palette.hairline, lineWidth: 1))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Last night was \(rating.title.lowercased())")
+                }
+            }
         }
-        .foregroundStyle(palette.text(onSkin: answer))
-        .padding(.leading, Spacing.x5)
-        .padding(.trailing, Spacing.x2)
-        .frame(maxWidth: .infinity, minHeight: 64)
-        .background(palette.color(for: answer), in: shape)
-        .overlay(shape.strokeBorder(palette.graphite, lineWidth: 1))
-        .accessibilityElement(children: .contain)
     }
 }
 
@@ -280,5 +275,67 @@ struct SkinSwatch: View {
             .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(palette.graphite, lineWidth: 1))
             .frame(width: size, height: size)
             .accessibilityHidden(true)
+    }
+}
+
+/// Today's (or tonight's) logs, newest first, with 0.5pt dividers. Tap to
+/// edit; swipe left to delete (Undo in the Logged line).
+private struct TodaySoFar: View {
+    @Environment(\.palette) private var palette
+    @Environment(TodayModel.self) private var model
+    let entries: [LogEntry]
+    let isNight: Bool
+    let onEdit: (LogEntry) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.x2) {
+            HStack {
+                Text(isNight ? "Tonight so far" : "Today so far")
+                    .textStyle(.section)
+                    .foregroundStyle(palette.ink)
+                    .accessibilityAddTraits(.isHeader)
+                Spacer()
+                // Flare, bowel movement, mood, note: the round Log button in the bar is itching only.
+                MoreLogMenu {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(palette.ink)
+                        .frame(width: Size.touchTarget, height: Size.touchTarget)
+                        .background(palette.oat, in: Circle())
+                        .contentShape(Circle())
+                }
+            }
+            .padding(.horizontal, Spacing.margin)
+            if entries.isEmpty {
+                Text(isNight ? "Nothing logged yet tonight." : "Nothing logged yet today. Tap Log whenever it itches.")
+                    .textStyle(.body)
+                    .foregroundStyle(palette.graphite)
+                    .padding(.horizontal, Spacing.margin)
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(entries) { entry in
+                        SwipeToDelete { Task { await model.deleteWithUndo(entry) } } content: {
+                        Button { onEdit(entry) } label: {
+                            HStack {
+                                Text(model.title(for: entry))
+                                    .textStyle(.body)
+                                    .foregroundStyle(palette.ink)
+                                Spacer()
+                                Text([model.time(entry.timestamp), model.byline(for: entry)].compactMap { $0 }.joined(separator: " · "))
+                                    .textStyle(.meta)
+                                    .foregroundStyle(palette.graphite)
+                            }
+                            .frame(minHeight: 52)
+                            .contentShape(Rectangle())
+                            .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityHint("Edit, or swipe left to delete")
+                        }
+                    }
+                }
+                .padding(.horizontal, Spacing.margin)
+            }
+        }
     }
 }

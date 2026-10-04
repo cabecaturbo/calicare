@@ -13,12 +13,6 @@ struct SupplementsScreen: View {
         let giving = plan.rows.filter { $0.item.isGiving == true }
         let notYet = plan.rows.filter { $0.item.isGiving != true }
         InfoScreen(title: "Supplements") {
-            if !plan.rows.isEmpty {
-                BigStatement(
-                    text: giving.count == 1 ? "Giving 1 supplement." : "Giving \(giving.count) supplements.",
-                    line: notYet.isEmpty ? nil : (notYet.count == 1 ? "One more is in the plan." : "\(notYet.count) more are in the plan.")
-                )
-            }
             if plan.rows.isEmpty && plan.mentioned.isEmpty {
                 Text("Your plan has no supplements.").textStyle(.body).foregroundStyle(palette.graphite)
             }
@@ -51,7 +45,7 @@ struct SupplementsScreen: View {
                 }
             }
             if !plan.mentioned.isEmpty {
-                Group(title: "Your doctor also said") {
+                Group(title: "Your provider mentioned") {
                     ForEach(plan.mentioned) { Text("“\($0.providerWords)”").textStyle(.meta).foregroundStyle(palette.graphite) }
                 }
             }

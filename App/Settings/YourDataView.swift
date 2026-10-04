@@ -30,7 +30,7 @@ struct YourDataView: View {
                         NavigationLink {
                             JournalExportView(child: child, from: model.activePlan?.startedAt)
                         } label: {
-                            row("Daily journal for your doctor")
+                            row("Daily journal for your provider")
                         }
                     }
                     Text("The sheet opens in Numbers, Excel, or Google Sheets. Each row is one log. It shows the child, the time, what it was, the note, where it came from, and who logged it.")
@@ -43,17 +43,17 @@ struct YourDataView: View {
                 }
 
                 section("What's stored where") {
-                    fact("On this phone", "Everything you log, your children's names, and your care steps. Widgets and Siri read the same place.")
+                    fact("On this phone", "Everything you log, your children's names, and your routine. Widgets and Siri read the same place.")
                     fact("Photos", "Photos never leave this phone. They aren't synced or sent anywhere.")
-                    fact("If you share with family", "Logs, children, and care steps are copied to our server so everyone sees the same day. Nothing else, and never photos.")
-                    fact("Never", "No ads. We never sell what you log.")
+                    fact("If you share with family", "Logs, children, and routine steps are copied to our server so everyone sees the same day. Nothing else, and never photos.")
+                    fact("Never", "No ads, no selling data, no tracking.")
                 }
             }
             .padding(.horizontal, Spacing.margin)
             .padding(.vertical, Spacing.x5)
         }
         .paperBackground()
-        .navigationTitle("Privacy")
+        .navigationTitle("Your data")
         .navigationBarTitleDisplayMode(.inline)
         .task { await makeFile() }
     }

@@ -1,9 +1,8 @@
 import Core
 import SwiftUI
 
-/// Today, To do, How it's going, Care plan: four native tabs, with Itchy's dock
-/// above the tab bar on every one. Owns the shared day (one `TodayModel`),
-/// Settings, adding a child, More, and the log sheets.
+/// Today, Plan, and Progress. Owns the shared day (one `TodayModel`), Settings,
+/// adding a child, the log sheet, and the quick log bar on Plan and Progress.
 struct AppShell: View {
     @Environment(\.palette) private var palette
     @Environment(\.scenePhase) private var scenePhase
@@ -40,10 +39,6 @@ struct AppShell: View {
             LogSheet()
                 .nightAwarePalette()
         }
-        .sheet(isPresented: $shell.showingMore, onDismiss: runPendingMore) {
-            MoreSheet { shell.pendingMore = $0 }
-                .nightAwarePalette()
-        }
         .sheet(item: $shell.choosing) { choice in
             ChoiceSheet(choice: choice)
                 .nightAwarePalette()
@@ -72,39 +67,75 @@ struct AppShell: View {
         .environment(shell)
     }
 
+    /// Apple's glass tab bar with the round Log button (iOS 26.1 and later);
+    /// older phones keep our own pills.
+    private var usesGlassBar: Bool {
+        if #available(iOS 26.1, *) { return true }
+        return false
+    }
+
+    @ViewBuilder
     private var tabs: some View {
-        @Bindable var shell = shell
-        return TabView(selection: $shell.tab) {
+        let pills = !usesGlassBar
+        let view = TabView(selection: tabSelection) {
             Tab("Today", systemImage: "sun.horizon", value: AppTab.today) {
                 TodayView()
-                    .itchyDock(isNightToday: palette.isNight)
+                    .modifier(TabChrome(pills: pills))
             }
             Tab("To do", systemImage: "checklist", value: AppTab.todo) {
                 TodoView()
-                    .itchyDock()
+                    .modifier(TabChrome(pills: pills))
             }
-            Tab("How it’s going", systemImage: "chart.line.uptrend.xyaxis", value: AppTab.progress) {
+            Tab("Progress", systemImage: "chart.line.uptrend.xyaxis", value: AppTab.progress) {
                 ProgressTab()
-                    .itchyDock()
+                    .modifier(TabChrome(pills: pills))
             }
-            Tab("Care plan", systemImage: "book.closed", value: AppTab.info) {
+            Tab("Info", systemImage: "book.closed", value: AppTab.info) {
                 InfoView()
-                    .itchyDock()
+                    .modifier(TabChrome(pills: pills))
+            }
+            if !pills {
+                Tab(value: AppTab.logItchy, role: circleRole) {
+                    Color.clear
+                } label: {
+                    Label { Text("Log") } icon: { Image(uiImage: LogTabIcon.image) }
+                }
+                .accessibilityLabel("Log itching")
             }
         }
         .tint(palette.indigo)
+
+        if pills {
+            // The system tab bar is hidden; BottomBar draws the pills and log control.
+            view.overlay(alignment: .bottom) { BottomBar() }
+        } else if #available(iOS 26.0, *) {
+            view.tabBarMinimizeBehavior(.onScrollDown)
+        } else {
+            view
+        }
     }
 
-    /// Runs what was picked in More once its sheet is gone, so the next sheet can show.
-    private func runPendingMore() {
-        guard let choice = shell.pendingMore else { return }
-        shell.pendingMore = nil
-        switch choice {
-        case .flare: Task { await model.log(.flare) }
-        case .bowel: shell.choosing = .bowel
-        case .mood: shell.choosing = .mood
-        case .note: shell.showingNote = true
-        }
+    /// The role that sets a tab apart as a circle: `.search` on iOS 26,
+    /// `.prominent` from iOS 27.
+    private var circleRole: TabRole {
+        #if compiler(>=6.4) // Xcode 27: the iOS 27 SDK has .prominent
+        if #available(iOS 27.0, *) { return .prominent }
+        #endif
+        return .search
+    }
+
+    /// The circle "tab" logs itching and stays on the current tab.
+    private var tabSelection: Binding<AppTab> {
+        Binding(
+            get: { shell.tab },
+            set: { new in
+                if new == .logItchy {
+                    Task { await model.log(.itchEpisode) }
+                } else {
+                    shell.tab = new
+                }
+            }
+        )
     }
 
     private func reload() {
@@ -116,5 +147,19 @@ struct AppShell: View {
             get: { model.problem != nil },
             set: { if !$0 { model.problem = nil } }
         )
+    }
+}
+
+/// Per tab: with our pills the system tab bar hides; with the glass bar the
+/// Logged line sits above it.
+private struct TabChrome: ViewModifier {
+    let pills: Bool
+
+    func body(content: Content) -> some View {
+        if pills {
+            content.toolbar(.hidden, for: .tabBar)
+        } else {
+            content.modifier(LoggedBannerInset(isOn: true))
+        }
     }
 }

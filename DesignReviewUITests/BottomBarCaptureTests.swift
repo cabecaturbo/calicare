@@ -10,7 +10,7 @@ final class BottomBarCaptureTests: XCTestCase {
         app.launch()
         sleep(3)
         Capture.screen("bar-today-\(variant)")
-        app.buttons["More"].firstMatch.tap()
+        app.buttons["More to log"].firstMatch.tap()
         sleep(1)
         Capture.screen("bar-more-\(variant)")
         app.tap()

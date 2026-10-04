@@ -38,7 +38,7 @@ struct DeleteAccountSheet: View {
                         : "Children and logs stay on this phone, like before you signed in.") {
                         LedgerRow {
                             Toggle(isOn: $erasePhone) {
-                                Text("Also delete what’s on this phone")
+                                Text("Also delete data on this phone")
                                     .textStyle(.control)
                                     .foregroundStyle(palette.ink)
                             }
@@ -72,7 +72,7 @@ struct DeleteAccountSheet: View {
                 Button("Delete account") { Task { await delete() } }
                 Button("Keep my account", role: .cancel) {}
             } message: {
-                Text(erasePhone ? "Your account, and what’s on this phone." : "Your account. What’s on this phone stays.")
+                Text(erasePhone ? "Your account, and the data on this phone." : "Your account. Data on this phone stays.")
             }
         }
         .tint(palette.indigo)

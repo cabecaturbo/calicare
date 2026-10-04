@@ -22,7 +22,7 @@ struct StepSourceSheet: View {
                     TextField("Name", text: $name, axis: .vertical)
                         .textStyle(.body)
                 } header: {
-                    Text("Name on To do").textStyle(.section).foregroundStyle(palette.ink).textCase(nil)
+                    Text("Name on Plan").textStyle(.section).foregroundStyle(palette.ink).textCase(nil)
                 } footer: {
                     Text("Start with what to do: “Apply aloe vera”.").textStyle(.meta)
                 }

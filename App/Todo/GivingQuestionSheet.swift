@@ -47,7 +47,7 @@ struct GivingQuestionSheet: View {
                 } header: {
                     FormHeader("Which of these are you giving now?")
                 } footer: {
-                    Text("Only these go on To do. You can change this in Care plan, Supplements.")
+                    Text("Only these go on To do. You can change this any time in Info, Supplements.")
                         .textStyle(.meta)
                 }
             }

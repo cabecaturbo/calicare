@@ -1,0 +1,86 @@
+/* Cali Care web pages: paper, ink, and indigo (DESIGN.md). */
+:root {
+  --paper: #F6F1E8;
+  --oat: #ECE4D6;
+  --ink: #1E1B18;
+  --graphite: #5C554D;
+  --hairline: #D8CFC0;
+  --indigo: #34466A;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #14161C;
+    --oat: #1E2129;
+    --ink: #EAE3D6;
+    --graphite: #A8A093;
+    --hairline: #2C303A;
+    --indigo: #9FB0D0;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 40px 16px 64px;
+}
+
+h1, h2, .wordmark {
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+h1 { font-size: 40px; line-height: 1.15; margin: 24px 0 16px; }
+h2 { font-size: 24px; line-height: 1.25; margin: 40px 0 8px; }
+
+.wordmark {
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+p, li { color: var(--graphite); }
+p.lede { font-size: 20px; color: var(--ink); }
+strong { color: var(--ink); font-weight: 600; }
+ul { padding-left: 20px; }
+li { margin: 4px 0; }
+
+a { color: var(--indigo); }
+
+.card {
+  background: var(--oat);
+  border: 0.5px solid var(--hairline);
+  border-radius: 16px;
+  padding: 16px 24px;
+  margin: 24px 0;
+}
+
+.button {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 999px;
+  padding: 12px 24px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+footer {
+  margin-top: 64px;
+  padding-top: 16px;
+  border-top: 0.5px solid var(--hairline);
+  font-size: 15px;
+  color: var(--graphite);
+}
+footer a { margin-right: 16px; }

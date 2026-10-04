@@ -27,7 +27,6 @@ something needs the owner, or when something is broken.
       Code merged: invite and join by code, members list, 16 SQL tests. Still to do: the two-phone test (a second account joins and sees the same logs).
 - [ ] 2.5 "Logged by" names
       Code merged: logs save your name ("You" signed out); "by Dad" on the timeline and small widget when 2+ people share. Still to do: check names on two phones.
-      Code merged: logs save your name ("You" signed out); "by Dad" on the timeline and small widget when 2+ people share. Still to do: check names on two phones.
 - [x] 2.6 Account settings and account deletion
       Delete account with the last-owner rule (Edge Function + SQL). Verified on the iPhone: nothing left in Supabase afterwards. Left over: Apple token revocation before App Store review.
 
@@ -74,6 +73,7 @@ One prompt per session, same rules as docs/prompts/README.md.
 
 ## Before App Store (remind the owner when we get close)
 - [ ] Data export and an About section (privacy link, support email): UX.5.
+      Export and Contact support are in Settings. Still to do: the privacy policy link (comes with 7.5).
 - [ ] Apple token revocation on account deletion: a Sign in with Apple key from the Apple Developer site, stored as a Supabase secret, called by the delete-account Edge Function.
 - [ ] Two-phone test of family sharing: join with an invite code (2.4) and "by Dad" names (2.5).
 - [ ] A pediatric dermatologist reviews the reports and wording.
@@ -116,14 +116,15 @@ not in version 1; the code stays. Next:
 - [x] V1.0b To do + Info: Plan split into "What do I do right now?" and "What does the plan say?", time blocks with "All done" reminders, supplements by time, plain words, reading-grade test (SchemaV7, additive)
 - [ ] V1.1 🛑 Phone check: a real plan import, the doctor PDF, photos, products
 - [ ] V1.2 🛑 Two-phone sync test (2.4 and 2.5)
-- [ ] Then 7.3 paywall, 7.5 landing page and privacy policy, 7.6 TestFlight
-      with 5–10 eczema parents
+- [ ] Then 7.5 landing page and privacy policy, Apple sign-in token removal
+      on account deletion, 7.6 TestFlight with 5–10 eczema parents
+      (7.3 paywall is out: version 1 is free during beta)
 
 
 ## Phase 7: Launch (docs/prompts/phase-7-launch.md)
 - [-] 7.1 🛑 Apple Watch app (after launch)
 - [-] 7.2 Keyboard extension (not in version 1)
-- [ ] 7.3 🛑 Premium paywall
+- [-] 7.3 🛑 Premium paywall (free while in beta, owner, October 4, 2026)
 - [-] 7.4 Monthly recap (Progress › Month covers it)
 - [ ] 7.5 🛑 Vercel landing page and privacy policy
 - [ ] 7.6 🛑 Launch readiness and TestFlight

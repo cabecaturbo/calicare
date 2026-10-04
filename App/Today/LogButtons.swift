@@ -21,7 +21,7 @@ struct LogButtons: View {
         Choice(type: .itchEpisode, title: "Itchy", spoken: "Log itching"),
         Choice(type: .flare, title: "Flare", spoken: "Log a flare"),
         Choice(type: .bowelMovement, title: "Bowel movement", spoken: "Log a bowel movement"),
-        Choice(type: .routineDone, title: "Routine done", spoken: "Log routine done"),
+        Choice(type: .routineDone, title: "Care steps done", spoken: "Log care steps done"),
     ]
 
     var body: some View {

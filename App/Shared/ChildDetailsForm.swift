@@ -42,11 +42,14 @@ struct ChildDetails {
 struct ChildDetailsForm: View {
     @Environment(\.palette) private var palette
     @Binding var details: ChildDetails
+    /// Onboarding asks for the name only; birth date and color wait for Settings.
+    var nameOnly = false
     let onSubmit: () -> Void
     @FocusState private var nameFocused: Bool
 
-    init(details: Binding<ChildDetails>, onSubmit: @escaping () -> Void = {}) {
+    init(details: Binding<ChildDetails>, nameOnly: Bool = false, onSubmit: @escaping () -> Void = {}) {
         _details = details
+        self.nameOnly = nameOnly
         self.onSubmit = onSubmit
     }
 
@@ -66,6 +69,7 @@ struct ChildDetailsForm: View {
                     .accessibilityLabel("Name")
             }
 
+            if !nameOnly {
             LedgerRow {
                 Toggle(isOn: $details.hasBirthDate.animation(.easeOut(duration: 0.2))) {
                     VStack(alignment: .leading, spacing: 2) {
@@ -103,6 +107,7 @@ struct ChildDetailsForm: View {
                 }
             } trailing: {
                 colorChoices
+            }
             }
         }
         .onAppear { nameFocused = details.name.isEmpty }

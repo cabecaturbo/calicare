@@ -1,8 +1,8 @@
 import Core
 import SwiftUI
 
-/// Info: "What does the plan say?" One row per part of the plan; each opens
-/// its own screen. No paragraphs or links here.
+/// Care plan: "What did the doctor tell us?" One big statement (whose plan,
+/// from when), then one row per part of the plan; each opens its own screen.
 struct InfoView: View {
     @Environment(\.palette) private var palette
     @Environment(TodayModel.self) private var model
@@ -11,19 +11,23 @@ struct InfoView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    AppHeader(title: "Info")
+                    AppHeader(title: "Care plan", why: "What \(model.child?.name ?? "your child")’s doctor told you, in one place.")
+                    BigStatement(text: statement.text, line: statement.line)
+                        .padding(.horizontal, Spacing.margin)
+                        .padding(.top, Spacing.x6)
                     VStack(spacing: 0) {
-                        InfoRow(title: "Care plan", detail: planDetail) { CarePlanScreen() }
+                        InfoRow(title: "The full plan", detail: planDetail) { CarePlanScreen() }
                         InfoRow(title: "Supplements", detail: supplementsDetail) { SupplementsScreen() }
                         InfoRow(title: "Patch tests", detail: nil) { PatchTestsScreen() }
-                        InfoRow(title: "Visits and journal", detail: visitsDetail) { VisitsScreen() }
+                        InfoRow(title: "Visits and notes", detail: visitsDetail) { VisitsScreen() }
                         InfoRow(title: "Food", detail: foodDetail) { FoodListView() }
                         InfoRow(title: "Products", detail: productsDetail) { ProductListView() }
                     }
+                    .overlay(alignment: .top) { palette.hairline.frame(height: Rule.width) }
                     .padding(.horizontal, Spacing.margin)
                     .padding(.top, Spacing.x5)
                 }
-                .padding(.bottom, BottomBar.clearance)
+                .padding(.bottom, Spacing.x5)
             }
             .paperBackground()
             .statusBarBackground()
@@ -32,9 +36,18 @@ struct InfoView: View {
         }
     }
 
+    /// "Dr. Lee's plan, from Sep 12." or, before a plan, how to add one.
+    private var statement: (text: String, line: String?) {
+        guard let plan = model.activePlan else {
+            return ("No care plan yet.", "Add the plan from \(model.child?.name ?? "your child")’s doctor.")
+        }
+        let whose = plan.provider.isEmpty ? "Your doctor’s plan" : "\(plan.provider)’s plan"
+        let date = (plan.planDate ?? plan.startedAt).map { ", from \($0.formatted(.dateTime.month(.abbreviated).day()))" } ?? ""
+        return ("\(whose)\(date).", "Tap a part to read it.")
+    }
+
     private var planDetail: String? {
-        guard let plan = model.activePlan else { return "Add your plan" }
-        return plan.provider.isEmpty ? "Started" : "From \(plan.provider)"
+        model.activePlan == nil ? "Add your plan" : nil
     }
 
     private var supplementsDetail: String? {
@@ -100,7 +113,7 @@ struct InfoScreen<Content: View>: View {
             }
             .padding(.horizontal, Spacing.margin)
             .padding(.top, Spacing.x5)
-            .padding(.bottom, BottomBar.clearance)
+            .padding(.bottom, Spacing.x5)
         }
         .paperBackground()
         .solidNavigationBar(.paper)
@@ -109,12 +122,12 @@ struct InfoScreen<Content: View>: View {
     }
 }
 
-/// Info › Care plan: "What does the plan say?" The plan itself, and its baths.
+/// Care plan › The full plan: what the plan says, and its baths.
 struct CarePlanScreen: View {
     @Environment(TodayModel.self) private var model
 
     var body: some View {
-        InfoScreen(title: "Care plan") {
+        InfoScreen(title: "The full plan") {
             CarePlanSection()
             let baths = model.bathWeek
             if !baths.rows.isEmpty || !baths.notes.isEmpty {
@@ -124,12 +137,12 @@ struct CarePlanScreen: View {
     }
 }
 
-/// Info › Visits and journal: when to see the provider, and the journal for them.
+/// Care plan › Visits and notes: when to see the doctor, and notes for them.
 struct VisitsScreen: View {
     @Environment(TodayModel.self) private var model
 
     var body: some View {
-        InfoScreen(title: "Visits and journal") {
+        InfoScreen(title: "Visits and notes") {
             ProviderSection(tracker: model.providerTracker)
         }
     }

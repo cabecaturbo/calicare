@@ -47,7 +47,7 @@ final class ShellTourTests: XCTestCase {
         Capture.screen("03-log-sheet")
         tap(app.buttons["Cancel"])
 
-        tap(app.tabBars.buttons["Progress"])
+        tap(app.tabBars.buttons["How it’s going"])
         sleep(2)
         Capture.screen("04-progress")
 

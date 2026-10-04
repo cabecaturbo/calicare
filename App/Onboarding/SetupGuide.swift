@@ -5,8 +5,10 @@ import SwiftUI
 struct GuideStep: Hashable {
     /// Asset name by feature and iOS version, e.g. "widgetHome_ios27_step1".
     let asset: String
-    /// One short sentence.
+    /// The step itself, the big statement: "Tap Edit."
     let sentence: String
+    /// One short line under it, when it helps: "It's in the top-left corner."
+    var line: String? = nil
     /// Where to tap, as a fraction of the screenshot, measured at capture.
     var tap: UnitPoint?
 }
@@ -21,8 +23,8 @@ enum GuidePath: String, Identifiable, CaseIterable {
 
     var title: String {
         switch self {
-        case .homeScreen: "Home Screen widget"
-        case .lockScreen: "Lock Screen widget"
+        case .homeScreen: "Home Screen"
+        case .lockScreen: "Lock Screen"
         case .controlCenter: "Control Center"
         }
     }
@@ -38,8 +40,8 @@ enum GuidePath: String, Identifiable, CaseIterable {
 
     var doneSentence: String {
         switch self {
-        case .homeScreen: "Tap Log on your Home Screen whenever it itches. The app never opens."
-        case .lockScreen: "Log an itch or see last night without unlocking."
+        case .homeScreen: "Try it now. Tap Log on your Home Screen."
+        case .lockScreen: "Tap Log on your Lock Screen. No need to unlock."
         case .controlCenter: "Swipe down and tap the hand to log an itch."
         }
     }
@@ -47,27 +49,27 @@ enum GuidePath: String, Identifiable, CaseIterable {
     var steps: [GuideStep] {
         switch self {
         case .homeScreen: [
-            GuideStep(asset: "widgetHome_ios27_step1", sentence: "Touch and hold an empty area of your Home Screen until the apps jiggle.", tap: UnitPoint(x: 0.500, y: 0.680)),
-            GuideStep(asset: "widgetHome_ios27_step2", sentence: "Tap Edit in the top-left corner.", tap: UnitPoint(x: 0.172, y: 0.038)),
+            GuideStep(asset: "widgetHome_ios27_step1", sentence: "Press and hold an empty spot.", line: "Wait until the apps jiggle.", tap: UnitPoint(x: 0.500, y: 0.680)),
+            GuideStep(asset: "widgetHome_ios27_step2", sentence: "Tap Edit.", line: "It’s in the top-left corner.", tap: UnitPoint(x: 0.172, y: 0.038)),
             GuideStep(asset: "widgetHome_ios27_step3", sentence: "Tap Add Widget.", tap: UnitPoint(x: 0.393, y: 0.106)),
-            GuideStep(asset: "widgetHome_ios27_step4", sentence: "Search for Cali Care and tap it.", tap: UnitPoint(x: 0.500, y: 0.291)),
-            GuideStep(asset: "widgetHome_ios27_step5", sentence: "Swipe to pick a size, then tap Add Widget.", tap: UnitPoint(x: 0.500, y: 0.905)),
-            GuideStep(asset: "widgetHome_ios27_step6", sentence: "Tap the checkmark in the top-right corner.", tap: UnitPoint(x: 0.828, y: 0.038)),
+            GuideStep(asset: "widgetHome_ios27_step4", sentence: "Search for Cali Care.", line: "Then tap it.", tap: UnitPoint(x: 0.500, y: 0.291)),
+            GuideStep(asset: "widgetHome_ios27_step5", sentence: "Pick a size.", line: "Swipe, then tap Add Widget.", tap: UnitPoint(x: 0.500, y: 0.905)),
+            GuideStep(asset: "widgetHome_ios27_step6", sentence: "Tap the check mark.", line: "It’s in the top-right corner.", tap: UnitPoint(x: 0.828, y: 0.038)),
         ]
         case .lockScreen: [
-            GuideStep(asset: "widgetLock_ios27_step1", sentence: "Touch and hold your Lock Screen.", tap: UnitPoint(x: 0.500, y: 0.450)),
+            GuideStep(asset: "widgetLock_ios27_step1", sentence: "Press and hold your Lock Screen.", tap: UnitPoint(x: 0.500, y: 0.450)),
             GuideStep(asset: "widgetLock_ios27_step2", sentence: "Tap Customize.", tap: UnitPoint(x: 0.500, y: 0.930)),
-            GuideStep(asset: "widgetLock_ios27_step3", sentence: "Tap Add Widgets under the clock.", tap: UnitPoint(x: 0.500, y: 0.788)),
-            GuideStep(asset: "widgetLock_ios27_step4", sentence: "Tap Cali Care in the list.", tap: UnitPoint(x: 0.500, y: 0.724)),
-            GuideStep(asset: "widgetLock_ios27_step5", sentence: "Tap Log to add it. Swipe for Last night.", tap: UnitPoint(x: 0.500, y: 0.710)),
+            GuideStep(asset: "widgetLock_ios27_step3", sentence: "Tap Add Widgets.", line: "It’s under the clock.", tap: UnitPoint(x: 0.500, y: 0.788)),
+            GuideStep(asset: "widgetLock_ios27_step4", sentence: "Tap Cali Care.", line: "It’s in the list.", tap: UnitPoint(x: 0.500, y: 0.724)),
+            GuideStep(asset: "widgetLock_ios27_step5", sentence: "Tap Log to add it.", line: "Swipe to see Last night too.", tap: UnitPoint(x: 0.500, y: 0.710)),
             GuideStep(asset: "widgetLock_ios27_step6", sentence: "Tap Done.", tap: UnitPoint(x: 0.818, y: 0.038)),
         ]
         case .controlCenter: [
-            GuideStep(asset: "controlCenter_ios27_step1", sentence: "Swipe down from the top-right corner.", tap: UnitPoint(x: 0.900, y: 0.010)),
-            GuideStep(asset: "controlCenter_ios27_step2", sentence: "Touch and hold an empty area.", tap: UnitPoint(x: 0.500, y: 0.880)),
+            GuideStep(asset: "controlCenter_ios27_step1", sentence: "Swipe down from the top right.", line: "Control Center opens.", tap: UnitPoint(x: 0.900, y: 0.010)),
+            GuideStep(asset: "controlCenter_ios27_step2", sentence: "Press and hold an empty spot.", tap: UnitPoint(x: 0.500, y: 0.880)),
             GuideStep(asset: "controlCenter_ios27_step3", sentence: "Tap Add a Control.", tap: UnitPoint(x: 0.500, y: 0.916)),
-            GuideStep(asset: "controlCenter_ios27_step4", sentence: "Search for Cali Care, then tap Log.", tap: UnitPoint(x: 0.144, y: 0.302)),
-            GuideStep(asset: "controlCenter_ios27_step5", sentence: "Tap an empty area to finish."),
+            GuideStep(asset: "controlCenter_ios27_step4", sentence: "Search for Cali Care.", line: "Then tap Log.", tap: UnitPoint(x: 0.144, y: 0.302)),
+            GuideStep(asset: "controlCenter_ios27_step5", sentence: "Tap an empty spot to finish."),
         ]
         }
     }
@@ -91,9 +93,9 @@ struct SetupGuide: View {
             topBar
             Group {
                 if isDone {
-                    page(asset: path.doneAsset, tap: nil, heading: "You’re set.", sentence: path.doneSentence)
+                    page(asset: path.doneAsset, tap: nil, statement: "You’re set.", line: path.doneSentence)
                 } else {
-                    page(asset: steps[index].asset, tap: steps[index].tap, heading: nil, sentence: steps[index].sentence)
+                    page(asset: steps[index].asset, tap: steps[index].tap, statement: steps[index].sentence, line: steps[index].line)
                 }
             }
             .id(index)
@@ -109,9 +111,6 @@ struct SetupGuide: View {
     private var topBar: some View {
         VStack(spacing: Spacing.x4) {
             HStack {
-                Text(path.title)
-                    .textStyle(.section)
-                    .foregroundStyle(palette.ink)
                 Spacer()
                 Button {
                     dismiss()
@@ -137,27 +136,21 @@ struct SetupGuide: View {
         .padding(.top, Spacing.x2)
     }
 
-    private func page(asset: String, tap: UnitPoint?, heading: String?, sentence: String) -> some View {
-        VStack(spacing: Spacing.x4) {
-            if let heading {
-                Text(heading)
-                    .textStyle(.title)
-                    .foregroundStyle(palette.ink)
-                    .accessibilityAddTraits(.isHeader)
-            }
+    /// The step as the big statement, its one line, then the real screenshot.
+    private func page(asset: String, tap: UnitPoint?, statement: String, line: String?) -> some View {
+        VStack(alignment: .leading, spacing: Spacing.x4) {
+            Text(isDone ? "\(path.title) · Done" : "\(path.title) · Step \(index + 1) of \(steps.count)")
+                .textStyle(.meta)
+                .foregroundStyle(palette.graphite)
+                .accessibilityHidden(true)
+            BigStatement(text: statement, line: line)
+                .accessibilityAddTraits(.isHeader)
             GuideScreenshot(asset: asset, tap: tap)
                 .frame(maxHeight: .infinity)
                 .accessibilityHidden(true)
-            Text(sentence)
-                .textStyle(.body)
-                .foregroundStyle(palette.ink)
-                .multilineTextAlignment(.center)
-                .lineLimit(3)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: 320)
         }
         .padding(.horizontal, Spacing.margin)
-        .padding(.top, Spacing.x5)
+        .padding(.top, Spacing.x4)
     }
 
     private var footer: some View {

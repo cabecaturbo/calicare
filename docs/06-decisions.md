@@ -581,3 +581,37 @@ The owner asked for one job per screen. To do answers "What do I do right now?" 
   - Plan showed `PlanItem.text`, which the reader was told to keep "as short as the plan allows".
   - Screens now show the provider's words from `sourceLine`, or a restored `sourceParagraph` from the saved original when the quote itself was cut. The reader's prompt now says never drop a sentence.
 - **Fix: Bath, Moisturizer, Pajamas, Wash face missing.** The clean slate the owner chose soft-deleted all routine steps. `restoreOwnSteps` clears `deletedAt` on the parent's own steps removed at that moment: same IDs, so the history comes back. It runs once on the phone with `-restoreOwnSteps YES`.
+
+## Plain and obvious redesign, Phase 1: Today v2 on the canvas (October 4, 2026)
+From the owner's brief: every screen must say in 3 seconds what it is, why it helps, and the one thing to do, at grade 6 or below. New boards sit next to the old ones in their own canvas section ("Today v2"); no old board changed. Waiting on the owner's review before Phase 2 (other screens) and Phase 3 (the app).
+- **Names:** tabs are Today · To do · How it's going · Care plan. "Doctor", not "provider". Every tab title gets one plain "why" line.
+- **One big statement** per screen: Newsreader 400, 40/46 (`.t-statement`). The tab title drops to 24pt (`.t-title`) and shares the row with "Cal ▾" and Settings, so the statement is clearly the biggest thing and all four skin bands fit above Itchy.
+- **The scale is the interface:** four full-width bands, 64pt, 22pt labels, edge to edge with a 1px graphite border so Calm never vanishes. Text on each band (`--on-*`): day ink on Calm (13.8:1) and A little itchy (10.5:1), paper on Flaring (4.9:1) and Very rough (9.5:1); night ink on Calm (10.2:1) and A little itchy (7.3:1), night paper on Flaring (6.2:1) and Very rough (10.4:1). Selected: check, bold, 2pt ink outline 2pt outside the band (ink on Very rough alone is 1.6:1). Answered: one band with "Change".
+- **Itchy has one home:** a full-width ink button (64pt; 96pt on Today at night) above a native 4-tab bar, with "More" as a text button beside it. At night on Today, Flare and Note are 72pt rows under Itchy instead of More. Replaces DESIGN.md's floating Itchy/··· pill and the 3-tab pill bar for v2.
+- **Logged moment:** "Logged · 2:14 AM" with Undo, on an oat bar above Itchy, for 5 seconds. Undo from Siri and widgets keeps its 10-minute window (`UndoLastIntent`).
+- **Night why-line:** "Tap Itchy when Cal wakes up." (no skin question at night).
+- **Bands supersede "ledger rows, never cards"** for the skin answer only.
+
+## Plain and obvious redesign, Phase 2: every other screen on the canvas (October 4, 2026)
+The three answers and big statement for each screen are in `docs/redesign-v2-screens.md`. New v2 boards sit in their own canvas rows; the old boards are unchanged. Screenshots: `design-review/v2/`.
+- **Onboarding keeps its order** (Welcome → Your child → Reminders → Log from anywhere → Today). Each page leads with a 40pt statement in place of the 34pt title. "Skip" on onboarding pages became a plain "Not now" text button, so there's one clear main button. Birthday moved out of onboarding ("You can add a birthday later") so the first page asks for one thing.
+- **Guide steps:** the step itself is the big statement ("Press and hold an empty spot."), with one short line under it. Only Next at the bottom; Back stays in the top bar.
+- **To do:** the statement counts what's left in the open block. The other blocks fold into one row ("Morning and afternoon · Done"). Edit became "Change the list" under the list.
+- **How it's going:** skin by day as bars in the scale colors (taller is rougher), one legend line, and "Worth watching". The night dots row is gone; the statement covers nights.
+- **Care plan:** the statement names the doctor and date. Rows: The full plan, Supplements, Patch tests, Visits and notes, Food, Products.
+- **Settings:** "Your data" became "Privacy". The About line says "doctor".
+- **The Itchy area** is on every tab and every pushed screen inside a tab, day and night (64pt; 96pt only on Today at night).
+
+## Plain and obvious redesign, Phase 3: the app (October 4, 2026)
+The app now follows the v2 canvas. Simulator screenshots, day and night: `design-review/v2-app/`.
+- **Tokens (Core):** `TypeStyle.statement` (Newsreader 40/46; the bundled 500 cut, the canvas drew 400) and `.band` (SF Pro 22 medium). `Palette.text(onSkin:)`: ink on the two light steps, paper on the two deep ones, tested at 4.5:1 or better in both palettes (`ContrastTests`). `Spacing.x3` (12) and `.x6` (32, between sections). `Corner.control` is now 4pt, as DESIGN.md always said; it had drifted to 12.
+- **Shell:** four native tabs (Today · To do · How it's going · Care plan). The pill bar and the round Log tab are gone (`BottomBar`, `LogTabIcon` removed). `ItchyDock` sits above the tab bar on every tab through `safeAreaInset`. "More" opens a native sheet (Flare, Bowel movement, Mood, Note). Mood stays in More, though the brief listed three, so it isn't lost. The Logged line reads "Logged · 2:14 AM" with Undo for 5 seconds (7 with "Add where"); VoiceOver still hears the full sentence.
+- **Header:** the title, child switcher and Settings share one row; the why-line sits under it. `BigStatement` is the shared statement view.
+- **Today:** statement from last night's rating, or wake-ups when it isn't rated. The skin bands show all day now, not only after 4 PM, because the scale is the interface. The Good/Okay/Rough row under Last night is gone from Today; the morning check-in still asks it. Today's logs moved behind a "Today's logs" row (a sheet with change and delete), so nothing else competes with the bands.
+- **To do:** the statement counts what's left in the open block; two or more finished blocks fold into one row; "Change the list" replaces Edit.
+- **How it's going:** headline as the statement, the date range under it, "Worth watching" under the grid. The week grid itself is unchanged.
+- **Care plan:** statement from the plan's doctor and date. Supplements leads with "Giving 3 supplements."
+- **Settings:** stays a native list, with the why-line and "2 people help care for Cal." as its first section.
+- **Onboarding:** statements in place of titles; no drawing on Welcome; name only on Your child (birthday and color in Settings); Log from anywhere shows only the Home Screen widget (Lock Screen and Control Center live in Settings › Quick logging). Guide steps: the step is the big statement, with one short line.
+- **Copy:** "provider" became "doctor" everywhere on screen; "routine", "data" and "tracking" are gone from screen copy; old tab names in hints were updated. Every string passes `ReadingGradeTests`.
+- **Debug only:** `-designReviewTab todo|progress|info`, `-designReviewOnboarding welcome|child|reminders|logAnywhere`, and `-designReviewSettings YES` open a screen directly for screenshots.

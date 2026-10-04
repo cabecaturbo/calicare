@@ -19,7 +19,7 @@ final class SampleCaptureTests: XCTestCase {
         app.buttons["To do"].firstMatch.tap()
         sleep(2)
         Capture.screen("sample-plan-\(variant)")
-        app.buttons["Progress"].firstMatch.tap()
+        app.buttons["How it’s going"].firstMatch.tap()
         sleep(2)
         Capture.screen("sample-week-\(variant)")
         app.buttons["Month"].firstMatch.tap()

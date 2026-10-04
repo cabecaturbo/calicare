@@ -114,6 +114,7 @@ The owner wants "the tried and true, solid launch version". `[-]` means
 not in version 1; the code stays. Next:
 - [x] V1.0 Hierarchy and step wording: short verb-first labels with the plan's full words on tap, Skin groups, New pills, "Your provider mentioned", serif headers, 4/8/16/24/40 spacing (SchemaV6, additive)
 - [x] V1.0b To do + Info: Plan split into "What do I do right now?" and "What does the plan say?", time blocks with "All done" reminders, supplements by time, plain words, reading-grade test (SchemaV7, additive)
+- [x] V1.0c Plain and obvious redesign: canvas v2 for every screen, then the app (native tabs, Itchy above the tab bar, skin bands, big statements, grade-6 copy, "doctor")
 - [ ] V1.1 🛑 Phone check: a real plan import, the doctor PDF, photos, products
 - [ ] V1.2 🛑 Two-phone sync test (2.4 and 2.5)
 - [ ] Then 7.3 paywall, 7.5 landing page and privacy policy, 7.6 TestFlight

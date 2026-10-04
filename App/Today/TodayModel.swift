@@ -14,6 +14,10 @@ final class TodayModel {
         /// Undo brings a deleted log back instead of removing a new one.
         var wasDeleted = false
         var id: UUID { entry.id }
+        /// What the Logged line shows: "Logged · 2:14 AM".
+        var short: String {
+            "\(wasDeleted ? "Deleted" : "Logged") · \(entry.timestamp.formatted(date: .omitted, time: .shortened))"
+        }
     }
 
     private(set) var children: [ChildInfo] = []

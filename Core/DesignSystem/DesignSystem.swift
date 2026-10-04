@@ -109,6 +109,16 @@ public struct Palette: Sendable, Equatable {
     public func color(for skin: SkinToday) -> Color {
         severity(step: skin.step)
     }
+
+    /// Text on a skin band: ink on the two light steps, paper on the two deep
+    /// ones, in both palettes (at least 4.5:1 each; `ContrastTests`).
+    public func textToken(onSkin skin: SkinToday) -> Token {
+        skin.step <= 2 ? .ink : .paper
+    }
+
+    public func text(onSkin skin: SkinToday) -> Color {
+        color(textToken(onSkin: skin))
+    }
 }
 
 extension ChildColor {
@@ -160,6 +170,10 @@ public enum TypeStyle: CaseIterable, Sendable {
     case control
     /// SF Pro 400, 13/18: times, eyebrows, footnotes.
     case meta
+    /// Newsreader 500, 40/46: the one big statement at the top of a screen.
+    case statement
+    /// SF Pro 500, 22/28: skin band labels, the Itchy button, night logging rows.
+    case band
 
     public var font: Font {
         switch self {
@@ -169,6 +183,8 @@ public enum TypeStyle: CaseIterable, Sendable {
         case .label: .system(.subheadline, weight: .semibold)
         case .body, .control: .system(.body)
         case .meta: .system(.footnote)
+        case .statement: .custom(Self.displayCut, size: 40, relativeTo: .largeTitle)
+        case .band: .system(size: 22, weight: .medium)
         }
     }
 
@@ -181,6 +197,8 @@ public enum TypeStyle: CaseIterable, Sendable {
         case .label: 15
         case .body, .control: 17
         case .meta: 13
+        case .statement: 40
+        case .band: 22
         }
     }
 
@@ -192,6 +210,8 @@ public enum TypeStyle: CaseIterable, Sendable {
         case .label: 20
         case .body, .control: 24
         case .meta: 18
+        case .statement: 46
+        case .band: 28
         }
     }
 
@@ -203,6 +223,8 @@ public enum TypeStyle: CaseIterable, Sendable {
         case .label: .subheadline
         case .body, .control: .body
         case .meta: .footnote
+        case .statement: .largeTitle
+        case .band: .title2
         }
     }
 
@@ -220,8 +242,12 @@ public enum TypeStyle: CaseIterable, Sendable {
 public enum Spacing {
     public static let x1: CGFloat = 4
     public static let x2: CGFloat = 8
+    /// Inside the Itchy dock and between a statement and its line.
+    public static let x3: CGFloat = 12
     public static let x4: CGFloat = 16
     public static let x5: CGFloat = 24
+    /// Between sections on the plain-and-obvious screens (v2).
+    public static let x6: CGFloat = 32
     /// Between sections.
     public static let x7: CGFloat = 40
     /// Screen margins.
@@ -240,8 +266,8 @@ public enum CardSpacing {
 }
 
 public enum Corner {
-    /// Buttons, cards, inputs (DESIGN.md §5).
-    public static let control: CGFloat = 12
+    /// Buttons and inputs: 4pt (ink buttons, the Itchy button, skin bands).
+    public static let control: CGFloat = 4
     /// Images and screenshots.
     public static let image: CGFloat = 2
     /// DESIGN.md §5: buttons, cards, inputs, and widget tiles (the new rule; screens move to it in U3–U5).

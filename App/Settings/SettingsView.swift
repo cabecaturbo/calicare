@@ -2,7 +2,7 @@ import Core
 import SwiftUI
 
 /// Settings, as a large sheet over every tab. Grouped as UX.md section 7:
-/// children, family, reminders, quick logging, privacy, account, about.
+/// children, family, reminders, quick logging, your data, account, about.
 struct SettingsView: View {
     @Environment(\.palette) private var palette
     @Environment(\.dismiss) private var dismiss
@@ -14,7 +14,6 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                summarySection
                 childrenSection
                 FamilySection()
                 ReminderSettingsSection()
@@ -53,29 +52,6 @@ struct SettingsView: View {
         }
     }
 
-    /// Why this screen helps, and the one big fact: who helps, and whether reminders are on.
-    private var summarySection: some View {
-        Section {
-            VStack(alignment: .leading, spacing: Spacing.x5) {
-                Text("Change how Cali Care works for you.")
-                    .textStyle(.body)
-                    .foregroundStyle(palette.graphite)
-                BigStatement(text: helpers, line: anyReminderOn ? "Reminders are on." : "Reminders are off.")
-            }
-            .listRowBackground(Color.clear)
-            .listRowInsets(EdgeInsets(top: Spacing.x2, leading: Spacing.margin, bottom: Spacing.x2, trailing: Spacing.margin))
-        }
-    }
-
-    private var helpers: String {
-        let name = model.child?.name ?? "your child"
-        return model.householdSize <= 1 ? "You care for \(name)." : "\(model.householdSize) people help care for \(name)."
-    }
-
-    private var anyReminderOn: Bool {
-        ReminderKind.allCases.contains { reminders.settings[$0].isOn }
-    }
-
     private var childrenSection: some View {
         SettingsSection("Children") {
             ForEach(model.children) { child in
@@ -97,7 +73,7 @@ struct SettingsView: View {
     }
 
     private var yourDataSection: some View {
-        SettingsSection("Privacy", footnote: "Everything stays on this phone unless you share with family.") {
+        SettingsSection("Your data", footnote: "Everything stays on this phone unless you share with family.") {
             NavigationLink {
                 YourDataView()
             } label: {
@@ -137,7 +113,7 @@ struct SettingsView: View {
     }
 
     private var aboutSection: some View {
-        SettingsSection("About", footnote: "Cali Care keeps the plan your doctor gave you. Not medical advice.") {
+        SettingsSection("About", footnote: "Cali Care keeps the plan your provider gave you. Not medical advice.") {
             NavigationLink {
                 AboutView()
             } label: {

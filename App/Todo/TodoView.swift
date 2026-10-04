@@ -15,35 +15,28 @@ struct TodoView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    AppHeader(title: "To do", why: "What to do today, from \(model.child?.name ?? "your child")’s care plan.")
+                    AppHeader(title: "To do", onEdit: { editing = true })
                     if let todo = model.todo {
-                        let openBlock = todo.blocks.first { $0.block == (expanded ?? todo.open) }
-                        let statement = TodoStatement(block: openBlock, nextMorning: model.time(todo.nextMorning))
-                        BigStatement(text: statement.text, line: statement.line)
-                            .padding(.horizontal, Spacing.margin)
-                            .padding(.top, Spacing.x6)
+                        if todo.allDone && expanded == nil {
+                            AllDone(nextMorning: todo.nextMorning)
+                                .padding(.horizontal, Spacing.margin)
+                                .padding(.top, Spacing.x5)
+                        }
                         VStack(alignment: .leading, spacing: 0) {
-                            if let openBlock {
-                                OpenBlock(block: openBlock, onTick: tick, onOpen: { showing = $0 })
-                                    .padding(.bottom, Spacing.x5)
+                            ForEach(todo.blocks) { block in
+                                if block.block == (expanded ?? todo.open) {
+                                    OpenBlock(block: block, onTick: tick, onOpen: { showing = $0 })
+                                        .padding(.vertical, Spacing.x5)
+                                } else {
+                                    BlockRow(block: block) { withAnimation { expanded = block.block } }
+                                }
                             }
-                            let others = todo.blocks.filter { $0.block != openBlock?.block }
-                            let done = others.filter(\.isDone)
-                            if done.count > 1 {
-                                FoldedRow(blocks: done) { withAnimation { expanded = done[0].block } }
-                            }
-                            ForEach(others.filter { done.count <= 1 || !$0.isDone }) { block in
-                                BlockRow(block: block) { withAnimation { expanded = block.block } }
-                            }
-                            Button("Change the list") { editing = true }
-                                .buttonStyle(.textLink)
-                                .padding(.top, Spacing.x2)
                         }
                         .padding(.horizontal, Spacing.margin)
                         .padding(.top, Spacing.x5)
                     }
                 }
-                .padding(.bottom, Spacing.x5)
+                .padding(.bottom, BottomBar.clearance)
             }
             .paperBackground()
             .statusBarBackground()
@@ -80,83 +73,33 @@ struct TodoView: View {
     }
 }
 
-/// The open block's rows.
+/// The open block: its name, "3 of 5 done", and its rows.
 private struct OpenBlock: View {
+    @Environment(\.palette) private var palette
     @Environment(TodayModel.self) private var model
     let block: TodoDay.Block
     let onTick: (TodoDay.Item, TodoBlock) -> Void
     let onOpen: (TodoDay.Item) -> Void
 
     var body: some View {
-        VStack(spacing: 0) {
-            ForEach(block.items) { item in
-                TodoRow(item: item, done: item.doneAt.map { model.time($0) },
-                        onTick: { onTick(item, block.block) }, onOpen: { onOpen(item) })
+        VStack(alignment: .leading, spacing: Spacing.x2) {
+            VStack(alignment: .leading, spacing: Spacing.x1) {
+                Text(block.block.title)
+                    .textStyle(.title)
+                    .foregroundStyle(palette.ink)
+                    .accessibilityAddTraits(.isHeader)
+                Text(block.items.isEmpty ? "Nothing here yet. Tap Edit to add steps." : block.progress)
+                    .textStyle(.meta)
+                    .foregroundStyle(palette.graphite)
+            }
+            VStack(spacing: 0) {
+                ForEach(block.items) { item in
+                    TodoRow(item: item, done: item.doneAt.map { model.time($0) },
+                            onTick: { onTick(item, block.block) }, onOpen: { onOpen(item) })
+                }
             }
         }
-        .overlay(alignment: .top) { if !block.items.isEmpty { HairlineTop() } }
     }
-}
-
-private struct HairlineTop: View {
-    @Environment(\.palette) private var palette
-    var body: some View { palette.hairline.frame(height: Rule.width) }
-}
-
-/// The words for To do's big statement: what's left in the open block.
-struct TodoStatement {
-    let text: String
-    let line: String?
-
-    init(block: TodoDay.Block?, nextMorning: String) {
-        guard let block else {
-            text = "All done for today."
-            line = "Morning list starts at \(nextMorning)."
-            return
-        }
-        let name = block.block.title.lowercased()
-        let left = block.items.count - block.doneCount
-        if block.items.isEmpty {
-            text = "Nothing here yet."
-            line = "Tap Change the list to add steps."
-        } else if left == 0 {
-            text = "\(block.block.title) is done."
-            line = block.progress + "."
-        } else {
-            text = left == 1 ? "1 thing left for \(name)." : "\(left) things left for \(name)."
-            line = block.doneCount == 0 ? "Tap a circle when it’s done." : block.progress + "."
-        }
-    }
-}
-
-/// Two or more finished blocks as one row: "Morning and afternoon · Done".
-private struct FoldedRow: View {
-    @Environment(\.palette) private var palette
-    let blocks: [TodoDay.Block]
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            AdaptiveStack {
-                Text(TodayStatement.list(blocks.map(\.block.title)).lowercased().capitalizedFirst)
-                    .textStyle(.body).foregroundStyle(palette.ink)
-                Spacer(minLength: 0)
-                Text("Done").textStyle(.meta).foregroundStyle(palette.graphite)
-                Image(systemName: "chevron.right").font(.footnote).foregroundStyle(palette.graphite)
-                    .accessibilityHidden(true)
-            }
-            .frame(minHeight: 56)
-            .contentShape(Rectangle())
-            .overlay(alignment: .top) { palette.hairline.frame(height: Rule.width) }
-            .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
-        }
-        .buttonStyle(.plain)
-        .accessibilityHint("Shows these lists.")
-    }
-}
-
-private extension String {
-    var capitalizedFirst: String { prefix(1).uppercased() + dropFirst() }
 }
 
 /// A block that isn't open: its name and time (or Done), one row.
@@ -183,6 +126,25 @@ private struct BlockRow: View {
         }
         .buttonStyle(.plain)
         .accessibilityHint("Shows this list.")
+    }
+}
+
+/// "All done for tonight." and when the morning list starts.
+private struct AllDone: View {
+    @Environment(\.palette) private var palette
+    @Environment(TodayModel.self) private var model
+    let nextMorning: Date
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.x1) {
+            Text("All done for tonight.")
+                .textStyle(.title)
+                .foregroundStyle(palette.ink)
+                .accessibilityAddTraits(.isHeader)
+            Text("Morning list starts at \(model.time(nextMorning)).")
+                .textStyle(.meta)
+                .foregroundStyle(palette.graphite)
+        }
     }
 }
 

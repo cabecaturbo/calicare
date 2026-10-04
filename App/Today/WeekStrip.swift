@@ -1,60 +1,137 @@
 import Core
 import SwiftUI
 
-/// "This week.": one thin block per day in the skin scale colors, day letters
-/// under it, today outlined. A day not answered is a dashed outline, never "missed".
+/// The last 7 days: a dot for each night and a square for each day's skin, on the
+/// indigo scale. Days with nothing logged are plain outlines, never "missed".
 struct WeekStrip: View {
     @Environment(\.palette) private var palette
+    @Environment(\.dynamicTypeSize) private var typeSize
     let days: [WeekDay]
 
+    private static let markRow: CGFloat = 22
+
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.x2) {
-            Text("This week.")
-                .textStyle(.meta)
-                .foregroundStyle(palette.graphite)
-            HStack(spacing: Spacing.x2) {
-                ForEach(days) { day in
-                    let today = day.id == days.last?.id
-                    VStack(spacing: Spacing.x1 + 2) {
-                        block(day.skin)
-                            .overlay {
-                                if today {
-                                    RoundedRectangle(cornerRadius: 5)
-                                        .stroke(palette.ink, lineWidth: 2)
-                                        .padding(-4)
-                                }
-                            }
-                        Text(day.day.noon().formatted(.dateTime.weekday(.narrow)))
-                            .textStyle(.meta)
-                            .fontWeight(today ? .semibold : .regular)
-                            .foregroundStyle(today ? palette.ink : palette.graphite)
-                    }
-                    .frame(maxWidth: .infinity)
+        LedgerSection(
+            "This week",
+            footnote: "Lighter is calmer. An outline just means nothing was logged."
+        ) {
+            Group {
+                if typeSize.isAccessibilitySize {
+                    rows
+                } else {
+                    columns
                 }
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, Spacing.margin)
+            .padding(.vertical, Spacing.x4)
+            .overlay(alignment: .bottom) { Hairline() }
         }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("This week. " + days.map(description).joined(separator: " "))
+    }
+
+    /// Side by side, with row labels on the left.
+    private var columns: some View {
+        HStack(alignment: .top, spacing: 0) {
+            VStack(alignment: .leading, spacing: Spacing.x4) {
+                Text(" ").textStyle(.meta)
+                rowLabel("Night")
+                rowLabel("Skin")
+            }
+            .accessibilityHidden(true)
+            ForEach(days) { day in
+                VStack(spacing: Spacing.x4) {
+                    Text(weekdayLetter(day))
+                        .textStyle(.meta)
+                        .foregroundStyle(isToday(day) ? palette.indigo : palette.graphite)
+                    LevelMark(fill: day.night.map(palette.color(for:)), shape: .circle)
+                        .frame(height: Self.markRow)
+                    LevelMark(fill: day.skin.map(palette.color(for:)), shape: .square)
+                        .frame(height: Self.markRow)
+                }
+                .frame(maxWidth: .infinity)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(description(day))
+            }
+        }
+    }
+
+    /// One day per row, for the largest text sizes.
+    private var rows: some View {
+        VStack(alignment: .leading, spacing: Spacing.x4) {
+            ForEach(days) { day in
+                HStack(alignment: .center, spacing: Spacing.x4) {
+                    LevelMark(fill: day.night.map(palette.color(for:)), shape: .circle)
+                    LevelMark(fill: day.skin.map(palette.color(for:)), shape: .square)
+                    Text(description(day))
+                        .textStyle(.body)
+                        .foregroundStyle(palette.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(description(day))
+            }
+        }
+    }
+
+    private func rowLabel(_ text: String) -> some View {
+        Text(text)
+            .textStyle(.meta)
+            .foregroundStyle(palette.graphite)
+            .frame(minHeight: Self.markRow)
+            .padding(.trailing, Spacing.x2)
+    }
+
+    private func isToday(_ day: WeekDay) -> Bool {
+        day.id == days.last?.id
+    }
+
+    private func weekdayLetter(_ day: WeekDay) -> String {
+        day.day.noon().formatted(.dateTime.weekday(.narrow))
+    }
+
+    /// "Tuesday: rough night, skin a little itchy." or "Tuesday: nothing logged."
+    private func description(_ day: WeekDay) -> String {
+        let name = isToday(day) ? "Today" : day.day.noon().formatted(.dateTime.weekday(.wide))
+        var parts: [String] = []
+        if let rating = day.nightRating {
+            parts.append("\(rating.rawValue) night")
+        } else if day.nightItches > 0 {
+            parts.append(day.nightItches == 1 ? "1 itchy wake-up" : "\(day.nightItches) itchy wake-ups")
+        }
+        if let skin = day.skin {
+            parts.append("skin \(skin.words)")
+        }
+        return parts.isEmpty ? "\(name): nothing logged." : "\(name): \(parts.joined(separator: ", "))."
+    }
+}
+
+/// A filled indigo mark, or a quiet outline when there's nothing (no log, or skin not answered).
+private struct LevelMark: View {
+    enum MarkShape { case circle, square }
+
+    @Environment(\.palette) private var palette
+    let fill: Color?
+    let shape: MarkShape
+    private let size: CGFloat = 16
+
+    var body: some View {
+        Group {
+            switch shape {
+            case .circle:
+                mark(Circle())
+            case .square:
+                mark(RoundedRectangle(cornerRadius: Corner.image))
+            }
+        }
+        .frame(width: size, height: size)
+        .accessibilityHidden(true)
     }
 
     @ViewBuilder
-    private func block(_ skin: SkinToday?) -> some View {
-        let shape = RoundedRectangle(cornerRadius: 3)
-        if let skin {
-            shape.fill(palette.color(for: skin))
-                .overlay(shape.strokeBorder(palette.graphite, lineWidth: 1))
-                .frame(height: 14)
+    private func mark(_ outline: some InsettableShape) -> some View {
+        if let fill {
+            outline.fill(fill)
         } else {
-            shape.strokeBorder(palette.graphite, style: StrokeStyle(lineWidth: 1, dash: [3, 2]))
-                .frame(height: 14)
+            outline.strokeBorder(palette.graphite.opacity(0.5), lineWidth: 1)
         }
-    }
-
-    /// "Tuesday: skin flaring." or "Today: not answered yet."
-    private func description(_ day: WeekDay) -> String {
-        let name = day.id == days.last?.id ? "Today" : day.day.noon().formatted(.dateTime.weekday(.wide))
-        guard let skin = day.skin else { return "\(name): not answered." }
-        return "\(name): skin \(skin.words)."
     }
 }

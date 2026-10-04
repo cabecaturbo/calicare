@@ -33,7 +33,7 @@ struct ProductListView: View {
                 }
             } footer: {
                 if model.products.isEmpty {
-                    Text("Add what touches the skin: creams, washes, laundry soap, clothes. Starting and stopping shows up in How it’s going.")
+                    Text("Add what touches the skin: creams, washes, laundry soap, clothes. Starting and stopping shows up in Progress › Changes.")
                         .textStyle(.meta)
                         .foregroundStyle(palette.graphite)
                 }

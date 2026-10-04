@@ -104,7 +104,7 @@ struct AddPlanSheet: View {
     private var choices: some View {
         VStack(alignment: .leading, spacing: Spacing.x4) {
             VStack(alignment: .leading, spacing: Spacing.x2) {
-                Text("Doctor")
+                Text("Provider")
                     .textStyle(.section)
                     .foregroundStyle(palette.ink)
                 TextField("Name (optional)", text: $provider)
@@ -187,7 +187,7 @@ struct AddPlanSheet: View {
             let items = try await PlanReader.read(extracted.text)
             guard !items.isEmpty else {
                 PlanFiles.delete(file)
-                stage = .failed("We couldn’t find plan items in that. Try clearer photos, or the PDF your doctor sent.")
+                stage = .failed("We couldn’t find plan items in that. Try clearer photos, or the PDF your provider sent.")
                 return
             }
             let plan = try await CarePlanStore(modelContainer: try CaliCareModelContainer.shared())

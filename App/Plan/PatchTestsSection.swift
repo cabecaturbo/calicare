@@ -21,7 +21,7 @@ struct PatchTestsScreen: View {
                         .textStyle(.body).foregroundStyle(palette.ink).fixedSize(horizontal: false, vertical: true)
                 }
                 VStack(alignment: .leading, spacing: Spacing.x2) {
-                    Text("Your doctor’s words").textStyle(.section).foregroundStyle(palette.ink).accessibilityAddTraits(.isHeader)
+                    Text("Your provider's words").textStyle(.section).foregroundStyle(palette.ink).accessibilityAddTraits(.isHeader)
                     Text("“\(item.providerWords)”")
                         .textStyle(.body).foregroundStyle(palette.graphite)
                         .fixedSize(horizontal: false, vertical: true)

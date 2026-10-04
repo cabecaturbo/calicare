@@ -12,7 +12,7 @@ final class CaregiverCaptureTests: XCTestCase {
         app.terminate()
         app.launch()
         sleep(3)
-        app.buttons["How it’s going"].firstMatch.tap()
+        app.buttons["Progress"].firstMatch.tap()
         sleep(2)
         app.swipeUp()
         app.buttons["Caregiver card"].firstMatch.tap()

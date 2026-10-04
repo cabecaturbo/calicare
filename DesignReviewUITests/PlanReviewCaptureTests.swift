@@ -75,7 +75,7 @@ final class PlanReviewCaptureTests: XCTestCase {
         app.swipeDown()
         app.swipeDown()
         sleep(1)
-        app.buttons["How it’s going"].firstMatch.tap()
+        app.buttons["Progress"].firstMatch.tap()
         sleep(2)
         app.swipeUp()
         sleep(1)

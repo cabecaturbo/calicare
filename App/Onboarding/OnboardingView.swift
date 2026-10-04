@@ -108,7 +108,7 @@ struct OnboardingView: View {
     }
 }
 
-/// The name, one big statement, one line, and what we promise.
+/// The wordmark, the sunrise drawing, one sentence, and what we promise.
 private struct WelcomeStep: View {
     @Environment(\.palette) private var palette
     let onContinue: () -> Void
@@ -117,31 +117,38 @@ private struct WelcomeStep: View {
         OnboardingPage {
             VStack(alignment: .leading, spacing: 0) {
                 Wordmark()
-                BigStatement(text: "Log itchy nights in one tap.", line: "Keep your child’s care plan in one place.")
-                    .padding(.top, 120)
+                Illustration(kind: .sun, size: CGSize(width: 168, height: 160))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, Spacing.section)
+                Text("A calm place to follow your child’s care plan and log how their skin and nights are going, in one tap.")
+                    .textStyle(.lede)
+                    .foregroundStyle(palette.ink)
             }
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, Spacing.margin)
         } footer: {
-            Text("No ads. Photos stay on your phone. Not medical advice.")
+            Button("Add your child", action: onContinue)
+                .buttonStyle(.primary)
+            Text("No ads. Photos never leave your phone.")
                 .textStyle(.meta)
                 .foregroundStyle(palette.graphite)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            Button("Start", action: onContinue)
-                .buttonStyle(.primary)
         }
     }
 }
 
-/// "Cali Care" in Newsreader, small. No symbol.
+/// "Cali Care" set in Newsreader Display over a hairline ink rule. No symbol.
 struct Wordmark: View {
     @Environment(\.palette) private var palette
 
     var body: some View {
-        Text("Cali Care")
-            .textStyle(.title)
-            .foregroundStyle(palette.ink)
-            .accessibilityAddTraits(.isHeader)
+        VStack(alignment: .leading, spacing: Spacing.x4) {
+            Text("Cali Care")
+                .textStyle(.display)
+                .foregroundStyle(palette.ink)
+                .accessibilityAddTraits(.isHeader)
+            palette.ink.frame(height: Rule.width)
+                .accessibilityHidden(true)
+        }
     }
 }
 
@@ -154,15 +161,10 @@ private struct ChildStep: View {
 
     var body: some View {
         OnboardingPage {
-            OnboardingHeading(title: "Who are we caring for?", detail: "Their first name is enough.")
-            ChildDetailsForm(details: $details, nameOnly: true) {
+            OnboardingHeading(title: "Who are we looking after?", detail: "A first name or nickname is enough.")
+            ChildDetailsForm(details: $details) {
                 if details.canSave { onContinue() }
             }
-            Text("It stays on this phone. You can add a birthday later.")
-                .textStyle(.meta)
-                .foregroundStyle(palette.graphite)
-                .padding(.horizontal, Spacing.margin)
-                .padding(.top, Spacing.x4)
             if let error {
                 Text(error)
                     .textStyle(.body)
@@ -178,16 +180,25 @@ private struct ChildStep: View {
     }
 }
 
-/// The big statement and one line, with the margin, for the steps after Welcome.
+/// Title and one line, with the margin, for the steps after Welcome.
 struct OnboardingHeading: View {
+    @Environment(\.palette) private var palette
     let title: String
     let detail: String
 
     var body: some View {
-        BigStatement(text: title, line: detail)
-            .accessibilityAddTraits(.isHeader)
-            .padding(.horizontal, Spacing.margin)
-            .padding(.bottom, Spacing.x6)
+        VStack(alignment: .leading, spacing: Spacing.titleToLede) {
+            Text(title)
+                .textStyle(.title)
+                .foregroundStyle(palette.ink)
+                .accessibilityAddTraits(.isHeader)
+            Text(detail)
+                .textStyle(.body)
+                .foregroundStyle(palette.graphite)
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        .padding(.horizontal, Spacing.margin)
+        .padding(.bottom, Spacing.ledeToSection)
     }
 }
 
@@ -204,7 +215,7 @@ struct OnboardingPage<Content: View, Footer: View>: View {
                 content
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, Spacing.x6)
+            .padding(.top, Spacing.section)
             .padding(.bottom, Spacing.margin)
         }
         .scrollBounceBehavior(.basedOnSize)

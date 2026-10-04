@@ -9,7 +9,7 @@ final class ProductsCaptureTests: XCTestCase {
         app.launchArguments = ScreenTourTests.launchArguments + ["-designReviewSeed", "YES"]
         app.launch()
         sleep(4)
-        app.buttons["Care plan"].firstMatch.tap()
+        app.buttons["Info"].firstMatch.tap()
         sleep(1)
         let diary = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Products")).firstMatch
         for _ in 0..<8 where !diary.isHittable { app.swipeUp() }

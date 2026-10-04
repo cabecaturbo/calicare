@@ -52,7 +52,7 @@ struct TodoItemSheet: View {
                     }
                 }
             }
-            Section(title: "Your doctor’s words") {
+            Section(title: "Your provider's words") {
                 ForEach(steps) { step in
                     ProviderWords(step.planItemID.flatMap { model.planItems[$0]?.providerWords } ?? step.original)
                 }
@@ -62,7 +62,7 @@ struct TodoItemSheet: View {
                 Paragraph(giveLine(plan))
                 if let plain = plan.plainText { Paragraph(plain) }
             }
-            Section(title: "Your doctor’s words") {
+            Section(title: "Your provider's words") {
                 ProviderWords(plan.providerWords)
                 ForEach([plan.timing, plan.duration].compactMap { $0 }, id: \.self) { ProviderWords($0) }
             }
@@ -71,7 +71,7 @@ struct TodoItemSheet: View {
             Section(title: "What to do") {
                 Paragraph(plan?.plainText ?? step.displayName)
             }
-            Section(title: "Your doctor’s words") {
+            Section(title: "Your provider's words") {
                 ProviderWords(plan?.providerWords ?? step.original)
             }
         }

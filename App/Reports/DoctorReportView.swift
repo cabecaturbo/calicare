@@ -31,7 +31,7 @@ struct DoctorReportView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: Spacing.section) {
                 VStack(alignment: .leading, spacing: Spacing.titleToLede) {
-                    Text("A care log for \(child.name)’s doctor")
+                    Text("A care log for \(child.name)'s provider")
                         .textStyle(.title)
                         .foregroundStyle(palette.ink)
                         .accessibilityAddTraits(.isHeader)
@@ -61,7 +61,7 @@ struct DoctorReportView: View {
                         ShareLink(item: file) { Text("Share PDF") }
                             .buttonStyle(.primary)
                         if MFMailComposeViewController.canSendMail() {
-                            Button("Email to the doctor") { composing = true }
+                            Button("Email to provider") { composing = true }
                                 .buttonStyle(.secondary)
                         }
                     } else {
@@ -123,7 +123,7 @@ struct DoctorReportView: View {
     }
 }
 
-/// Mail with the PDF attached, for "Email to the doctor".
+/// Mail with the PDF attached, for "Email to provider".
 private struct MailComposer: UIViewControllerRepresentable {
     @Environment(\.dismiss) private var dismiss
     let subject: String

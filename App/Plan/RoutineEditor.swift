@@ -23,7 +23,7 @@ struct RoutineEditor: View {
             .settingsListStyle(palette)
             .paperBackground(.oat)
             .solidNavigationBar()
-            .navigationTitle("Change the list")
+            .navigationTitle("Routine")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {

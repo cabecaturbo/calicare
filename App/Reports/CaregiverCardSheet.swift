@@ -26,7 +26,7 @@ struct CaregiverCardSheet: View {
                         .foregroundStyle(palette.graphite)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    field("Bedtime steps", hint: "One step per line", text: $card.bedtime)
+                    field("Bedtime routine", hint: "One step per line", text: $card.bedtime)
                     field("Safe snacks", hint: "One per line", text: $card.safeSnacks)
                     field("Please avoid", hint: "One per line", text: $card.pleaseAvoid)
                     field("If \(child.name) is scratching", hint: "What you'd like them to do", text: $card.ifScratching)

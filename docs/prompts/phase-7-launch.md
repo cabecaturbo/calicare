@@ -23,6 +23,9 @@ Done when: it logs from Messages on the phone.
 ---
 
 ## 7.3 🛑 Premium paywall
+Deferred (October 4, 2026): version 1 is free while we gather beta users.
+Revisit after TestFlight feedback.
+
 Product decisions needed from the owner: prices and what's in premium
 (the brief suggests about $5.99/month or $44.99/year).
 1. StoreKit 2 subscriptions. Free forever: logging, multiple children,

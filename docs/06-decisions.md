@@ -584,3 +584,9 @@ The owner asked for one job per screen. To do answers "What do I do right now?" 
 
 ## Plain and obvious redesign: reverted in the app (October 4, 2026)
 The owner saw the v2 redesign on the phone and asked for it to be reverted. The app is back to its state before PR #53. The v2 canvas boards and their screenshots (`design-review/v2/`, `design-review/today-v2/`, `docs/redesign-v2-screens.md`) stay for reference only.
+
+## Version 1 is free during beta (October 4, 2026)
+- The owner wants version 1 free while we gather beta users, so 7.3 (premium paywall) is out for now.
+- No paywall, prices, or StoreKit code. The App Store listing says Free.
+- Revisit after TestFlight feedback. The 7.3 prompt stays as written for then.
+- The landing page and privacy policy go on a free `*.vercel.app` address for now (owner's choice); a real domain can come later.

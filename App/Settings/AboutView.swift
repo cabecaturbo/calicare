@@ -19,15 +19,15 @@ struct AboutView: View {
                         .textStyle(.section)
                         .foregroundStyle(palette.ink)
                         .accessibilityAddTraits(.isHeader)
-                    fact("Skin today", "Your one answer each evening: calm, a little itchy, flaring, or very rough. It's the only thing Progress uses for skin.")
+                    fact("Skin today", "Your one answer each evening: calm, a little itchy, flaring, or very rough. It's the only thing How it's going uses for skin.")
                     fact("Last night", "Good, okay, or rough, as you saw it. Without a rating, the number of itchy wake-ups stands in.")
                     fact("Log (the palm)", "One tap each time it itches. Between 7 PM and 7 AM it counts as an itchy wake-up.")
                     fact("Flare, bowel movement, mood, note", "Whenever they're worth noting. \"Add where\" after a flare is optional.")
-                    fact("Routine", "The steps you set in Plan, ticked off as you go.")
+                    fact("To do", "The steps from the care plan, ticked off as you go.")
                 }
 
                 VStack(alignment: .leading, spacing: Spacing.x4) {
-                    Text("How Progress compares")
+                    Text("How we compare weeks")
                         .textStyle(.section)
                         .foregroundStyle(palette.ink)
                         .accessibilityAddTraits(.isHeader)

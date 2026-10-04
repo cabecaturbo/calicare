@@ -15,6 +15,16 @@ struct ContrastTests {
         }
     }
 
+    /// Each skin band's label, in both palettes.
+    @Test(arguments: [Palette.day, Palette.night])
+    func skinBandLabelsAreAtLeastAA(palette: Palette) {
+        for skin in SkinToday.allCases {
+            let band = palette.severityScale[skin.step - 1]
+            let ratio = Self.contrast(palette.hex(palette.textToken(onSkin: skin)), band)
+            #expect(ratio >= 4.5, "\(skin) band is \(ratio) in \(palette.isNight ? "night" : "day")")
+        }
+    }
+
     /// Every color used for text has at least one approved background.
     @Test func everyTextTokenHasAPair() {
         let textTokens: Set<Palette.Token> = [.ink, .graphite, .indigo, .ochre, .paper]

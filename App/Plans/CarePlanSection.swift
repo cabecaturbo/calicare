@@ -24,7 +24,7 @@ struct CarePlanSection: View {
             case .active?:
                 row("About this plan", detail: plan.map(providerLine)) { showingAbout = true }
             default:
-                Text("Scan or pick the plan from \(model.child?.name ?? "your child")’s provider.")
+                Text("Scan or pick the plan from \(model.child?.name ?? "your child")’s doctor.")
                     .textStyle(.body)
                     .foregroundStyle(palette.graphite)
                     .fixedSize(horizontal: false, vertical: true)
@@ -52,7 +52,7 @@ struct CarePlanSection: View {
     }
 
     private func providerLine(_ plan: CarePlanInfo) -> String {
-        let from = plan.provider.isEmpty ? "From your provider" : "From \(plan.provider)"
+        let from = plan.provider.isEmpty ? "From your doctor" : "From \(plan.provider)"
         guard let started = plan.startedAt else { return from }
         return "\(from) · started \(started.formatted(.dateTime.month(.abbreviated).day()))"
     }
@@ -98,7 +98,7 @@ struct AboutPlanView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: Spacing.section) {
                     VStack(alignment: .leading, spacing: Spacing.x1) {
-                        Text(plan.provider.isEmpty ? "Your provider’s plan" : "From \(plan.provider)")
+                        Text(plan.provider.isEmpty ? "Your doctor’s plan" : "From \(plan.provider)")
                             .textStyle(.title)
                             .foregroundStyle(palette.ink)
                         if let started = plan.startedAt {
@@ -141,7 +141,7 @@ struct AboutPlanView: View {
                     }
                     Button("End this plan") { confirmingEnd = true }
                         .buttonStyle(.textLink)
-                    Text("Cali Care keeps the plan your provider gave you. Not medical advice.")
+                    Text("Cali Care keeps the plan your doctor gave you. Not medical advice.")
                         .textStyle(.meta)
                         .foregroundStyle(palette.graphite)
                 }
@@ -165,7 +165,7 @@ struct AboutPlanView: View {
                     }
                 }
             } message: {
-                Text("It stops showing in Plan. Its items stay in your history.")
+                Text("It stops showing in To do. Its items stay in your history.")
             }
         }
         .tint(palette.indigo)

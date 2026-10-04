@@ -140,7 +140,7 @@ struct StartTrialSheet: View {
                 Section {
                     Stepper("\(days) day\(days == 1 ? "" : "s")", value: $days, in: 1...21)
                 } footer: {
-                    Text("As your plan or provider says.")
+                    Text("As your plan or doctor says.")
                 }
                 Section {
                     TextField("Amounts, one per day (optional)", text: $steps, axis: .vertical)

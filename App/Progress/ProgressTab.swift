@@ -2,12 +2,11 @@ import Core
 import SwiftData
 import SwiftUI
 
-/// Progress: Week or Month (UX.md §6), each a summary card and a grid, then
-/// Share with provider for the chosen range. "Since visit" joins once visits
-/// exist (Phase 4).
+/// How it's going: Week, Month, or Since the visit. One big statement (is it
+/// getting better?), the grid in skin colors, then sharing with the doctor.
 struct ProgressTab: View {
     enum Span: String, CaseIterable {
-        case week = "Week", month = "Month", sinceVisit = "Since visit"
+        case week = "Week", month = "Month", sinceVisit = "Since the visit"
     }
 
     @Environment(\.palette) private var palette
@@ -24,68 +23,65 @@ struct ProgressTab: View {
     @State private var file: URL?
     @State private var problem: String?
 
+    /// Headlines read as a sentence: "Calmer than last week."
+    static func sentence(_ text: String) -> String {
+        guard let last = text.last, !".!?".contains(last) else { return text }
+        return text + "."
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    AppHeader(title: "Progress")
+                    AppHeader(title: "How it’s going", why: "See if \(model.child?.name ?? "your child")’s skin is getting better.")
                     Picker("Range", selection: $span) {
                         ForEach(Span.allCases.filter { $0 != .sinceVisit || lastVisit != nil }, id: \.self) { Text($0.rawValue).tag($0) }
                     }
                     .pickerStyle(.segmented)
                     .padding(.horizontal, Spacing.margin)
-                    .padding(.top, Spacing.x4)
+                    .padding(.top, Spacing.x5)
 
                     if span == .sinceVisit, let lastVisit {
-                        SummaryCard(
-                            eyebrow: "Since the \(lastVisit.date.formatted(.dateTime.month(.abbreviated).day())) visit",
-                            title: "\(sinceVisitDays.filter { $0.nightRating == .good }.count) good nights of \(sinceVisitDays.count)",
-                            art: .tree
+                        BigStatement(
+                            text: "\(sinceVisitDays.filter { $0.nightRating == .good }.count) good nights out of \(sinceVisitDays.count).",
+                            line: "Since the \(lastVisit.date.formatted(.dateTime.month(.abbreviated).day())) visit."
                         )
                         .padding(.horizontal, Spacing.margin)
-                        .padding(.top, Spacing.x5)
+                        .padding(.top, Spacing.x6)
 
                         MonthGrid(days: sinceVisitDays, title: "Since the visit")
                             .padding(.horizontal, Spacing.margin)
-                            .padding(.top, Spacing.x7)
+                            .padding(.top, Spacing.x6)
                     } else if span == .month, let monthReport {
-                        SummaryCard(
-                            eyebrow: monthReport.title(),
-                            title: monthReport.headline.text,
-                            caption: monthReport.worthWatching.map { "Worth watching: \($0.prefix(1).lowercased())\($0.dropFirst())" },
-                            art: .tree
-                        )
-                        .padding(.horizontal, Spacing.margin)
-                        .padding(.top, Spacing.x5)
+                        BigStatement(text: Self.sentence(monthReport.headline.text), line: monthReport.title())
+                            .padding(.horizontal, Spacing.margin)
+                            .padding(.top, Spacing.x6)
 
                         MonthGrid(days: monthReport.days)
                             .padding(.horizontal, Spacing.margin)
-                            .padding(.top, Spacing.x7)
+                            .padding(.top, Spacing.x6)
+                        WorthWatching(text: monthReport.worthWatching)
                     } else if span == .week, let report {
-                        SummaryCard(
-                            eyebrow: report.dateRange(),
-                            title: report.headline.text,
-                            caption: report.worthWatching.map { "Worth watching: \($0.prefix(1).lowercased())\($0.dropFirst())" },
-                            art: .flower
-                        )
+                        BigStatement(text: Self.sentence(report.headline.text), line: report.dateRange())
                         .padding(.horizontal, Spacing.margin)
-                        .padding(.top, Spacing.x5)
+                        .padding(.top, Spacing.x6)
 
                         WeekGrid(days: report.days)
                             .padding(.horizontal, Spacing.margin)
-                            .padding(.top, Spacing.x7)
+                            .padding(.top, Spacing.x6)
+                        WorthWatching(text: report.worthWatching)
                     }
 
                     if let child = model.child {
                         PhotosSection(child: child)
                             .padding(.horizontal, Spacing.margin)
-                            .padding(.top, Spacing.x7)
+                            .padding(.top, Spacing.x6)
                     }
 
                     if !changes.isEmpty || rougherSince != nil {
                         ChangesSection(changes: changes, rougherSince: rougherSince)
                             .padding(.horizontal, Spacing.margin)
-                            .padding(.top, Spacing.x7)
+                            .padding(.top, Spacing.x6)
                     }
 
                     if let child = model.child {
@@ -93,11 +89,11 @@ struct ProgressTab: View {
                             NavigationLink {
                                 DoctorReportView(child: child, range: shareRange)
                             } label: {
-                                Text("Share with provider")
+                                Text("Share with \(child.name)’s doctor")
                                     .font(TypeStyle.label.font)
                                     .foregroundStyle(palette.ink)
-                                    .frame(maxWidth: .infinity, minHeight: 52)
-                                    .overlay(RoundedRectangle(cornerRadius: Corner.card).strokeBorder(palette.ink, lineWidth: 1))
+                                    .frame(maxWidth: .infinity, minHeight: Size.button(isNight: palette.isNight))
+                                    .overlay(RoundedRectangle(cornerRadius: Corner.control).strokeBorder(palette.ink, lineWidth: 1))
                             }
                             Button {
                                 showingCaregiverCard = true
@@ -118,7 +114,7 @@ struct ProgressTab: View {
                             }
                         }
                         .padding(.horizontal, Spacing.margin)
-                        .padding(.top, Spacing.x7)
+                        .padding(.top, Spacing.x6)
                     }
                     if let problem {
                         Text(problem)
@@ -127,7 +123,7 @@ struct ProgressTab: View {
                             .padding(.horizontal, Spacing.margin)
                     }
                 }
-                .padding(.bottom, BottomBar.clearance)
+                .padding(.bottom, Spacing.x5)
             }
             .paperBackground()
             .statusBarBackground()
@@ -203,6 +199,23 @@ struct ProgressTab: View {
             problem = nil
         } catch {
             problem = "Couldn't make the card just now. Try again in a moment."
+        }
+    }
+}
+
+/// "Worth watching: two flares on Tuesday." under the grid, when there's one.
+private struct WorthWatching: View {
+    @Environment(\.palette) private var palette
+    let text: String?
+
+    var body: some View {
+        if let text {
+            Text("Worth watching: \(text.prefix(1).lowercased())\(text.dropFirst())")
+                .textStyle(.body)
+                .foregroundStyle(palette.ink)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, Spacing.margin)
+                .padding(.top, Spacing.x4)
         }
     }
 }

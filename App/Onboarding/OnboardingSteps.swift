@@ -15,8 +15,8 @@ struct RemindersStep: View {
     var body: some View {
         OnboardingPage {
             OnboardingHeading(
-                title: "Gentle reminders",
-                detail: "A nudge to log \(childName.map { "\($0)’s" } ?? "the") night in the morning, and skin in the evening. Answer right from the notification."
+                title: "Two quiet reminders.",
+                detail: "One question each. Answer right from the alert."
             )
             VStack(spacing: 0) {
                 Hairline()
@@ -26,9 +26,14 @@ struct RemindersStep: View {
                             get: { reminders.settings[kind].isOn },
                             set: { turn($0, kind) }
                         )) {
-                            Text(ReminderCopy.settingsTitle(kind))
-                                .textStyle(.control)
-                                .foregroundStyle(palette.ink)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(ReminderCopy.settingsTitle(kind))
+                                    .textStyle(.control)
+                                    .foregroundStyle(palette.ink)
+                                Text(question(kind))
+                                    .textStyle(.meta)
+                                    .foregroundStyle(palette.graphite)
+                            }
                         }
                         .tint(palette.indigo)
                     }
@@ -50,25 +55,27 @@ struct RemindersStep: View {
                     }
                 }
             }
-            if primed {
-                Text("Your iPhone will ask once. Reminders skip anything you’ve already logged.")
-                    .textStyle(.body)
-                    .foregroundStyle(palette.graphite)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, Spacing.margin)
-                    .padding(.top, Spacing.x4)
-                    .transition(.opacity)
-            }
+            Text(primed ? "Your iPhone will ask once. We skip a day if you already answered." : "We skip a day if you already answered.")
+                .textStyle(.meta)
+                .foregroundStyle(palette.graphite)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, Spacing.margin)
+                .padding(.top, Spacing.x4)
         } footer: {
             if anyOn {
                 Button("Continue", action: onContinue)
                     .buttonStyle(.primary)
             } else {
-                Button("Skip for now", action: onContinue)
+                Button("Not now", action: onContinue)
                     .buttonStyle(.textLink)
             }
         }
         .task { await reminders.reload() }
+    }
+
+    /// The one question each reminder asks.
+    private func question(_ kind: ReminderKind) -> String {
+        kind == .checkIn ? "How was last night?" : "How was \(childName.map { "\($0)’s" } ?? "their") skin today?"
     }
 
     private var anyOn: Bool { kinds.contains { reminders.settings[$0].isOn } }
@@ -88,11 +95,9 @@ struct RemindersStep: View {
     }
 }
 
-/// Home Screen, Lock Screen, or Control Center: a real screenshot of the
-/// finished setup, "Show me how", and "Skip for now".
+/// The Itchy widget: a real screenshot of it on the Home Screen, "Show me how",
+/// and "Not now". The Lock Screen and Control Center wait in Settings › Quick logging.
 struct LogAnywhereStep: View {
-    @Environment(\.palette) private var palette
-    @State private var path: GuidePath = .homeScreen
     @State private var showing: GuidePath?
     @State private var watchedOne = false
     let onFinish: () -> Void
@@ -100,31 +105,17 @@ struct LogAnywhereStep: View {
     var body: some View {
         OnboardingPage {
             OnboardingHeading(
-                title: "Log from anywhere",
-                detail: "One tap from your Home Screen, Lock Screen, or Control Center. The app never opens."
+                title: "Log from your Home Screen.",
+                detail: "One tap logs it. The app stays closed."
             )
-            VStack(spacing: Spacing.x5) {
-                Picker("Where", selection: $path) {
-                    Text("Home").tag(GuidePath.homeScreen)
-                    Text("Lock").tag(GuidePath.lockScreen)
-                    Text("Control Center").tag(GuidePath.controlCenter)
-                }
-                .pickerStyle(.segmented)
-                GuideScreenshot(asset: path.doneAsset, tap: nil)
-                    .frame(height: 380)
-                    .id(path)
-                    .transition(.opacity)
-                    .accessibilityLabel("\(path.title), finished")
-                Text("Siri works too: “Log itching in Cali Care.”")
-                    .textStyle(.meta)
-                    .foregroundStyle(palette.graphite)
-            }
-            .padding(.horizontal, Spacing.margin)
-            .animation(.easeOut(duration: 0.2), value: path)
+            GuideScreenshot(asset: GuidePath.homeScreen.doneAsset, tap: nil)
+                .frame(height: 380)
+                .frame(maxWidth: .infinity)
+                .accessibilityLabel("The Itchy widget on a Home Screen")
         } footer: {
-            Button("Show me how") { showing = path }
+            Button("Show me how") { showing = .homeScreen }
                 .buttonStyle(.primary)
-            Button(watchedOne ? "Go to Today" : "Skip for now", action: onFinish)
+            Button(watchedOne ? "Go to Today" : "Not now", action: onFinish)
                 .buttonStyle(.textLink)
         }
         .fullScreenCover(item: $showing, onDismiss: { watchedOne = true }) { path in

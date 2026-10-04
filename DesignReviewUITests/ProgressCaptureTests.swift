@@ -11,7 +11,7 @@ final class ProgressCaptureTests: XCTestCase {
         app.launch()
         sleep(3)
 
-        app.buttons["Progress"].tap()
+        app.buttons["How it’s going"].tap()
         sleep(2)
         Capture.screen("progress-week-\(variant)")
         app.buttons["Month"].tap()

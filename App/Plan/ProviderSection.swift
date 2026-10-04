@@ -13,7 +13,7 @@ struct ProviderSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.x2) {
-            Text("Provider")
+            Text("Doctor")
                 .textStyle(.section)
                 .foregroundStyle(palette.ink)
                 .accessibilityAddTraits(.isHeader)
@@ -28,7 +28,7 @@ struct ProviderSection: View {
                         row("Messages", "\(messages.left) of \(messages.total) left" + (messages.until.map { " · until \($0.formatted(day))" } ?? ""))
                     }
                     .buttonStyle(.plain)
-                    .accessibilityHint("Logs one message sent to the provider.")
+                    .accessibilityHint("Logs one message sent to the doctor.")
                 }
                 if let last = tracker.lastVisit {
                     row("Last visit", last.date.formatted(day))
@@ -40,7 +40,7 @@ struct ProviderSection: View {
                 NavigationLink {
                     JournalExportView(child: child, from: model.activePlan?.startedAt)
                 } label: {
-                    Text("Journal for your provider").textStyle(.body).foregroundStyle(palette.indigo)
+                    Text("Notes for your doctor").textStyle(.body).foregroundStyle(palette.indigo)
                 }
                 .frame(minHeight: Size.touchTarget)
             }
@@ -86,7 +86,7 @@ private struct AddVisitSheet: View {
                     FormHeader("When")
                 }
                 Section {
-                    TextField("Provider", text: $provider)
+                    TextField("Doctor", text: $provider)
                         .textStyle(.body)
                 } header: {
                     FormHeader("Who")

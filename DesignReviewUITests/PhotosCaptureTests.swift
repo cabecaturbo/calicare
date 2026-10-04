@@ -9,7 +9,7 @@ final class PhotosCaptureTests: XCTestCase {
         app.launchArguments = ScreenTourTests.launchArguments + ["-designReviewSeed", "YES"]
         app.launch()
         sleep(3)
-        app.buttons["Progress"].firstMatch.tap()
+        app.buttons["How it’s going"].firstMatch.tap()
         sleep(2)
         let add = app.buttons["Add a spot"].firstMatch
         for _ in 0..<5 where !add.isHittable { app.swipeUp() }

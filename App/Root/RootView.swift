@@ -8,7 +8,9 @@ struct RootView: View {
 
     var body: some View {
         Group {
-            if hasOnboarded {
+            if let review = Self.reviewStep {
+                OnboardingView(start: review) {}
+            } else if hasOnboarded {
                 AppShell()
             } else if let start {
                 OnboardingView(start: start) { hasOnboarded = true }
@@ -17,6 +19,21 @@ struct RootView: View {
             }
         }
         .task { await chooseStart() }
+    }
+
+    /// Design review only: `-designReviewOnboarding welcome|child|reminders|logAnywhere`.
+    private static var reviewStep: OnboardingView.Step? {
+        #if DEBUG
+        switch UserDefaults.standard.string(forKey: "designReviewOnboarding") {
+        case "welcome": return .welcome
+        case "child": return .child
+        case "reminders": return .reminders
+        case "logAnywhere": return .logAnywhere
+        default: return nil
+        }
+        #else
+        return nil
+        #endif
     }
 
     /// Someone who already added a child (and left mid-setup) picks up at reminders.

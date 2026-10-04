@@ -30,7 +30,7 @@ final class TodayCaptureTests: XCTestCase {
             Capture.screen("today-rated-\(variant)")
         }
 
-        tap(app.buttons["More to log"])
+        tap(app.buttons["More"])
         tap(app.buttons["Flare"])
         tap(app.buttons["Add where"])
         let outline = app.otherElements["Body outline, front"]
@@ -44,7 +44,7 @@ final class TodayCaptureTests: XCTestCase {
 
         // The first tap after a sheet closes can land before the bar is ready.
         for _ in 0..<3 where !app.buttons["Mood"].exists {
-            app.buttons["More to log"].tap()
+            app.buttons["More"].tap()
             sleep(1)
         }
         tap(app.buttons["Mood"])

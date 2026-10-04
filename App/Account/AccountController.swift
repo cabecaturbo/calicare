@@ -86,15 +86,24 @@ final class AccountController {
 
     /// Deletes the account on the server (see supabase/functions/delete-account),
     /// then signs out here. With `erasePhone`, children and logs leave this
-    /// phone too; otherwise they stay, like before signing in.
+    /// phone too; otherwise they stay, like before signing in. Apple's sheet
+    /// asks first, so the server can tell Apple to forget the app.
     func deleteAccount(erasePhone: Bool) async -> Bool {
         guard let client else { return false }
         isWorking = true
         defer { isWorking = false }
+        let appleCode: String?
+        switch await AppleReauthorization.code() {
+        case .code(let code): appleCode = code
+        case .canceled: return false
+        case .unavailable: appleCode = nil
+        }
         struct Deleted: Decodable { let deleted: Bool }
+        struct Body: Encodable { let apple_authorization_code: String? }
         do {
             let result: Deleted = try await client.functions.invoke(
-                "delete-account", options: FunctionInvokeOptions(method: .post)
+                "delete-account",
+                options: FunctionInvokeOptions(method: .post, body: Body(apple_authorization_code: appleCode))
             )
             guard result.deleted else { throw CancellationError() }
         } catch {

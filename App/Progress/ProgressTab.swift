@@ -199,11 +199,22 @@ struct ProgressTab: View {
             self.report = report
             let today = CareDay.containing(.now)
             monthReport = try await MonthlyReport.load(child: child, year: today.year, month: today.month, container: container)
-            file = try WeeklyCardRenderer.file(for: report)
             await loadChanges(child: child, container: container, today: today)
             problem = nil
+            file = await cardFile(for: report)
         } catch {
-            problem = "Couldn't make the card just now. Try again in a moment."
+            problem = "Couldn't load this week just now. Try again in a moment."
         }
+    }
+
+    /// The shareable card. Rendering can fail for a moment right as the app
+    /// opens, so try a few times; if it still fails, only the card's Share
+    /// button is missing, and everything else on the page still shows.
+    private func cardFile(for report: WeeklyReport) async -> URL? {
+        for attempt in 0..<3 {
+            if let url = try? WeeklyCardRenderer.file(for: report) { return url }
+            try? await Task.sleep(for: .milliseconds(400 * (attempt + 1)))
+        }
+        return nil
     }
 }

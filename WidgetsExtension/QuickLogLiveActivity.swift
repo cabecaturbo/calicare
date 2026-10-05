@@ -105,8 +105,8 @@ private struct QuickLogCardView: View {
     }
 }
 
-/// The big Log button, matching the Home Screen widget: a terracotta capsule
-/// with a soft shade and the palm. Never red: terracotta is the accent.
+/// The big Log button, matching the Home Screen widget: a rose capsule
+/// with a soft shade and the palm. Never red: rose is the accent.
 private struct CardLogButton: View {
     let childID: UUID
     let palette: Palette

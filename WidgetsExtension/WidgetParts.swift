@@ -2,7 +2,7 @@ import Core
 import SwiftUI
 import WidgetKit
 
-/// The main log button: a terracotta tile with a soft top-to-bottom shade,
+/// The main log button: a rose tile with a soft top-to-bottom shade,
 /// the palm in a pale circle, and "Log" in the serif. In tinted and clear
 /// looks it keeps a filled glass shape, so it stays the widget's main thing.
 struct ItchyTile: View {
@@ -45,7 +45,7 @@ struct ItchyTile: View {
 }
 
 /// A quieter one-tap button beside Log: a soft oat pill with a small
-/// terracotta icon in full color, an outline in tinted and clear.
+/// rose icon in full color, an outline in tinted and clear.
 struct SecondaryWidgetButton: View {
     @Environment(\.widgetRenderingMode) private var renderingMode
     let palette: Palette

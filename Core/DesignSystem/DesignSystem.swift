@@ -1,6 +1,6 @@
 import SwiftUI
 
-// Tokens from DESIGN.md: paper, ink, terracotta, and sage. Only this file should change
+// Tokens from DESIGN.md: paper, ink, rose, and sage. Only this file should change
 // if the palette or the serif is ever swapped.
 
 // MARK: - Color
@@ -32,27 +32,26 @@ public struct Palette: Sendable, Equatable {
     public let isNight: Bool
     private let tokens: [Token: UInt32]
     /// Sage density, calm first. Day: light is calm. Night: brighter is harder.
-    /// Never red: terracotta is the accent, never a severity.
+    /// Never red: rose is the accent, never a severity.
     public let severityScale: [UInt32]
 
+    /// Blush and rose (owner, October 5, 2026): blush paper, a dusty rose
+    /// accent for buttons and links only, and a warm sage skin scale.
     public static let day = Palette(
         isNight: false,
         tokens: [
-            .paper: 0xF6F1E8, .oat: 0xECE4D6, .ink: 0x1E1B18, .graphite: 0x5C554D,
-            .hairline: 0xD8CFC0, .accent: 0xA4492E, .ochre: 0x8A6320,
+            .paper: 0xF9F0EC, .oat: 0xF2E2DC, .ink: 0x2B1D1F, .graphite: 0x6E5A5C,
+            .hairline: 0xE6D0CA, .accent: 0x9E4357, .ochre: 0x8A6320,
         ],
-        severityScale: [0xE6EADF, 0xC6D1BB, 0x9AAE8C, 0x6B8360, 0x3F5236]
+        severityScale: [0xEAEDE1, 0xCCD6BF, 0xADBDA0, 0x8FA382, 0x56704C]
     )
 
-    /// 8 PM – 7 AM. Warm text, never pure white. Night ochre isn't in DESIGN.md;
-    /// #C9A15B is a proposed value (7.5:1 on night).
+    /// 8 PM – 7 AM keeps the night layout (bigger Log button and rows) but,
+    /// since October 5, 2026, the same colors as the day: no dark mode.
     public static let night = Palette(
         isNight: true,
-        tokens: [
-            .paper: 0x1B1714, .oat: 0x26201B, .ink: 0xEAE3D6, .graphite: 0xA8A093,
-            .hairline: 0x3A322B, .accent: 0xE29A78, .ochre: 0xC9A15B,
-        ],
-        severityScale: [0x2B3026, 0x3C4634, 0x5B6D4E, 0x8CA67C, 0xC2D4B1]
+        tokens: Palette.day.tokens,
+        severityScale: Palette.day.severityScale
     )
 
     /// Every text-on-background combination the UI may use. The contrast test

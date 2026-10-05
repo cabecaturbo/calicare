@@ -69,7 +69,7 @@ struct ProductEditor: View {
                 Text("In your own words, for next time.")
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
     }
 
     private func save() async {

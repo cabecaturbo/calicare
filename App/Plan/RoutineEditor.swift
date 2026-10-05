@@ -38,7 +38,7 @@ struct RoutineEditor: View {
                 Button("OK", role: .cancel) {}
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .task { await reload() }
     }
 
@@ -74,7 +74,7 @@ struct RoutineEditor: View {
                     Button("Delete") { run { try await $0.delete(step.id) } }
                         .tint(palette.graphite)
                     Button(step.isActive ? "Pause" : "Resume") { run { try await $0.setActive(step.id, !step.isActive) } }
-                        .tint(palette.indigo)
+                        .tint(palette.accent)
                 }
                 .accessibilityActions {
                     Button(step.isActive ? "Pause" : "Resume") { run { try await $0.setActive(step.id, !step.isActive) } }

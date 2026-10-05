@@ -75,7 +75,7 @@ struct LogButtons: View {
                 if selected {
                     Image(systemName: "checkmark")
                         .font(.body.weight(.regular))
-                        .foregroundStyle(palette.indigo)
+                        .foregroundStyle(palette.accent)
                         .accessibilityHidden(true)
                 }
             }

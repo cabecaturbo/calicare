@@ -16,7 +16,7 @@ struct LeftoversSection: View {
             ForEach(model.batches) { batch in
                 row(batch)
                     .swipeActions(edge: .trailing) {
-                        Button("Used") { Task { await model.finishBatch(batch) } }.tint(palette.indigo)
+                        Button("Used") { Task { await model.finishBatch(batch) } }.tint(palette.accent)
                         if batch.place == .fridge {
                             Button("Freeze") { onFreeze(batch) }.tint(palette.graphite)
                         }
@@ -93,7 +93,7 @@ struct AddBatchSheet: View {
                 }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .presentationDetents([.medium])
     }
 }

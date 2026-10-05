@@ -83,8 +83,8 @@ private struct GivingRow: View {
                             .foregroundStyle(on ? palette.paper : palette.ink)
                             .padding(.horizontal, Spacing.x2 + Spacing.x1)
                             .padding(.vertical, Spacing.x1)
-                            .background(Capsule().fill(on ? palette.indigo : Color.clear))
-                            .overlay(Capsule().strokeBorder(on ? palette.indigo : palette.hairline, lineWidth: 1))
+                            .background(Capsule().fill(on ? palette.accent : Color.clear))
+                            .overlay(Capsule().strokeBorder(on ? palette.accent : palette.hairline, lineWidth: 1))
                             .frame(minHeight: Size.touchTarget)
                             .contentShape(Rectangle())
                     }
@@ -99,7 +99,7 @@ private struct GivingRow: View {
                         Text("How to give").textStyle(.meta)
                         Image(systemName: showingHow ? "chevron.up" : "chevron.down").font(.caption)
                     }
-                    .foregroundStyle(palette.indigo)
+                    .foregroundStyle(palette.accent)
                     .frame(minHeight: Size.touchTarget)
                     .contentShape(Rectangle())
                 }

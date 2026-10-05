@@ -4,7 +4,7 @@ import SwiftUI
 /// Draws a DoctorReport as a multi-page US Letter PDF: summary and trends,
 /// day by day, notes, then the full log table. Every page carries the child,
 /// the dates, and "Not medical advice. Logged by parent." White pages (they
-/// get printed), ink text, indigo only in the charts.
+/// get printed), ink text, accent only in the charts.
 public enum DoctorReportPDF {
     public static let pageSize = CGSize(width: 612, height: 792)
     /// About 24pt a row in the ~560pt between the page title and the footer.
@@ -147,7 +147,7 @@ private struct SummaryPage: View {
                 .padding(.top, Spacing.margin)
             Chart(report.days, id: \.day) { day in
                 BarMark(x: .value("Night", day.day.noon()), y: .value("Wake-ups", day.itchyWakeUps))
-                    .foregroundStyle(palette.indigo)
+                    .foregroundStyle(palette.accent)
             }
             .chartYAxis { AxisMarks(values: .automatic(desiredCount: 3)) }
             .frame(height: 120)
@@ -159,7 +159,7 @@ private struct SummaryPage: View {
                 .padding(.top, Spacing.x4)
             Chart(report.days.filter { $0.night != nil }, id: \.day) { day in
                 PointMark(x: .value("Night", day.day.noon()), y: .value("Level", day.night?.rawValue ?? 0))
-                    .foregroundStyle(palette.indigo)
+                    .foregroundStyle(palette.accent)
             }
             .chartYScale(domain: 0...2)
             .chartYAxis {

@@ -165,7 +165,7 @@ struct StartTrialSheet: View {
                 }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .presentationDetents([.medium, .large])
     }
 }

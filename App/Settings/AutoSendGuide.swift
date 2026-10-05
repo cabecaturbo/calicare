@@ -28,7 +28,7 @@ struct AutoSendGuide: View {
                         HStack(alignment: .firstTextBaseline, spacing: Spacing.x4) {
                             Text("\(index + 1)")
                                 .textStyle(.label)
-                                .foregroundStyle(palette.indigo)
+                                .foregroundStyle(palette.accent)
                                 .frame(width: 20, alignment: .leading)
                             Text(step)
                                 .textStyle(.body)

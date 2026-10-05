@@ -21,13 +21,13 @@ struct CaliCareShortcuts: AppShortcutsProvider {
             systemImageName: "moon.zzz"
         )
         AppShortcut(
-            intent: StartTonightIntent(),
+            intent: StartQuickLogIntent(),
             phrases: [
-                "Start tonight in \(.applicationName)",
-                "Start Tonight in \(.applicationName)",
+                "Start Quick Log in \(.applicationName)",
+                "Put Quick Log on the Lock Screen in \(.applicationName)",
             ],
-            shortTitle: "Start Tonight",
-            systemImageName: "moon"
+            shortTitle: "Start Quick Log",
+            systemImageName: "hand.raised"
         )
         AppShortcut(
             intent: LogItchIntent(),

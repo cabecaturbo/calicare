@@ -36,16 +36,16 @@ struct AppShell: View {
             if DeepLink.isNote(url) { shell.showingNote = true }
             if DeepLink.isProgress(url) { shell.tab = .progress }
             if DeepLink.isNight(url) { shell.showingNight = true }
-            if DeepLink.isTonight(url) {
+            if DeepLink.isQuickLog(url) {
                 shell.tab = .today
-                if !Tonight.isRunning { shell.startingTonight = true }
+                if !QuickLogCard.isRunning { shell.startingQuickLog = true }
             }
         }
         .sheet(isPresented: $shell.showingNight) {
             NightSummarySheet()
                 .nightAwarePalette()
         }
-        .tonightStarter()
+        .quickLogCardStarter()
         .sheet(isPresented: $shell.showingLog) {
             LogSheet()
                 .nightAwarePalette()
@@ -114,7 +114,7 @@ struct AppShell: View {
                 .accessibilityLabel("Log itching")
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
 
         if pills {
             // The system tab bar is hidden; BottomBar draws the pills and log control.

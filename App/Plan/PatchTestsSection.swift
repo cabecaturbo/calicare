@@ -76,7 +76,7 @@ struct PatchTestsScreen: View {
         AdaptiveStack {
             Text(title).textStyle(.body).foregroundStyle(palette.ink)
             Spacer(minLength: 0)
-            Text(detail).textStyle(.meta).foregroundStyle(ready ? palette.indigo : palette.graphite)
+            Text(detail).textStyle(.meta).foregroundStyle(ready ? palette.accent : palette.graphite)
         }
         .frame(minHeight: 52)
         .contentShape(Rectangle())
@@ -135,7 +135,7 @@ private struct StartPatchTestSheet: View {
                 }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .presentationDetents([.medium, .large])
     }
 

@@ -33,7 +33,7 @@ struct NoteSheet: View {
                     }
                 }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .presentationDetents([.medium, .large])
         .onAppear { focused = true }
     }

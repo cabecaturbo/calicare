@@ -149,7 +149,7 @@ private struct NightRow: View {
                     Capsule().fill(palette.hairline).frame(height: 1)
                     ForEach(Array(night.positions.enumerated()), id: \.offset) { _, position in
                         Circle()
-                            .fill(palette.indigo)
+                            .fill(palette.accent)
                             .frame(width: Self.dot, height: Self.dot)
                             .offset(x: (proxy.size.width - Self.dot) * position)
                             .widgetAccentable()

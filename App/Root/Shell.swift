@@ -21,11 +21,11 @@ final class Shell {
     var choosing: LogChoice?
     /// A flare getting "Add where".
     var addingWhere: LogEntry?
-    /// Start Tonight (asks which child first when there's more than one).
-    var startingTonight = false
-    var pickingTonightChild = false
-    /// Bumped when Tonight starts or ends, so rows showing it refresh.
-    var tonightVersion = 0
-    /// Last night's summary, from the morning Tonight card.
+    /// Put Quick Log on the Lock Screen (asks which child first when there's more than one).
+    var startingQuickLog = false
+    var pickingQuickLogChild = false
+    /// Bumped when the card is added or removed, so rows showing it refresh.
+    var quickLogVersion = 0
+    /// Last night's summary, from the card in the morning.
     var showingNight = false
 }

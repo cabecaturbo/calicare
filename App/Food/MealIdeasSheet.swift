@@ -84,7 +84,7 @@ struct MealIdeasSheet: View {
                 ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .sheet(isPresented: $signingIn) {
             AccountSheet().environment(account).nightAwarePalette()
         }
@@ -139,8 +139,8 @@ struct FoodChips: View {
                         .foregroundStyle(on ? palette.paper : palette.ink)
                         .padding(.horizontal, Spacing.x4)
                         .frame(minHeight: Size.touchTarget)
-                        .background(on ? palette.indigo : palette.paper, in: Capsule())
-                        .overlay(Capsule().strokeBorder(on ? palette.indigo : palette.hairline, lineWidth: 1))
+                        .background(on ? palette.accent : palette.paper, in: Capsule())
+                        .overlay(Capsule().strokeBorder(on ? palette.accent : palette.hairline, lineWidth: 1))
                 }
                 .buttonStyle(.plain)
                 .accessibilityAddTraits(on ? .isSelected : [])

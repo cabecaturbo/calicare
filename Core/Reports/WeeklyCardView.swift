@@ -103,7 +103,7 @@ public struct WeeklyCardView: View {
     }
 }
 
-/// Seven night dots and seven skin bars on the indigo scale. Empty days are outlines.
+/// Seven night dots and seven skin bars on the accent scale. Empty days are outlines.
 private struct WeekChart: View {
     let days: [WeeklyCard.Day]
     let palette: Palette
@@ -142,7 +142,7 @@ private struct WeekChart: View {
         }
     }
 
-    /// Taller and deeper for harder days (indigo steps 1–5); an outline when not answered.
+    /// Taller and deeper for harder days (accent steps 1–5); an outline when not answered.
     @ViewBuilder
     private func bar(step: Int?) -> some View {
         let shape = RoundedRectangle(cornerRadius: Corner.image)

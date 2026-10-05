@@ -62,7 +62,7 @@ struct WeekGrid: View {
                     ForEach(Array(days.enumerated()), id: \.element.id) { index, day in
                         Text(day.day.noon().formatted(.dateTime.weekday(.narrow)))
                             .font(index == days.count - 1 ? TypeStyle.meta.font.weight(.semibold) : TypeStyle.meta.font)
-                            .foregroundStyle(index == days.count - 1 ? palette.indigo : palette.graphite)
+                            .foregroundStyle(index == days.count - 1 ? palette.accent : palette.graphite)
                     }
                 }
             }

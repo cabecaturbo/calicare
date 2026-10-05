@@ -2,9 +2,9 @@ import Core
 import SwiftUI
 import WidgetKit
 
-/// The main log button: a filled tile with the palm and "Log" under it, centered.
-/// In tinted and clear (accented) looks it keeps a filled glass shape, so it
-/// stays the most prominent thing in the widget.
+/// The main log button: a terracotta tile with a soft top-to-bottom shade,
+/// the palm in a pale circle, and "Log" in the serif. In tinted and clear
+/// looks it keeps a filled glass shape, so it stays the widget's main thing.
 struct ItchyTile: View {
     @Environment(\.widgetRenderingMode) private var renderingMode
     let child: ChildEntity?
@@ -12,50 +12,68 @@ struct ItchyTile: View {
 
     var body: some View {
         let fullColor = renderingMode == .fullColor
+        let shape = RoundedRectangle(cornerRadius: 20, style: .continuous)
         Button(intent: WidgetLogIntent(action: .itchy, child: child)) {
-            VStack(spacing: Spacing.x1) {
+            VStack(spacing: Spacing.x2) {
                 Image(systemName: "hand.raised.fill")
-                    .font(.title2)
+                    .font(.system(size: 20, weight: .medium))
+                    .frame(width: 40, height: 40)
+                    .background(Circle().fill((fullColor ? palette.paper : Color.primary).opacity(0.18)))
                 Text("Log")
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.custom("NewsreaderDisplay-Medium", size: 20, relativeTo: .title3))
             }
             .foregroundStyle(fullColor ? palette.paper : Color.primary)
             .widgetAccentable()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .frame(minHeight: Size.touchTarget)
-            .background(
-                RoundedRectangle(cornerRadius: Corner.card)
-                    .fill(fullColor ? palette.indigo : Color.primary.opacity(0.28))
-            )
-            .contentShape(RoundedRectangle(cornerRadius: Corner.card))
+            .background {
+                if fullColor {
+                    shape.fill(LinearGradient(
+                        colors: [palette.accent.mix(with: .white, by: 0.08), palette.accent.mix(with: .black, by: 0.06)],
+                        startPoint: .top, endPoint: .bottom
+                    ))
+                    .overlay(shape.strokeBorder(Color.white.opacity(0.14), lineWidth: 1))
+                } else {
+                    shape.fill(Color.primary.opacity(0.28))
+                }
+            }
+            .contentShape(shape)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(WidgetAction.itchy.accessibilityLabel(for: child?.name))
     }
 }
 
-/// A quieter one-tap button beside Itchy: a soft fill in full color, an
-/// outline in tinted and clear.
-struct SecondaryWidgetButton<Label: View>: View {
+/// A quieter one-tap button beside Log: a soft oat pill with a small
+/// terracotta icon in full color, an outline in tinted and clear.
+struct SecondaryWidgetButton: View {
     @Environment(\.widgetRenderingMode) private var renderingMode
     let palette: Palette
-    @ViewBuilder let label: Label
+    let title: String
+    let symbol: String
 
     var body: some View {
         let fullColor = renderingMode == .fullColor
-        label
-            .font(TypeStyle.control.font)
-            .foregroundStyle(fullColor ? palette.ink : Color.primary)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .frame(minHeight: Size.touchTarget)
-            .background {
-                if fullColor {
-                    RoundedRectangle(cornerRadius: Corner.card).fill(palette.oat)
-                } else {
-                    RoundedRectangle(cornerRadius: Corner.card).strokeBorder(Color.primary.opacity(0.5), lineWidth: 1)
-                }
+        let shape = RoundedRectangle(cornerRadius: 16, style: .continuous)
+        HStack(spacing: Spacing.x1 + 2) {
+            Image(systemName: symbol)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(fullColor ? palette.accent : Color.primary)
+                .widgetAccentable()
+            Text(title)
+                .font(.system(size: 15, weight: .medium))
+                .foregroundStyle(fullColor ? palette.ink : Color.primary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(minHeight: Size.touchTarget)
+        .background {
+            if fullColor {
+                shape.fill(palette.oat)
+            } else {
+                shape.strokeBorder(Color.primary.opacity(0.5), lineWidth: 1)
             }
-            .contentShape(RoundedRectangle(cornerRadius: Corner.card))
+        }
+        .contentShape(shape)
     }
 }
 
@@ -66,7 +84,7 @@ struct FlareButton: View {
 
     var body: some View {
         Button(intent: WidgetLogIntent(action: .flare, child: child)) {
-            SecondaryWidgetButton(palette: palette) { Text("Flare") }
+            SecondaryWidgetButton(palette: palette, title: "Flare", symbol: "flame")
         }
         .buttonStyle(.plain)
         .accessibilityLabel(WidgetAction.flare.accessibilityLabel(for: child?.name))
@@ -78,7 +96,7 @@ struct NoteLink: View {
 
     var body: some View {
         Link(destination: DeepLink.note) {
-            SecondaryWidgetButton(palette: palette) { Text("Note") }
+            SecondaryWidgetButton(palette: palette, title: "Note", symbol: "square.and.pencil")
         }
         .accessibilityLabel("Write a note")
         .accessibilityHint("Opens Cali Care.")
@@ -93,7 +111,7 @@ struct UndoButton: View {
         Button(intent: UndoLastIntent()) {
             Text("Undo")
                 .font(TypeStyle.control.font)
-                .foregroundStyle(palette.indigo)
+                .foregroundStyle(palette.accent)
                 .frame(minWidth: Size.touchTarget, minHeight: Size.touchTarget, alignment: .leading)
                 .contentShape(Rectangle())
         }
@@ -111,7 +129,7 @@ struct LoggedLabel: View {
         VStack(alignment: .leading, spacing: 2) {
             Image(systemName: "checkmark")
                 .font(.body.weight(.semibold))
-                .foregroundStyle(palette.indigo)
+                .foregroundStyle(palette.accent)
                 .widgetAccentable()
                 .accessibilityHidden(true)
             Text("Logged")

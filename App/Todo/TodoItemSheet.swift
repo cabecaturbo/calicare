@@ -31,7 +31,7 @@ struct TodoItemSheet: View {
                     ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
                 }
             }
-            .tint(palette.indigo)
+            .tint(palette.accent)
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
         }

@@ -27,11 +27,11 @@ final class MessagesModel {
             }
         }
         cards = loaded
-        let day = TonightNight.lastNight(at: now)
+        let day = LogPeriod.lastNight(at: now)
         var nights: [LastNightText] = []
         for child in children {
             let events = (try? await LogStore(modelContainer: container).events(for: day, child: child.id)) ?? []
-            let text = TonightNight(day: day, events: events).words.shareText { TonightClock.time($0) }
+            let text = LogPeriod(kind: .night, day: day, events: events).words.shareText { CardClock.time($0) }
             nights.append(LastNightText(childName: child.name, text: children.count > 1 ? "\(child.name). \(text)" : text))
         }
         lastNights = nights

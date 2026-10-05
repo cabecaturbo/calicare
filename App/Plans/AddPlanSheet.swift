@@ -73,7 +73,7 @@ struct AddPlanSheet: View {
                 }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .fullScreenCover(isPresented: $scanning) {
             DocumentScanner { images in
                 scanning = false
@@ -220,7 +220,7 @@ private struct ChoiceLabel: View {
         HStack(spacing: Spacing.x4) {
             Image(systemName: symbol)
                 .font(.body)
-                .foregroundStyle(palette.indigo)
+                .foregroundStyle(palette.accent)
                 .frame(width: 28)
             Text(title)
                 .textStyle(.body)

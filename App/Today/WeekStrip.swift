@@ -2,7 +2,7 @@ import Core
 import SwiftUI
 
 /// The last 7 days: a dot for each night and a square for each day's skin, on the
-/// indigo scale. Days with nothing logged are plain outlines, never "missed".
+/// accent scale. Days with nothing logged are plain outlines, never "missed".
 struct WeekStrip: View {
     @Environment(\.palette) private var palette
     @Environment(\.dynamicTypeSize) private var typeSize
@@ -41,7 +41,7 @@ struct WeekStrip: View {
                 VStack(spacing: Spacing.x4) {
                     Text(weekdayLetter(day))
                         .textStyle(.meta)
-                        .foregroundStyle(isToday(day) ? palette.indigo : palette.graphite)
+                        .foregroundStyle(isToday(day) ? palette.accent : palette.graphite)
                     LevelMark(fill: day.night.map(palette.color(for:)), shape: .circle)
                         .frame(height: Self.markRow)
                     LevelMark(fill: day.skin.map(palette.color(for:)), shape: .square)
@@ -104,7 +104,7 @@ struct WeekStrip: View {
     }
 }
 
-/// A filled indigo mark, or a quiet outline when there's nothing (no log, or skin not answered).
+/// A filled accent mark, or a quiet outline when there's nothing (no log, or skin not answered).
 private struct LevelMark: View {
     enum MarkShape { case circle, square }
 

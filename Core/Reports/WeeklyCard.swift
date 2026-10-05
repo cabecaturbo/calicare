@@ -8,7 +8,7 @@ public struct WeeklyCard: Codable, Equatable, Sendable {
         public var letter: String
         /// CareLevel raw value; nil when nothing was logged.
         public var night: Int?
-        /// The skin answer's indigo step (1, 2, 4, 5); nil when not answered.
+        /// The skin answer's accent step (1, 2, 4, 5); nil when not answered.
         /// Key "k": links from before skinToday used "s" for guessed skin, which is no longer read.
         public var skin: Int?
 

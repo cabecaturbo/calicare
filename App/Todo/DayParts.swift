@@ -36,7 +36,7 @@ private struct DayPartCard: View {
             VStack(alignment: .leading, spacing: Spacing.x1) {
                 Image(systemName: symbol)
                     .font(.system(size: 18, weight: .regular))
-                    .foregroundStyle(isShown ? palette.indigo : palette.graphite)
+                    .foregroundStyle(isShown ? palette.accent : palette.graphite)
                     .frame(height: 20)
                 Text(block.block.title)
                     .textStyle(.label)
@@ -54,7 +54,7 @@ private struct DayPartCard: View {
                     .frame(height: 4)
                     .overlay(alignment: .leading) {
                         GeometryReader { proxy in
-                            Capsule().fill(palette.indigo).frame(width: proxy.size.width * block.fraction)
+                            Capsule().fill(palette.accent).frame(width: proxy.size.width * block.fraction)
                         }
                     }
                     .padding(.top, Spacing.x1)

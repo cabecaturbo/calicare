@@ -44,7 +44,7 @@ public struct WeeklyBubbleView: View {
             HStack {
                 Text("Tap to see full week.")
                     .font(TypeStyle.control.font)
-                    .foregroundStyle(palette.indigo)
+                    .foregroundStyle(palette.accent)
                 Spacer()
                 Text("Not medical advice.")
                     .font(TypeStyle.meta.font)

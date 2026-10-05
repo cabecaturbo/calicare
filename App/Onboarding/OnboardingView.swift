@@ -60,7 +60,7 @@ struct OnboardingView: View {
             HStack(spacing: Spacing.x1) {
                 ForEach(Step.allCases.dropFirst(), id: \.self) { item in
                     Capsule()
-                        .fill(item.rawValue <= step.rawValue ? palette.indigo : palette.hairline)
+                        .fill(item.rawValue <= step.rawValue ? palette.accent : palette.hairline)
                         .frame(height: 2)
                 }
             }

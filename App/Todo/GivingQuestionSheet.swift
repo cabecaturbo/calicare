@@ -29,7 +29,7 @@ struct GivingQuestionSheet: View {
                             HStack(spacing: Spacing.x4) {
                                 Image(systemName: isOn ? "checkmark.circle.fill" : "circle")
                                     .font(.title2)
-                                    .foregroundStyle(isOn ? palette.indigo : palette.graphite)
+                                    .foregroundStyle(isOn ? palette.accent : palette.graphite)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(SupplementDisplay(row.item).name).textStyle(.body).foregroundStyle(palette.ink)
                                     if let dose = row.item.dose {
@@ -60,7 +60,7 @@ struct GivingQuestionSheet: View {
                 ToolbarItem(placement: .confirmationAction) { Button("Save") { Task { await save() } } }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .interactiveDismissDisabled()
         .onAppear {
             guard !loaded else { return }

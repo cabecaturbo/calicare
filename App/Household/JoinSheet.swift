@@ -90,7 +90,7 @@ struct JoinSheet: View {
                 Text(mergeMessage)
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .onAppear { focused = true }
     }
 

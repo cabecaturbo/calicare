@@ -10,9 +10,9 @@ care plan and track progress with as little effort as possible.
 - Every log is one tap. Works offline, at night, one-handed.
 - The app never recommends treatments. It organizes the plan the family's
   provider gave them. No medical claims. No diagnosis.
-- No streaks, no guilt, no red for "bad." Severity uses indigo density (see DESIGN.md).
+- No streaks, no guilt, no red for "bad." Severity uses sage density; terracotta is only the accent, never a severity (see DESIGN.md).
 - Children's photos never leave the device.
-- Beautiful and calm: paper, ink, and indigo, generous spacing (see DESIGN.md).
+- Beautiful and calm: paper, ink, terracotta, and sage, generous spacing (see DESIGN.md).
 
 ## Tech
 - Bundle ID: com.cursorkittens.calicare (widgets: .widgets, Core: .core).

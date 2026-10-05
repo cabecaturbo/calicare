@@ -48,7 +48,7 @@ struct TodayView: View {
         if let hint = TodayPrompts.firstRunHint(hasEverLogged: model.hasEverLogged, isNight: night, asksSkin: asksSkin, childName: name) {
             Text(hint)
                 .textStyle(.body)
-                .foregroundStyle(palette.indigo)
+                .foregroundStyle(palette.accent)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, Spacing.margin)
                 .padding(.top, Spacing.x4)
@@ -67,8 +67,8 @@ struct TodayView: View {
             .padding(.horizontal, Spacing.margin)
             .padding(.top, asksSkin ? Spacing.x7 : Spacing.x5)
 
-        if TonightRow.shows() {
-            TonightRow()
+        if QuickLogCardRow.shows {
+            QuickLogCardRow()
                 .padding(.horizontal, Spacing.margin)
                 .padding(.top, Spacing.x4)
         }
@@ -92,7 +92,7 @@ struct TodayView: View {
                 Spacer()
                 Button("Change") { changingSkin = true }
                     .font(.body)
-                    .foregroundStyle(palette.indigo)
+                    .foregroundStyle(palette.accent)
                     .frame(minHeight: Size.touchTarget)
             }
             .padding(.horizontal, Spacing.margin)
@@ -114,7 +114,7 @@ struct TodayView: View {
                 .foregroundStyle(palette.paper)
                 .frame(maxWidth: .infinity, minHeight: 96, alignment: .leading)
                 .padding(.horizontal, Spacing.x5)
-                .background(palette.indigo, in: RoundedRectangle(cornerRadius: Corner.card))
+                .background(palette.accent, in: RoundedRectangle(cornerRadius: Corner.card))
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Log itching")
@@ -211,7 +211,7 @@ struct SkinCheckIn: View {
                         .background(isSelected ? palette.oat : palette.paper, in: RoundedRectangle(cornerRadius: Corner.card))
                         .overlay(
                             RoundedRectangle(cornerRadius: Corner.card)
-                                .strokeBorder(isSelected ? palette.indigo : palette.hairline, lineWidth: isSelected ? 2 : 1)
+                                .strokeBorder(isSelected ? palette.accent : palette.hairline, lineWidth: isSelected ? 2 : 1)
                         )
                         .overlay(alignment: .topTrailing) {
                             if isSelected {
@@ -219,7 +219,7 @@ struct SkinCheckIn: View {
                                     .font(.caption.weight(.bold))
                                     .foregroundStyle(palette.paper)
                                     .frame(width: 22, height: 22)
-                                    .background(palette.indigo, in: Circle())
+                                    .background(palette.accent, in: Circle())
                                     .offset(x: 8, y: -8)
                             }
                         }

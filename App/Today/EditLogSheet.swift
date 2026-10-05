@@ -38,7 +38,7 @@ struct EditLogSheet: View {
                         } trailing: {
                             DatePicker("Time", selection: $timestamp, in: ...max(Date.now, entry.timestamp))
                                 .labelsHidden()
-                                .tint(palette.indigo)
+                                .tint(palette.accent)
                         }
                     }
 
@@ -93,7 +93,7 @@ struct EditLogSheet: View {
                 Button("Keep it", role: .cancel) {}
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
     }
 
     private func kindRow(_ option: Option) -> some View {
@@ -109,7 +109,7 @@ struct EditLogSheet: View {
                 if selected {
                     Image(systemName: "checkmark")
                         .font(.body.weight(.regular))
-                        .foregroundStyle(palette.indigo)
+                        .foregroundStyle(palette.accent)
                         .accessibilityHidden(true)
                 }
             }

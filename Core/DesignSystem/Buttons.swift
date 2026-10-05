@@ -58,7 +58,7 @@ public struct SecondaryButtonStyle: ButtonStyle {
     }
 }
 
-/// Indigo words, like "Undo" or "Show me again". Still at least 44pt to tap.
+/// Accent words, like "Undo" or "Show me again". Still at least 44pt to tap.
 public struct TextLinkButtonStyle: ButtonStyle {
     public init() {}
 
@@ -73,7 +73,7 @@ public struct TextLinkButtonStyle: ButtonStyle {
         var body: some View {
             configuration.label
                 .textStyle(.control)
-                .foregroundStyle(palette.indigo)
+                .foregroundStyle(palette.accent)
                 .opacity(configuration.isPressed ? 0.6 : 1)
                 .frame(minWidth: Size.touchTarget, minHeight: Size.touchTarget)
                 .contentShape(Rectangle())

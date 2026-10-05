@@ -84,7 +84,7 @@ struct PlanReviewView: View {
                 Text("The items and the saved file are removed from this phone.")
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .task { await reload() }
     }
 
@@ -142,7 +142,7 @@ private struct ItemRow: View {
             Button(action: onToggle) {
                 ZStack {
                     if item.isConfirmed {
-                        Circle().fill(palette.indigo)
+                        Circle().fill(palette.accent)
                         Image(systemName: "checkmark").font(.caption.weight(.bold)).foregroundStyle(palette.paper)
                     } else {
                         Circle().strokeBorder(palette.ink, lineWidth: 1)
@@ -246,7 +246,7 @@ private struct PlanItemEditor: View {
                 ToolbarItem(placement: .confirmationAction) { Button("Save") { Task { await save() } } }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
     }
 
     private func field(_ detail: PlanDetail, _ value: Binding<String?>) -> some View {

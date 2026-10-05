@@ -57,7 +57,7 @@ struct AccountSettingsSection: View {
                     LabeledContent {
                         Text(info.displayName ?? "Add a name")
                             .textStyle(.meta)
-                            .foregroundStyle(info.displayName == nil ? palette.indigo : palette.graphite)
+                            .foregroundStyle(info.displayName == nil ? palette.accent : palette.graphite)
                     } label: {
                         SettingsLabel("Shown as")
                     }

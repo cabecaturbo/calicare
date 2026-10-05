@@ -18,7 +18,7 @@ struct SettingsView: View {
                 FamilySection()
                 ReminderSettingsSection()
                 quickLoggingSection
-                TonightSettingsSection()
+                QuickLogCardSettingsSection()
                 yourDataSection
                 AccountSettingsSection()
                 aboutSection
@@ -35,7 +35,7 @@ struct SettingsView: View {
                 }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .task { await reminders.reload() }
         .sheet(isPresented: $addingChild, onDismiss: { Task { await model.load() } }) {
             AddChildSheet()

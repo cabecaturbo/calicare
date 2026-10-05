@@ -16,7 +16,7 @@ Use Apple's system components and behaviors; restyle them with our
 tokens, don't replace them.
 
 ## 1. The idea in one line
-A beautifully made notebook from a good shop: paper, ink, and indigo.
+A beautifully made notebook from a good shop: paper, ink, terracotta, and sage.
 Think Kinfolk's restraint and Anthropologie's warmth. Not a health app,
 not a plant app, not a baby app, not a SaaS dashboard.
 
@@ -72,28 +72,28 @@ Day
 | ink | #1E1B18 | Text, primary buttons, outlines |
 | graphite | #5C554D | Secondary text, captions, swatch borders |
 | hairline | #D8CFC0 | 0.5pt dividers, card and pill borders |
-| indigo | #34466A | The one accent: links, "Change", checks, the night Itchy button |
+| accent (terracotta) | #A4492E | The one accent: links, "Change", checks, the Log buttons |
 | ochre | #8A6320 | Still in the palette; no longer used on the tabs |
 
 Night (8 PM – 7 AM, every tab)
 | Token | Hex |
 |---|---|
-| paper | #14161C |
-| oat | #1E2129 |
+| paper | #1B1714 |
+| oat | #26201B |
 | ink | #EAE3D6 |
 | graphite | #A8A093 |
-| hairline | #2C303A |
-| indigo | #9FB0D0 |
+| hairline | #3A322B |
+| accent (terracotta) | #E29A78 |
 
 One scale for skin answers and for nights
 | Answer | Day | Night |
 |---|---|---|
-| calm | #E3E7EE | #2A3142 |
-| a little itchy | #C2CBDB | #3C4760 |
-| flaring | #56698F | #8497BD |
-| very rough | #2E3E5E | #B7C5E0 |
+| calm | #E6EADF | #2B3026 |
+| a little itchy | #C6D1BB | #3C4634 |
+| flaring | #6B8360 | #8CA67C |
+| very rough | #3F5236 | #C2D4B1 |
 Nights use the same marks: good = calm, okay = a little itchy, rough = very
-rough. (A fifth, middle step, #8C9BB8 by day and #5A6B8E at night, is still in
+rough. (A fifth, middle step, #9AAE8C by day and #5B6D4E at night, is still in
 the palette but unused.)
 
 Drawing the scale
@@ -107,8 +107,12 @@ Drawing the scale
 Contrast: every text color passes 4.5:1 on paper and oat in both themes;
 the unit test checks each pair.
 
-Why indigo: calm, works on every skin tone, can't be confused with skin
-or blood, and is not a plant color.
+Why terracotta and sage (owner, October 5, 2026): a warm, earthy palette
+in place of blue. Terracotta is only the accent (buttons, links, checks),
+never a severity, so "rough" is never shown in a red-like color. The skin
+scale is sage: deeper by day and brighter at night means rougher, and it
+can't be confused with skin or blood. The night background is a warm
+near-black instead of blue-black.
 
 ## 4. Type
 Two families.

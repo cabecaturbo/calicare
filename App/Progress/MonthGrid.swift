@@ -2,7 +2,7 @@ import Core
 import SwiftUI
 
 /// A month as a calendar (UX.md §6): weekday letters, then a cell per day with
-/// the skin square (indigo depth says how rough) over the night dot. Not
+/// the skin square (accent depth says how rough) over the night dot. Not
 /// answered is a short dash, the same as the week grid.
 struct MonthGrid: View {
     @Environment(\.palette) private var palette
@@ -61,7 +61,7 @@ struct MonthGrid: View {
         return VStack(spacing: 3) {
             Text("\(day.day.day)")
                 .font(isToday ? TypeStyle.meta.font.weight(.semibold) : TypeStyle.meta.font)
-                .foregroundStyle(isToday ? palette.indigo : palette.graphite)
+                .foregroundStyle(isToday ? palette.accent : palette.graphite)
             Group {
                 if let skin = day.skin {
                     RoundedRectangle(cornerRadius: 3)

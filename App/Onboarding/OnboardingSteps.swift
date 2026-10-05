@@ -30,7 +30,7 @@ struct RemindersStep: View {
                                 .textStyle(.control)
                                 .foregroundStyle(palette.ink)
                         }
-                        .tint(palette.indigo)
+                        .tint(palette.accent)
                     }
                     if reminders.settings[kind].isOn {
                         LedgerRow {
@@ -44,7 +44,7 @@ struct RemindersStep: View {
                                 displayedComponents: .hourAndMinute
                             )
                             .labelsHidden()
-                            .tint(palette.indigo)
+                            .tint(palette.accent)
                             .accessibilityLabel("\(ReminderCopy.settingsTitle(kind)) time")
                         }
                     }

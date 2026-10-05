@@ -1,6 +1,6 @@
 import SwiftUI
 
-// Tokens from DESIGN.md: paper, ink, and indigo. Only this file should change
+// Tokens from DESIGN.md: paper, ink, terracotta, and sage. Only this file should change
 // if the palette or the serif is ever swapped.
 
 // MARK: - Color
@@ -18,7 +18,7 @@ public struct Palette: Sendable, Equatable {
         /// 0.5pt rules between rows and sections.
         case hairline
         /// The one accent: selected states, links, charts.
-        case indigo
+        case accent
         /// "Worth watching" text only, used rarely. Paper only: it fails on oat.
         case ochre
     }
@@ -31,16 +31,17 @@ public struct Palette: Sendable, Equatable {
 
     public let isNight: Bool
     private let tokens: [Token: UInt32]
-    /// Indigo density, calm first. Day: light is calm. Night: brighter is harder.
+    /// Sage density, calm first. Day: light is calm. Night: brighter is harder.
+    /// Never red: terracotta is the accent, never a severity.
     public let severityScale: [UInt32]
 
     public static let day = Palette(
         isNight: false,
         tokens: [
             .paper: 0xF6F1E8, .oat: 0xECE4D6, .ink: 0x1E1B18, .graphite: 0x5C554D,
-            .hairline: 0xD8CFC0, .indigo: 0x34466A, .ochre: 0x8A6320,
+            .hairline: 0xD8CFC0, .accent: 0xA4492E, .ochre: 0x8A6320,
         ],
-        severityScale: [0xE3E7EE, 0xC2CBDB, 0x8C9BB8, 0x56698F, 0x2E3E5E]
+        severityScale: [0xE6EADF, 0xC6D1BB, 0x9AAE8C, 0x6B8360, 0x3F5236]
     )
 
     /// 8 PM – 7 AM. Warm text, never pure white. Night ochre isn't in DESIGN.md;
@@ -48,10 +49,10 @@ public struct Palette: Sendable, Equatable {
     public static let night = Palette(
         isNight: true,
         tokens: [
-            .paper: 0x14161C, .oat: 0x1E2129, .ink: 0xEAE3D6, .graphite: 0xA8A093,
-            .hairline: 0x2C303A, .indigo: 0x9FB0D0, .ochre: 0xC9A15B,
+            .paper: 0x1B1714, .oat: 0x26201B, .ink: 0xEAE3D6, .graphite: 0xA8A093,
+            .hairline: 0x3A322B, .accent: 0xE29A78, .ochre: 0xC9A15B,
         ],
-        severityScale: [0x2A3142, 0x3C4760, 0x5A6B8E, 0x8497BD, 0xB7C5E0]
+        severityScale: [0x2B3026, 0x3C4634, 0x5B6D4E, 0x8CA67C, 0xC2D4B1]
     )
 
     /// Every text-on-background combination the UI may use. The contrast test
@@ -61,8 +62,8 @@ public struct Palette: Sendable, Equatable {
         TextPair(text: .ink, background: .oat),
         TextPair(text: .graphite, background: .paper),
         TextPair(text: .graphite, background: .oat),
-        TextPair(text: .indigo, background: .paper),
-        TextPair(text: .indigo, background: .oat),
+        TextPair(text: .accent, background: .paper),
+        TextPair(text: .accent, background: .oat),
         TextPair(text: .ochre, background: .paper),
         TextPair(text: .paper, background: .ink),
     ]
@@ -87,7 +88,7 @@ public struct Palette: Sendable, Equatable {
     public var ink: Color { color(.ink) }
     public var graphite: Color { color(.graphite) }
     public var hairline: Color { color(.hairline) }
-    public var indigo: Color { color(.indigo) }
+    public var accent: Color { color(.accent) }
     public var ochre: Color { color(.ochre) }
 
     /// A step on the severity scale, 1 (calm) to 5 (hard).
@@ -115,7 +116,7 @@ extension ChildColor {
     /// Tags keep their stored names; they now draw from the notebook palette.
     public func color(in palette: Palette) -> Color {
         switch self {
-        case .sage: palette.indigo
+        case .sage: palette.accent
         case .clay: palette.ochre
         case .moss: palette.graphite
         case .sand: palette.oat

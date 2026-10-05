@@ -47,7 +47,7 @@ struct ProductListView: View {
         .solidNavigationBar(.paper)
         .navigationTitle("Products")
         .navigationBarTitleDisplayMode(.inline)
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .sheet(item: $editing, onDismiss: { Task { await model.load() } }) { product in
             ProductEditor(product: product)
                 .nightAwarePalette()

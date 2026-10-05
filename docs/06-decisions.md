@@ -610,4 +610,5 @@ The owner saw the v2 redesign on the phone and asked for it to be reverted. The 
 - The Lock Screen shows only counts and times, never a name. Tonight's Log runs as a LiveActivityIntent (the app's process) and saves through the same QuickLog path as the widgets, so "by Dad" and sync work the same.
 - The Tonight card only updates from the app's process: a log from the Home Screen widget or Siri shows on the card at the next Tonight tap or app open.
 - A widget's stale child falls back to the current child only when there's exactly one child; with two or more it never guesses.
+- Confirmed on the owner's phone (October 5, 2026): a Lock Screen tap asks for Face ID first, as Apple's docs say. The site uses the Home Screen widget wording and doesn't mention the Lock Screen (`TONIGHT_CONFIRMED = False` in `scripts/site/gen_day.py`). Tonight still saves without opening the app after Face ID.
 

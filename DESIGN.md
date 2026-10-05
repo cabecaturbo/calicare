@@ -16,7 +16,7 @@ Use Apple's system components and behaviors; restyle them with our
 tokens, don't replace them.
 
 ## 1. The idea in one line
-A beautifully made notebook from a good shop: paper, ink, and indigo.
+A beautifully made notebook from a good shop: linen paper, ink, greige, and olive.
 Think Kinfolk's restraint and Anthropologie's warmth. Not a health app,
 not a plant app, not a baby app, not a SaaS dashboard.
 
@@ -67,33 +67,35 @@ fix this file. Tokens live in `Core/DesignSystem/DesignSystem.swift`.
 Day
 | Token | Hex | Use |
 |---|---|---|
-| paper | #F6F1E8 | Page background, the bottom bar, the Itchy pill |
-| oat | #ECE4D6 | Summary cards, the active tab by day, selected choice |
-| ink | #1E1B18 | Text, primary buttons, outlines |
-| graphite | #5C554D | Secondary text, captions, swatch borders |
-| hairline | #D8CFC0 | 0.5pt dividers, card and pill borders |
-| indigo | #34466A | The one accent: links, "Change", checks, the night Itchy button |
-| ochre | #8A6320 | Still in the palette; no longer used on the tabs |
+| paper | #F6EEE2 | Page background (linen), the bottom bar, the Itchy pill |
+| oat | #ECDFCC | Summary cards, the active tab by day, selected choice |
+| ink | #261C14 | Text, primary buttons, outlines |
+| graphite | #67584A | Secondary text, captions, swatch borders |
+| hairline | #DECDB6 | 0.5pt dividers, card and pill borders |
+| accent (greige) | #665B52 | The one accent: links, "Change", checks, the selected tab |
+| button (greige) | #665B52 | The Log buttons' fill; text on it is paper (onButton #F6EEE2) |
+| ochre | #8A6320 | "Worth watching" text only, on paper |
 
-Night (8 PM – 7 AM, every tab)
+Night (8 PM – 7 AM, every tab, or pinned with the day/night toggle): a soft, warm night
 | Token | Hex |
 |---|---|
-| paper | #14161C |
-| oat | #1E2129 |
-| ink | #EAE3D6 |
-| graphite | #A8A093 |
-| hairline | #2C303A |
-| indigo | #9FB0D0 |
+| paper | #201712 |
+| oat | #2C2019 |
+| ink | #F2E5D6 |
+| graphite | #BBA792 |
+| hairline | #3B2C22 |
+| accent (greige) | #D3C8BC |
+| button | #D3C8BC (text #201712) |
 
-One scale for skin answers and for nights
+One scale for skin answers and for nights (olive)
 | Answer | Day | Night |
 |---|---|---|
-| calm | #E3E7EE | #2A3142 |
-| a little itchy | #C2CBDB | #3C4760 |
-| flaring | #56698F | #8497BD |
-| very rough | #2E3E5E | #B7C5E0 |
+| calm | #ECECD8 | #2F2F1E |
+| a little itchy | #CFD0A6 | #46462C |
+| flaring | #8F9156 | #8F9156 |
+| very rough | #55582C | #D2D39C |
 Nights use the same marks: good = calm, okay = a little itchy, rough = very
-rough. (A fifth, middle step, #8C9BB8 by day and #5A6B8E at night, is still in
+rough. (A fifth, middle step, #B0B17E by day and #6B6B40 at night, is still in
 the palette but unused.)
 
 Drawing the scale
@@ -107,8 +109,18 @@ Drawing the scale
 Contrast: every text color passes 4.5:1 on paper and oat in both themes;
 the unit test checks each pair.
 
-Why indigo: calm, works on every skin tone, can't be confused with skin
-or blood, and is not a plant color.
+Why greige on linen (owner, October 5, 2026): a warm, quiet palette in
+place of blue, picked after trying terracotta and sage, blush and rose,
+clay and honey, rust and olive, and soft grey on the phone. Greige (a warm
+grey with a touch of brown) is the accent and the Log button fill. The skin
+scale is olive and can't be confused with skin or blood; greige is never a
+severity. The night stays soft and warm: brown-black, not blue-black.
+
+Day/night toggle: a small sun or moon fixed just above the tab bar on every
+tab (it doesn't scroll). A tap switches to the other colors and keeps them;
+press and hold for "Match the time of day". Only the colors change: the
+night layout (bigger Log button, "Tonight so far") follows the clock.
+Widgets and the Quick Log card follow the toggle too.
 
 ## 4. Type
 Two families.

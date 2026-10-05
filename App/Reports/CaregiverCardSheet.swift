@@ -61,7 +61,7 @@ struct CaregiverCardSheet: View {
                 }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .task(id: card) {
             CaregiverCardStore.save(card, child: child)
             try? await Task.sleep(for: .milliseconds(400))

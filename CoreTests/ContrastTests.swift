@@ -17,7 +17,7 @@ struct ContrastTests {
 
     /// Every color used for text has at least one approved background.
     @Test func everyTextTokenHasAPair() {
-        let textTokens: Set<Palette.Token> = [.ink, .graphite, .indigo, .ochre, .paper]
+        let textTokens: Set<Palette.Token> = [.ink, .graphite, .accent, .ochre, .paper]
         let covered = Set(Palette.textPairs.map(\.text))
         #expect(textTokens.isSubset(of: covered))
     }
@@ -31,11 +31,11 @@ struct ContrastTests {
     /// Spot-checks against the ratios written in DESIGN.md.
     @Test func matchesTheDesignDoc() {
         let day = Palette.day, night = Palette.night
-        #expect(abs(Self.contrast(day.hex(.ink), day.hex(.paper)) - 15.2) < 0.1)
-        #expect(abs(Self.contrast(day.hex(.graphite), day.hex(.oat)) - 5.8) < 0.1)
-        #expect(abs(Self.contrast(day.hex(.ochre), day.hex(.paper)) - 4.8) < 0.1)
+        #expect(abs(Self.contrast(day.hex(.ink), day.hex(.paper)) - 14.5) < 0.1)
+        #expect(abs(Self.contrast(day.hex(.graphite), day.hex(.oat)) - 5.2) < 0.1)
+        #expect(abs(Self.contrast(day.hex(.ochre), day.hex(.paper)) - 4.7) < 0.1)
         #expect(abs(Self.contrast(night.hex(.ink), night.hex(.paper)) - 14.2) < 0.1)
-        #expect(abs(Self.contrast(night.hex(.indigo), night.hex(.paper)) - 8.3) < 0.1)
+        #expect(abs(Self.contrast(night.hex(.accent), night.hex(.paper)) - 10.7) < 0.1)
     }
 
     static func contrast(_ a: UInt32, _ b: UInt32) -> Double {

@@ -36,16 +36,16 @@ struct AppShell: View {
             if DeepLink.isNote(url) { shell.showingNote = true }
             if DeepLink.isProgress(url) { shell.tab = .progress }
             if DeepLink.isNight(url) { shell.showingNight = true }
-            if DeepLink.isTonight(url) {
+            if DeepLink.isQuickLog(url) {
                 shell.tab = .today
-                if !Tonight.isRunning { shell.startingTonight = true }
+                if !QuickLogCard.isRunning { shell.startingQuickLog = true }
             }
         }
         .sheet(isPresented: $shell.showingNight) {
             NightSummarySheet()
                 .nightAwarePalette()
         }
-        .tonightStarter()
+        .quickLogCardStarter()
         .sheet(isPresented: $shell.showingLog) {
             LogSheet()
                 .nightAwarePalette()
@@ -114,7 +114,7 @@ struct AppShell: View {
                 .accessibilityLabel("Log itching")
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
 
         if pills {
             // The system tab bar is hidden; BottomBar draws the pills and log control.
@@ -167,10 +167,18 @@ private struct TabChrome: ViewModifier {
     let pills: Bool
 
     func body(content: Content) -> some View {
-        if pills {
-            content.toolbar(.hidden, for: .tabBar)
-        } else {
-            content.modifier(LoggedBannerInset(isOn: true))
+        Group {
+            if pills {
+                content.toolbar(.hidden, for: .tabBar)
+            } else {
+                content.modifier(LoggedBannerInset(isOn: true))
+            }
+        }
+        // The day/night toggle stays in place while the page scrolls, just above the bar.
+        .overlay(alignment: .bottomTrailing) {
+            AppearanceToggle()
+                .padding(.trailing, Spacing.margin)
+                .padding(.bottom, Spacing.x3)
         }
     }
 }

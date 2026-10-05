@@ -40,7 +40,7 @@ struct ProviderSection: View {
                 NavigationLink {
                     JournalExportView(child: child, from: model.activePlan?.startedAt)
                 } label: {
-                    Text("Journal for your provider").textStyle(.body).foregroundStyle(palette.indigo)
+                    Text("Journal for your provider").textStyle(.body).foregroundStyle(palette.accent)
                 }
                 .frame(minHeight: Size.touchTarget)
             }
@@ -114,7 +114,7 @@ private struct AddVisitSheet: View {
                 }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .presentationDetents([.medium, .large])
     }
 }

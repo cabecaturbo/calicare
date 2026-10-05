@@ -33,7 +33,7 @@ struct MealSheet: View {
                 }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .presentationDetents([.medium, .large])
     }
 }
@@ -62,7 +62,7 @@ struct RotationView: View {
                 } header: {
                     Text(index == today ? "Day \(index + 1) · today" : "Day \(index + 1)")
                         .textStyle(.section)
-                        .foregroundStyle(index == today ? palette.indigo : palette.ink)
+                        .foregroundStyle(index == today ? palette.accent : palette.ink)
                         .textCase(nil)
                 }
                 .listRowBackground(palette.paper)

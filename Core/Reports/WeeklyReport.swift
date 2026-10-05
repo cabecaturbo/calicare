@@ -150,7 +150,7 @@ struct Week {
     var roughNights: Int { logged.filter { $0.nightRating == .rough }.count }
     var flares: Int { logged.reduce(0) { $0 + $1.flares } }
     var averageNight: Double? { Self.average(days.compactMap(\.night)) }
-    /// Skin answers on the night levels' 0…2 scale: indigo step 1 is 0, step 5 is 2.
+    /// Skin answers on the night levels' 0…2 scale: accent step 1 is 0, step 5 is 2.
     var averageSkin: Double? {
         Self.average(days.compactMap(\.skin).map { Double($0.step - 1) / 2 })
     }

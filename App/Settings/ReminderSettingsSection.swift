@@ -43,7 +43,7 @@ struct ReminderSettingsSection: View {
         )) {
             SettingsLabel(ReminderCopy.settingsTitle(kind))
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
 
         if reminders.settings[kind].isOn {
             DatePicker(
@@ -58,7 +58,7 @@ struct ReminderSettingsSection: View {
                     .foregroundStyle(palette.graphite)
             }
             .accessibilityLabel("\(ReminderCopy.settingsTitle(kind)) time")
-            .tint(palette.indigo)
+            .tint(palette.accent)
         }
     }
 }

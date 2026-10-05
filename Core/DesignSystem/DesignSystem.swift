@@ -1,6 +1,6 @@
 import SwiftUI
 
-// Tokens from DESIGN.md: paper, ink, and indigo. Only this file should change
+// Tokens from DESIGN.md: linen paper, ink, greige, and olive. Only this file should change
 // if the palette or the serif is ever swapped.
 
 // MARK: - Color
@@ -18,9 +18,13 @@ public struct Palette: Sendable, Equatable {
         /// 0.5pt rules between rows and sections.
         case hairline
         /// The one accent: selected states, links, charts.
-        case indigo
+        case accent
         /// "Worth watching" text only, used rarely. Paper only: it fails on oat.
         case ochre
+        /// The fill of the Log buttons (and the night tab pill).
+        case button
+        /// Text and icons on `button`.
+        case onButton
     }
 
     /// A text color on a background color that screens are allowed to use.
@@ -31,27 +35,33 @@ public struct Palette: Sendable, Equatable {
 
     public let isNight: Bool
     private let tokens: [Token: UInt32]
-    /// Indigo density, calm first. Day: light is calm. Night: brighter is harder.
+    /// Olive density, calm first. Day: light is calm. Night: brighter is harder.
+    /// Never red: the accent is grey, never a severity.
     public let severityScale: [UInt32]
 
+    /// Greige on linen (owner, October 5, 2026): a warm grey for the Log
+    /// buttons, links, and checks, and an olive skin scale.
     public static let day = Palette(
         isNight: false,
         tokens: [
-            .paper: 0xF6F1E8, .oat: 0xECE4D6, .ink: 0x1E1B18, .graphite: 0x5C554D,
-            .hairline: 0xD8CFC0, .indigo: 0x34466A, .ochre: 0x8A6320,
+            .paper: 0xF6EEE2, .oat: 0xECDFCC, .ink: 0x261C14, .graphite: 0x67584A,
+            .hairline: 0xDECDB6, .accent: 0x665B52, .ochre: 0x8A6320,
+            .button: 0x665B52, .onButton: 0xF6EEE2,
         ],
-        severityScale: [0xE3E7EE, 0xC2CBDB, 0x8C9BB8, 0x56698F, 0x2E3E5E]
+        severityScale: [0xECECD8, 0xCFD0A6, 0xB0B17E, 0x8F9156, 0x55582C]
     )
 
-    /// 8 PM – 7 AM. Warm text, never pure white. Night ochre isn't in DESIGN.md;
-    /// #C9A15B is a proposed value (7.5:1 on night).
+    /// Night colors (8 PM – 7 AM, or pinned with the toggle): a soft, warm
+    /// night. Brown-black paper, warm text, a light greige accent; on the
+    /// olive scale, brighter is rougher.
     public static let night = Palette(
         isNight: true,
         tokens: [
-            .paper: 0x14161C, .oat: 0x1E2129, .ink: 0xEAE3D6, .graphite: 0xA8A093,
-            .hairline: 0x2C303A, .indigo: 0x9FB0D0, .ochre: 0xC9A15B,
+            .paper: 0x201712, .oat: 0x2C2019, .ink: 0xF2E5D6, .graphite: 0xBBA792,
+            .hairline: 0x3B2C22, .accent: 0xD3C8BC, .ochre: 0xC9A15B,
+            .button: 0xD3C8BC, .onButton: 0x201712,
         ],
-        severityScale: [0x2A3142, 0x3C4760, 0x5A6B8E, 0x8497BD, 0xB7C5E0]
+        severityScale: [0x2F2F1E, 0x46462C, 0x6B6B40, 0x8F9156, 0xD2D39C]
     )
 
     /// Every text-on-background combination the UI may use. The contrast test
@@ -61,17 +71,22 @@ public struct Palette: Sendable, Equatable {
         TextPair(text: .ink, background: .oat),
         TextPair(text: .graphite, background: .paper),
         TextPair(text: .graphite, background: .oat),
-        TextPair(text: .indigo, background: .paper),
-        TextPair(text: .indigo, background: .oat),
+        TextPair(text: .accent, background: .paper),
+        TextPair(text: .accent, background: .oat),
         TextPair(text: .ochre, background: .paper),
         TextPair(text: .paper, background: .ink),
+        TextPair(text: .onButton, background: .button),
     ]
 
     public static func current(at date: Date = .now, calendar: Calendar = .current) -> Palette {
         #if DEBUG
         if let forced = DesignReview.forcedNight { return forced ? .night : .day }
         #endif
-        return NightMode.isActive(at: date, calendar: calendar) ? .night : .day
+        switch AppearanceMode.current {
+        case .day: return .day
+        case .night: return .night
+        case .automatic: return NightMode.isActive(at: date, calendar: calendar) ? .night : .day
+        }
     }
 
     public func hex(_ token: Token) -> UInt32 {
@@ -87,8 +102,10 @@ public struct Palette: Sendable, Equatable {
     public var ink: Color { color(.ink) }
     public var graphite: Color { color(.graphite) }
     public var hairline: Color { color(.hairline) }
-    public var indigo: Color { color(.indigo) }
+    public var accent: Color { color(.accent) }
     public var ochre: Color { color(.ochre) }
+    public var button: Color { color(.button) }
+    public var onButton: Color { color(.onButton) }
 
     /// A step on the severity scale, 1 (calm) to 5 (hard).
     public func severity(step: Int) -> Color {
@@ -115,7 +132,7 @@ extension ChildColor {
     /// Tags keep their stored names; they now draw from the notebook palette.
     public func color(in palette: Palette) -> Color {
         switch self {
-        case .sage: palette.indigo
+        case .sage: palette.accent
         case .clay: palette.ochre
         case .moss: palette.graphite
         case .sand: palette.oat

@@ -236,12 +236,12 @@ private struct GhostCamera: UIViewControllerRepresentable {
     }
 }
 
-/// Indigo link text, as its own view so a picker's label can use it.
+/// Accent link text, as its own view so a picker's label can use it.
 private struct LinkLabel: View {
     @Environment(\.palette) private var palette
     let title: String
 
     var body: some View {
-        Text(title).textStyle(.body).foregroundStyle(palette.indigo)
+        Text(title).textStyle(.body).foregroundStyle(palette.accent)
     }
 }

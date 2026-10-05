@@ -140,7 +140,7 @@ struct FoodListView: View {
         .solidNavigationBar(.paper)
         .navigationTitle("Food list")
         .navigationBarTitleDisplayMode(.inline)
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .sheet(isPresented: $addingBatch) {
             AddBatchSheet().nightAwarePalette()
         }
@@ -295,7 +295,7 @@ private struct FoodEditor: View {
                 ToolbarItem(placement: .confirmationAction) { Button("Save") { Task { await save() } } }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .sheet(isPresented: $startingTrial, onDismiss: { dismiss() }) {
             StartTrialSheet(food: food)
                 .nightAwarePalette()

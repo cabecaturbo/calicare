@@ -51,7 +51,7 @@ struct BodyAreaSheet: View {
                 }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .presentationDetents([.large])
     }
 
@@ -117,8 +117,8 @@ struct BodyOutline: View {
             ForEach(parts) { part in
                 let isOn = selected.contains(part.area)
                 RoundedRectangle(cornerRadius: part.corner)
-                    .fill(isOn ? palette.indigo : palette.paper)
-                    .overlay(RoundedRectangle(cornerRadius: part.corner).strokeBorder(isOn ? palette.indigo : palette.graphite, lineWidth: 1))
+                    .fill(isOn ? palette.accent : palette.paper)
+                    .overlay(RoundedRectangle(cornerRadius: part.corner).strokeBorder(isOn ? palette.accent : palette.graphite, lineWidth: 1))
                     .frame(width: part.rect.width, height: part.rect.height)
                     .contentShape(Rectangle())
                     .onTapGesture { toggle(part.area) }

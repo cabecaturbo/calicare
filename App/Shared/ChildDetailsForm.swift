@@ -77,7 +77,7 @@ struct ChildDetailsForm: View {
                             .foregroundStyle(palette.graphite)
                     }
                 }
-                .tint(palette.indigo)
+                .tint(palette.accent)
             }
 
             if details.hasBirthDate {
@@ -88,7 +88,7 @@ struct ChildDetailsForm: View {
                 } trailing: {
                     DatePicker("Born", selection: $details.birthDate, in: ...Date.now, displayedComponents: .date)
                         .labelsHidden()
-                        .tint(palette.indigo)
+                        .tint(palette.accent)
                 }
             }
 

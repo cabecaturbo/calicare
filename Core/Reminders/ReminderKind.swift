@@ -4,7 +4,7 @@ import Foundation
 public enum ReminderKind: String, Codable, Sendable, CaseIterable {
     // Raw values stay as saved; the list reminders were the routine reminders.
     case checkIn, skinCheckIn, morningRoutine, afternoonRoutine, eveningRoutine
-    /// "Start Tonight for the night?": opens the app to start the Lock Screen card.
+    /// "Put Quick Log on your Lock Screen?": opens the app to add the card.
     case tonight
 
     /// Which routine this reminds about; nil for the check-ins and afternoon.

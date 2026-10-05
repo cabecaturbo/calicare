@@ -36,7 +36,7 @@ struct AddChildSheet: View {
                 }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
     }
 
     private func save() async {

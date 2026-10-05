@@ -168,7 +168,7 @@ struct AboutPlanView: View {
                 Text("It stops showing in Plan. Its items stay in your history.")
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .task {
             items = (try? await CarePlanStore(modelContainer: CaliCareModelContainer.shared()).items(plan: plan.id)) ?? []
         }

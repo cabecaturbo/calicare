@@ -40,7 +40,7 @@ struct AccountSheet: View {
                 }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
     }
 
     /// Signed out, or signed in before but the session ran out.

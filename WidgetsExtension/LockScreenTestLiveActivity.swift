@@ -25,7 +25,7 @@ struct LockScreenTestLiveActivity: Widget {
                         .foregroundStyle(palette.paper)
                         .padding(.horizontal, Spacing.x5)
                         .frame(minHeight: 52)
-                        .background(palette.indigo, in: Capsule())
+                        .background(palette.accent, in: Capsule())
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Log a wake-up")

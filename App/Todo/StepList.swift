@@ -1,9 +1,9 @@
 import Core
 import SwiftUI
 
-/// One part of the day's steps, joined by a rail: indigo where two done steps
+/// One part of the day's steps, joined by a rail: accent where two done steps
 /// meet, hairline elsewhere. In the open part, the first step not done is
-/// "Next", on an oat row with an indigo ring.
+/// "Next", on an oat row with an accent ring.
 struct StepList: View {
     @Environment(\.palette) private var palette
     @Environment(TodayModel.self) private var model
@@ -62,7 +62,7 @@ struct StepList: View {
         Text("Tap a step to see how").textStyle(.meta).foregroundStyle(palette.graphite)
     }
 
-    /// The rail between two steps is indigo only when both are done.
+    /// The rail between two steps is accent only when both are done.
     private func joined(_ a: TodoDay.Item, _ b: TodoDay.Item) -> Bool { a.isDone && b.isDone }
 
     private func isSkin(_ item: TodoDay.Item) -> Bool { if case .skin = item.kind { true } else { false } }
@@ -72,7 +72,7 @@ private struct StepRow: View {
     @Environment(\.palette) private var palette
     let item: TodoDay.Item
     let isNext: Bool
-    /// nil: no rail on that side (first or last step). true: indigo.
+    /// nil: no rail on that side (first or last step). true: accent.
     let railAbove: Bool?
     let railBelow: Bool?
     let pips: [TodoDay.Skin.Pip]?
@@ -98,7 +98,7 @@ private struct StepRow: View {
                 HStack(spacing: Spacing.x3) {
                     VStack(alignment: .leading, spacing: Spacing.x1) {
                         if isNext {
-                            Text("Next").textStyle(.meta).fontWeight(.semibold).foregroundStyle(palette.indigo)
+                            Text("Next").textStyle(.meta).fontWeight(.semibold).foregroundStyle(palette.accent)
                         }
                         Text(item.label)
                             .textStyle(.body)
@@ -133,13 +133,13 @@ private struct StepRow: View {
 
     @ViewBuilder private var circle: some View {
         if item.isDone {
-            Circle().fill(palette.indigo)
+            Circle().fill(palette.accent)
                 .overlay(Image(systemName: "checkmark").font(.footnote.weight(.bold)).foregroundStyle(palette.paper))
                 .frame(width: 28, height: 28)
         } else {
             Circle()
                 .fill(isNext ? palette.oat : palette.paper)
-                .overlay(Circle().strokeBorder(isNext ? palette.indigo : palette.ink, lineWidth: isNext ? 2 : 1.5))
+                .overlay(Circle().strokeBorder(isNext ? palette.accent : palette.ink, lineWidth: isNext ? 2 : 1.5))
                 .frame(width: 28, height: 28)
         }
     }
@@ -155,7 +155,7 @@ private struct StepRow: View {
     }
 
     private func half(_ state: Bool?) -> some View {
-        Rectangle().fill(state.map { $0 ? palette.indigo : palette.hairline } ?? .clear)
+        Rectangle().fill(state.map { $0 ? palette.accent : palette.hairline } ?? .clear)
     }
 
     @ViewBuilder private var meta: some View {
@@ -164,8 +164,8 @@ private struct StepRow: View {
                 HStack(spacing: Spacing.x1) {
                     ForEach(Array(pips.enumerated()), id: \.offset) { _, pip in
                         Circle()
-                            .fill(pip == .done ? palette.indigo : .clear)
-                            .overlay(Circle().strokeBorder(palette.indigo,
+                            .fill(pip == .done ? palette.accent : .clear)
+                            .overlay(Circle().strokeBorder(palette.accent,
                                                            style: StrokeStyle(lineWidth: 1.5, dash: pip == .optional ? [2, 2] : [])))
                             .frame(width: 8, height: 8)
                     }

@@ -25,6 +25,9 @@ public enum Surface: Sendable {
 }
 
 private struct NightAwarePaletteModifier: ViewModifier {
+    /// Redraws right away when the day/night toggle changes.
+    @AppStorage(AppearanceMode.key, store: AppGroup.defaults) private var mode = AppearanceMode.automatic.rawValue
+
     func body(content: Content) -> some View {
         TimelineView(.everyMinute) { context in
             let palette = Palette.current(at: context.date)

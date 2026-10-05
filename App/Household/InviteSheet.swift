@@ -51,7 +51,7 @@ struct InviteSheet: View {
                 }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .task { await make() }
     }
 

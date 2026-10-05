@@ -34,7 +34,7 @@ public struct LiveNotificationCenter: NotificationScheduling {
             intentIdentifiers: [],
             options: []
         )
-        // No buttons: tapping it opens the app, which starts Tonight.
+        // No buttons: tapping it opens the app, which adds the Quick Log card.
         let tonight = UNNotificationCategory(identifier: ReminderIDs.tonightCategory, actions: [], intentIdentifiers: [], options: [])
         UNUserNotificationCenter.current().setNotificationCategories([checkIn, skin, routine, tonight])
     }

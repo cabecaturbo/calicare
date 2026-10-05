@@ -104,7 +104,7 @@ struct DoctorReportView: View {
         } trailing: {
             picker()
                 .labelsHidden()
-                .tint(palette.indigo)
+                .tint(palette.accent)
         }
     }
 

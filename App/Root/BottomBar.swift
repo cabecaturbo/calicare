@@ -26,7 +26,7 @@ struct BottomBar: View {
             }
             HStack(spacing: Spacing.x4) {
                 TabPill()
-                LogPill(showsItchy: !(shell.tab == .today && palette.isNight))
+                LogPill(showsItchy: !(shell.tab == .today && NightMode.isLayoutActive()))
             }
         }
         .padding(.horizontal, Spacing.margin)
@@ -77,11 +77,11 @@ private struct TabPill: View {
                         Image(systemName: symbol).font(.system(size: 18, weight: .regular))
                         Text(title).font(.system(size: 12, weight: active ? .semibold : .medium))
                     }
-                    .foregroundStyle(active ? (palette.isNight ? palette.paper : palette.indigo) : palette.ink)
+                    .foregroundStyle(active ? (palette.isNight ? palette.onButton : palette.accent) : palette.ink)
                     .frame(maxWidth: .infinity, minHeight: 50)
                     .background {
                         if active {
-                            Capsule().fill(palette.isNight ? palette.indigo : palette.oat)
+                            Capsule().fill(palette.isNight ? palette.button : palette.oat)
                         }
                     }
                     .contentShape(Capsule())

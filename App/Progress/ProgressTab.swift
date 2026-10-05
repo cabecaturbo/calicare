@@ -104,7 +104,7 @@ struct ProgressTab: View {
                             } label: {
                                 Text("Caregiver card")
                                     .textStyle(.body)
-                                    .foregroundStyle(palette.indigo)
+                                    .foregroundStyle(palette.accent)
                                     .frame(minHeight: Size.touchTarget)
                             }
                             .accessibilityHint("A card for a sitter or grandparent, in your words.")
@@ -113,7 +113,7 @@ struct ProgressTab: View {
                                 ShareLink(item: file) {
                                     Text("Share this week’s card")
                                         .textStyle(.body)
-                                        .foregroundStyle(palette.indigo)
+                                        .foregroundStyle(palette.accent)
                                         .frame(minHeight: Size.touchTarget)
                                 }
                             }

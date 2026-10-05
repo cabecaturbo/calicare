@@ -42,7 +42,7 @@ struct DeleteAccountSheet: View {
                                     .textStyle(.control)
                                     .foregroundStyle(palette.ink)
                             }
-                            .tint(palette.indigo)
+                            .tint(palette.accent)
                         }
                     }
 
@@ -75,7 +75,7 @@ struct DeleteAccountSheet: View {
                 Text(erasePhone ? "Your account, and the data on this phone." : "Your account. Data on this phone stays.")
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .task { await load() }
     }
 

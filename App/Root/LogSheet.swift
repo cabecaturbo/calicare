@@ -27,7 +27,7 @@ struct LogSheet: View {
                 }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .presentationDetents(typeSize.isAccessibilitySize ? [.large] : [.medium, .large])
     }
 }

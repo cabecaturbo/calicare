@@ -1,6 +1,6 @@
 import Foundation
 
-/// A night on the indigo scale. Lighter is calmer. There is no "bad" level and no red.
+/// A night on the accent scale. Lighter is calmer. There is no "bad" level and no red.
 public enum CareLevel: Int, Hashable, Sendable, Comparable, CaseIterable {
     case low, medium, high
 

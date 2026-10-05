@@ -68,11 +68,11 @@ public enum RoutineTime: String, Codable, Sendable, CaseIterable {
     }
 }
 
-/// The daily skin answer, drawn on indigo steps 1, 2, 4, and 5 (light is calm).
+/// The daily skin answer, drawn on accent steps 1, 2, 4, and 5 (light is calm).
 public enum SkinToday: String, Codable, Sendable, CaseIterable {
     case calm, littleItchy, flaring, veryRough
 
-    /// Step on the five-step indigo scale.
+    /// Step on the five-step accent scale.
     public var step: Int {
         switch self {
         case .calm: 1

@@ -21,7 +21,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         let actionIdentifier = response.actionIdentifier
         let payload = ReminderPayload(userInfo: response.notification.request.content.userInfo)
         if payload?.kind == .tonight, actionIdentifier == UNNotificationDefaultActionIdentifier {
-            await MainActor.run { UIApplication.shared.open(DeepLink.tonight) }
+            await MainActor.run { UIApplication.shared.open(DeepLink.quickLog) }
             return
         }
         do {

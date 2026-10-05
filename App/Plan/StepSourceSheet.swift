@@ -54,7 +54,7 @@ struct StepSourceSheet: View {
                 ToolbarItem(placement: .confirmationAction) { Button("Save") { Task { await save() } } }
             }
         }
-        .tint(palette.indigo)
+        .tint(palette.accent)
         .presentationDetents([.medium, .large])
     }
 

@@ -126,7 +126,7 @@ struct SetupGuide: View {
             HStack(spacing: Spacing.x1) {
                 ForEach(0...steps.count, id: \.self) { item in
                     Capsule()
-                        .fill(item <= index ? palette.indigo : palette.hairline)
+                        .fill(item <= index ? palette.accent : palette.hairline)
                         .frame(height: 2)
                 }
             }
@@ -257,14 +257,14 @@ struct GuideScreenshot: View {
     }
 }
 
-/// The indigo ring and dot that mark where to tap.
+/// The accent ring and dot that mark where to tap.
 private struct TapRing: View {
     @Environment(\.palette) private var palette
 
     var body: some View {
         ZStack {
-            Circle().strokeBorder(palette.indigo, lineWidth: 3).frame(width: 40, height: 40)
-            Circle().fill(palette.indigo.opacity(0.85)).frame(width: 12, height: 12)
+            Circle().strokeBorder(palette.accent, lineWidth: 3).frame(width: 40, height: 40)
+            Circle().fill(palette.accent.opacity(0.85)).frame(width: 12, height: 12)
         }
     }
 }

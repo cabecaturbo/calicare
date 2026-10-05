@@ -602,3 +602,12 @@ The owner saw the v2 redesign on the phone and asked for it to be reverted. The 
 - Only the To do screen changed: the bottom tab bar and round Log button stay on every tab (owner's choice; the v2 Itchy dock is not used).
 - New shared tokens: `TypeStyle.statement` (Newsreader 400, 40/46), `Spacing.x3` (12) and `x6` (32), `Corner.tight` (4).
 - The step sheet keeps "Your provider's words" (the board says "doctor's") to match Info.
+
+## Tonight and Night strip (October 5, 2026)
+- No file protection changes: the store already uses first-unlock protection, which allows saves while locked. Before the first unlock after a restart, saving can't work, and the widget falls back to its empty state.
+- Apple's docs say Lock Screen widget and Live Activity buttons are inactive until the phone is unlocked; whether a tap asks for Face ID or runs is confirmed on the phone. Site copy that says "without unlocking" is inside VERIFY: tonight with a Home Screen fallback.
+- Live Activities run 8 hours (then stay up to 4 more). Tonight restarts itself on any tap after 30 minutes, so a night with wake-ups lasts until 7 AM. On a quiet night it goes stale at the 8-hour mark and says "Tonight ended at 4:00 AM. Open Cali Care to keep logging." instead of disappearing. No scheduled second activity (it would alert in the night).
+- The Lock Screen shows only counts and times, never a name. Tonight's Log runs as a LiveActivityIntent (the app's process) and saves through the same QuickLog path as the widgets, so "by Dad" and sync work the same.
+- The Tonight card only updates from the app's process: a log from the Home Screen widget or Siri shows on the card at the next Tonight tap or app open.
+- A widget's stale child falls back to the current child only when there's exactly one child; with two or more it never guesses.
+

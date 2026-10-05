@@ -14,6 +14,7 @@ struct CaliCareWidgets: WidgetBundle {
         QuickLogWidget()
         LastNightWidget()
         LogItchControl()
+        NightStripWidget()
     }
 }
 

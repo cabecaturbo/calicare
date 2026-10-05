@@ -25,7 +25,10 @@ public enum CaliCareModelContainer {
             do {
                 return try make()
             } catch {
-                guard attempt < attempts else { throw error }
+                guard attempt < attempts else {
+                    LockScreenDiagnostics.note("Store failed to open: \(error)")
+                    throw error
+                }
                 attempt += 1
                 Thread.sleep(forTimeInterval: 0.3)
             }

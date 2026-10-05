@@ -16,7 +16,7 @@ Use Apple's system components and behaviors; restyle them with our
 tokens, don't replace them.
 
 ## 1. The idea in one line
-A beautifully made notebook from a good shop: blush paper, ink, dusty rose, and sage.
+A beautifully made notebook from a good shop: cream paper, ink, clay, and olive.
 Think Kinfolk's restraint and Anthropologie's warmth. Not a health app,
 not a plant app, not a baby app, not a SaaS dashboard.
 
@@ -64,30 +64,40 @@ say which items you checked.
 27, 2026).** The phone is the reference; if this file and the phone disagree,
 fix this file. Tokens live in `Core/DesignSystem/DesignSystem.swift`.
 
-Day (and night: since October 5, 2026 there's no dark mode; after 8 PM the
-app keeps its night layout, with the bigger Log button and rows, in these colors)
+Day
 | Token | Hex | Use |
 |---|---|---|
-| paper | #F9F0EC | Page background (blush), the bottom bar, the Itchy pill |
-| oat | #F2E2DC | Summary cards, the active tab, selected choice |
-| ink | #2B1D1F | Text, primary buttons, outlines |
-| graphite | #6E5A5C | Secondary text, captions, swatch borders |
-| hairline | #E6D0CA | 0.5pt dividers, card and pill borders |
-| accent (dusty rose) | #9E4357 | The one accent: links, "Change", checks, the Log buttons |
+| paper | #F7EFE4 | Page background (cream), the bottom bar, the Itchy pill |
+| oat | #EFE2CF | Summary cards, the active tab by day, selected choice |
+| ink | #2A1E17 | Text, primary buttons, outlines |
+| graphite | #6B5A4B | Secondary text, captions, swatch borders |
+| hairline | #E0CFB8 | 0.5pt dividers, card and pill borders |
+| accent (clay) | #9E4A26 | The one accent: links, "Change", checks, the Log buttons |
 | ochre | #8A6320 | "Worth watching" text only, on paper |
 
-One scale for skin answers and for nights (warm sage)
-| Answer | Hex |
+Night (8 PM – 7 AM, every tab): a soft, warm night
+| Token | Hex |
 |---|---|
-| calm | #EAEDE1 |
-| a little itchy | #CCD6BF |
-| flaring | #8FA382 |
-| very rough | #56704C |
+| paper | #221813 |
+| oat | #2E221B |
+| ink | #F2E6D8 |
+| graphite | #BCA894 |
+| hairline | #3D2E24 |
+| accent (clay) | #E8A37A |
+
+One scale for skin answers and for nights (olive)
+| Answer | Day | Night |
+|---|---|---|
+| calm | #EFEBD6 | #33301F |
+| a little itchy | #D8D3A8 | #4A4730 |
+| flaring | #9C9A5A | #9C9A5A |
+| very rough | #5E6233 | #D6D29A |
 Nights use the same marks: good = calm, okay = a little itchy, rough = very
-rough. (A fifth, middle step, #ADBDA0, is still in the palette but unused.)
+rough. (A fifth, middle step, #BAB781 by day and #6E6B44 at night, is still in
+the palette but unused.)
 
 Drawing the scale
-- Rougher always stands out more: deeper sage.
+- Rougher always stands out more: deeper by day, brighter at night.
 - Every swatch, bar, and dot has a 1pt graphite border.
 - Skin bars are taller for rougher days.
 - A day with no skin answer is a short graphite dash (12 × 2pt), no bar.
@@ -97,11 +107,12 @@ Drawing the scale
 Contrast: every text color passes 4.5:1 on paper and oat in both themes;
 the unit test checks each pair.
 
-Why blush and rose (owner, October 5, 2026): a warm, soft palette in place
-of blue, picked from four warm options. Rose is only the accent (buttons,
-links, checks), never a severity, so "rough" is never shown in a red-like
-color. The skin scale is warm sage, deeper for rougher, and can't be
-confused with skin or blood. No dark mode.
+Why clay and honey (owner, October 5, 2026): a warm palette in place of
+blue, picked from four warm options (blush and rose was tried on the phone
+and passed over, and so was dropping night mode). Clay is only the accent
+(buttons, links, checks), never a severity, so "rough" is never shown in a
+red-like color. The skin scale is olive and can't be confused with skin or
+blood. The night stays soft and warm: brown-black, not blue-black.
 
 ## 4. Type
 Two families.

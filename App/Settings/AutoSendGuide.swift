@@ -39,7 +39,7 @@ struct AutoSendGuide: View {
                 }
 
                 ShortcutsLink()
-                    .shortcutsLinkStyle(.light)
+                    .shortcutsLinkStyle(palette.isNight ? .dark : .light)
 
                 Text("\"Get Care Log\" works the same way for your provider: add it instead, then Send Email. The care log says it isn't medical advice on every page.")
                     .textStyle(.meta)

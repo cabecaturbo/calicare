@@ -15,7 +15,7 @@ struct SiriSetupGuide: View {
             )
             VStack(alignment: .leading, spacing: Spacing.x4) {
                 SiriTipView(intent: LogItchIntent(), isVisible: $showTip)
-                    .siriTipViewStyle(.light)
+                    .siriTipViewStyle(palette.isNight ? .dark : .light)
                 Text("Also try \u{201C}Log a rough night in Cali Care\u{201D} or \u{201C}Undo in Cali Care.\u{201D}")
                     .textStyle(.body)
                     .foregroundStyle(palette.graphite)

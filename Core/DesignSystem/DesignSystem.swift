@@ -1,6 +1,6 @@
 import SwiftUI
 
-// Tokens from DESIGN.md: paper, ink, rose, and sage. Only this file should change
+// Tokens from DESIGN.md: cream paper, ink, clay, and olive. Only this file should change
 // if the palette or the serif is ever swapped.
 
 // MARK: - Color
@@ -31,27 +31,30 @@ public struct Palette: Sendable, Equatable {
 
     public let isNight: Bool
     private let tokens: [Token: UInt32]
-    /// Sage density, calm first. Day: light is calm. Night: brighter is harder.
-    /// Never red: rose is the accent, never a severity.
+    /// Olive density, calm first. Day: light is calm. Night: brighter is harder.
+    /// Never red: clay is the accent, never a severity.
     public let severityScale: [UInt32]
 
-    /// Blush and rose (owner, October 5, 2026): blush paper, a dusty rose
-    /// accent for buttons and links only, and a warm sage skin scale.
+    /// Clay and honey (owner, October 5, 2026): creamy paper, a rust-clay
+    /// accent for buttons and links only, and an olive skin scale.
     public static let day = Palette(
         isNight: false,
         tokens: [
-            .paper: 0xF9F0EC, .oat: 0xF2E2DC, .ink: 0x2B1D1F, .graphite: 0x6E5A5C,
-            .hairline: 0xE6D0CA, .accent: 0x9E4357, .ochre: 0x8A6320,
+            .paper: 0xF7EFE4, .oat: 0xEFE2CF, .ink: 0x2A1E17, .graphite: 0x6B5A4B,
+            .hairline: 0xE0CFB8, .accent: 0x9E4A26, .ochre: 0x8A6320,
         ],
-        severityScale: [0xEAEDE1, 0xCCD6BF, 0xADBDA0, 0x8FA382, 0x56704C]
+        severityScale: [0xEFEBD6, 0xD8D3A8, 0xBAB781, 0x9C9A5A, 0x5E6233]
     )
 
-    /// 8 PM – 7 AM keeps the night layout (bigger Log button and rows) but,
-    /// since October 5, 2026, the same colors as the day: no dark mode.
+    /// 8 PM – 7 AM: a soft, warm night. Brown-black paper, warm text, a light
+    /// clay accent; on the olive scale, brighter is rougher.
     public static let night = Palette(
         isNight: true,
-        tokens: Palette.day.tokens,
-        severityScale: Palette.day.severityScale
+        tokens: [
+            .paper: 0x221813, .oat: 0x2E221B, .ink: 0xF2E6D8, .graphite: 0xBCA894,
+            .hairline: 0x3D2E24, .accent: 0xE8A37A, .ochre: 0xC9A15B,
+        ],
+        severityScale: [0x33301F, 0x4A4730, 0x6E6B44, 0x9C9A5A, 0xD6D29A]
     )
 
     /// Every text-on-background combination the UI may use. The contrast test

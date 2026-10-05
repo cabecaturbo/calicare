@@ -16,7 +16,7 @@ Use Apple's system components and behaviors; restyle them with our
 tokens, don't replace them.
 
 ## 1. The idea in one line
-A beautifully made notebook from a good shop: cream paper, ink, clay, and olive.
+A beautifully made notebook from a good shop: linen paper, ink, rust, and olive.
 Think Kinfolk's restraint and Anthropologie's warmth. Not a health app,
 not a plant app, not a baby app, not a SaaS dashboard.
 
@@ -67,33 +67,33 @@ fix this file. Tokens live in `Core/DesignSystem/DesignSystem.swift`.
 Day
 | Token | Hex | Use |
 |---|---|---|
-| paper | #F7EFE4 | Page background (cream), the bottom bar, the Itchy pill |
-| oat | #EFE2CF | Summary cards, the active tab by day, selected choice |
-| ink | #2A1E17 | Text, primary buttons, outlines |
-| graphite | #6B5A4B | Secondary text, captions, swatch borders |
-| hairline | #E0CFB8 | 0.5pt dividers, card and pill borders |
-| accent (clay) | #9E4A26 | The one accent: links, "Change", checks, the Log buttons |
+| paper | #F6EEE2 | Page background (linen), the bottom bar, the Itchy pill |
+| oat | #ECDFCC | Summary cards, the active tab by day, selected choice |
+| ink | #261C14 | Text, primary buttons, outlines |
+| graphite | #67584A | Secondary text, captions, swatch borders |
+| hairline | #DECDB6 | 0.5pt dividers, card and pill borders |
+| accent (rust) | #A8451A | The one accent: links, "Change", checks, the Log buttons |
 | ochre | #8A6320 | "Worth watching" text only, on paper |
 
 Night (8 PM – 7 AM, every tab): a soft, warm night
 | Token | Hex |
 |---|---|
-| paper | #221813 |
-| oat | #2E221B |
-| ink | #F2E6D8 |
-| graphite | #BCA894 |
-| hairline | #3D2E24 |
-| accent (clay) | #E8A37A |
+| paper | #201712 |
+| oat | #2C2019 |
+| ink | #F2E5D6 |
+| graphite | #BBA792 |
+| hairline | #3B2C22 |
+| accent (rust) | #EE9A6B |
 
 One scale for skin answers and for nights (olive)
 | Answer | Day | Night |
 |---|---|---|
-| calm | #EFEBD6 | #33301F |
-| a little itchy | #D8D3A8 | #4A4730 |
-| flaring | #9C9A5A | #9C9A5A |
-| very rough | #5E6233 | #D6D29A |
+| calm | #ECECD8 | #2F2F1E |
+| a little itchy | #CFD0A6 | #46462C |
+| flaring | #8F9156 | #8F9156 |
+| very rough | #55582C | #D2D39C |
 Nights use the same marks: good = calm, okay = a little itchy, rough = very
-rough. (A fifth, middle step, #BAB781 by day and #6E6B44 at night, is still in
+rough. (A fifth, middle step, #B0B17E by day and #6B6B40 at night, is still in
 the palette but unused.)
 
 Drawing the scale
@@ -107,12 +107,13 @@ Drawing the scale
 Contrast: every text color passes 4.5:1 on paper and oat in both themes;
 the unit test checks each pair.
 
-Why clay and honey (owner, October 5, 2026): a warm palette in place of
-blue, picked from four warm options (blush and rose was tried on the phone
-and passed over, and so was dropping night mode). Clay is only the accent
-(buttons, links, checks), never a severity, so "rough" is never shown in a
-red-like color. The skin scale is olive and can't be confused with skin or
-blood. The night stays soft and warm: brown-black, not blue-black.
+Why rust and olive (owner, October 5, 2026): a warm, earthy palette in
+place of blue, picked from four warm options after trying terracotta and
+sage, blush and rose, and clay and honey on the phone. Rust is only the
+accent (buttons, links, checks), never a severity, so "rough" is never
+shown in a red-like color. The skin scale is olive and can't be confused
+with skin or blood. The night stays soft and warm: brown-black, not
+blue-black.
 
 ## 4. Type
 Two families.

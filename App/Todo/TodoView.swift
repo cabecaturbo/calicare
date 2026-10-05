@@ -1,41 +1,57 @@
 import Core
 import SwiftUI
 
-/// To do: "What do I do right now?" The open block's things to tick, the other
-/// blocks as one row each, and Edit. Nothing else.
+/// To do (canvas "To do v2"): the header and why-line, one big statement
+/// ("3 things left for bedtime."), the parts of the day as cards, then the
+/// shown part's steps on a rail, and "Change the list". All done shows the
+/// moon instead of the list.
 struct TodoView: View {
     @Environment(\.palette) private var palette
     @Environment(TodayModel.self) private var model
     @State private var editing = false
     @State private var showing: TodoDay.Item?
-    @State private var expanded: TodoBlock?
+    @State private var picked: TodoBlock?
     @State private var asking = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    AppHeader(title: "To do", onEdit: { editing = true })
+                    TodoHeader(why: why)
                     if let todo = model.todo {
-                        if todo.allDone && expanded == nil {
-                            AllDone(nextMorning: todo.nextMorning)
-                                .padding(.horizontal, Spacing.margin)
-                                .padding(.top, Spacing.x5)
-                        }
-                        VStack(alignment: .leading, spacing: 0) {
-                            ForEach(todo.blocks) { block in
-                                if block.block == (expanded ?? todo.open) {
-                                    OpenBlock(block: block, onTick: tick, onOpen: { showing = $0 })
-                                        .padding(.vertical, Spacing.x5)
-                                } else {
-                                    BlockRow(block: block) { withAnimation { expanded = block.block } }
-                                }
+                        let summary = todo.summary(time: model.time)
+                        VStack(alignment: .leading, spacing: Spacing.x1) {
+                            Text(summary.statement)
+                                .textStyle(.statement)
+                                .foregroundStyle(palette.ink)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .accessibilityAddTraits(.isHeader)
+                            if let line = summary.line {
+                                Text(line).textStyle(.body).foregroundStyle(palette.graphite)
+                                    .fixedSize(horizontal: false, vertical: true)
                             }
                         }
-                        .padding(.horizontal, Spacing.margin)
+                        .padding(.top, Spacing.x6)
+
+                        DayParts(blocks: todo.blocks, shown: shown(in: todo)) { block in
+                            withAnimation { picked = block }
+                        }
                         .padding(.top, Spacing.x5)
+
+                        if let block = todo.blocks.first(where: { $0.block == shown(in: todo) }) {
+                            StepList(block: block, isOpen: block.block == todo.open, skin: todo.skin,
+                                     onTick: tick, onOpen: { showing = $0 })
+                                .padding(.top, Spacing.x6)
+                        } else if todo.allDone {
+                            AllDoneRest(name: model.child?.name)
+                                .padding(.top, Spacing.x6)
+                        }
                     }
+                    Button("Change the list") { editing = true }
+                        .buttonStyle(.textLink)
+                        .padding(.top, Spacing.x5)
                 }
+                .padding(.horizontal, Spacing.margin)
                 .padding(.bottom, BottomBar.clearance)
             }
             .paperBackground()
@@ -52,8 +68,17 @@ struct TodoView: View {
             }
             .task { await model.load() }
             .task(id: needsAsking) { if needsAsking { asking = true } }
-            .onChange(of: model.todo?.open) { _, _ in expanded = nil }
+            .onChange(of: model.todo?.open) { _, _ in picked = nil }
         }
+    }
+
+    /// The part whose list shows: the one tapped, else the open one (none when all done).
+    private func shown(in todo: TodoDay) -> TodoBlock? { picked ?? todo.open }
+
+    /// "What to do today, from Cal's care plan."
+    private var why: String {
+        let name = model.child?.name ?? "your child"
+        return model.activePlan == nil ? "What to do today for \(name)." : "What to do today, from \(name)'s care plan."
     }
 
     /// The plan has supplements nobody has said yes or no to yet.
@@ -73,135 +98,20 @@ struct TodoView: View {
     }
 }
 
-/// The open block: its name, "3 of 5 done", and its rows.
-private struct OpenBlock: View {
+/// "Rest up. Cal's list is clear." under the moon.
+private struct AllDoneRest: View {
     @Environment(\.palette) private var palette
-    @Environment(TodayModel.self) private var model
-    let block: TodoDay.Block
-    let onTick: (TodoDay.Item, TodoBlock) -> Void
-    let onOpen: (TodoDay.Item) -> Void
+    let name: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.x2) {
-            VStack(alignment: .leading, spacing: Spacing.x1) {
-                Text(block.block.title)
-                    .textStyle(.title)
-                    .foregroundStyle(palette.ink)
-                    .accessibilityAddTraits(.isHeader)
-                Text(block.items.isEmpty ? "Nothing here yet. Tap Edit to add steps." : block.progress)
-                    .textStyle(.meta)
-                    .foregroundStyle(palette.graphite)
-            }
-            VStack(spacing: 0) {
-                ForEach(block.items) { item in
-                    TodoRow(item: item, done: item.doneAt.map { model.time($0) },
-                            onTick: { onTick(item, block.block) }, onOpen: { onOpen(item) })
-                }
-            }
-        }
-    }
-}
-
-/// A block that isn't open: its name and time (or Done), one row.
-private struct BlockRow: View {
-    @Environment(\.palette) private var palette
-    @Environment(TodayModel.self) private var model
-    let block: TodoDay.Block
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            AdaptiveStack {
-                Text(block.block.title).textStyle(.body).foregroundStyle(palette.ink)
-                Spacer(minLength: 0)
-                Text(block.isDone ? "Done" : model.time(block.startsAt))
-                    .textStyle(.meta)
-                    .foregroundStyle(palette.graphite)
-                Image(systemName: "chevron.right").font(.footnote).foregroundStyle(palette.graphite)
-                    .accessibilityHidden(true)
-            }
-            .frame(minHeight: 56)
-            .contentShape(Rectangle())
-            .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
-        }
-        .buttonStyle(.plain)
-        .accessibilityHint("Shows this list.")
-    }
-}
-
-/// "All done for tonight." and when the morning list starts.
-private struct AllDone: View {
-    @Environment(\.palette) private var palette
-    @Environment(TodayModel.self) private var model
-    let nextMorning: Date
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.x1) {
-            Text("All done for tonight.")
-                .textStyle(.title)
-                .foregroundStyle(palette.ink)
-                .accessibilityAddTraits(.isHeader)
-            Text("Morning list starts at \(model.time(nextMorning)).")
-                .textStyle(.meta)
+        VStack(spacing: Spacing.x3) {
+            Illustration(kind: .moon, size: CGSize(width: 140, height: 120))
+            Text(name.map { "Rest up. \($0)'s list is clear." } ?? "Rest up. The list is clear.")
+                .textStyle(.body)
                 .foregroundStyle(palette.graphite)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
         }
+        .frame(maxWidth: .infinity)
     }
-}
-
-/// A big check circle (its own target), the label, one short meta line, and
-/// when it was done. Tapping the words opens the item's sheet.
-private struct TodoRow: View {
-    @Environment(\.palette) private var palette
-    let item: TodoDay.Item
-    let done: String?
-    let onTick: () -> Void
-    let onOpen: () -> Void
-
-    var body: some View {
-        HStack(alignment: .center, spacing: Spacing.x2) {
-            Button(action: onTick) {
-                ZStack {
-                    if item.isDone {
-                        Circle().fill(palette.indigo)
-                        Image(systemName: "checkmark").font(.footnote.weight(.bold)).foregroundStyle(palette.paper)
-                    } else {
-                        Circle().strokeBorder(palette.ink, lineWidth: 1.5)
-                    }
-                }
-                .frame(width: 28, height: 28)
-                .frame(width: 48, height: 56, alignment: .leading)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(item.label)
-            .accessibilityValue(item.isDone ? (item.meta ?? "Done") : (item.meta ?? "Not done"))
-            .accessibilityHint(isSkin ? "Logs one round." : (item.isDone ? "Marks it not done." : "Marks it done."))
-
-            Button(action: onOpen) {
-                AdaptiveStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(item.label)
-                            .textStyle(.body)
-                            .foregroundStyle(item.isDone && !isSkin ? palette.graphite : palette.ink)
-                        if let meta = item.meta {
-                            Text(meta).textStyle(.meta).foregroundStyle(palette.graphite)
-                        }
-                    }
-                    .fixedSize(horizontal: false, vertical: true)
-                    Spacer(minLength: 0)
-                    if let done, !isSkin {
-                        Text("Done \(done)").textStyle(.meta).foregroundStyle(palette.graphite)
-                    }
-                }
-                .padding(.vertical, Spacing.x2)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityHint("Shows what to do and the plan's words.")
-        }
-        .frame(minHeight: 56)
-        .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
-    }
-
-    private var isSkin: Bool { if case .skin = item.kind { true } else { false } }
 }

@@ -160,6 +160,9 @@ public enum TypeStyle: CaseIterable, Sendable {
     case control
     /// SF Pro 400, 13/18: times, eyebrows, footnotes.
     case meta
+    /// Newsreader 400, 40/46: the one big statement at the top of To do
+    /// ("3 things left for bedtime.") and its step sheet.
+    case statement
 
     public var font: Font {
         switch self {
@@ -169,6 +172,7 @@ public enum TypeStyle: CaseIterable, Sendable {
         case .label: .system(.subheadline, weight: .semibold)
         case .body, .control: .system(.body)
         case .meta: .system(.footnote)
+        case .statement: .custom(Self.statementCut, size: 40, relativeTo: .largeTitle)
         }
     }
 
@@ -181,6 +185,7 @@ public enum TypeStyle: CaseIterable, Sendable {
         case .label: 15
         case .body, .control: 17
         case .meta: 13
+        case .statement: 40
         }
     }
 
@@ -192,6 +197,7 @@ public enum TypeStyle: CaseIterable, Sendable {
         case .label: 20
         case .body, .control: 24
         case .meta: 18
+        case .statement: 46
         }
     }
 
@@ -203,11 +209,14 @@ public enum TypeStyle: CaseIterable, Sendable {
         case .label: .subheadline
         case .body, .control: .body
         case .meta: .footnote
+        case .statement: .largeTitle
         }
     }
 
     /// Newsreader at optical size 36, weight 500 (cut from the variable font).
     static let displayCut = "NewsreaderDisplay-Medium"
+    /// Newsreader at optical size 36, weight 400: the statement.
+    static let statementCut = "NewsreaderDisplay-Regular"
     /// Newsreader at optical size 16, weight 400: widgets' small serif only.
     static let textCut = "NewsreaderText-Regular"
 }
@@ -220,8 +229,11 @@ public enum TypeStyle: CaseIterable, Sendable {
 public enum Spacing {
     public static let x1: CGFloat = 4
     public static let x2: CGFloat = 8
+    /// 12 and 32: To do v2 only (tokens.css --s3 and --s6).
+    public static let x3: CGFloat = 12
     public static let x4: CGFloat = 16
     public static let x5: CGFloat = 24
+    public static let x6: CGFloat = 32
     /// Between sections.
     public static let x7: CGFloat = 40
     /// Screen margins.
@@ -244,6 +256,8 @@ public enum Corner {
     public static let control: CGFloat = 12
     /// Images and screenshots.
     public static let image: CGFloat = 2
+    /// To do v2's day cards, next row, and buttons (tokens.css --r-btn).
+    public static let tight: CGFloat = 4
     /// DESIGN.md §5: buttons, cards, inputs, and widget tiles (the new rule; screens move to it in U3–U5).
     public static let card: CGFloat = 12
 }

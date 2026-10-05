@@ -20,11 +20,12 @@ public struct ReminderSettings: Codable, Hashable, Sendable {
     public var morningRoutine = ReminderSlot(isOn: false, hour: 7, minute: 30)
     public var afternoonRoutine = ReminderSlot(isOn: false, hour: 12, minute: 30)
     public var eveningRoutine = ReminderSlot(isOn: false, hour: 19, minute: 0)
+    public var tonight = ReminderSlot(isOn: false, hour: 19, minute: 30)
 
     public init() {}
 
     private enum CodingKeys: String, CodingKey {
-        case checkIn, skinCheckIn, morningRoutine, afternoonRoutine, eveningRoutine
+        case checkIn, skinCheckIn, morningRoutine, afternoonRoutine, eveningRoutine, tonight
     }
 
     /// Missing reminders keep their defaults, so settings saved by an older
@@ -37,6 +38,7 @@ public struct ReminderSettings: Codable, Hashable, Sendable {
         morningRoutine = try container.decodeIfPresent(ReminderSlot.self, forKey: .morningRoutine) ?? defaults.morningRoutine
         afternoonRoutine = try container.decodeIfPresent(ReminderSlot.self, forKey: .afternoonRoutine) ?? defaults.afternoonRoutine
         eveningRoutine = try container.decodeIfPresent(ReminderSlot.self, forKey: .eveningRoutine) ?? defaults.eveningRoutine
+        tonight = try container.decodeIfPresent(ReminderSlot.self, forKey: .tonight) ?? defaults.tonight
     }
 
     public subscript(kind: ReminderKind) -> ReminderSlot {
@@ -47,6 +49,7 @@ public struct ReminderSettings: Codable, Hashable, Sendable {
             case .morningRoutine: morningRoutine
             case .afternoonRoutine: afternoonRoutine
             case .eveningRoutine: eveningRoutine
+            case .tonight: tonight
             }
         }
         set {
@@ -56,6 +59,7 @@ public struct ReminderSettings: Codable, Hashable, Sendable {
             case .morningRoutine: morningRoutine = newValue
             case .afternoonRoutine: afternoonRoutine = newValue
             case .eveningRoutine: eveningRoutine = newValue
+            case .tonight: tonight = newValue
             }
         }
     }

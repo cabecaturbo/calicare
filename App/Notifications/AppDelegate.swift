@@ -20,6 +20,10 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
     ) async {
         let actionIdentifier = response.actionIdentifier
         let payload = ReminderPayload(userInfo: response.notification.request.content.userInfo)
+        if payload?.kind == .tonight, actionIdentifier == UNNotificationDefaultActionIdentifier {
+            await MainActor.run { UIApplication.shared.open(DeepLink.tonight) }
+            return
+        }
         do {
             try await NotificationActionHandler.live().handle(actionIdentifier: actionIdentifier, payload: payload)
         } catch {

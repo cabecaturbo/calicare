@@ -108,6 +108,7 @@ struct ProgressTab: View {
                                     .frame(minHeight: Size.touchTarget)
                             }
                             .accessibilityHint("A card for a sitter or grandparent, in your words.")
+                            ShareLastNightLink(child: child.id)
                             if span == .week, let file {
                                 ShareLink(item: file) {
                                     Text("Share this week’s card")

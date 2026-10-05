@@ -27,4 +27,20 @@ public enum DeepLink {
     public static func isProgress(_ url: URL) -> Bool {
         url.scheme == scheme && url.host == "progress"
     }
+
+    /// Starts Tonight (the bedtime reminder, and the Tonight card when it ended early).
+    public static let tonight: URL = link("tonight")
+
+    /// Last night's summary with Share (the Tonight card in the morning).
+    public static let night: URL = link("night")
+
+    public static func isTonight(_ url: URL) -> Bool { url.scheme == scheme && url.host == "tonight" }
+    public static func isNight(_ url: URL) -> Bool { url.scheme == scheme && url.host == "night" }
+
+    private static func link(_ host: String) -> URL {
+        var parts = URLComponents()
+        parts.scheme = scheme
+        parts.host = host
+        return parts.url ?? URL(fileURLWithPath: "/")
+    }
 }

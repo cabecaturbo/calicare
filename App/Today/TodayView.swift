@@ -111,10 +111,10 @@ struct TodayView: View {
                             .opacity(0.8)
                     }
                 }
-                .foregroundStyle(palette.paper)
+                .foregroundStyle(palette.onButton)
                 .frame(maxWidth: .infinity, minHeight: 96, alignment: .leading)
                 .padding(.horizontal, Spacing.x5)
-                .background(palette.accent, in: RoundedRectangle(cornerRadius: Corner.card))
+                .background(palette.button, in: RoundedRectangle(cornerRadius: Corner.card))
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Log itching")

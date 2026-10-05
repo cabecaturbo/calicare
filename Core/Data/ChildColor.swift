@@ -16,7 +16,7 @@ public enum ChildColor: String, Sendable, CaseIterable, Identifiable {
     /// Stored tags predate the notebook palette, so the spoken name follows the color shown.
     public var name: String {
         switch self {
-        case .sage: "Rust"
+        case .sage: "Stone"
         case .clay: "Ochre"
         case .moss: "Graphite"
         case .sand: "Oat"

@@ -16,7 +16,7 @@ Use Apple's system components and behaviors; restyle them with our
 tokens, don't replace them.
 
 ## 1. The idea in one line
-A beautifully made notebook from a good shop: linen paper, ink, rust, and olive.
+A beautifully made notebook from a good shop: linen paper, ink, soft grey, and olive.
 Think Kinfolk's restraint and Anthropologie's warmth. Not a health app,
 not a plant app, not a baby app, not a SaaS dashboard.
 
@@ -72,7 +72,8 @@ Day
 | ink | #261C14 | Text, primary buttons, outlines |
 | graphite | #67584A | Secondary text, captions, swatch borders |
 | hairline | #DECDB6 | 0.5pt dividers, card and pill borders |
-| accent (rust) | #A8451A | The one accent: links, "Change", checks, the Log buttons |
+| accent (stone grey) | #625D57 | The one accent: links, "Change", checks, the selected tab |
+| button (soft grey) | #D3CDC5 | The Log buttons' fill; text on it is ink (onButton #261C14) |
 | ochre | #8A6320 | "Worth watching" text only, on paper |
 
 Night (8 PM – 7 AM, every tab): a soft, warm night
@@ -83,7 +84,8 @@ Night (8 PM – 7 AM, every tab): a soft, warm night
 | ink | #F2E5D6 |
 | graphite | #BBA792 |
 | hairline | #3B2C22 |
-| accent (rust) | #EE9A6B |
+| accent (stone grey) | #CFC8BF |
+| button | #4A433D (text #F2E5D6) |
 
 One scale for skin answers and for nights (olive)
 | Answer | Day | Night |
@@ -107,13 +109,13 @@ Drawing the scale
 Contrast: every text color passes 4.5:1 on paper and oat in both themes;
 the unit test checks each pair.
 
-Why rust and olive (owner, October 5, 2026): a warm, earthy palette in
-place of blue, picked from four warm options after trying terracotta and
-sage, blush and rose, and clay and honey on the phone. Rust is only the
-accent (buttons, links, checks), never a severity, so "rough" is never
-shown in a red-like color. The skin scale is olive and can't be confused
-with skin or blood. The night stays soft and warm: brown-black, not
-blue-black.
+Why soft grey on linen (owner, October 5, 2026): a warm, quiet palette in
+place of blue. Picked after trying terracotta and sage, blush and rose,
+clay and honey, and rust and olive on the phone. The Log buttons are a pale
+soft grey with dark text; links and checks are a deeper stone grey so they
+stay readable. The skin scale is olive and can't be confused with skin or
+blood; grey is never a severity. The night stays soft and warm:
+brown-black, not blue-black.
 
 ## 4. Type
 Two families.

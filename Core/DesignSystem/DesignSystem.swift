@@ -1,6 +1,6 @@
 import SwiftUI
 
-// Tokens from DESIGN.md: linen paper, ink, rust, and olive. Only this file should change
+// Tokens from DESIGN.md: linen paper, ink, soft grey, and olive. Only this file should change
 // if the palette or the serif is ever swapped.
 
 // MARK: - Color
@@ -21,6 +21,10 @@ public struct Palette: Sendable, Equatable {
         case accent
         /// "Worth watching" text only, used rarely. Paper only: it fails on oat.
         case ochre
+        /// The soft grey fill of the Log buttons (and the night tab pill).
+        case button
+        /// Text and icons on `button`.
+        case onButton
     }
 
     /// A text color on a background color that screens are allowed to use.
@@ -32,27 +36,29 @@ public struct Palette: Sendable, Equatable {
     public let isNight: Bool
     private let tokens: [Token: UInt32]
     /// Olive density, calm first. Day: light is calm. Night: brighter is harder.
-    /// Never red: rust is the accent, never a severity.
+    /// Never red: the accent is grey, never a severity.
     public let severityScale: [UInt32]
 
-    /// Rust and olive (owner, October 5, 2026): warm linen paper, a burnt-
-    /// orange accent for buttons and links only, and an olive skin scale.
+    /// Soft grey on linen (owner, October 5, 2026): pale grey Log buttons with
+    /// dark text, stone grey for links and checks, and an olive skin scale.
     public static let day = Palette(
         isNight: false,
         tokens: [
             .paper: 0xF6EEE2, .oat: 0xECDFCC, .ink: 0x261C14, .graphite: 0x67584A,
-            .hairline: 0xDECDB6, .accent: 0xA8451A, .ochre: 0x8A6320,
+            .hairline: 0xDECDB6, .accent: 0x625D57, .ochre: 0x8A6320,
+            .button: 0xD3CDC5, .onButton: 0x261C14,
         ],
         severityScale: [0xECECD8, 0xCFD0A6, 0xB0B17E, 0x8F9156, 0x55582C]
     )
 
-    /// 8 PM – 7 AM: a soft, warm night. Brown-black paper, warm text, a light
-    /// rust accent; on the olive scale, brighter is rougher.
+    /// 8 PM – 7 AM: a soft, warm night. Brown-black paper, warm text, a soft
+    /// grey-brown Log button; on the olive scale, brighter is rougher.
     public static let night = Palette(
         isNight: true,
         tokens: [
             .paper: 0x201712, .oat: 0x2C2019, .ink: 0xF2E5D6, .graphite: 0xBBA792,
-            .hairline: 0x3B2C22, .accent: 0xEE9A6B, .ochre: 0xC9A15B,
+            .hairline: 0x3B2C22, .accent: 0xCFC8BF, .ochre: 0xC9A15B,
+            .button: 0x4A433D, .onButton: 0xF2E5D6,
         ],
         severityScale: [0x2F2F1E, 0x46462C, 0x6B6B40, 0x8F9156, 0xD2D39C]
     )
@@ -68,6 +74,7 @@ public struct Palette: Sendable, Equatable {
         TextPair(text: .accent, background: .oat),
         TextPair(text: .ochre, background: .paper),
         TextPair(text: .paper, background: .ink),
+        TextPair(text: .onButton, background: .button),
     ]
 
     public static func current(at date: Date = .now, calendar: Calendar = .current) -> Palette {
@@ -92,6 +99,8 @@ public struct Palette: Sendable, Equatable {
     public var hairline: Color { color(.hairline) }
     public var accent: Color { color(.accent) }
     public var ochre: Color { color(.ochre) }
+    public var button: Color { color(.button) }
+    public var onButton: Color { color(.onButton) }
 
     /// A step on the severity scale, 1 (calm) to 5 (hard).
     public func severity(step: Int) -> Color {

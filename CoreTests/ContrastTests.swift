@@ -35,7 +35,7 @@ struct ContrastTests {
         #expect(abs(Self.contrast(day.hex(.graphite), day.hex(.oat)) - 5.2) < 0.1)
         #expect(abs(Self.contrast(day.hex(.ochre), day.hex(.paper)) - 4.7) < 0.1)
         #expect(abs(Self.contrast(night.hex(.ink), night.hex(.paper)) - 14.2) < 0.1)
-        #expect(abs(Self.contrast(night.hex(.accent), night.hex(.paper)) - 7.9) < 0.1)
+        #expect(abs(Self.contrast(night.hex(.accent), night.hex(.paper)) - 10.6) < 0.1)
     }
 
     static func contrast(_ a: UInt32, _ b: UInt32) -> Double {

@@ -105,8 +105,8 @@ private struct QuickLogCardView: View {
     }
 }
 
-/// The big Log button, matching the Home Screen widget: a rust capsule
-/// with a soft shade and the palm. Never red: rust is the accent.
+/// The big Log button, matching the Home Screen widget: a soft grey capsule
+/// with a soft shade and the palm. Never red.
 private struct CardLogButton: View {
     let childID: UUID
     let palette: Palette
@@ -120,12 +120,12 @@ private struct CardLogButton: View {
                 Text("Log")
                     .font(.custom("NewsreaderDisplay-Medium", size: 20, relativeTo: .title3))
             }
-            .foregroundStyle(palette.paper)
+            .foregroundStyle(palette.onButton)
             .padding(.horizontal, Spacing.x5)
             .frame(maxWidth: wide ? .infinity : nil, minHeight: 56)
             .background(
                 Capsule().fill(LinearGradient(
-                    colors: [palette.accent.mix(with: .white, by: 0.08), palette.accent.mix(with: .black, by: 0.06)],
+                    colors: [palette.button.mix(with: .white, by: 0.10), palette.button.mix(with: .black, by: 0.04)],
                     startPoint: .top, endPoint: .bottom
                 ))
             )

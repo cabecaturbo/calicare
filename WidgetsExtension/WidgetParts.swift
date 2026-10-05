@@ -2,7 +2,7 @@ import Core
 import SwiftUI
 import WidgetKit
 
-/// The main log button: a rust tile with a soft top-to-bottom shade,
+/// The main log button: a soft grey tile with a soft top-to-bottom shade,
 /// the palm in a pale circle, and "Log" in the serif. In tinted and clear
 /// looks it keeps a filled glass shape, so it stays the widget's main thing.
 struct ItchyTile: View {
@@ -18,21 +18,21 @@ struct ItchyTile: View {
                 Image(systemName: "hand.raised.fill")
                     .font(.system(size: 20, weight: .medium))
                     .frame(width: 40, height: 40)
-                    .background(Circle().fill((fullColor ? palette.paper : Color.primary).opacity(0.18)))
+                    .background(Circle().fill((fullColor ? palette.paper : Color.primary).opacity(fullColor ? 0.55 : 0.18)))
                 Text("Log")
                     .font(.custom("NewsreaderDisplay-Medium", size: 20, relativeTo: .title3))
             }
-            .foregroundStyle(fullColor ? palette.paper : Color.primary)
+            .foregroundStyle(fullColor ? palette.onButton : Color.primary)
             .widgetAccentable()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .frame(minHeight: Size.touchTarget)
             .background {
                 if fullColor {
                     shape.fill(LinearGradient(
-                        colors: [palette.accent.mix(with: .white, by: 0.08), palette.accent.mix(with: .black, by: 0.06)],
+                        colors: [palette.button.mix(with: .white, by: 0.10), palette.button.mix(with: .black, by: 0.04)],
                         startPoint: .top, endPoint: .bottom
                     ))
-                    .overlay(shape.strokeBorder(Color.white.opacity(0.14), lineWidth: 1))
+                    .overlay(shape.strokeBorder(palette.ink.opacity(0.08), lineWidth: 1))
                 } else {
                     shape.fill(Color.primary.opacity(0.28))
                 }
@@ -44,8 +44,7 @@ struct ItchyTile: View {
     }
 }
 
-/// A quieter one-tap button beside Log: a soft oat pill with a small
-/// rust icon in full color, an outline in tinted and clear.
+/// A quieter one-tap button beside Log: a soft oat pill with a small/// stone grey icon in full color, an outline in tinted and clear.
 struct SecondaryWidgetButton: View {
     @Environment(\.widgetRenderingMode) private var renderingMode
     let palette: Palette

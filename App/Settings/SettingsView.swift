@@ -148,6 +148,11 @@ struct SettingsView: View {
                 } label: {
                     SettingsLabel("Recent logs")
                 }
+                NavigationLink {
+                    LockScreenTestView()
+                } label: {
+                    SettingsLabel("Lock Screen test")
+                }
             }
             TryNotificationSection()
         }

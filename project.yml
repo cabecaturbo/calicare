@@ -43,6 +43,8 @@ targets:
       properties:
         CFBundleDisplayName: Cali Care
         CFBundleName: Cali Care
+        # Tonight and the Phase 0 Lock Screen test.
+        NSSupportsLiveActivities: true
         # calicare://note opens the note sheet (the medium widget's Note button).
         CFBundleURLTypes:
           - CFBundleURLName: com.cursorkittens.calicare

@@ -59,30 +59,29 @@ struct ItchWidgetView: View {
     /// The Lock Screen draws its own tint: the palm over "Log".
     @ViewBuilder
     private var circular: some View {
-        if entry.feedback != nil {
-            // Not a button, so a second tap can't undo by accident.
-            ZStack {
-                AccessoryWidgetBackground()
-                Image(systemName: "checkmark")
-                    .font(.title3.weight(.semibold))
-            }
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Logged")
-        } else if let child = entry.childEntity {
+        if let child = entry.childEntity {
+            // Stays a button after a tap (showing a check for a minute), so a
+            // second wake-up can be logged right away.
             Button(intent: WidgetLogIntent(action: .itchy, child: child)) {
                 ZStack {
                     AccessoryWidgetBackground()
-                    VStack(spacing: 1) {
-                        Image(systemName: "hand.raised.fill")
-                            .font(.body)
-                        Text("Log")
-                            .font(.system(size: 12, weight: .semibold))
-                            .minimumScaleFactor(0.7)
+                    if entry.feedback != nil {
+                        Image(systemName: "checkmark")
+                            .font(.title3.weight(.semibold))
+                    } else {
+                        VStack(spacing: 1) {
+                            Image(systemName: "hand.raised.fill")
+                                .font(.body)
+                            Text("Log")
+                                .font(.system(size: 12, weight: .semibold))
+                                .minimumScaleFactor(0.7)
+                        }
                     }
                 }
             }
             .buttonStyle(.plain)
             .accessibilityLabel(WidgetAction.itchy.accessibilityLabel(for: child.name))
+            .accessibilityValue(entry.feedback != nil ? "Logged" : "")
         } else {
             ZStack {
                 AccessoryWidgetBackground()

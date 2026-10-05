@@ -2,6 +2,22 @@
 static HTML in the site's existing look (tokens.css), desktop and phone."""
 import sys
 
+import os
+HERE = os.path.dirname(os.path.abspath(__file__))
+# The owner's phone asks for Face ID before a Lock Screen tap runs (October 5,
+# 2026), so the page uses the Home Screen widget wording. Flip to True only if
+# Lock Screen logging without unlocking is ever confirmed.
+TONIGHT_CONFIRMED = False
+
+
+def picture(name, label, scale=None, w=417, h=876):
+    """A drawn picture saved from the earlier page (scripts/site/*.html), inert."""
+    inner = open(os.path.join(HERE, name + '.html')).read()
+    if scale:
+        inner = (f'<div style="width:{int(w*scale)}px;height:{int(h*scale)}px;overflow:hidden">'
+                 f'<div style="width:{w}px;height:{h}px;transform:scale({scale});transform-origin:top left">{inner}</div></div>')
+    return f'<div role="img" aria-label="{label}"><div inert aria-hidden="true">{inner}</div></div>'
+
 BETA = 'mailto:msmccartin@gmail.com?subject=Cali%20Care%20beta'
 CONTACT = 'mailto:msmccartin@gmail.com?subject=Cali%20Care'
 
@@ -153,7 +169,11 @@ def build(desk):
 </div>
 <span class="t-caption muted">Free on iPhone during the beta. No account needed.</span>
 </div>'''
-    hero_vis = verify('tonight', lock_phone(sc), 'swap in the Home Screen widget phone mockup (the previous hero picture, web/index.html before this change).')
+    if TONIGHT_CONFIRMED:
+        hero_vis = verify('tonight', lock_phone(sc))
+    else:
+        hero_vis = (picture('hero_desk', 'A Home Screen with the Cali Care Log widget') if desk
+                    else picture('hero_mob', 'A Home Screen with the Cali Care Log widget', scale=0.8))
     if desk:
         out.append(f'<section id="top" style="box-sizing:border-box;padding:96px 120px;display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:80px;align-items:center">{hero_text}<div style="display:flex;justify-content:center">{hero_vis}</div></section>')
     else:
@@ -175,14 +195,17 @@ def build(desk):
     out.append(f'<section id="day{m}" style="box-sizing:border-box;padding:{"96px 120px 0" if desk else "56px var(--gutter) 0"}"><h2 class="t-label muted" style="margin:0;font-size:15px;letter-spacing:0.08em;text-transform:uppercase">A day with Cali Care</h2></section>')
 
     # 4. 2:14 AM
-    t214 = verify('tonight', P(T214_BODY), T214_FALLBACK) + verify('tonight', f'<p class="t-caption muted" style="margin:0;{small}">{T214_SMALL}</p>')
-    out.append(moment('night', '2:14 AM', 'Tap once, and get back to your child.', t214,
-                      verify('tonight', tonight_card(1.0 if desk else 0.9), 'swap in the Home Screen widget picture (WSmall loop) from the previous page.'),
-                      night=True))
+    if TONIGHT_CONFIRMED:
+        t214 = verify('tonight', P(T214_BODY)) + verify('tonight', f'<p class="t-caption muted" style="margin:0;{small}">{T214_SMALL}</p>')
+        v214 = verify('tonight', tonight_card(1.0 if desk else 0.9))
+    else:
+        t214 = P(T214_FALLBACK)
+        v214 = picture('widget_desk', 'The Cali Care widget: tap Log, then Undo if you need it', w=158, h=158)
+    out.append(moment('night', '2:14 AM', 'Tap once, and get back to your child.', t214, v214, night=True))
 
     # 5. 7:00 AM
     swatches = ''.join(f'<div style="display:flex;align-items:center;gap:var(--s2)"><span class="swatch {c}" style="width:20px;height:20px"></span><span class="t-caption">{n}</span></div>' for n, c in SCALE)
-    t7 = (verify('tonight', P(T7_BODY), T7_FALLBACK)
+    t7 = ((verify('tonight', P(T7_BODY)) if TONIGHT_CONFIRMED else P(T7_FALLBACK))
           + P('It also asks one question: how is their skin today?')
           + f'<div style="display:{"flex" if desk else "grid"};{"" if desk else "grid-template-columns:repeat(2, minmax(0, 1fr));"}gap:var(--s3) var(--s5)">{swatches}</div>'
           + f'<span class="t-caption muted" style="max-width:480px">The scale never uses red, and it’s based on symptoms, not how the skin looks, so it works for every skin tone.</span>')

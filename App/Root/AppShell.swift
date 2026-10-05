@@ -34,6 +34,7 @@ struct AppShell: View {
         }
         .onOpenURL { url in
             if DeepLink.isNote(url) { shell.showingNote = true }
+            if DeepLink.isProgress(url) { shell.tab = .progress }
         }
         .sheet(isPresented: $shell.showingLog) {
             LogSheet()

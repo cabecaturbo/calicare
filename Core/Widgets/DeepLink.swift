@@ -15,4 +15,16 @@ public enum DeepLink {
     public static func isNote(_ url: URL) -> Bool {
         url.scheme == scheme && url.host == "note"
     }
+
+    /// Opens Progress (the Night strip widget).
+    public static let progress: URL = {
+        var parts = URLComponents()
+        parts.scheme = scheme
+        parts.host = "progress"
+        return parts.url ?? URL(fileURLWithPath: "/")
+    }()
+
+    public static func isProgress(_ url: URL) -> Bool {
+        url.scheme == scheme && url.host == "progress"
+    }
 }

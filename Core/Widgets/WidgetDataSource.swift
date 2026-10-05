@@ -63,6 +63,15 @@ public struct WidgetDataSource: Sendable {
         )
     }
 
+    /// The last `count` nights for the Night strip widget.
+    public func nightStrip(for child: ChildInfo?, at date: Date, count: Int) async throws -> NightStrip {
+        let last = CareDay.containing(date, calendar: calendar)
+        let first = last.adding(days: -(count - 1), calendar: calendar)
+        var events: [LogEntry] = []
+        if let child { events = try await logs.events(from: first, through: last, child: child.id) }
+        return NightStrip(events: events, count: count, now: date, calendar: calendar)
+    }
+
     /// The last widget tap for this child, if it's recent and hasn't been undone.
     public func feedback(for child: ChildInfo?, at date: Date) async throws -> WidgetFeedback? {
         guard let child, let feedback = feedbackStore.latest,

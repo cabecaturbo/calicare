@@ -15,6 +15,7 @@ struct CaliCareWidgets: WidgetBundle {
         LastNightWidget()
         LogItchControl()
         NightStripWidget()
+        LockScreenTestLiveActivity()
     }
 }
 

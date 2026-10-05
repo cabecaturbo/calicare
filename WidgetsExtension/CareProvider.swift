@@ -49,6 +49,7 @@ struct CareProvider: AppIntentTimelineProvider {
             }
             return entries
         } catch {
+            LockScreenDiagnostics.note("Widget timeline failed: \(error). Data available: \(LockScreenDiagnostics.protectedDataAvailable)")
             return [CareEntry(date: now, snapshot: .empty, feedback: nil)]
         }
     }

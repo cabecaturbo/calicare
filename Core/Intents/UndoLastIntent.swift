@@ -5,6 +5,7 @@ public struct UndoLastIntent: AppIntent {
     public static let title: LocalizedStringResource = "Undo Last Log"
     public static let description = IntentDescription("Removes the most recent log from the last 10 minutes.")
     public static let openAppWhenRun = false
+    public static let authenticationPolicy: IntentAuthenticationPolicy = .alwaysAllowed
 
     public init() {}
 

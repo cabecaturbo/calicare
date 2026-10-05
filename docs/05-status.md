@@ -25,17 +25,14 @@ Where CaliCare stands. `PROGRESS.md` has the step-by-step checklist, and `docs/0
    - meal ideas (needs sign-in)
    - the Shortcuts automation
 2. **Two-phone test (owner):** join with an invite code (2.4) and "by Dad" names (2.5).
-3. **7.5 Landing page and privacy policy:**
-   - Both go on a free `*.vercel.app` address.
-   - Link the privacy policy from Settings.
-   - Manual: run `vercel login` once.
-4. **Apple sign-in token removal on account deletion:** the `delete-account` Edge Function calls Apple's revoke endpoint. Manual: create a Sign in with Apple key on developer.apple.com.
-5. **7.6 TestFlight:**
+3. **Apple sign-in token removal on account deletion:** code merged (PR #57). Manual: create a Sign in with Apple key on developer.apple.com, then set the APPLE_* Supabase secrets and deploy `delete-account`.
+4. **7.6 TestFlight:**
    - Create the App Store record and upload a build. Ask the owner before each.
    - Invite 5–10 eczema parents.
    - Ideally, a pediatric dermatologist reviews the reports and wording.
 
 ## Already done for the App Store
+- **Landing page and privacy policy:** https://calicare.vercel.app and /privacy, linked from Settings.
 - **Data export:** CSV and journal PDF, in Settings › Your data.
 - **Contact support:** msmccartin@gmail.com for now.
 - **App icon.**

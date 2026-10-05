@@ -119,6 +119,9 @@ struct SettingsView: View {
             } label: {
                 SettingsLabel("How Cali Care works")
             }
+            Link(destination: Self.privacyURL) {
+                SettingsLabel("Privacy policy")
+            }
             Link(destination: Self.supportURL) {
                 SettingsLabel("Contact support")
             }
@@ -150,6 +153,9 @@ struct SettingsView: View {
         }
     }
     #endif
+
+    /// The privacy policy on the landing page (web/privacy.html).
+    static let privacyURL = URL(string: "https://calicare.vercel.app/privacy")!
 
     /// Support email for now (owner, October 2, 2026); a support address comes with the landing page.
     static let supportURL = URL(string: "mailto:msmccartin@gmail.com?subject=Cali%20Care")!

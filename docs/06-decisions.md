@@ -596,3 +596,9 @@ The owner saw the v2 redesign on the phone and asked for it to be reverted. The 
 - Built from the owner's "Cali Care website" design canvas (Home · desktop and Home · phone), rendered to static HTML. Beta changes: "Join the beta" (email) in place of App Store buttons; the founder section waits for the owner's words.
 - The drawn app screens were swapped for real simulator captures of the current app (`web/shots/`), plus a To do section, so the site matches the app.
 - Settings › About links to /privacy. Settings › Your data now says sync runs whenever you're signed in.
+
+## To do v2 (October 4, 2026)
+- To do is built from the app canvas's "To do v2" boards (open, all done, night, one-step sheet) with tokens.css colors, type, and spacing. The owner checked it on the phone and said to merge (PR #63).
+- Only the To do screen changed: the bottom tab bar and round Log button stay on every tab (owner's choice; the v2 Itchy dock is not used).
+- New shared tokens: `TypeStyle.statement` (Newsreader 400, 40/46), `Spacing.x3` (12) and `x6` (32), `Corner.tight` (4).
+- The step sheet keeps "Your provider's words" (the board says "doctor's") to match Info.

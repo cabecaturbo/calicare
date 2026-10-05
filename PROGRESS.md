@@ -129,3 +129,11 @@ not in version 1; the code stays. Next:
 - [x] 7.5 🛑 Vercel landing page and privacy policy
       Live at https://calicare.vercel.app (privacy: /privacy), built from the website design canvas with real app screenshots. Linked from Settings › About.
 - [ ] 7.6 🛑 Launch readiness and TestFlight
+
+## Tonight and Night strip (October 5, 2026)
+- [x] Phase 0: why Lock Screen logging fails. Data protection is the iOS default (works while locked after the first unlock), so it isn't the cause. Apple's docs say widget and Live Activity buttons are inactive on a locked phone until it's unlocked. Added logging (Settings › Debug › Lock Screen test), explicit `.alwaysAllowed`, a safe stale-child fallback, and kept the Lock Screen circle a button (PR #70).
+- [x] Night strip widget: last 7 nights (medium) or 5 (small) as dots on a 7 PM–7 AM line; opens Progress (PR #71).
+- [x] Tonight Live Activity: Log, count, Logged · Undo, morning summary, restart on tap to cover the 8-hour limit, Siri "Start tonight", Settings switch, optional Start Tonight reminder, Share last night in Progress and iMessage (PR #72).
+- [ ] 🛑 Phone check: the on-device Tonight checklist (locked with Face ID, offline, before first unlock, Undo, second phone, two children, a full night, widgets refreshing).
+- [ ] Site: "A day with Cali Care" is a protected preview (PR #73, draft). Goes live after the phone check confirms Tonight and the Night strip.
+

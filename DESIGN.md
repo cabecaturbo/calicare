@@ -16,7 +16,7 @@ Use Apple's system components and behaviors; restyle them with our
 tokens, don't replace them.
 
 ## 1. The idea in one line
-A beautifully made notebook from a good shop: linen paper, ink, soft grey, and olive.
+A beautifully made notebook from a good shop: linen paper, ink, greige, and olive.
 Think Kinfolk's restraint and Anthropologie's warmth. Not a health app,
 not a plant app, not a baby app, not a SaaS dashboard.
 
@@ -72,11 +72,11 @@ Day
 | ink | #261C14 | Text, primary buttons, outlines |
 | graphite | #67584A | Secondary text, captions, swatch borders |
 | hairline | #DECDB6 | 0.5pt dividers, card and pill borders |
-| accent (stone grey) | #625D57 | The one accent: links, "Change", checks, the selected tab |
-| button (soft grey) | #D3CDC5 | The Log buttons' fill; text on it is ink (onButton #261C14) |
+| accent (greige) | #665B52 | The one accent: links, "Change", checks, the selected tab |
+| button (greige) | #665B52 | The Log buttons' fill; text on it is paper (onButton #F6EEE2) |
 | ochre | #8A6320 | "Worth watching" text only, on paper |
 
-Night (8 PM – 7 AM, every tab): a soft, warm night
+Night (8 PM – 7 AM, every tab, or pinned with the day/night toggle): a soft, warm night
 | Token | Hex |
 |---|---|
 | paper | #201712 |
@@ -84,8 +84,8 @@ Night (8 PM – 7 AM, every tab): a soft, warm night
 | ink | #F2E5D6 |
 | graphite | #BBA792 |
 | hairline | #3B2C22 |
-| accent (stone grey) | #CFC8BF |
-| button | #4A433D (text #F2E5D6) |
+| accent (greige) | #D3C8BC |
+| button | #D3C8BC (text #201712) |
 
 One scale for skin answers and for nights (olive)
 | Answer | Day | Night |
@@ -109,13 +109,18 @@ Drawing the scale
 Contrast: every text color passes 4.5:1 on paper and oat in both themes;
 the unit test checks each pair.
 
-Why soft grey on linen (owner, October 5, 2026): a warm, quiet palette in
-place of blue. Picked after trying terracotta and sage, blush and rose,
-clay and honey, and rust and olive on the phone. The Log buttons are a pale
-soft grey with dark text; links and checks are a deeper stone grey so they
-stay readable. The skin scale is olive and can't be confused with skin or
-blood; grey is never a severity. The night stays soft and warm:
-brown-black, not blue-black.
+Why greige on linen (owner, October 5, 2026): a warm, quiet palette in
+place of blue, picked after trying terracotta and sage, blush and rose,
+clay and honey, rust and olive, and soft grey on the phone. Greige (a warm
+grey with a touch of brown) is the accent and the Log button fill. The skin
+scale is olive and can't be confused with skin or blood; greige is never a
+severity. The night stays soft and warm: brown-black, not blue-black.
+
+Day/night toggle: a small sun or moon fixed just above the tab bar on every
+tab (it doesn't scroll). A tap switches to the other colors and keeps them;
+press and hold for "Match the time of day". Only the colors change: the
+night layout (bigger Log button, "Tonight so far") follows the clock.
+Widgets and the Quick Log card follow the toggle too.
 
 ## 4. Type
 Two families.

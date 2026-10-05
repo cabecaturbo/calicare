@@ -1,6 +1,6 @@
 import SwiftUI
 
-// Tokens from DESIGN.md: linen paper, ink, soft grey, and olive. Only this file should change
+// Tokens from DESIGN.md: linen paper, ink, greige, and olive. Only this file should change
 // if the palette or the serif is ever swapped.
 
 // MARK: - Color
@@ -21,7 +21,7 @@ public struct Palette: Sendable, Equatable {
         case accent
         /// "Worth watching" text only, used rarely. Paper only: it fails on oat.
         case ochre
-        /// The soft grey fill of the Log buttons (and the night tab pill).
+        /// The fill of the Log buttons (and the night tab pill).
         case button
         /// Text and icons on `button`.
         case onButton
@@ -39,26 +39,27 @@ public struct Palette: Sendable, Equatable {
     /// Never red: the accent is grey, never a severity.
     public let severityScale: [UInt32]
 
-    /// Soft grey on linen (owner, October 5, 2026): pale grey Log buttons with
-    /// dark text, stone grey for links and checks, and an olive skin scale.
+    /// Greige on linen (owner, October 5, 2026): a warm grey for the Log
+    /// buttons, links, and checks, and an olive skin scale.
     public static let day = Palette(
         isNight: false,
         tokens: [
             .paper: 0xF6EEE2, .oat: 0xECDFCC, .ink: 0x261C14, .graphite: 0x67584A,
-            .hairline: 0xDECDB6, .accent: 0x625D57, .ochre: 0x8A6320,
-            .button: 0xD3CDC5, .onButton: 0x261C14,
+            .hairline: 0xDECDB6, .accent: 0x665B52, .ochre: 0x8A6320,
+            .button: 0x665B52, .onButton: 0xF6EEE2,
         ],
         severityScale: [0xECECD8, 0xCFD0A6, 0xB0B17E, 0x8F9156, 0x55582C]
     )
 
-    /// 8 PM – 7 AM: a soft, warm night. Brown-black paper, warm text, a soft
-    /// grey-brown Log button; on the olive scale, brighter is rougher.
+    /// Night colors (8 PM – 7 AM, or pinned with the toggle): a soft, warm
+    /// night. Brown-black paper, warm text, a light greige accent; on the
+    /// olive scale, brighter is rougher.
     public static let night = Palette(
         isNight: true,
         tokens: [
             .paper: 0x201712, .oat: 0x2C2019, .ink: 0xF2E5D6, .graphite: 0xBBA792,
-            .hairline: 0x3B2C22, .accent: 0xCFC8BF, .ochre: 0xC9A15B,
-            .button: 0x4A433D, .onButton: 0xF2E5D6,
+            .hairline: 0x3B2C22, .accent: 0xD3C8BC, .ochre: 0xC9A15B,
+            .button: 0xD3C8BC, .onButton: 0x201712,
         ],
         severityScale: [0x2F2F1E, 0x46462C, 0x6B6B40, 0x8F9156, 0xD2D39C]
     )
@@ -81,7 +82,11 @@ public struct Palette: Sendable, Equatable {
         #if DEBUG
         if let forced = DesignReview.forcedNight { return forced ? .night : .day }
         #endif
-        return NightMode.isActive(at: date, calendar: calendar) ? .night : .day
+        switch AppearanceMode.current {
+        case .day: return .day
+        case .night: return .night
+        case .automatic: return NightMode.isActive(at: date, calendar: calendar) ? .night : .day
+        }
     }
 
     public func hex(_ token: Token) -> UInt32 {

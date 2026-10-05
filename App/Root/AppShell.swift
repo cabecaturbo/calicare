@@ -167,10 +167,18 @@ private struct TabChrome: ViewModifier {
     let pills: Bool
 
     func body(content: Content) -> some View {
-        if pills {
-            content.toolbar(.hidden, for: .tabBar)
-        } else {
-            content.modifier(LoggedBannerInset(isOn: true))
+        Group {
+            if pills {
+                content.toolbar(.hidden, for: .tabBar)
+            } else {
+                content.modifier(LoggedBannerInset(isOn: true))
+            }
+        }
+        // The day/night toggle stays in place while the page scrolls, just above the bar.
+        .overlay(alignment: .bottomTrailing) {
+            AppearanceToggle()
+                .padding(.trailing, Spacing.margin)
+                .padding(.bottom, Spacing.x3)
         }
     }
 }

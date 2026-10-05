@@ -26,7 +26,7 @@ struct BottomBar: View {
             }
             HStack(spacing: Spacing.x4) {
                 TabPill()
-                LogPill(showsItchy: !(shell.tab == .today && palette.isNight))
+                LogPill(showsItchy: !(shell.tab == .today && NightMode.isLayoutActive()))
             }
         }
         .padding(.horizontal, Spacing.margin)

@@ -4,6 +4,15 @@ public enum NightMode {
     public static let startHour = 20
     public static let endHour = 7
 
+    /// The night layout (bigger Log button, "Tonight so far") follows the
+    /// clock, whatever colors the parent picked with the day/night toggle.
+    public static func isLayoutActive(at date: Date = .now, calendar: Calendar = .current) -> Bool {
+        #if DEBUG
+        if let forced = DesignReview.forcedNight { return forced }
+        #endif
+        return isActive(at: date, calendar: calendar)
+    }
+
     public static func isActive(at date: Date, calendar: Calendar = .current) -> Bool {
         let hour = calendar.component(.hour, from: date)
         return hour >= startHour || hour < endHour
@@ -58,3 +67,16 @@ public enum DesignReview {
     }
 }
 #endif
+
+/// The day/night toggle: automatic (night colors 8 PM – 7 AM), or pinned to
+/// day or night colors. Shared through the App Group so widgets follow.
+public enum AppearanceMode: String, CaseIterable, Sendable {
+    case automatic, day, night
+
+    public static let key = "appearance.mode"
+
+    public static var current: AppearanceMode {
+        get { AppGroup.defaults.string(forKey: key).flatMap(AppearanceMode.init(rawValue:)) ?? .automatic }
+        set { AppGroup.defaults.set(newValue.rawValue, forKey: key) }
+    }
+}

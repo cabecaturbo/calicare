@@ -43,7 +43,11 @@ struct QuickLogLiveActivity: Widget {
 
     /// Night colors for the night, day colors for the day.
     static func palette(_ state: QuickLogCardAttributes.ContentState) -> Palette {
-        state.kind == .night ? .night : .day
+        switch AppearanceMode.current {
+        case .day: .day
+        case .night: .night
+        case .automatic: state.kind == .night ? .night : .day
+        }
     }
 }
 
@@ -105,7 +109,7 @@ private struct QuickLogCardView: View {
     }
 }
 
-/// The big Log button, matching the Home Screen widget: a soft grey capsule
+/// The big Log button, matching the Home Screen widget: a greige capsule
 /// with a soft shade and the palm. Never red.
 private struct CardLogButton: View {
     let childID: UUID

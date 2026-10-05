@@ -143,6 +143,69 @@ struct TodoDayTests {
         let day = TodoDay(steps: [], items: [drops], logs: logs, times: TodoDay.defaultTimes, now: at, calendar: calendar)
         #expect(day.blocks.map { $0.items.first?.isDone } == [true, false, false])
     }
+
+    // MARK: To do v2 words
+
+    private func clock(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.calendar = calendar
+        f.timeZone = calendar.timeZone
+        f.dateFormat = "h:mm a"
+        return f.string(from: date)
+    }
+
+    @Test func summarySaysWhatsLeftAndWhatsNext() {
+        let (steps, items) = sample
+        let at = TestTime.date(26, 8)
+        let fresh = TodoDay(steps: steps, items: items, logs: [], times: TodoDay.defaultTimes, now: at, calendar: calendar)
+        #expect(fresh.summary(time: clock) == TodoDay.Summary(statement: "6 things left for the morning.", line: "Next: Wash face."))
+
+        let wash = steps[0]
+        let one = TodoDay(steps: steps, items: items, logs: [log(.routineDone, .routine(.morning), step: wash.id, at: at)],
+                          times: TodoDay.defaultTimes, now: at.addingTimeInterval(60), calendar: calendar)
+        #expect(one.summary(time: clock).statement == "5 things left for the morning.")
+        #expect(one.summary(time: clock).line == "Next: Put on moisturizer.")
+        #expect(one.blocks[0].status == "1 of 6")
+        #expect(abs(one.blocks[0].fraction - 1.0 / 6.0) < 0.001)
+        #expect(one.blocks[0].next?.label == "Put on moisturizer")
+    }
+
+    @Test func summaryWhenAllDoneAndWhenEmpty() {
+        let (steps, items) = sample
+        let at = TestTime.date(26, 20)
+        let bed = TodoDay(steps: steps, items: items, logs: [], times: TodoDay.defaultTimes, now: at, calendar: calendar)
+        #expect(bed.summary(time: clock).statement == "\(bed.blocks.last!.items.count) things left for bedtime.")
+        var logs: [LogEntry] = []
+        for item in bed.blocks.last!.items {
+            switch item.kind {
+            case .step(let s): logs.append(log(.routineDone, .routine(.evening), step: s.id, at: at))
+            case .supplement(let p): logs.append(log(.supplement, .supplement(.taken), step: p.id, at: at, note: "bedtime"))
+            case .skin: for s in bed.skin!.steps { for _ in 0..<3 { logs.append(log(.routineDone, .routine(.evening), step: s.id, at: at)) } }
+            }
+        }
+        let done = TodoDay(steps: steps, items: items, logs: logs, times: TodoDay.defaultTimes, now: at.addingTimeInterval(60), calendar: calendar)
+        #expect(done.summary(time: clock) == TodoDay.Summary(statement: "All done for today.", line: "Morning list starts at 7:30 AM."))
+        #expect(done.blocks.last?.status == "Done")
+
+        let empty = TodoDay(steps: [], items: [], logs: [], times: TodoDay.defaultTimes, now: TestTime.date(26, 8), calendar: calendar)
+        if empty.open != nil {
+            #expect(empty.summary(time: clock).statement.hasPrefix("Nothing on the list"))
+        }
+    }
+
+    @Test func skinDotsShowDoneDueAndOptional() {
+        let (steps, items) = sample
+        let skin = steps.filter { $0.category == .apply && $0.planItemID != nil }
+        let at = TestTime.date(26, 9)
+        let none = TodoDay(steps: steps, items: items, logs: [], times: TodoDay.defaultTimes, now: at, calendar: calendar)
+        #expect(none.skin?.pips == [.due, .due, .due, .optional])
+        let one = TodoDay(steps: steps, items: items, logs: [log(.routineDone, .routine(.morning), step: skin[0].id, at: at)],
+                          times: TodoDay.defaultTimes, now: at, calendar: calendar)
+        #expect(one.skin?.pips == [.done, .due, .due, .optional])
+        let five = (0..<5).map { _ in log(.routineDone, .routine(.morning), step: skin[0].id, at: at) }
+        let extra = TodoDay(steps: steps, items: items, logs: five, times: TodoDay.defaultTimes, now: at, calendar: calendar)
+        #expect(extra.skin?.pips == [.done, .done, .done, .done, .done])
+    }
 }
 
 /// Ticking a whole block, the restore, the provider's words, and the upgrade.

@@ -590,3 +590,9 @@ The owner saw the v2 redesign on the phone and asked for it to be reverted. The 
 - No paywall, prices, or StoreKit code. The App Store listing says Free.
 - Revisit after TestFlight feedback. The 7.3 prompt stays as written for then.
 - The landing page and privacy policy go on a free `*.vercel.app` address for now (owner's choice); a real domain can come later.
+
+## Landing page live (October 4, 2026)
+- https://calicare.vercel.app, Vercel project `calicare` on the cabecaturbo account; `web/` deploys with `cd web && vercel deploy --prod`.
+- Built from the owner's "Cali Care website" design canvas (Home · desktop and Home · phone), rendered to static HTML. Beta changes: "Join the beta" (email) in place of App Store buttons; the founder section waits for the owner's words.
+- The drawn app screens were swapped for real simulator captures of the current app (`web/shots/`), plus a To do section, so the site matches the app.
+- Settings › About links to /privacy. Settings › Your data now says sync runs whenever you're signed in.

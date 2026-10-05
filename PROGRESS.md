@@ -72,8 +72,8 @@ One prompt per session, same rules as docs/prompts/README.md.
 - [x] Recapture the setup guide screenshots (widgets now show the palm and "Log").
 
 ## Before App Store (remind the owner when we get close)
-- [ ] Data export and an About section (privacy link, support email): UX.5.
-      Export and Contact support are in Settings. Still to do: the privacy policy link (comes with 7.5).
+- [x] Data export and an About section (privacy link, support email): UX.5.
+      Done: export, Contact support, and the Privacy policy link are in Settings.
 - [ ] Apple token revocation on account deletion: a Sign in with Apple key from the Apple Developer site, stored as a Supabase secret, called by the delete-account Edge Function.
 - [ ] Two-phone test of family sharing: join with an invite code (2.4) and "by Dad" names (2.5).
 - [ ] A pediatric dermatologist reviews the reports and wording.
@@ -116,8 +116,8 @@ not in version 1; the code stays. Next:
 - [x] V1.0b To do + Info: Plan split into "What do I do right now?" and "What does the plan say?", time blocks with "All done" reminders, supplements by time, plain words, reading-grade test (SchemaV7, additive)
 - [ ] V1.1 🛑 Phone check: a real plan import, the doctor PDF, photos, products
 - [ ] V1.2 🛑 Two-phone sync test (2.4 and 2.5)
-- [ ] Then 7.5 landing page and privacy policy, Apple sign-in token removal
-      on account deletion, 7.6 TestFlight with 5–10 eczema parents
+- [ ] Then Apple sign-in token removal
+      on account deletion (code merged; needs the owner's key), 7.6 TestFlight with 5–10 eczema parents
       (7.3 paywall is out: version 1 is free during beta)
 
 
@@ -126,5 +126,6 @@ not in version 1; the code stays. Next:
 - [-] 7.2 Keyboard extension (not in version 1)
 - [-] 7.3 🛑 Premium paywall (free while in beta, owner, October 4, 2026)
 - [-] 7.4 Monthly recap (Progress › Month covers it)
-- [ ] 7.5 🛑 Vercel landing page and privacy policy
+- [x] 7.5 🛑 Vercel landing page and privacy policy
+      Live at https://calicare.vercel.app (privacy: /privacy), built from the website design canvas with real app screenshots. Linked from Settings › About.
 - [ ] 7.6 🛑 Launch readiness and TestFlight

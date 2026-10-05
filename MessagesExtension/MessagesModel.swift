@@ -8,6 +8,8 @@ import Observation
 @Observable
 final class MessagesModel {
     private(set) var cards: [WeeklyCard] = []
+    /// "Last night: 3 wake-ups, at …" for each child, as plain text to send.
+    private(set) var lastNights: [LastNightText] = []
     private(set) var hasLoaded = false
     /// A tapped bubble's card, shown full size.
     var opened: WeeklyCard?
@@ -25,5 +27,19 @@ final class MessagesModel {
             }
         }
         cards = loaded
+        let day = TonightNight.lastNight(at: now)
+        var nights: [LastNightText] = []
+        for child in children {
+            let events = (try? await LogStore(modelContainer: container).events(for: day, child: child.id)) ?? []
+            let text = TonightNight(day: day, events: events).words.shareText { TonightClock.time($0) }
+            nights.append(LastNightText(childName: child.name, text: children.count > 1 ? "\(child.name). \(text)" : text))
+        }
+        lastNights = nights
     }
+}
+
+struct LastNightText: Identifiable {
+    let childName: String
+    let text: String
+    var id: String { childName }
 }

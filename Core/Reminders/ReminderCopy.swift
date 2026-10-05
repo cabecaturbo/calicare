@@ -11,6 +11,7 @@ public enum ReminderCopy {
             let block = kind.todoBlock?.title ?? ""
             guard let things, things > 0 else { return "\(block) list for \(childName)" }
             return "\(block): \(things) thing\(things == 1 ? "" : "s")"
+        case .tonight: return "Start Tonight for the night?"
         }
     }
 
@@ -19,6 +20,7 @@ public enum ReminderCopy {
         case .checkIn, .skinCheckIn: "One tap is enough."
         case .morningRoutine, .afternoonRoutine, .eveningRoutine:
             childName.isEmpty ? "Tap All done when it's all done." : "For \(childName). Tap All done when it's all done."
+        case .tonight: "Tap to put the Log button on your Lock Screen."
         }
     }
 
@@ -30,6 +32,7 @@ public enum ReminderCopy {
         case .morningRoutine: "Morning list"
         case .afternoonRoutine: "Afternoon list"
         case .eveningRoutine: "Bedtime list"
+        case .tonight: "Start Tonight reminder"
         }
     }
 }

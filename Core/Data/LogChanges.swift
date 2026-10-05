@@ -26,6 +26,8 @@ public enum LogChanges {
     /// simulator it sometimes never does), and saving must never wait on it.
     public static func refreshDisplays() async {
         await reloadWidgets()
+        // The Tonight card (only in the app's process; elsewhere it waits for the next tap or app open).
+        await Tonight.refresh()
         Task.detached(priority: .utility) {
             try? await ReminderScheduler.live().refresh()
         }

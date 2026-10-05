@@ -54,7 +54,7 @@ struct SkinCheckInTests {
     }
 
     @Test func settingsListsItAfterTheMorningCheckIn() {
-        #expect(ReminderKind.allCases == [.checkIn, .skinCheckIn, .morningRoutine, .afternoonRoutine, .eveningRoutine])
+        #expect(ReminderKind.allCases == [.checkIn, .skinCheckIn, .morningRoutine, .afternoonRoutine, .eveningRoutine, .tonight])
         #expect(ReminderCopy.settingsTitle(.skinCheckIn) == "Evening skin check-in")
     }
 

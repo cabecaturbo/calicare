@@ -21,6 +21,15 @@ struct CaliCareShortcuts: AppShortcutsProvider {
             systemImageName: "moon.zzz"
         )
         AppShortcut(
+            intent: StartTonightIntent(),
+            phrases: [
+                "Start tonight in \(.applicationName)",
+                "Start Tonight in \(.applicationName)",
+            ],
+            shortTitle: "Start Tonight",
+            systemImageName: "moon"
+        )
+        AppShortcut(
             intent: LogItchIntent(),
             phrases: [
                 "Log itching in \(.applicationName)",

@@ -96,6 +96,15 @@ public struct ReminderPlanner: Sendable {
                 payload: ReminderPayload(kind: kind, childID: child.id, fireDate: nil)
             ))
         }
+        if settings.tonight.isOn {
+            reminders.append(PlannedReminder(
+                id: ReminderIDs.routine(.tonight),
+                trigger: .daily(hour: settings.tonight.hour, minute: settings.tonight.minute),
+                title: ReminderCopy.title(.tonight, childName: child.name),
+                body: ReminderCopy.body(.tonight, childName: child.name),
+                payload: ReminderPayload(kind: .tonight, childID: child.id, fireDate: nil)
+            ))
+        }
         return reminders
     }
 

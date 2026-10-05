@@ -7,6 +7,7 @@ struct MessagesRootView: View {
     @Environment(\.palette) private var palette
     let model: MessagesModel
     let onSend: (WeeklyCard) -> Void
+    let onSendText: (String) -> Void
     let onBack: () -> Void
 
     var body: some View {
@@ -24,6 +25,25 @@ struct MessagesRootView: View {
     private var picker: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Spacing.x4) {
+                if !model.lastNights.isEmpty {
+                    Text("Last night")
+                        .textStyle(.title)
+                        .foregroundStyle(palette.ink)
+                        .accessibilityAddTraits(.isHeader)
+                    ForEach(model.lastNights) { night in
+                        Button { onSendText(night.text) } label: {
+                            Text(night.text)
+                                .textStyle(.body)
+                                .foregroundStyle(palette.ink)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(Spacing.x4)
+                                .overlay(RoundedRectangle(cornerRadius: Corner.card).strokeBorder(palette.hairline, lineWidth: Rule.width))
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityHint("Adds this text to the message.")
+                    }
+                }
                 Text("This week")
                     .textStyle(.title)
                     .foregroundStyle(palette.ink)

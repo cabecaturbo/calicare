@@ -34,7 +34,9 @@ public struct LiveNotificationCenter: NotificationScheduling {
             intentIdentifiers: [],
             options: []
         )
-        UNUserNotificationCenter.current().setNotificationCategories([checkIn, skin, routine])
+        // No buttons: tapping it opens the app, which starts Tonight.
+        let tonight = UNNotificationCategory(identifier: ReminderIDs.tonightCategory, actions: [], intentIdentifiers: [], options: [])
+        UNUserNotificationCenter.current().setNotificationCategories([checkIn, skin, routine, tonight])
     }
 
     public func isAuthorized() async -> Bool {

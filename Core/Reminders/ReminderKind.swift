@@ -4,11 +4,13 @@ import Foundation
 public enum ReminderKind: String, Codable, Sendable, CaseIterable {
     // Raw values stay as saved; the list reminders were the routine reminders.
     case checkIn, skinCheckIn, morningRoutine, afternoonRoutine, eveningRoutine
+    /// "Start Tonight for the night?": opens the app to start the Lock Screen card.
+    case tonight
 
     /// Which routine this reminds about; nil for the check-ins and afternoon.
     public var routineTime: RoutineTime? {
         switch self {
-        case .checkIn, .skinCheckIn, .afternoonRoutine: nil
+        case .checkIn, .skinCheckIn, .afternoonRoutine, .tonight: nil
         case .morningRoutine: .morning
         case .eveningRoutine: .evening
         }
@@ -17,7 +19,7 @@ public enum ReminderKind: String, Codable, Sendable, CaseIterable {
     /// Which To do block this reminds about; nil for the check-ins.
     public var todoBlock: TodoBlock? {
         switch self {
-        case .checkIn, .skinCheckIn: nil
+        case .checkIn, .skinCheckIn, .tonight: nil
         case .morningRoutine: .morning
         case .afternoonRoutine: .afternoon
         case .eveningRoutine: .bedtime
@@ -29,6 +31,7 @@ public enum ReminderKind: String, Codable, Sendable, CaseIterable {
         case .checkIn: ReminderIDs.checkInCategory
         case .skinCheckIn: ReminderIDs.skinCategory
         case .morningRoutine, .afternoonRoutine, .eveningRoutine: ReminderIDs.routineCategory
+        case .tonight: ReminderIDs.tonightCategory
         }
     }
 
@@ -86,6 +89,7 @@ enum ReminderIDs {
     static let checkInCategory = "calicare.category.checkIn"
     static let routineCategory = "calicare.category.routine"
     static let skinCategory = "calicare.category.skin"
+    static let tonightCategory = "calicare.category.tonight"
 
     private static let checkInPrefix = "calicare.checkIn."
     private static let skinPrefix = "calicare.skin."
@@ -107,6 +111,7 @@ enum ReminderIDs {
     static func isPlanned(_ id: String) -> Bool {
         id.hasPrefix(checkInPrefix) || id.hasPrefix(skinPrefix)
             || id == routine(.morningRoutine) || id == routine(.afternoonRoutine) || id == routine(.eveningRoutine)
+            || id == routine(.tonight)
     }
 
     /// The reminder a snooze request belongs to.

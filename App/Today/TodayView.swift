@@ -67,6 +67,12 @@ struct TodayView: View {
             .padding(.horizontal, Spacing.margin)
             .padding(.top, asksSkin ? Spacing.x7 : Spacing.x5)
 
+        if TonightRow.shows() {
+            TonightRow()
+                .padding(.horizontal, Spacing.margin)
+                .padding(.top, Spacing.x4)
+        }
+
         if !night, model.isDaytime, let report = model.lastNight, report.rating == nil, !report.isTonight {
             NightRatingChoices { rating in
                 Task { await model.log(.nightRating, value: .night(rating)) }

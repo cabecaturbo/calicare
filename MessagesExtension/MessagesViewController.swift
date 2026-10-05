@@ -15,6 +15,13 @@ final class MessagesViewController: MSMessagesAppViewController {
         let root = MessagesRootView(
             model: model,
             onSend: { [weak self] card in self?.send(card) },
+            onSendText: { [weak self] text in
+                guard let conversation = self?.activeConversation else { return }
+                Task {
+                    try? await conversation.insertText(text)
+                    self?.requestPresentationStyle(.compact)
+                }
+            },
             onBack: { [weak self] in
                 self?.model.opened = nil
                 self?.requestPresentationStyle(.compact)

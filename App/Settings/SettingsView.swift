@@ -18,6 +18,7 @@ struct SettingsView: View {
                 FamilySection()
                 ReminderSettingsSection()
                 quickLoggingSection
+                TonightSettingsSection()
                 yourDataSection
                 AccountSettingsSection()
                 aboutSection

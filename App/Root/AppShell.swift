@@ -35,7 +35,17 @@ struct AppShell: View {
         .onOpenURL { url in
             if DeepLink.isNote(url) { shell.showingNote = true }
             if DeepLink.isProgress(url) { shell.tab = .progress }
+            if DeepLink.isNight(url) { shell.showingNight = true }
+            if DeepLink.isTonight(url) {
+                shell.tab = .today
+                if !Tonight.isRunning { shell.startingTonight = true }
+            }
         }
+        .sheet(isPresented: $shell.showingNight) {
+            NightSummarySheet()
+                .nightAwarePalette()
+        }
+        .tonightStarter()
         .sheet(isPresented: $shell.showingLog) {
             LogSheet()
                 .nightAwarePalette()

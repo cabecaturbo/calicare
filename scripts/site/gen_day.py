@@ -93,8 +93,8 @@ STORY = 'My son still struggles with severe eczema. I know what it’s like to g
 T214_BODY = 'When your child wakes up itching, tap Log right on your Lock Screen. You don’t have to unlock your phone or open the app. At night, the app switches to dark, warm colors so it won’t light up the room.'
 T214_FALLBACK = 'When your child wakes up itching, tap Log on the Cali Care widget on your Home Screen. It saves right away, even offline, and Undo is right there if you tap by mistake. At night, the app switches to dark, warm colors so it won’t light up the room.'
 T214_SMALL = 'Your Lock Screen only shows how many times they woke up, never your child’s name.'
-T7_BODY = 'When you wake up, Cali Care shows how the night went: how many times your child woke up, and when. You can text it to your partner with one tap, so you don’t have to explain it over breakfast.'
-T7_FALLBACK = 'In the morning, Cali Care shows how the night went: how many times your child woke up, and when. You can text it to your partner with one tap, so you don’t have to explain it over breakfast.'
+T7_BODY = 'When you wake up, Cali Care shows how the night went: how many times your child woke up, and when. You can text it to your partner in a couple of taps, so you don’t have to explain it over breakfast.'
+T7_FALLBACK = 'In the morning, Cali Care shows how the night went: how many times your child woke up, and when. You can text it to your partner in a couple of taps, so you don’t have to explain it over breakfast.'
 WEEKS_BODY = 'The Night strip widget shows your last 7 nights right on your Home Screen. In the app, you can see how this week compares with last and how things have gone since your last visit.'
 WEEKS_FALLBACK = 'In the app, you can see how this week compares with last and how things have gone since your last visit.'
 
@@ -160,15 +160,14 @@ def build(desk):
         out.append(f'<section id="top-m" style="box-sizing:border-box;padding:48px var(--gutter) 56px;display:flex;flex-direction:column;gap:var(--s6)">{hero_text}<div style="display:flex;justify-content:center">{hero_vis}</div></section>')
 
     # 2. story
-    photo = f'''<!-- TODO: founder photo. Replace this box with <img src="shots/founder.jpg" alt="Matthew with his son">. -->
-<div aria-hidden="true" style="width:{'360px' if desk else '100%'};height:{'440px' if desk else '280px'};border-radius:var(--r-btn);background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center"><span class="t-caption muted">Founder photo</span></div>'''
+    photo = '<!-- TODO: founder photo. Add <img src="shots/founder.jpg" alt="Matthew with his son"> here (360 px wide on desktop). -->'
     story_text = f'''<div style="display:flex;flex-direction:column;gap:var(--s5);max-width:640px">
 <h2 style="margin:0;{h2}">Why I built Cali Care</h2>
 <p class="t-lede" style="margin:0;{'' if desk else 'font-size:21px;line-height:30px'}">{STORY}</p>
 <span class="t-body muted">— Matthew, dad and founder</span>
 </div>'''
     if desk:
-        out.append(f'<section id="story" style="box-sizing:border-box;padding:120px;background:var(--surface);display:grid;grid-template-columns:minmax(0, 1fr) 360px;gap:80px;align-items:center">{story_text}{photo}</section>')
+        out.append(f'<section id="story" style="box-sizing:border-box;padding:120px;background:var(--surface);display:block">{story_text}{photo}</section>')
     else:
         out.append(f'<section id="story-m" style="box-sizing:border-box;padding:56px var(--gutter);background:var(--surface);display:flex;flex-direction:column;gap:var(--s5)">{story_text}{photo}</section>')
 
@@ -212,7 +211,7 @@ def build(desk):
     # 9. everyone who helps
     items = [
         ('Your partner', 'Invite them with a code, and you’ll both see every log.', 'family-sharing'),
-        ('Babysitters and grandparents', 'Give them a one-page card with the routine.', None),
+        ('Babysitters and grandparents', 'Give them a one-page card with what they need to know.', None),
         ('Family', 'Text them a weekly summary card.', None),
     ]
     cells = ''

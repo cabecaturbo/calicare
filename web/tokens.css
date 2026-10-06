@@ -1,46 +1,46 @@
 /* Cali Care tokens: the only place colors, type, spacing, radii and motion are defined. */
 
 .day, :root {
-  --bg: #F6F1E8;
-  --surface: #ECE4D6;
-  --ink: #1E1B18;
-  --muted: #5C554D;
-  --line: #D8CFC0;
-  --accent: #34466A;
-  --on-accent: #F6F1E8;
-  --bar-bg: rgba(246, 241, 232, 0.96);
+  --bg: #F6EEE2;
+  --surface: #ECDFCC;
+  --ink: #261C14;
+  --muted: #67584A;
+  --line: #DECDB6;
+  --accent: #665B52;
+  --on-accent: #F6EEE2;
+  --bar-bg: rgba(246, 238, 226, 0.96);
   --scrim: rgba(30, 27, 24, 0.32);
-  --calm: #E3E7EE;
-  --little-itchy: #C2CBDB;
-  --flaring: #56698F;
-  --very-rough: #2E3E5E;
+  --calm: #ECECD8;
+  --little-itchy: #CFD0A6;
+  --flaring: #8F9156;
+  --very-rough: #55582C;
 }
 .night {
-  --bg: #14161C;
-  --surface: #1E2129;
-  --ink: #EAE3D6;
-  --muted: #A8A093;
-  --line: #2C303A;
-  --accent: #9FB0D0;
-  --on-accent: #14161C;
-  --bar-bg: rgba(30, 33, 41, 0.96);
+  --bg: #201712;
+  --surface: #2C2019;
+  --ink: #F2E5D6;
+  --muted: #BBA792;
+  --line: #3B2C22;
+  --accent: #D3C8BC;
+  --on-accent: #201712;
+  --bar-bg: rgba(44, 32, 25, 0.96);
   --scrim: rgba(0, 0, 0, 0.5);
   /* Night ramp: on a dark ground, rougher is brighter, so it still stands out most. */
-  --calm: #2A3142;
-  --little-itchy: #3C4760;
-  --flaring: #8497BD;
-  --very-rough: #B7C5E0;
+  --calm: #2F2F1E;
+  --little-itchy: #46462C;
+  --flaring: #8F9156;
+  --very-rough: #D2D39C;
 }
 
 /* One scale for skin answers and nights. Rule in both themes: rougher always
    stands out more. Day: deeper is rougher. Night (.night above): brighter is rougher. */
 :root {
   /* Only inside the drawn phones in onboarding. */
-  --mock-bezel: #1E1B18;
+  --mock-bezel: #261C14;
   --mock-home: #CFC6B8;
   --mock-app: #B9B0A1;
-  --mock-lock: #2A2F3A;
-  --mock-lock-text: #EAE3D6;
+  --mock-lock: #3A3029;
+  --mock-lock-text: #F2E5D6;
   --mock-r-device: 40px;
   --mock-r-screen: 31px;
   --r-none: 0;
@@ -52,7 +52,7 @@
   --r-sys: 8px;       /* system compact controls: time picker */
   --r-sheet: 38px;    /* system sheet top corners */
   --knob: #FFFFFF;    /* system switch knob */
-  --ring: rgba(52, 70, 106, 0.55); /* soft indigo guide ring */
+  --ring: rgba(102, 91, 82, 0.55); /* soft greige guide ring */
   --r-pill: 999px;
   --r-mark: 3px;
   --hairline: 0.5px;
@@ -117,7 +117,7 @@ button, a, input { font: inherit; color: inherit; }
 .ledger-row.xl { min-height: 72px; }
 .ledger-row .swatch { width: 20px; height: 20px; flex-shrink: 0; }
 
-/* System switch, tinted indigo (never the default green). 51 x 31 track in a 44pt target. */
+/* System switch, tinted greige (never the default green). 51 x 31 track in a 44pt target. */
 .switch { width: 51px; height: var(--tap); border: 0; background: none; padding: 0; display: flex; align-items: center; flex-shrink: 0; }
 .switch .track { width: 51px; height: 31px; border-radius: var(--r-pill); background: var(--line); padding: 2px; box-sizing: border-box; display: flex; justify-content: flex-start; }
 .switch.on .track { background: var(--accent); justify-content: flex-end; }
@@ -139,7 +139,7 @@ button, a, input { font: inherit; color: inherit; }
    Looks the current iOS (27.0) supports: full color, tinted, clear.
    Lock Screen widgets and controls are always monochrome. */
 .w-full   { --w-bg: var(--bg); --w-fg: var(--ink); --w-muted: var(--muted); --w-btn-bg: var(--accent); --w-btn-fg: var(--on-accent); --w-soft: var(--surface); }
-.w-tinted { --w-bg: rgba(38, 54, 86, 0.55); --w-fg: #F1F5FC; --w-muted: #D9E2F1; --w-btn-bg: rgba(241, 245, 252, 0.18); --w-btn-fg: #FFFFFF; --w-soft: rgba(241, 245, 252, 0.12); }
+.w-tinted { --w-bg: rgba(102, 91, 82, 0.55); --w-fg: #F1F5FC; --w-muted: #D9E2F1; --w-btn-bg: rgba(241, 245, 252, 0.18); --w-btn-fg: #FFFFFF; --w-soft: rgba(241, 245, 252, 0.12); }
 .w-clear  { --w-bg: rgba(20, 22, 28, 0.30); --w-fg: #FFFFFF; --w-muted: #E6E8EC; --w-btn-bg: rgba(255, 255, 255, 0.16); --w-btn-fg: #FFFFFF; --w-soft: rgba(255, 255, 255, 0.10); }
 .w-mono   { --w-bg: rgba(20, 22, 28, 0.30); --w-fg: #FFFFFF; --w-muted: #E6E8EC; --w-btn-bg: rgba(255, 255, 255, 0.16); --w-btn-fg: #FFFFFF; --w-soft: rgba(255, 255, 255, 0.10); }
 /* The one widget-only type exception: "Itchy" in the small Lock Screen circle. */
@@ -151,17 +151,17 @@ button, a, input { font: inherit; color: inherit; }
   --mock-island: #000000;
   --mock-r-phone: 67px;
   --mock-r-display: 55px;
-  --mock-wall: #5E6878;
-  --mock-wall-shape: #6E7889;
-  --mock-wall-shape-2: #535D6C;
-  --mock-wall-night: #232833;
-  --mock-wall-night-shape: #2C3240;
+  --mock-wall: #8A7F73;
+  --mock-wall-shape: #998E82;
+  --mock-wall-shape-2: #7A6F64;
+  --mock-wall-night: #2A221C;
+  --mock-wall-night-shape: #352B24;
   --mock-on-wall: #FFFFFF;
   --mock-icon-1: #E6E0D5;
-  --mock-icon-2: #CBD3DD;
+  --mock-icon-2: #DDD3C6;
   --mock-icon-3: #DDD6C9;
-  --mock-icon-4: #B9C3CF;
-  --mock-icon-glyph: #4A5260;
+  --mock-icon-4: #CFC3B4;
+  --mock-icon-glyph: #5E5248;
   --mock-glass: rgba(255, 255, 255, 0.18);
   --mock-glass-strong: rgba(255, 255, 255, 0.30);
   --mock-dim: rgba(10, 12, 16, 0.45);
@@ -176,7 +176,7 @@ button, a, input { font: inherit; color: inherit; }
   --mock-badge: #D9D9DE;
   --mock-key-dark: #4A4A4E;
   --mock-keyboard-dark: #2B2B2E;
-  --mock-app-icon: #F6F1E8;
+  --mock-app-icon: #F6EEE2;
   --mock-r-icon: 15px;
   --mock-r-dock: 36px;
   --mock-r-widget: 22px;

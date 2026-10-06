@@ -1,21 +1,21 @@
-/* Cali Care web pages: paper, ink, and indigo (DESIGN.md). */
+/* Cali Care web pages: linen, ink, and greige (DESIGN.md). */
 :root {
-  --paper: #F6F1E8;
-  --oat: #ECE4D6;
-  --ink: #1E1B18;
-  --graphite: #5C554D;
-  --hairline: #D8CFC0;
-  --indigo: #34466A;
+  --paper: #F6EEE2;
+  --oat: #ECDFCC;
+  --ink: #261C14;
+  --graphite: #67584A;
+  --hairline: #DECDB6;
+  --indigo: #665B52;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #14161C;
-    --oat: #1E2129;
-    --ink: #EAE3D6;
-    --graphite: #A8A093;
-    --hairline: #2C303A;
-    --indigo: #9FB0D0;
+    --paper: #201712;
+    --oat: #2C2019;
+    --ink: #F2E5D6;
+    --graphite: #BBA792;
+    --hairline: #3B2C22;
+    --indigo: #D3C8BC;
   }
 }
 

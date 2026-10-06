@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cali Care: keeping track of your child’s eczema shouldn’t be hard</title>
+<meta name="description" content="Cali Care makes it easy to log what matters, see what’s been happening, and share it with your doctor and anyone who helps care for your child. Free on iPhone during the beta.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<!-- Built from the "Cali Care website" design canvas (Home · desktop and Home · phone),
+     with real app screenshots in shots/. -->
+<style>
+body{margin:0;background:#F6EEE2}
+a{color:#665B52}a:hover{color:#261C14}
+.layout{margin:0 auto}
+details.faq summary{list-style:none;cursor:pointer}details.faq summary::-webkit-details-marker{display:none}details.faq[open] .faq-chev{transform:rotate(90deg)}
+
+#desk{width:1440px}
+#mob{width:390px;display:none}
+@media (max-width:759px){#desk{display:none}#mob{display:block}}
+</style>
+</head>
+<body>
+<div class="layout" id="desk">{DESK}</div>
+<div class="layout" id="mob">{MOB}</div>
+<script>
+// Each layout is drawn at a fixed width; scale it to the window.
+function fit(){
+  var w=document.documentElement.clientWidth, phone=w<760;
+  document.getElementById('desk').style.zoom=phone?1:Math.min(1,w/1440);
+  document.getElementById('mob').style.zoom=phone?w/390:1;
+}
+fit();addEventListener('resize',fit);
+// The drawn phones and widgets are pictures: keep their buttons out of reach.
+document.querySelectorAll('.sc-host .sc-host').forEach(function(el){el.setAttribute('inert','');el.setAttribute('aria-hidden','true');});
+</script>
+</body>
+</html>

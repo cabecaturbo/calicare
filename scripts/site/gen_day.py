@@ -33,12 +33,12 @@ def verify(name, html, fallback=None):
 
 def tonight_card(scale=1.0):
     s = scale
-    return f'''<div role="img" aria-label="The Tonight card on the Lock Screen: 2 wake-ups, last at 1:52 AM, with a Log button" style="box-sizing:border-box;width:{int(358*s)}px;padding:{int(16*s)}px;border-radius:{int(24*s)}px;background:#1E2129;border:1px solid #2C303A;color:#EAE3D6;display:flex;align-items:center;gap:{int(16*s)}px;font-family:var(--sans)">
+    return f'''<div role="img" aria-label="The Tonight card on the Lock Screen: 2 wake-ups, last at 1:52 AM, with a Log button" style="box-sizing:border-box;width:{int(358*s)}px;padding:{int(16*s)}px;border-radius:{int(24*s)}px;background:#2C2019;border:1px solid #3B2C22;color:#F2E5D6;display:flex;align-items:center;gap:{int(16*s)}px;font-family:var(--sans)">
 <div style="flex-grow:1;display:flex;flex-direction:column;gap:{int(4*s)}px">
 <span style="font-family:var(--serif);font-weight:500;font-size:{int(24*s)}px;line-height:1.2">Tonight</span>
-<span style="font-size:{int(16*s)}px;line-height:1.35;color:#A8A093">2 wake-ups · last at 1:52 AM</span>
+<span style="font-size:{int(16*s)}px;line-height:1.35;color:#BBA792">2 wake-ups · last at 1:52 AM</span>
 </div>
-<span style="display:flex;align-items:center;gap:{int(8*s)}px;height:{int(56*s)}px;padding:0 {int(22*s)}px;border-radius:999px;background:#9FB0D0;color:#14161C;font-weight:600;font-size:{int(19*s)}px"><svg width="{int(20*s)}" height="{int(20*s)}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 11V6a2 2 0 0 0-4 0v5h-.5V4a2 2 0 0 0-4 0v7H9V6a2 2 0 0 0-4 0v8a8 8 0 0 0 16 0v-2a2 2 0 0 0-4 0v-1z"/></svg>Log</span>
+<span style="display:flex;align-items:center;gap:{int(8*s)}px;height:{int(56*s)}px;padding:0 {int(22*s)}px;border-radius:999px;background:#D3C8BC;color:#201712;font-weight:600;font-size:{int(19*s)}px"><svg width="{int(20*s)}" height="{int(20*s)}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 11V6a2 2 0 0 0-4 0v5h-.5V4a2 2 0 0 0-4 0v7H9V6a2 2 0 0 0-4 0v8a8 8 0 0 0 16 0v-2a2 2 0 0 0-4 0v-1z"/></svg>Log</span>
 </div>'''
 
 
@@ -47,14 +47,14 @@ def lock_phone(scale=1.0):
     s = scale
     w, h = int(414 * s), int(868 * s)
     return f'''<div aria-hidden="false" style="width:{w}px;height:{h}px;box-sizing:border-box;padding:{int(12*s)}px;border-radius:{int(58*s)}px;background:var(--mock-frame)">
-<div style="position:relative;width:100%;height:100%;border-radius:{int(46*s)}px;overflow:hidden;background:linear-gradient(180deg,#232833 0%,#2C3240 55%,#1B1F28 100%);color:#EAE3D6;font-family:var(--sans)">
+<div style="position:relative;width:100%;height:100%;border-radius:{int(46*s)}px;overflow:hidden;background:linear-gradient(180deg,#2A221C 0%,#352B24 55%,#1B1F28 100%);color:#F2E5D6;font-family:var(--sans)">
 <div style="position:absolute;top:{int(14*s)}px;left:50%;transform:translateX(-50%);width:{int(124*s)}px;height:{int(36*s)}px;border-radius:999px;background:#000"></div>
 <div style="position:absolute;top:{int(84*s)}px;left:0;right:0;text-align:center">
 <div style="font-size:{int(20*s)}px;font-weight:500">Tuesday, October 6</div>
 <div style="font-size:{int(92*s)}px;line-height:1.05;font-weight:600;letter-spacing:-2px">1:58</div>
 </div>
 <div style="position:absolute;left:{int(16*s)}px;right:{int(16*s)}px;bottom:{int(120*s)}px;display:flex;justify-content:center">{tonight_card(s)}</div>
-<div style="position:absolute;bottom:{int(10*s)}px;left:50%;transform:translateX(-50%);width:{int(134*s)}px;height:{int(5*s)}px;border-radius:999px;background:#EAE3D6;opacity:.8"></div>
+<div style="position:absolute;bottom:{int(10*s)}px;left:50%;transform:translateX(-50%);width:{int(134*s)}px;height:{int(5*s)}px;border-radius:999px;background:#F2E5D6;opacity:.8"></div>
 </div>
 </div>'''
 
@@ -70,15 +70,15 @@ def night_strip(scale=1.0):
     rows = ''
     for day, dots in NIGHTS:
         dots_html = ''.join(
-            f'<span style="position:absolute;left:calc({p*100:.0f}% - {int(5*s)}px);top:50%;transform:translateY(-50%);width:{int(10*s)}px;height:{int(10*s)}px;border-radius:999px;background:#9FB0D0"></span>'
+            f'<span style="position:absolute;left:calc({p*100:.0f}% - {int(5*s)}px);top:50%;transform:translateY(-50%);width:{int(10*s)}px;height:{int(10*s)}px;border-radius:999px;background:#D3C8BC"></span>'
             for p in dots)
         rows += f'''<div style="display:flex;align-items:center;gap:{int(10*s)}px;height:{int(16*s)}px">
-<span style="width:{int(30*s)}px;font-size:{int(11*s)}px;color:#A8A093">{day}</span>
-<span style="position:relative;flex-grow:1;height:{int(12*s)}px"><span style="position:absolute;left:0;right:0;top:50%;height:1px;background:#2C303A"></span>{dots_html}</span>
+<span style="width:{int(30*s)}px;font-size:{int(11*s)}px;color:#BBA792">{day}</span>
+<span style="position:relative;flex-grow:1;height:{int(12*s)}px"><span style="position:absolute;left:0;right:0;top:50%;height:1px;background:#3B2C22"></span>{dots_html}</span>
 </div>'''
-    return f'''<div role="img" aria-label="The Night strip widget: the last 7 nights as rows of dots, one dot per wake-up" style="box-sizing:border-box;width:{int(338*s)}px;height:{int(158*s)}px;padding:{int(14*s)}px {int(16*s)}px;border-radius:{int(22*s)}px;background:#14161C;font-family:var(--sans);display:flex;flex-direction:column;justify-content:space-between">
+    return f'''<div role="img" aria-label="The Night strip widget: the last 7 nights as rows of dots, one dot per wake-up" style="box-sizing:border-box;width:{int(338*s)}px;height:{int(158*s)}px;padding:{int(14*s)}px {int(16*s)}px;border-radius:{int(22*s)}px;background:#201712;font-family:var(--sans);display:flex;flex-direction:column;justify-content:space-between">
 {rows}
-<div style="display:flex;justify-content:space-between;padding-left:{int(40*s)}px;font-size:{int(10*s)}px;color:#A8A093"><span>7 PM</span><span>7 AM</span></div>
+<div style="display:flex;justify-content:space-between;padding-left:{int(40*s)}px;font-size:{int(10*s)}px;color:#BBA792"><span>7 PM</span><span>7 AM</span></div>
 </div>'''
 
 

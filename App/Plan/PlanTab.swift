@@ -264,13 +264,6 @@ private struct PlanUseRow: View {
 
             Button(action: onRead) {
                 HStack(alignment: .firstTextBaseline, spacing: Spacing.x3) {
-                    if let category = row.category {
-                        Image(systemName: category.symbol)
-                            .font(.system(size: 15, weight: .regular))
-                            .foregroundStyle(palette.accent)
-                            .frame(width: 20)
-                            .accessibilityHidden(true)
-                    }
                     VStack(alignment: .leading, spacing: Spacing.x1) {
                         Text(row.name)
                             .textStyle(.body)

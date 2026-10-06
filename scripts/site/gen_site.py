@@ -243,9 +243,10 @@ def build(desk):
     return f'<div class="day" style="width:{width};display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font-family:var(--sans)">' + '\n'.join(out) + '</div>'
 
 
-template = open(sys.argv[1]).read()
-html = template.replace('{DESK}', build(True)).replace('{MOB}', build(False))
-html = re.sub(r'<title>.*?</title>', '<title>Cali Care: eczema care plans, logging, and updates for parents</title>', html)
-html = re.sub(r'<meta name="description" content="[^"]*">', '<meta name="description" content="Turn your care plan into a daily checklist, log from your Lock Screen, and send a quick update to your doctor or sitter. Free on iPhone during the beta.">', html)
-html = re.sub(r'<!-- "A day with Cali Care".*?-->', '<!-- Built by scripts/site/gen_site.py in the site\'s look (tokens.css), with real app screenshots in shots/. -->', html, flags=re.S)
-open(sys.argv[2], 'w').write(html)
+if __name__ == '__main__':
+    template = open(sys.argv[1]).read()
+    html = template.replace('{DESK}', build(True)).replace('{MOB}', build(False))
+    html = re.sub(r'<title>.*?</title>', '<title>Cali Care: eczema care plans, logging, and updates for parents</title>', html)
+    html = re.sub(r'<meta name="description" content="[^"]*">', '<meta name="description" content="Turn your care plan into a daily checklist, log from your Lock Screen, and send a quick update to your doctor or sitter. Free on iPhone during the beta.">', html)
+    html = re.sub(r'<!-- "A day with Cali Care".*?-->', '<!-- Built by scripts/site/gen_site.py in the site\'s look (tokens.css), with real app screenshots in shots/. -->', html, flags=re.S)
+    open(sys.argv[2], 'w').write(html)

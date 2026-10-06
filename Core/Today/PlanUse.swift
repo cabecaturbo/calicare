@@ -22,8 +22,13 @@ public struct PlanUse: Equatable, Sendable {
         public let group: Group
         /// "Apply aloe vera", "Brand D Drops".
         public let name: String
+        /// What it is, in the plan's words: "96% or more pure. Plant Therapy
+        /// or Amara Beauty brands." Nil when the plan says nothing more.
+        public let detail: String?
         /// "Morning and bedtime", "8 drops · 3x daily".
         public let meta: String?
+        /// Wash, put on, give: drawn as a small icon.
+        public let category: StepCategory?
         public let isInUse: Bool
         /// The To do steps this row turns on and off (empty for supplements).
         public let stepIDs: [UUID]
@@ -58,14 +63,17 @@ public struct PlanUse: Equatable, Sendable {
                     item: item,
                     group: item.kind == .topicalStep || first.category == .apply ? .skin : .routine,
                     name: first.displayName,
+                    detail: Self.detail(first.detail),
                     meta: Self.when(Set(tasks.map(\.time))),
+                    category: first.category ?? .apply,
                     isInUse: tasks.contains(where: \.isActive),
                     stepIDs: tasks.map(\.id)
                 ))
             case .supplement where SupplementPlan.isProduct(item):
                 let display = SupplementDisplay(item)
-                rows.append(Row(item: item, group: .supplements, name: display.name, meta: display.meta,
-                                isInUse: item.isGiving == true, stepIDs: []))
+                rows.append(Row(item: item, group: .supplements, name: display.name,
+                                detail: Self.detail(Self.sentences(display.howToGive)), meta: display.meta,
+                                category: .give, isInUse: item.isGiving == true, stepIDs: []))
             default:
                 reference.append(item)
             }
@@ -96,6 +104,19 @@ public struct PlanUse: Equatable, Sendable {
     /// "Use all" or "Use none": only the rows that would change.
     public func changeAll(to isOn: Bool) -> [Change] {
         rows.filter { $0.isInUse != isOn }.map { Self.change($0, to: isOn) }
+    }
+
+    /// The plan's extra words, starting with a capital: "if tolerated. If…" → "If tolerated. If…".
+    public static func detail(_ text: String?) -> String? {
+        guard let text = text?.trimmingCharacters(in: .whitespacesAndNewlines), !text.isEmpty else { return nil }
+        return text.prefix(1).uppercased() + text.dropFirst()
+    }
+
+    /// "Mix into water." + "Can take long-term" → "Mix into water. Can take long-term."
+    static func sentences(_ parts: [String]) -> String {
+        parts.map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+            .map { $0.hasSuffix(".") ? $0 : $0 + "." }
+            .joined(separator: " ")
     }
 
     private static func when(_ times: Set<RoutineTime>) -> String {

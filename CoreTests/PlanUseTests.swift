@@ -33,6 +33,23 @@ struct PlanUseTests {
         #expect(use.statement == "Using 1 of 2 steps.")
     }
 
+    @Test func aSkinStepSaysWhatItIsAndShowsItsIcon() {
+        let aloe = item(.topicalStep, "Step 2: Aloe vera, 96% or more pure", order: 0)
+        let step = RoutineStepInfo(id: UUID(), childID: child, name: aloe.text, time: .morning, order: 0, isActive: true,
+                                   planItemID: aloe.id, label: "Apply aloe vera", detail: "96% or more pure. Plant Therapy brand.",
+                                   category: .apply)
+        let row = PlanUse(items: [aloe], steps: [step]).rows[0]
+        #expect(row.name == "Apply aloe vera")
+        #expect(row.detail == "96% or more pure. Plant Therapy brand.")
+        #expect(row.category == .apply)
+        #expect(PlanUse.detail(" if tolerated. ") == "If tolerated.")
+        #expect(PlanUse.detail("  ") == nil)
+        let withHow = PlanItemInfo(id: UUID(), planID: plan, kind: .supplement, text: "Gut Powder", dose: "1 tsp",
+                                   frequency: nil, timing: "Mix into water.", duration: "Can take long-term", sourcePage: 1,
+                                   sourceLine: nil, isConfirmed: true, order: 1, isGiving: true)
+        #expect(PlanUse(items: [withHow], steps: []).rows[0].detail == "Mix into water. Can take long-term.")
+    }
+
     @Test func supplementsFollowGivingAndMentionsAreForReading() {
         let drops = item(.supplement, "ADD Brand D Drops", order: 0, giving: true, dose: "8 drops")
         let notYet = item(.supplement, "Zinc", order: 1, giving: nil, dose: "1 tab")

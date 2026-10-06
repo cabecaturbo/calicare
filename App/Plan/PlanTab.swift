@@ -250,10 +250,11 @@ private struct PlanUseRow: View {
     let onRead: () -> Void
 
     var body: some View {
-        HStack(spacing: Spacing.x2) {
+        HStack(alignment: .top, spacing: 0) {
             Button(action: onToggle) {
                 circle
-                    .frame(width: 44, height: 56, alignment: .leading)
+                    .frame(width: 44, height: 44, alignment: .leading)
+                    .padding(.vertical, 1)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -262,13 +263,26 @@ private struct PlanUseRow: View {
             .accessibilityHint(row.isInUse ? "Takes it out of To do." : "Adds it to To do.")
 
             Button(action: onRead) {
-                HStack(spacing: Spacing.x3) {
+                HStack(alignment: .firstTextBaseline, spacing: Spacing.x3) {
+                    if let category = row.category {
+                        Image(systemName: category.symbol)
+                            .font(.system(size: 15, weight: .regular))
+                            .foregroundStyle(palette.accent)
+                            .frame(width: 20)
+                            .accessibilityHidden(true)
+                    }
                     VStack(alignment: .leading, spacing: Spacing.x1) {
                         Text(row.name)
                             .textStyle(.body)
                             .foregroundStyle(row.isInUse ? palette.ink : palette.graphite)
+                        if let detail = row.detail {
+                            Text(detail)
+                                .textStyle(.meta)
+                                .foregroundStyle(palette.graphite)
+                                .lineLimit(3)
+                        }
                         if let meta = row.meta {
-                            Text(meta).textStyle(.meta).foregroundStyle(palette.graphite)
+                            Text(meta).textStyle(.meta).fontWeight(.medium).foregroundStyle(palette.graphite)
                         }
                     }
                     .fixedSize(horizontal: false, vertical: true)

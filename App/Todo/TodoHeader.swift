@@ -1,17 +1,18 @@
 import Core
 import SwiftUI
 
-/// To do's header (canvas "HeaderV2"): the title in serif on the left, the
-/// child switcher and the Settings gear on the right, then one why-line.
+/// To do's and Plan's header (canvas "HeaderV2"): the title in serif on the
+/// left, the child switcher and the Settings gear on the right, then one why-line.
 struct TodoHeader: View {
     @Environment(\.palette) private var palette
     @Environment(Shell.self) private var shell
+    var title = "To do"
     let why: String
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.x1) {
             HStack(spacing: Spacing.x3) {
-                Text("To do")
+                Text(title)
                     .textStyle(.title)
                     .foregroundStyle(palette.ink)
                     .accessibilityAddTraits(.isHeader)

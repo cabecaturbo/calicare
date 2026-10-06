@@ -170,15 +170,17 @@ To do. One big statement at the top, like To do.
    source. Reading needs sign-in; the file stays on the phone.
 2. A plan being checked: "Check your plan." and "Finish checking" (the
    review screen).
-3. A running plan: "Using 12 of 15 steps." with who it's from, then the
-   steps grouped as Skin care, Routine, Supplements. Each has a check
-   circle (in To do or not; one tap) and its name, which opens "Your
-   provider's words". "Use all" / "Use none" beside "Checked steps show in
-   To do." A step's check turns all its times on or off (the routine's
-   pause switch); a supplement's is "giving now".
-4. "Also in your plan": items that never go in To do (baths, food,
-   basics, follow-ups, mentions), for reading.
-5. "More from the plan": Supplements (times and How to give), Baths,
+3. A running plan (canvas "Plan v2"): To do's compact header, then "Dr.
+   Rivera's plan, from Oct 5." with "8 of 9 steps are in To do." under it,
+   then "Open the full plan" (a small page drawing; the original file in
+   Quick Look). Steps are grouped as Skin care, Routine, Supplements: the
+   name with "AM · PM" (or the dose) beside it, one line of what it is, and
+   a switch for whether it's in To do. Switches, not circles, so they never
+   look like To do's done checks. "Use all" sits by a group's heading when
+   something in it is off. The name opens "Your provider's words".
+4. "The rest of the plan": items that never go in To do (baths, food,
+   basics, follow-ups, rules, mentions), for reading.
+5. "Everything in the plan": The rest of the plan, Supplements (times and How to give), Baths,
    Patch tests, Visits and journal, Food, Products.
 6. "About this plan" and "Add a new plan" at the bottom.
 

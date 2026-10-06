@@ -25,10 +25,8 @@ public struct PlanUse: Equatable, Sendable {
         /// What it is, in the plan's words: "96% or more pure. Plant Therapy
         /// or Amara Beauty brands." Nil when the plan says nothing more.
         public let detail: String?
-        /// "Morning and bedtime", "8 drops · 3x daily".
+        /// Beside the name: "AM · PM" for a step, the dose for a supplement.
         public let meta: String?
-        /// Wash, put on, give: drawn as a small icon.
-        public let category: StepCategory?
         public let isInUse: Bool
         /// The To do steps this row turns on and off (empty for supplements).
         public let stepIDs: [UUID]
@@ -65,15 +63,14 @@ public struct PlanUse: Equatable, Sendable {
                     name: first.displayName,
                     detail: Self.detail(first.detail),
                     meta: Self.when(Set(tasks.map(\.time))),
-                    category: first.category ?? .apply,
                     isInUse: tasks.contains(where: \.isActive),
                     stepIDs: tasks.map(\.id)
                 ))
             case .supplement where SupplementPlan.isProduct(item):
                 let display = SupplementDisplay(item)
                 rows.append(Row(item: item, group: .supplements, name: display.name,
-                                detail: Self.detail(Self.sentences(display.howToGive)), meta: display.meta,
-                                category: .give, isInUse: item.isGiving == true, stepIDs: []))
+                                detail: Self.detail(Self.sentences(display.howToGive)), meta: item.dose,
+                                isInUse: item.isGiving == true, stepIDs: []))
             default:
                 reference.append(item)
             }
@@ -85,12 +82,12 @@ public struct PlanUse: Equatable, Sendable {
     public var inUse: Int { rows.filter(\.isInUse).count }
     public var total: Int { rows.count }
 
-    /// "Using 12 of 15 steps." / "Using all 4 steps." / "No steps in use."
-    public var statement: String {
+    /// "8 of 9 steps are in To do." / "All 4 steps are in To do." / "None of the 9 steps are in To do yet."
+    public var line: String {
         switch inUse {
-        case 0: return "No steps in use."
-        case total: return total == 1 ? "Using the 1 step." : "Using all \(total) steps."
-        default: return "Using \(inUse) of \(total) steps."
+        case 0: return total == 1 ? "The 1 step isn't in To do yet." : "None of the \(total) steps are in To do yet."
+        case total: return total == 1 ? "The 1 step is in To do." : "All \(total) steps are in To do."
+        default: return "\(inUse) of \(total) steps are in To do."
         }
     }
 
@@ -101,9 +98,9 @@ public struct PlanUse: Equatable, Sendable {
         row.group == .supplements ? .giving(row.item.id, isOn) : .steps(row.stepIDs, active: isOn)
     }
 
-    /// "Use all" or "Use none": only the rows that would change.
-    public func changeAll(to isOn: Bool) -> [Change] {
-        rows.filter { $0.isInUse != isOn }.map { Self.change($0, to: isOn) }
+    /// "Use all" or "Use none": only the rows that would change (in one group, or all).
+    public func changeAll(to isOn: Bool, in group: Group? = nil) -> [Change] {
+        rows.filter { $0.isInUse != isOn && (group == nil || $0.group == group) }.map { Self.change($0, to: isOn) }
     }
 
     /// The plan's extra words, starting with a capital: "if tolerated. If…" → "If tolerated. If…".
@@ -121,9 +118,9 @@ public struct PlanUse: Equatable, Sendable {
 
     private static func when(_ times: Set<RoutineTime>) -> String {
         switch (times.contains(.morning), times.contains(.evening)) {
-        case (true, true): "Morning and bedtime"
-        case (true, false): "Morning"
-        default: "Bedtime"
+        case (true, true): "AM · PM"
+        case (true, false): "AM"
+        default: "PM"
         }
     }
 }

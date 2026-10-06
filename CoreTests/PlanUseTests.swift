@@ -27,10 +27,10 @@ struct PlanUseTests {
             step(aloe, .morning, active: false), step(aloe, .evening, active: false),
         ])
         #expect(use.rows.map(\.isInUse) == [true, false])
-        #expect(use.rows[0].meta == "Morning and bedtime")
+        #expect(use.rows[0].meta == "AM · PM")
         #expect(use.rows[0].group == .routine)
         #expect(use.rows[1].group == .skin)
-        #expect(use.statement == "Using 1 of 2 steps.")
+        #expect(use.line == "1 of 2 steps are in To do.")
     }
 
     @Test func aSkinStepSaysWhatItIsAndShowsItsIcon() {
@@ -41,7 +41,6 @@ struct PlanUseTests {
         let row = PlanUse(items: [aloe], steps: [step]).rows[0]
         #expect(row.name == "Apply aloe vera")
         #expect(row.detail == "96% or more pure. Plant Therapy brand.")
-        #expect(row.category == .apply)
         #expect(PlanUse.detail(" if tolerated. ") == "If tolerated.")
         #expect(PlanUse.detail("  ") == nil)
         let withHow = PlanItemInfo(id: UUID(), planID: plan, kind: .supplement, text: "Gut Powder", dose: "1 tsp",
@@ -69,7 +68,7 @@ struct PlanUseTests {
         let use = PlanUse(items: [bath, food, patch, noteOnly], steps: [step(noteOnly, .evening, kind: .note)])
         #expect(use.total == 0)
         #expect(use.reference.count == 4)
-        #expect(use.statement == "No steps in use.")
+        #expect(use.line == "None of the 0 steps are in To do yet.")
     }
 
     @Test func aSplitListShowsItsItemsNotTheList() {
@@ -78,7 +77,7 @@ struct PlanUseTests {
         let b = item(.supplement, "B", order: 2, giving: true, parent: list.id)
         let use = PlanUse(items: [list, a, b], steps: [])
         #expect(use.rows.map(\.name) == ["A", "B"])
-        #expect(use.statement == "Using all 2 steps.")
+        #expect(use.line == "All 2 steps are in To do.")
     }
 
     @Test func tapsChangeStepsOrGivingAndUseAllOnlyTouchesWhatsOff() {
@@ -92,6 +91,7 @@ struct PlanUseTests {
         #expect(PlanUse.change(use.rows[1], to: true) == .giving(drops.id, true))
         #expect(use.changeAll(to: true) == [.giving(drops.id, true)])
         #expect(use.changeAll(to: false) == [.steps([morning.id, evening.id], active: false)])
+        #expect(use.changeAll(to: true, in: .routine).isEmpty)
     }
 
     @Test func turningAStepOffTakesItOutOfToDo() async throws {
@@ -112,7 +112,7 @@ struct PlanUseTests {
         }
         let actions = PlanUseActions(routine: routine, plans: plans)
         try await actions.apply(try await current().changeAll(to: true))
-        #expect(try await current().statement == "Using all 2 steps.")
+        #expect(try await current().line == "All 2 steps are in To do.")
 
         let wash = try #require(try await current().rows.first { $0.name.contains("face") || $0.name.contains("Wash") })
         try await actions.apply([PlanUse.change(wash, to: false)])

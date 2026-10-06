@@ -17,6 +17,9 @@ Where CaliCare stands. `PROGRESS.md` has the step-by-step checklist, and `docs/0
   - The Watch comes after launch.
   - **No paywall: version 1 is free during beta** (October 4, 2026).
 
+## In progress
+- **Plan tab (replaces Info):** bring in the care plan, check which steps go in To do. Needs a phone check before merging.
+
 ## To finish before TestFlight
 1. **Phone checks (owner):**
    - a real care plan import
@@ -27,7 +30,8 @@ Where CaliCare stands. `PROGRESS.md` has the step-by-step checklist, and `docs/0
 2. **Two-phone test (owner):** join with an invite code (2.4) and "by Dad" names (2.5).
 3. **Apple sign-in token removal on account deletion:** code merged (PR #57). Manual: create a Sign in with Apple key on developer.apple.com, then set the APPLE_* Supabase secrets and deploy `delete-account`.
 4. **7.6 TestFlight:**
-   - Create the App Store record and upload a build. Ask the owner before each.
+   - Done October 5, 2026: app record created, build 1.0 (2) uploaded, in beta review. Owner is in the Team group.
+   - Public link (works after beta review): https://testflight.apple.com/join/ABXetDtE
    - Invite 5–10 eczema parents.
    - Ideally, a pediatric dermatologist reviews the reports and wording.
 
@@ -43,4 +47,4 @@ Where CaliCare stands. `PROGRESS.md` has the step-by-step checklist, and `docs/0
 - **Supabase project:** `calicare` (ref `sbzuoqxgtbpobnrqqmhw`).
 - **Edge Functions:** `delete-account`, `parse-care-plan`, `meal-ideas`.
 - **Test device:** iPhone 15 Pro.
-- **App Store Connect:** no app record yet.
+- **App Store Connect:** app "Cali Care", ID 6819521789, SKU calicare. TestFlight groups: Team (internal), Beta parents (public link).

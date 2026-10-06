@@ -1,6 +1,6 @@
 import XCTest
 
-/// To do at three times of day, an item sheet, and Info with its screens,
+/// To do at three times of day, an item sheet, and Plan with its screens,
 /// from the LEGACYPLAN seed (a made-up plan shaped like a real import).
 @MainActor
 final class TodoInfoCaptureTests: XCTestCase {
@@ -48,11 +48,12 @@ final class TodoInfoCaptureTests: XCTestCase {
         Capture.screen("todo-ask-\(variant)")
     }
 
-    func testInfo() {
+    func testPlan() {
         let app = launch(clock: "10:00")
-        tab(app, "Info")
-        Capture.screen("info-\(variant)")
-        for (row, name) in [("Supplements", "info-supplements"), ("Patch tests", "info-patch-tests"), ("Care plan", "info-care-plan")] {
+        tab(app, "Plan")
+        scroll(app, "plan-\(variant)")
+        for _ in 0..<10 { app.swipeUp() }
+        for (row, name) in [("Supplements", "plan-supplements"), ("Patch tests", "plan-patch-tests"), ("Baths", "plan-baths")] {
             let link = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", row)).firstMatch
             guard link.waitForExistence(timeout: 3) else { continue }
             link.tap()

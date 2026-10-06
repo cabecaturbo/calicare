@@ -14,10 +14,14 @@ struct AddPlanSheet: View {
         case failed(String)
     }
 
+    /// Where the plan comes from, when the Plan tab already asked.
+    enum Source { case scan, file, photos }
+
     @Environment(\.palette) private var palette
     @Environment(\.dismiss) private var dismiss
     @Environment(AccountController.self) private var account
     let child: ChildInfo
+    var source: Source?
     let onDraft: (CarePlanInfo) -> Void
 
     @State private var stage: Stage = .choose
@@ -25,6 +29,8 @@ struct AddPlanSheet: View {
     @State private var scanning = false
     @State private var importing = false
     @State private var photos: [PhotosPickerItem] = []
+    @State private var pickingPhotos = false
+    @State private var openedSource = false
     @State private var signingIn = false
 
     var body: some View {
@@ -85,6 +91,8 @@ struct AddPlanSheet: View {
             guard case .success(let urls) = result, !urls.isEmpty else { return }
             Task { await read(files: urls) }
         }
+        .photosPicker(isPresented: $pickingPhotos, selection: $photos, maxSelectionCount: 20, matching: .images)
+        .task(id: isSignedIn) { openSource() }
         .onChange(of: photos) { _, picked in
             guard !picked.isEmpty else { return }
             Task { await read(photos: picked) }
@@ -93,6 +101,17 @@ struct AddPlanSheet: View {
             AccountSheet()
                 .environment(account)
                 .nightAwarePalette()
+        }
+    }
+
+    /// Goes straight to the scanner or picker the parent chose on the Plan tab, once.
+    private func openSource() {
+        guard let source, isSignedIn, !openedSource, stage == .choose else { return }
+        openedSource = true
+        switch source {
+        case .scan where VNDocumentCameraViewController.isSupported: scanning = true
+        case .scan, .file: importing = true
+        case .photos: pickingPhotos = true
         }
     }
 

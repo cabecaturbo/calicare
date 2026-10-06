@@ -1,8 +1,8 @@
 import Core
 import SwiftUI
 
-/// Today, Plan, and Progress. Owns the shared day (one `TodayModel`), Settings,
-/// adding a child, the log sheet, and the quick log bar on Plan and Progress.
+/// Today, To do, Progress, and Plan. Owns the shared day (one `TodayModel`), Settings,
+/// adding a child, the log sheet, and the quick log bar on every tab.
 struct AppShell: View {
     @Environment(\.palette) private var palette
     @Environment(\.scenePhase) private var scenePhase
@@ -101,8 +101,8 @@ struct AppShell: View {
                 ProgressTab()
                     .modifier(TabChrome(pills: pills))
             }
-            Tab("Info", systemImage: "book.closed", value: AppTab.info) {
-                InfoView()
+            Tab("Plan", systemImage: "heart.text.clipboard", value: AppTab.plan) {
+                PlanTab()
                     .modifier(TabChrome(pills: pills))
             }
             if !pills {

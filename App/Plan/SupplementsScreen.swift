@@ -12,7 +12,7 @@ struct SupplementsScreen: View {
         let plan = model.supplementPlan
         let giving = plan.rows.filter { $0.item.isGiving == true }
         let notYet = plan.rows.filter { $0.item.isGiving != true }
-        InfoScreen(title: "Supplements") {
+        PlanPage(title: "Supplements") {
             if plan.rows.isEmpty && plan.mentioned.isEmpty {
                 Text("Your plan has no supplements.").textStyle(.body).foregroundStyle(palette.graphite)
             }

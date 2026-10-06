@@ -9,7 +9,7 @@ final class LeftoversCaptureTests: XCTestCase {
         app.launchArguments = ScreenTourTests.launchArguments + ["-designReviewSeed", "PLANSTARTED"]
         app.launch()
         sleep(4)
-        app.buttons["Info"].firstMatch.tap()
+        app.buttons["Plan"].firstMatch.tap()
         sleep(1)
         let list = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Food")).firstMatch
         for _ in 0..<8 where !list.isHittable { app.swipeUp() }

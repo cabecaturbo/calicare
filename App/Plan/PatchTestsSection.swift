@@ -13,7 +13,7 @@ struct PatchTestsScreen: View {
     private var tests: PatchTests { model.patchTests }
 
     var body: some View {
-        InfoScreen(title: "Patch tests") {
+        PlanPage(title: "Patch tests") {
             if let item = tests.planItem {
                 VStack(alignment: .leading, spacing: Spacing.x2) {
                     Text("What to do").textStyle(.section).foregroundStyle(palette.ink).accessibilityAddTraits(.isHeader)

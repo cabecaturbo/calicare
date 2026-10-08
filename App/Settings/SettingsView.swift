@@ -19,6 +19,7 @@ struct SettingsView: View {
                 ReminderSettingsSection()
                 quickLoggingSection
                 QuickLogCardSettingsSection()
+                AppearanceSection()
                 yourDataSection
                 AccountSettingsSection()
                 aboutSection

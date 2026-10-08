@@ -23,7 +23,7 @@ struct Illustration: View {
                 stroke
                     .trim(from: 0, to: reduceMotion ? 1 : drawn)
                     .stroke(palette.ink, style: StrokeStyle(lineWidth: 1.6, lineCap: .round, lineJoin: .round))
-                    .animation(.easeOut(duration: 1).delay(Double(index) * 0.15), value: drawn)
+                    .motion(.gentle, value: drawn, staggerIndex: index)
             }
         }
         .frame(width: size.width, height: size.height)

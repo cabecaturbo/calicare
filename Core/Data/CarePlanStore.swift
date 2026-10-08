@@ -180,6 +180,19 @@ public actor CarePlanStore: ModelActor {
         try changeItem(itemID) { $0.isGiving = isGiving }
     }
 
+    /// The parent's dose steps for a supplement. An empty list clears them.
+    public func setDoseSteps(_ itemID: UUID, _ steps: [DoseStep]) async throws {
+        try changeItem(itemID) { $0.doseStepsRaw = DoseStep.encode(steps) }
+    }
+
+    /// How long the plan runs, in weeks; nil when the parent clears it.
+    public func setLength(_ planID: UUID, weeks: Int?) async throws {
+        let plan = try fetchPlan(planID)
+        plan.lengthWeeks = weeks.map { min(max($0, 1), 104) }
+        touch(plan, at: now())
+        try modelContext.save()
+    }
+
     /// When a supplement is given. An empty list keeps the plan's default.
     public func setGivingTimes(_ itemID: UUID, _ blocks: [TodoBlock]) async throws {
         try changeItem(itemID) { $0.givingTimesRaw = blocks.isEmpty ? nil : TodoBlock.raw(blocks) }
@@ -335,6 +348,36 @@ public actor CarePlanStore: ModelActor {
     }
 
     // MARK: - Routine steps from the plan
+
+    /// A plan item's step at more times (Plan › an item › a time switched on
+    /// that has no step yet). Adds rows only; existing steps are untouched.
+    public func addSteps(for itemID: UUID, times: [RoutineTime]) async throws {
+        guard let item = try modelContext.fetch(FetchDescriptor<PlanItem>(predicate: #Predicate { $0.id == itemID })).first
+        else { throw CarePlanStoreError.itemNotFound }
+        let planID = item.planID
+        guard let plan = try modelContext.fetch(FetchDescriptor<CarePlan>(predicate: #Predicate { $0.id == planID })).first
+        else { throw CarePlanStoreError.planNotFound }
+        let childID = plan.childID
+        let steps = try modelContext.fetch(FetchDescriptor<RoutineStep>(
+            predicate: #Predicate { $0.childID == childID && $0.deletedAt == nil }
+        ))
+        let mine = steps.filter { $0.planItemID == itemID }
+        let template = mine.first
+        let current = now()
+        for time in times where !mine.contains(where: { $0.timeRaw == time.rawValue }) {
+            let order = (steps.filter { $0.timeRaw == time.rawValue }.map(\.order).max() ?? -1) + 1
+            let step = RoutineStep(childID: childID, name: template?.name ?? String(item.text.prefix(80)), time: time,
+                                   order: order, planItemID: itemID, now: current)
+            step.label = template?.label
+            step.detail = template?.detail
+            step.sourceText = template?.sourceText
+            step.categoryRaw = template?.categoryRaw
+            step.kindRaw = template?.kindRaw
+            step.timesPerDay = template?.timesPerDay
+            modelContext.insert(step)
+        }
+        try modelContext.save()
+    }
 
     /// The plan's daily steps join Plan's routine, after the parent's own, in
     /// the plan's order: morning, evening, or both (see PlanRoutine).

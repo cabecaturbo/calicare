@@ -11,6 +11,39 @@ struct AboutPlanView: View {
     @State private var items: [PlanItemInfo] = []
     @State private var preview: URL?
     @State private var confirmingEnd = false
+    @State private var length: Int?
+
+    /// "Length": how long the plan runs. Saved only when the parent picks one;
+    /// the plan's own longest duration is offered, never set for them.
+    private var lengthRow: some View {
+        VStack(alignment: .leading, spacing: Spacing.x1) {
+            HStack {
+                Text("Length").textStyle(.body).foregroundStyle(palette.ink)
+                Spacer(minLength: Spacing.x3)
+                Picker("Length", selection: Binding(get: { length ?? 0 }, set: { save($0 == 0 ? nil : $0) })) {
+                    Text("Not set").tag(0)
+                    ForEach(1...52, id: \.self) { weeks in
+                        Text(weeks == 1 ? "1 week" : "\(weeks) weeks").tag(weeks)
+                    }
+                }
+                .pickerStyle(.menu)
+                .tint(palette.accent)
+            }
+            .frame(minHeight: Size.touchTarget)
+            if length == nil, let suggested = PlanStar.suggestedWeeks(items) {
+                Button("The plan says about \(suggested) weeks. Use that") { save(suggested) }
+                    .buttonStyle(.textLink)
+            }
+        }
+    }
+
+    private func save(_ weeks: Int?) {
+        length = weeks
+        Task {
+            try? await CarePlanStore(modelContainer: CaliCareModelContainer.shared()).setLength(plan.id, weeks: weeks)
+            await LogChanges.didChange()
+        }
+    }
 
     var body: some View {
         NavigationStack {
@@ -26,6 +59,7 @@ struct AboutPlanView: View {
                                 .foregroundStyle(palette.graphite)
                         }
                     }
+                    lengthRow
                     if !notes.isEmpty {
                         VStack(alignment: .leading, spacing: Spacing.x2) {
                             Text("How often and how long").textStyle(.section).foregroundStyle(palette.ink)
@@ -88,6 +122,7 @@ struct AboutPlanView: View {
             }
         }
         .tint(palette.accent)
+        .onAppear { length = plan.lengthWeeks }
         .task {
             items = (try? await CarePlanStore(modelContainer: CaliCareModelContainer.shared()).items(plan: plan.id)) ?? []
         }

@@ -3,11 +3,11 @@ import SwiftData
 /// Add each new schema version and its stage here. Never edit a shipped version.
 public enum CaliCareMigrationPlan: SchemaMigrationPlan {
     public static var schemas: [any VersionedSchema.Type] {
-        [SchemaV1.self, SchemaV2.self, SchemaV3.self, SchemaV4.self, SchemaV5.self, SchemaV6.self, SchemaV7.self]
+        [SchemaV1.self, SchemaV2.self, SchemaV3.self, SchemaV4.self, SchemaV5.self, SchemaV6.self, SchemaV7.self, SchemaV8.self]
     }
 
     public static var stages: [MigrationStage] {
-        [v1ToV2, v2ToV3, v3ToV4, v4ToV5, v5ToV6, v6ToV7]
+        [v1ToV2, v2ToV3, v3ToV4, v4ToV5, v5ToV6, v6ToV7, v7ToV8]
     }
 
     /// V2 only adds optional fields and the RoutineStep model.
@@ -27,4 +27,7 @@ public enum CaliCareMigrationPlan: SchemaMigrationPlan {
 
     /// V7 adds optional supplement and wording fields to PlanItem.
     static let v6ToV7 = MigrationStage.lightweight(fromVersion: SchemaV6.self, toVersion: SchemaV7.self)
+
+    /// V8 adds CarePlan.lengthWeeks and PlanItem.doseStepsRaw (optional).
+    static let v7ToV8 = MigrationStage.lightweight(fromVersion: SchemaV7.self, toVersion: SchemaV8.self)
 }

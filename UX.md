@@ -162,27 +162,30 @@ Night layout (8 PM – 7 AM):
    ticks the whole block without opening the app. Off by default:
    Settings › Reminders › Morning list, Afternoon list, Bedtime list.
 
-### Plan: "What's in my plan, and which steps do I use?"
-A core screen: bringing the plan in, and choosing which of its steps go in
-To do. One big statement at the top, like To do.
-1. No plan: "Bring in your care plan." and three cards: Scan the paper,
-   Add a PDF, Choose a photo. Each opens the reader straight to that
-   source. Reading needs sign-in; the file stays on the phone.
-2. A plan being checked: "Check your plan." and "Finish checking" (the
-   review screen).
-3. A running plan (canvas "Plan v2"): To do's compact header, then "Dr.
-   Rivera's plan, from Oct 5." with "8 of 9 steps are in To do." under it,
-   then "Open the full plan" (a small page drawing; the original file in
-   Quick Look). Steps are grouped as Skin care, Routine, Supplements: the
-   name with "AM · PM" (or the dose) beside it, one line of what it is, and
-   a switch for whether it's in To do. Switches, not circles, so they never
-   look like To do's done checks. "Use all" sits by a group's heading when
-   something in it is off. The name opens "Your provider's words".
-4. "The rest of the plan": items that never go in To do (baths, food,
-   basics, follow-ups, rules, mentions), for reading.
-5. "Everything in the plan": The rest of the plan, Supplements (times and How to give), Baths,
-   Patch tests, Visits and journal, Food, Products.
-6. "About this plan" and "Add a new plan" at the bottom.
+### Plan: "Where am I in the plan, and what's next?" (v4, October 7, 2026)
+Built around one star (DESIGN.md §5a), from the canvas "Plan v4", softer.
+1. Header "Plan", caption "From Dr. Rivera".
+2. The star: a soft card. "Week 2 of 12" (or "Week 2" with no length), a
+   thin 4pt line for weeks done (only with a length), "Next visit Oct 26,
+   in 3 weeks" (only when one is scheduled), and "Full plan" (the original
+   document; About this plan is in its bar, with the plan's length).
+3. Coming up: at most 3 dated items (month small, day in serif, one line,
+   a muted reason when the plan gives one), then "See all". Only stored
+   dates: the parent's dose steps, starts the plan's own rules date ("2
+   weeks after Coptis"), and visits. Never a made-up dose, increase, or
+   date; hidden when there's nothing.
+4. Supplements: 2-column tiles (name, today's amount, small sun or moon
+   for when); not started is dashed with "Not started yet". "5 giving".
+5. Skin care: one soft card, steps numbered, "3 to 4 times a day" once.
+6. Rows: Baths, Food, Home, Plan notes (each its own page), Visits and
+   journal, Patch tests, Products, then "Add a new plan".
+7. Every tile, step, and Coming up item opens the item page (v3): status,
+   one button, times as switches, "Dose steps" for supplements (the
+   parent adds each step: amount and start day; To do shows that amount
+   from that day), and "What the plan says" in full. Back reads "‹ Plan".
+8. No plan: the star reads "Bring in your care plan", then Scan the paper,
+   Add a PDF, Choose a photo as quiet rows. A plan being checked: "Check
+   your plan" and "Finish checking".
 
 ### Words
 All app-written words read at grade 6 or easier (ReadingGradeTests).

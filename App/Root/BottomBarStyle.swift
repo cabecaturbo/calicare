@@ -18,10 +18,10 @@ struct LoggedBannerInset: ViewModifier {
                 }
                 .padding(.horizontal, Spacing.margin)
                 .padding(.bottom, Spacing.x2)
-                .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
+                .transition(Motion.arriveTransition(reduceMotion: reduceMotion))
             }
         }
-        .animation(.easeOut(duration: 0.25), value: model.confirmation)
+        .motion(.standard, value: model.confirmation)
     }
 
     private func addWhere(for confirmation: TodayModel.Confirmation) -> (() -> Void)? {

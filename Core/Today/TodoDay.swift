@@ -116,7 +116,7 @@ public struct TodoDay: Equatable, Sendable {
             for item in giving where item.blocks.contains(block) {
                 let doses = Self.doses(for: item, in: block, taken: taken)
                 list.append(Item(kind: .supplement(item), label: "Give \(SupplementDisplay(item).name)",
-                                 meta: item.dose, isDone: !doses.isEmpty, lastLog: doses.max { $0.timestamp < $1.timestamp }))
+                                 meta: item.dose(on: now, calendar: calendar), isDone: !doses.isEmpty, lastLog: doses.max { $0.timestamp < $1.timestamp }))
             }
             // Afternoon shows only when it has something in it.
             if block == .afternoon && list.isEmpty { continue }

@@ -106,10 +106,16 @@ public struct RoutineStepInfo: Identifiable, Hashable, Sendable {
     public let category: StepCategory?
     public let timesPerDay: Int?
     public let kind: StepKind
+    /// When the step was made (a plan's steps: when the plan started).
+    public let createdAt: Date?
+    /// Its last change, such as being paused.
+    public let updatedAt: Date?
 
     public init(id: UUID, childID: UUID, name: String, time: RoutineTime, order: Int, isActive: Bool, planItemID: UUID? = nil,
                 label: String? = nil, detail: String? = nil, sourceText: String? = nil, category: StepCategory? = nil,
-                timesPerDay: Int? = nil, kind: StepKind = .task) {
+                timesPerDay: Int? = nil, kind: StepKind = .task, createdAt: Date? = nil, updatedAt: Date? = nil) {
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
         self.id = id
         self.childID = childID
         self.name = name
@@ -138,7 +144,8 @@ extension RoutineStepInfo {
         self.init(id: step.id, childID: step.childID, name: step.name, time: time, order: step.order,
                   isActive: step.isActive, planItemID: step.planItemID, label: step.label, detail: step.detail,
                   sourceText: step.sourceText, category: step.categoryRaw.flatMap(StepCategory.init),
-                  timesPerDay: step.timesPerDay, kind: step.kindRaw.flatMap(StepKind.init) ?? .task)
+                  timesPerDay: step.timesPerDay, kind: step.kindRaw.flatMap(StepKind.init) ?? .task,
+                  createdAt: step.createdAt, updatedAt: step.updatedAt)
     }
 }
 
@@ -152,9 +159,12 @@ public struct CarePlanInfo: Identifiable, Hashable, Sendable {
     public let status: CarePlanStatus
     public let startedAt: Date?
     public let endedAt: Date?
+    /// How long the plan runs, in weeks, when the parent set it.
+    public let lengthWeeks: Int?
 
     public init(id: UUID, childID: UUID, provider: String, planDate: Date?, sourceFileName: String?,
-                status: CarePlanStatus, startedAt: Date?, endedAt: Date?) {
+                status: CarePlanStatus, startedAt: Date?, endedAt: Date?, lengthWeeks: Int? = nil) {
+        self.lengthWeeks = lengthWeeks
         self.id = id
         self.childID = childID
         self.provider = provider
@@ -170,7 +180,8 @@ extension CarePlanInfo {
     init?(_ plan: CarePlan) {
         guard let status = plan.status else { return nil }
         self.init(id: plan.id, childID: plan.childID, provider: plan.provider, planDate: plan.planDate,
-                  sourceFileName: plan.sourceFileName, status: status, startedAt: plan.startedAt, endedAt: plan.endedAt)
+                  sourceFileName: plan.sourceFileName, status: status, startedAt: plan.startedAt, endedAt: plan.endedAt,
+                  lengthWeeks: plan.lengthWeeks)
     }
 }
 
@@ -201,12 +212,15 @@ public struct PlanItemInfo: Identifiable, Hashable, Sendable {
     public let plainText: String?
     /// The provider's whole paragraph, restored from the saved original.
     public let sourceParagraph: String?
+    /// Supplements: the parent's dose steps, oldest first.
+    public let doseSteps: [DoseStep]
 
     public init(id: UUID, planID: UUID, kind: PlanItemKind, text: String, dose: String?, frequency: String?,
                 timing: String?, duration: String?, sourcePage: Int?, sourceLine: String?, isConfirmed: Bool, order: Int,
                 label: String? = nil, detail: String? = nil, category: StepCategory? = nil, parentItemID: UUID? = nil,
                 isGiving: Bool? = nil, givingTimes: [TodoBlock]? = nil, plainText: String? = nil,
-                sourceParagraph: String? = nil) {
+                sourceParagraph: String? = nil, doseSteps: [DoseStep] = []) {
+        self.doseSteps = doseSteps.sorted { $0.startDate < $1.startDate }
         self.isGiving = isGiving
         self.givingTimes = givingTimes
         self.plainText = plainText
@@ -235,6 +249,12 @@ extension PlanItemInfo {
     /// restored, else the quoted line, else the item's text.
     public var providerWords: String { sourceParagraph ?? sourceLine ?? text }
 
+    /// The amount for a day: the latest dose step that has started, else the plan's dose.
+    public func dose(on date: Date, calendar: Calendar = .autoupdatingCurrent) -> String? {
+        let end = calendar.startOfDay(for: date).addingTimeInterval(86_400)
+        return doseSteps.last { $0.startDate < end }?.amount ?? dose
+    }
+
     /// When a supplement is given: the parent's choice, or the plan's default.
     public var blocks: [TodoBlock] { givingTimes ?? TodoBlock.defaults(forFrequency: frequency) }
 }
@@ -248,7 +268,7 @@ extension PlanItemInfo {
                   label: item.label, detail: item.detail, category: item.categoryRaw.flatMap(StepCategory.init),
                   parentItemID: item.parentItemID, isGiving: item.isGiving,
                   givingTimes: TodoBlock.parse(item.givingTimesRaw), plainText: item.plainText,
-                  sourceParagraph: item.sourceParagraph)
+                  sourceParagraph: item.sourceParagraph, doseSteps: DoseStep.decode(item.doseStepsRaw))
     }
 }
 
@@ -272,5 +292,43 @@ public struct VisitInfo: Identifiable, Hashable, Sendable {
 extension VisitInfo {
     init(_ visit: Visit) {
         self.init(id: visit.id, childID: visit.childID, date: visit.date, provider: visit.provider, notes: visit.notes)
+    }
+}
+
+/// One dose step the parent set: from this day on, give this amount.
+public struct DoseStep: Codable, Hashable, Sendable {
+    public var amount: String
+    public var startDate: Date
+
+    public init(amount: String, startDate: Date) {
+        self.amount = amount
+        self.startDate = startDate
+    }
+
+    static func decode(_ raw: String?) -> [DoseStep] {
+        guard let data = raw?.data(using: .utf8) else { return [] }
+        return (try? JSONDecoder.doseSteps.decode([DoseStep].self, from: data)) ?? []
+    }
+
+    static func encode(_ steps: [DoseStep]) -> String? {
+        guard !steps.isEmpty, let data = try? JSONEncoder.doseSteps.encode(steps.sorted { $0.startDate < $1.startDate })
+        else { return nil }
+        return String(data: data, encoding: .utf8)
+    }
+}
+
+extension JSONEncoder {
+    static var doseSteps: JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        return encoder
+    }
+}
+
+extension JSONDecoder {
+    static var doseSteps: JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return decoder
     }
 }

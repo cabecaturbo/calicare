@@ -24,21 +24,26 @@ final class OnboardingCaptureTests: XCTestCase {
         name.typeText("Cal")
         Capture.screen("onb-2-child-\(variant)")
         // A fresh simulator can show a keyboard tip with its own "Continue".
-        let reminders = app.staticTexts["Gentle reminders"]
-        for _ in 0..<5 where !reminders.exists {
+        let plan = app.staticTexts["Bring in your care plan"]
+        for _ in 0..<5 where !plan.exists {
             app.buttons["Continue"].firstMatch.tap()
             sleep(1)
         }
-        XCTAssertTrue(reminders.waitForExistence(timeout: 5))
-
-        Capture.screen("onb-3-reminders-\(variant)")
+        XCTAssertTrue(plan.waitForExistence(timeout: 5))
+        Capture.screen("onb-3-plan-\(variant)")
         tap(app.buttons["Skip for now"])
 
-        Capture.screen("onb-4-anywhere-home-\(variant)")
+        let reminders = app.staticTexts["Gentle reminders"]
+        XCTAssertTrue(reminders.waitForExistence(timeout: 5))
+
+        Capture.screen("onb-4-reminders-\(variant)")
+        tap(app.buttons["Skip for now"])
+
+        Capture.screen("onb-5-anywhere-home-\(variant)")
         tap(app.buttons["Lock"])
-        Capture.screen("onb-4-anywhere-lock-\(variant)")
+        Capture.screen("onb-5-anywhere-lock-\(variant)")
         tap(app.buttons["Control Center"])
-        Capture.screen("onb-4-anywhere-cc-\(variant)")
+        Capture.screen("onb-5-anywhere-cc-\(variant)")
 
         for (segment, key, count) in [("Home", "home", 6), ("Lock", "lock", 6), ("Control Center", "cc", 5)] {
             tap(app.buttons[segment])
@@ -53,7 +58,7 @@ final class OnboardingCaptureTests: XCTestCase {
 
         tap(app.buttons["Go to Today"])
         sleep(2)
-        Capture.screen("onb-5-today-\(variant)")
+        Capture.screen("onb-6-today-\(variant)")
     }
 
     private func tap(_ element: XCUIElement) {

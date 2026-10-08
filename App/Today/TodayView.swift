@@ -5,6 +5,7 @@ import SwiftUI
 /// night, then today's logs. At night: tonight so far, a big Itchy, tonight's logs.
 struct TodayView: View {
     @Environment(\.palette) private var palette
+    @Environment(\.nightLayout) private var nightLayout
     @Environment(TodayModel.self) private var model
     @Environment(Shell.self) private var shell
     @State private var editing: LogEntry?
@@ -16,7 +17,7 @@ struct TodayView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     AppHeader(
                         title: "Today",
-                        caption: NightMode.isLayoutActive() ? nil : Date.now.formatted(.dateTime.weekday(.wide).month(.wide).day())
+                        caption: nightLayout ? nil : Date.now.formatted(.dateTime.weekday(.wide).month(.wide).day())
                     )
                     if model.child != nil {
                         content
@@ -40,7 +41,7 @@ struct TodayView: View {
 
     @ViewBuilder
     private var content: some View {
-        let night = NightMode.isLayoutActive()
+        let night = nightLayout
         let skin = model.skin
         let asksSkin = !night && (changingSkin || TodayPrompts.asksSkin(at: .now, answered: skin != nil))
         let name = model.child?.name ?? "your child"
@@ -116,7 +117,7 @@ struct TodayView: View {
                 .padding(.horizontal, Spacing.x5)
                 .background(palette.button, in: RoundedRectangle(cornerRadius: Corner.card))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .accessibilityLabel("Log itching")
             .padding(.horizontal, Spacing.margin)
             .padding(.top, Spacing.x4)
@@ -133,7 +134,7 @@ struct TodayView: View {
         let times = model.entries
             .filter { $0.type == .itchEpisode && CareDay.containing($0.timestamp).nightInterval().contains($0.timestamp) }
             .map { model.time($0.timestamp) }
-        if NightMode.isLayoutActive() {
+        if nightLayout {
             return SummaryCard(
                 eyebrow: "So far tonight",
                 title: wakeUps == 0 ? "A quiet night" : "\(wakeUps) wake-up\(wakeUps == 1 ? "" : "s")",
@@ -319,7 +320,7 @@ private struct TodaySoFar: View {
                     .padding(.horizontal, Spacing.margin)
             } else {
                 VStack(spacing: 0) {
-                    ForEach(entries) { entry in
+                    ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
                         SwipeToDelete { Task { await model.deleteWithUndo(entry) } } content: {
                         Button { onEdit(entry) } label: {
                             HStack {
@@ -338,6 +339,7 @@ private struct TodaySoFar: View {
                         .buttonStyle(.plain)
                         .accessibilityHint("Edit, or swipe left to delete")
                         }
+                        .arrive(index: index)
                     }
                 }
                 .padding(.horizontal, Spacing.margin)

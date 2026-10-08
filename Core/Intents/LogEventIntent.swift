@@ -3,7 +3,7 @@ import AppIntents
 /// Logs any event type from Siri or Shortcuts without opening the app.
 public struct LogEventIntent: AppIntent {
     public static let title: LocalizedStringResource = "Log an Event"
-    public static let description = IntentDescription("Logs something for your child without opening CaliCare.")
+    public static let description = IntentDescription("Logs something for your child without opening Cali Care.")
     public static let openAppWhenRun = false
 
     @Parameter(title: "Event")

@@ -128,7 +128,7 @@ struct BodyOutline: View {
         }
         .frame(width: 200, height: 360, alignment: .topLeading)
         .frame(maxWidth: .infinity)
-        .sensoryFeedback(.selection, trigger: selected)
+        .selectFeedback(trigger: selected)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(side == .front ? "Body outline, front" : "Body outline, back")
         .accessibilityValue(BodyArea.allCases.filter(selected.contains).map(\.words).joined(separator: ", "))

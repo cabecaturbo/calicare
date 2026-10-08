@@ -37,7 +37,7 @@ struct PhotoLibraryTests {
 
         // Nothing about photos is a synced model: the schema has no photo type,
         // and a sync of a store with only photos on disk pushes nothing.
-        let models = SchemaV7.models.map { String(describing: $0) }
+        let models = SchemaV8.models.map { String(describing: $0) }
         #expect(!models.contains { $0.localizedCaseInsensitiveContains("photo") })
         let harness = try await TestHarness()
         let remote = FakeSyncRemote()

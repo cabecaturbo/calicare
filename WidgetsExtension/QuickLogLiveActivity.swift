@@ -23,6 +23,7 @@ struct QuickLogLiveActivity: Widget {
                 DynamicIslandExpandedRegion(.trailing) {
                     Text("\(context.state.itches.count)")
                         .font(.title2.weight(.semibold))
+                        .contentTransition(.numericText())
                         .accessibilityLabel(QuickLogCardView.spoken(context.state))
                 }
                 DynamicIslandExpandedRegion(.bottom) {
@@ -32,9 +33,11 @@ struct QuickLogLiveActivity: Widget {
                 Image(systemName: "hand.raised.fill").accessibilityLabel("Quick Log")
             } compactTrailing: {
                 Text("\(context.state.itches.count)")
+                    .contentTransition(.numericText())
                     .accessibilityLabel(QuickLogCardView.spoken(context.state))
             } minimal: {
                 Text("\(context.state.itches.count)")
+                    .contentTransition(.numericText())
                     .accessibilityLabel(QuickLogCardView.spoken(context.state))
             }
             .widgetURL(DeepLink.quickLog)
@@ -96,6 +99,7 @@ private struct QuickLogCardView: View {
             Text("Logged \(CardClock.time(logged))")
                 .font(TypeStyle.body.font.weight(.semibold))
                 .foregroundStyle(palette.ink)
+                .transition(Motion.loggedTransition)
         } else {
             Text(words.line { CardClock.time($0) })
                 .font(TypeStyle.meta.font)

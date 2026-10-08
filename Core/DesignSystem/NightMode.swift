@@ -33,10 +33,21 @@ private struct PaletteKey: EnvironmentKey {
     static let defaultValue: Palette = .day
 }
 
+private struct NightLayoutKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
 extension EnvironmentValues {
     public var palette: Palette {
         get { self[PaletteKey.self] }
         set { self[PaletteKey.self] = newValue }
+    }
+
+    /// The night layout (bigger Log button, "So far tonight"), from the clock.
+    /// Set with the palette and refreshed every minute, so it switches on time.
+    public var nightLayout: Bool {
+        get { self[NightLayoutKey.self] }
+        set { self[NightLayoutKey.self] = newValue }
     }
 }
 
@@ -78,5 +89,16 @@ public enum AppearanceMode: String, CaseIterable, Sendable {
     public static var current: AppearanceMode {
         get { AppGroup.defaults.string(forKey: key).flatMap(AppearanceMode.init(rawValue:)) ?? .automatic }
         set { AppGroup.defaults.set(newValue.rawValue, forKey: key) }
+    }
+
+    static let movedToSettingsKey = "appearance.movedToSettings"
+
+    /// The old floating sun/moon button saved day or night for good, often by
+    /// accident. It's gone (Settings › Appearance now), so once, go back to
+    /// following the clock. A choice made in Settings after this is kept.
+    public static func resetOldButtonChoice(_ defaults: UserDefaults = AppGroup.defaults) {
+        guard !defaults.bool(forKey: movedToSettingsKey) else { return }
+        defaults.set(AppearanceMode.automatic.rawValue, forKey: key)
+        defaults.set(true, forKey: movedToSettingsKey)
     }
 }

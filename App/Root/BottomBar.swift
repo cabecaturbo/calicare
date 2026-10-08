@@ -7,6 +7,7 @@ import SwiftUI
 /// the page. The "Logged · Undo" line sits just above it.
 struct BottomBar: View {
     @Environment(\.palette) private var palette
+    @Environment(\.nightLayout) private var nightLayout
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(TodayModel.self) private var model
     @Environment(Shell.self) private var shell
@@ -22,11 +23,11 @@ struct BottomBar: View {
                 } onDismiss: {
                     model.confirmation = nil
                 }
-                .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
+                .transition(Motion.arriveTransition(reduceMotion: reduceMotion))
             }
             HStack(spacing: Spacing.x4) {
                 TabPill()
-                LogPill(showsItchy: !(shell.tab == .today && NightMode.isLayoutActive()))
+                LogPill(showsItchy: !(shell.tab == .today && nightLayout))
             }
         }
         .padding(.horizontal, Spacing.margin)
@@ -40,7 +41,7 @@ struct BottomBar: View {
             .ignoresSafeArea()
             .allowsHitTesting(false)
         }
-        .animation(.easeOut(duration: 0.25), value: model.confirmation)
+        .motion(.standard, value: model.confirmation)
     }
 
     /// "Add where" for a flare just logged.
@@ -122,7 +123,7 @@ private struct LogPill: View {
                     .background(palette.paper, in: Capsule())
                     .overlay(Capsule().strokeBorder(palette.hairline, lineWidth: 1))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .accessibilityLabel("Log itching")
             }
             MoreLogMenu {

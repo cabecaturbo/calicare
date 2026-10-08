@@ -17,6 +17,8 @@ public struct SupplementPlan: Equatable, Sendable {
         public let canStartAfter: Date?
         /// "Starts 2 weeks after Antimicrobial herb starts", when that one hasn't started yet.
         public let waitingFor: String?
+        /// Why `canStartAfter` is that date, from the plan's rule: "2 weeks after Coptis".
+        public let startReason: String?
         /// "Rotate after 3 weeks" from the plan, as a date once started.
         public let rotateOn: Date?
         public var id: UUID { item.id }
@@ -71,6 +73,7 @@ public struct SupplementPlan: Equatable, Sendable {
             let stopped = stoppedAt.flatMap { stop in started.map { stop > $0 } ?? true ? stop : nil }
             var canStartAfter: Date?
             var waitingFor: String?
+            var startReason: String?
             if started == nil {
                 if let spacing, let latestStart {
                     canStartAfter = calendar.date(byAdding: .day, value: spacing, to: latestStart)
@@ -79,6 +82,7 @@ public struct SupplementPlan: Equatable, Sendable {
                     if let otherStart = starts[after.other.id] ?? nil {
                         let date = calendar.date(byAdding: .day, value: after.days, to: otherStart)
                         canStartAfter = [canStartAfter, date].compactMap { $0 }.max()
+                        startReason = "\(after.words) after \(SupplementDisplay(after.other).name)"
                     } else {
                         waitingFor = "Starts \(after.words) after \(after.other.text) starts"
                     }
@@ -95,6 +99,7 @@ public struct SupplementPlan: Equatable, Sendable {
                 perDay: Self.perDay(item.frequency),
                 canStartAfter: canStartAfter,
                 waitingFor: waitingFor,
+                startReason: startReason,
                 rotateOn: started.flatMap { start in rotateWeeks.flatMap { calendar.date(byAdding: .day, value: $0 * 7, to: start) } }
             )
         }

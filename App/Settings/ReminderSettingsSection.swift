@@ -16,7 +16,7 @@ struct ReminderSettingsSection: View {
         ) {
             if reminders.status == .denied {
                 VStack(alignment: .leading, spacing: Spacing.x2) {
-                    Text("Notifications are off for CaliCare. You can turn them on in iOS Settings whenever you like.")
+                    Text("Notifications are off for Cali Care. You can turn them on in iOS Settings whenever you like.")
                         .textStyle(.body)
                         .foregroundStyle(palette.graphite)
                         .fixedSize(horizontal: false, vertical: true)

@@ -49,7 +49,7 @@ struct MessagesRootView: View {
                     .foregroundStyle(palette.ink)
                     .accessibilityAddTraits(.isHeader)
                 if model.hasLoaded && model.cards.isEmpty {
-                    Text("Add your child in CaliCare to share their week.")
+                    Text("Add your child in Cali Care to share their week.")
                         .textStyle(.body)
                         .foregroundStyle(palette.graphite)
                 }

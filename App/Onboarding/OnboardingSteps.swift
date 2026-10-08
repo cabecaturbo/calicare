@@ -57,7 +57,7 @@ struct RemindersStep: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, Spacing.margin)
                     .padding(.top, Spacing.x4)
-                    .transition(.opacity)
+                    .transition(Motion.fade)
             }
         } footer: {
             if anyOn {
@@ -80,7 +80,7 @@ struct RemindersStep: View {
         }
         Task {
             if reminders.status == .notDetermined, !primed {
-                withAnimation(.easeOut(duration: 0.25)) { primed = true }
+                withMotion(.quick) { primed = true }
                 try? await Task.sleep(for: .seconds(1.2))
             }
             await reminders.turnOnAsking(kind)
@@ -101,7 +101,7 @@ struct LogAnywhereStep: View {
         OnboardingPage {
             OnboardingHeading(
                 title: "Log from anywhere",
-                detail: "One tap from your Home Screen, Lock Screen, or Control Center. The app never opens."
+                detail: "One tap from your Home Screen or Control Center. On the Lock Screen, your iPhone checks it's you first."
             )
             VStack(spacing: Spacing.x5) {
                 Picker("Where", selection: $path) {
@@ -110,17 +110,18 @@ struct LogAnywhereStep: View {
                     Text("Control Center").tag(GuidePath.controlCenter)
                 }
                 .pickerStyle(.segmented)
+                .tint(palette.accent)
                 GuideScreenshot(asset: path.doneAsset, tap: nil)
                     .frame(height: 380)
                     .id(path)
-                    .transition(.opacity)
+                    .transition(Motion.fade)
                     .accessibilityLabel("\(path.title), finished")
                 Text("Siri works too: “Log itching in Cali Care.”")
                     .textStyle(.meta)
                     .foregroundStyle(palette.graphite)
             }
             .padding(.horizontal, Spacing.margin)
-            .animation(.easeOut(duration: 0.2), value: path)
+            .motion(.quick, value: path)
         } footer: {
             Button("Show me how") { showing = path }
                 .buttonStyle(.primary)

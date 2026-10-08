@@ -1,16 +1,6 @@
 import Foundation
 import SwiftData
 
-// Current model names always point at the latest schema version.
-public typealias Child = SchemaV7.Child
-public typealias LogEvent = SchemaV7.LogEvent
-public typealias RoutineStep = SchemaV7.RoutineStep
-public typealias CarePlan = SchemaV7.CarePlan
-public typealias PlanItem = SchemaV7.PlanItem
-public typealias Visit = SchemaV7.Visit
-public typealias Food = SchemaV7.Food
-public typealias Product = SchemaV7.Product
-
 /// To do + Info: the V6 models are copied unchanged except new optional
 /// fields on PlanItem (isGiving, givingTimesRaw, plainText, sourceParagraph),
 /// so the migration from V6 is lightweight. Nothing existing changes.

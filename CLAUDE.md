@@ -12,7 +12,7 @@ care plan and track progress with as little effort as possible.
   provider gave them. No medical claims. No diagnosis.
 - No streaks, no guilt, no red for "bad." Severity uses olive density; the greige accent is never a severity (see DESIGN.md).
 - Children's photos never leave the device.
-- Beautiful and calm: linen paper, ink, greige, and olive, with a soft warm night and a day/night toggle; generous spacing (see DESIGN.md).
+- Beautiful and calm: linen paper, ink, greige, and olive, with a soft warm night that comes on automatically (override in Settings › Appearance); generous spacing (see DESIGN.md).
 
 ## Tech
 - Bundle ID: com.cursorkittens.calicare (widgets: .widgets, Core: .core).

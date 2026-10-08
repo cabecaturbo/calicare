@@ -15,7 +15,6 @@ struct AppShell: View {
     var body: some View {
         @Bindable var shell = shell
         tabs
-        .sensoryFeedback(.impact(weight: .light), trigger: model.confirmation?.id) { _, new in new != nil }
         .sheet(isPresented: $shell.showingSettings, onDismiss: reload) {
             SettingsView()
                 .environment(reminders)
@@ -173,12 +172,6 @@ private struct TabChrome: ViewModifier {
             } else {
                 content.modifier(LoggedBannerInset(isOn: true))
             }
-        }
-        // The day/night toggle stays in place while the page scrolls, just above the bar.
-        .overlay(alignment: .bottomTrailing) {
-            AppearanceToggle()
-                .padding(.trailing, Spacing.margin)
-                .padding(.bottom, Spacing.x3)
         }
     }
 }

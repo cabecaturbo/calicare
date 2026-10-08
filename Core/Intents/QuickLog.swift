@@ -10,8 +10,8 @@ public enum QuickLogError: Error, Equatable, Sendable, CustomLocalizedStringReso
 
     public var localizedStringResource: LocalizedStringResource {
         switch self {
-        case .noChild: "Add your child in CaliCare first, then try again."
-        case .childNotFound: "That child isn't in CaliCare anymore."
+        case .noChild: "Add your child in Cali Care first, then try again."
+        case .childNotFound: "That child isn't in Cali Care anymore."
         }
     }
 }

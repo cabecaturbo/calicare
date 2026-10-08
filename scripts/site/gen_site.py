@@ -102,8 +102,8 @@ def shot(src, alt, s=1.0):
 </div>'''
 
 
-STORY = ('My son still struggles with severe eczema. I know what it’s like to go through life sleep deprived, just trying to make it through the day. '
-         'Keeping track of flares and how he reacts to different foods was one more thing on my plate. '
+STORY = ('I know what it’s like to go through life sleep deprived, just trying to make it through the day. '
+         'Keeping track of flares and how my son reacts to different foods was one more thing on my plate. '
          'That’s why I built Cali Care: to make that part as easy as possible.')
 
 FAQ = [

@@ -622,3 +622,10 @@ The owner saw the v2 redesign on the phone and asked for it to be reverted. The 
 ## First TestFlight build (October 5, 2026)
 - App record "Cali Care" (6819521789, SKU calicare), version 1.0. Build 1 was rejected (ITMS 90649: no iMessage icons) because XcodeGen built the Messages extension as a plain app extension; `type: app-extension.messages` fixed it (build 2).
 - Groups: Team (internal, all builds) and Beta parents (public link https://testflight.apple.com/join/ABXetDtE, 100 people, after beta review).
+
+## Plan v3: read first (October 6, 2026)
+- The owner's spec: Plan is a reference. The list has no switches, circles, or "Use all"; each item opens a pushed page with one Start/Stop button, a switch per time, and the provider's full words. Matches the canvas boards "Plan v3" and "Plan item detail".
+- No schema change. Supplements: `isGiving`, `givingTimes`, and the existing started/stopped supplement logs (which give "since" and "Stopped" dates). Routine steps: `isActive` per time; dates from the step's own createdAt/updatedAt (a rename also moves updatedAt). Steps have only Morning and Bedtime (RoutineTime has no afternoon); Afternoon shows for supplements only.
+- A time switched on with no step makes one (`CarePlanStore.addSteps`), copying the item's other step. Stopping never deletes anything.
+- Supplements read "Give X" in the list (spec: verb-first for tasks), though the board shows the bare name.
+- The floating day/night button is gone; night colors follow the clock with Settings › Appearance (Time of day, Day, Night) as the override.

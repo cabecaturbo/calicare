@@ -76,7 +76,7 @@ Day
 | button (greige) | #665B52 | The Log buttons' fill; text on it is paper (onButton #F6EEE2) |
 | ochre | #8A6320 | "Worth watching" text only, on paper |
 
-Night (8 PM – 7 AM, every tab, or pinned with the day/night toggle): a soft, warm night
+Night (8 PM – 7 AM, every tab, or pinned in Settings › Appearance): a soft, warm night
 | Token | Hex |
 |---|---|
 | paper | #201712 |
@@ -116,11 +116,10 @@ grey with a touch of brown) is the accent and the Log button fill. The skin
 scale is olive and can't be confused with skin or blood; greige is never a
 severity. The night stays soft and warm: brown-black, not blue-black.
 
-Day/night toggle: a small sun or moon fixed just above the tab bar on every
-tab (it doesn't scroll). A tap switches to the other colors and keeps them;
-press and hold for "Match the time of day". Only the colors change: the
-night layout (bigger Log button, "Tonight so far") follows the clock.
-Widgets and the Quick Log card follow the toggle too.
+Night colors come on automatically (8 PM to 7 AM). Settings › Appearance
+can pin Day or Night instead; there's no button on the tabs. Only the
+colors change: the night layout (bigger Log button, "Tonight so far")
+follows the clock. Widgets and the Quick Log card follow the setting too.
 
 ## 4. Type
 Two families.

@@ -106,10 +106,16 @@ public struct RoutineStepInfo: Identifiable, Hashable, Sendable {
     public let category: StepCategory?
     public let timesPerDay: Int?
     public let kind: StepKind
+    /// When the step was made (a plan's steps: when the plan started).
+    public let createdAt: Date?
+    /// Its last change, such as being paused.
+    public let updatedAt: Date?
 
     public init(id: UUID, childID: UUID, name: String, time: RoutineTime, order: Int, isActive: Bool, planItemID: UUID? = nil,
                 label: String? = nil, detail: String? = nil, sourceText: String? = nil, category: StepCategory? = nil,
-                timesPerDay: Int? = nil, kind: StepKind = .task) {
+                timesPerDay: Int? = nil, kind: StepKind = .task, createdAt: Date? = nil, updatedAt: Date? = nil) {
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
         self.id = id
         self.childID = childID
         self.name = name
@@ -138,7 +144,8 @@ extension RoutineStepInfo {
         self.init(id: step.id, childID: step.childID, name: step.name, time: time, order: step.order,
                   isActive: step.isActive, planItemID: step.planItemID, label: step.label, detail: step.detail,
                   sourceText: step.sourceText, category: step.categoryRaw.flatMap(StepCategory.init),
-                  timesPerDay: step.timesPerDay, kind: step.kindRaw.flatMap(StepKind.init) ?? .task)
+                  timesPerDay: step.timesPerDay, kind: step.kindRaw.flatMap(StepKind.init) ?? .task,
+                  createdAt: step.createdAt, updatedAt: step.updatedAt)
     }
 }
 

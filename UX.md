@@ -162,27 +162,33 @@ Night layout (8 PM – 7 AM):
    ticks the whole block without opening the app. Off by default:
    Settings › Reminders › Morning list, Afternoon list, Bedtime list.
 
-### Plan: "What's in my plan, and which steps do I use?"
-A core screen: bringing the plan in, and choosing which of its steps go in
-To do. One big statement at the top, like To do.
-1. No plan: "Bring in your care plan." and three cards: Scan the paper,
-   Add a PDF, Choose a photo. Each opens the reader straight to that
-   source. Reading needs sign-in; the file stays on the phone.
-2. A plan being checked: "Check your plan." and "Finish checking" (the
-   review screen).
-3. A running plan (canvas "Plan v2"): To do's compact header, then "Dr.
-   Rivera's plan, from Oct 5." with "8 of 9 steps are in To do." under it,
-   then "Open the full plan" (a small page drawing; the original file in
-   Quick Look). Steps are grouped as Skin care, Routine, Supplements: the
-   name with "AM · PM" (or the dose) beside it, one line of what it is, and
-   a switch for whether it's in To do. Switches, not circles, so they never
-   look like To do's done checks. "Use all" sits by a group's heading when
-   something in it is off. The name opens "Your provider's words".
-4. "The rest of the plan": items that never go in To do (baths, food,
-   basics, follow-ups, rules, mentions), for reading.
-5. "Everything in the plan": The rest of the plan, Supplements (times and How to give), Baths,
-   Patch tests, Visits and journal, Food, Products.
-6. "About this plan" and "Add a new plan" at the bottom.
+### Plan: "What does the plan say?" (v3, October 6, 2026)
+A read-first reference (canvas "Plan v3" and "Plan item detail"). Nothing
+on the list changes data; changes happen on an item's own page.
+1. No plan: "Bring in your care plan." and Scan the paper, Add a PDF,
+   Choose a photo. A plan being checked: "Check your plan." and "Finish
+   checking".
+2. Running plan: header "Plan", caption "What Dr. Rivera's plan says".
+   First row "Open the full plan" (page thumbnail, "From Oct 5 · 2 pages"):
+   the original document on this phone, with "About this plan" in its bar.
+3. Sections in this order, only when they have items: Skin care,
+   Supplements, Baths, Food, Home, Plan notes. Each row: verb-first label
+   in ink (never grayed), one meta line, chevron; the whole row is one
+   64pt target; VoiceOver reads "label, meta, button".
+   Meta: "1 teaspoon · Morning and bedtime" (active), "Step 1 · 3 to 4
+   times a day" (skin), "Not started yet", "Stopped Sep 30".
+4. Then "More" (Supplements, Baths, Patch tests, Visits and journal,
+   Food, Products) and, last, "Add a new plan".
+5. Item page (pushed): back "Plan", the label as the title, a status line
+   ("In your daily list since Sep 12" / "Not started yet" / "Stopped Sep
+   30"), one primary button ("Start giving it" / "Stop giving it" for
+   supplements, "Add to daily list" / "Remove from daily list" for other
+   tasks) with a caption saying what happens. Stopping asks first and
+   keeps all history. "How much and when": the amount, then a switch per
+   time (Morning, Afternoon, Bedtime for supplements; Morning and Bedtime
+   for routine steps). "What the plan says": the provider's whole words
+   in the serif with a left rule, never cut. Notes, baths, food, and home
+   show only the words. Status changes are announced to VoiceOver.
 
 ### Words
 All app-written words read at grade 6 or easier (ReadingGradeTests).

@@ -3,43 +3,41 @@ import PDFKit
 import QuickLook
 import SwiftUI
 
-/// Plan: the care plan from the provider, and which of its steps the family
-/// uses. No plan yet: bring one in. A draft: finish checking it. A running
-/// plan: whose plan it is ("Dr. Rivera's plan, from Oct 5."), the paper,
-/// each step with a switch for To do, then everything else in the plan.
+/// Plan: the care plan from the provider, read first. No plan yet: bring one
+/// in. A draft: finish checking it. A running plan: "Open the full plan",
+/// then the plan by section; each item opens its own page, the only place
+/// anything changes. Then the rest of the plan's pages and "Add a new plan".
 struct PlanTab: View {
     @Environment(\.palette) private var palette
     @Environment(TodayModel.self) private var model
     @State private var plan: CarePlanInfo?
     @State private var adding: AddPlanSheet.Source??
     @State private var reviewing: CarePlanInfo?
-    @State private var showingAbout = false
-    @State private var reading: PlanItemInfo?
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    TodoHeader(title: "Plan", why: why)
-                    switch plan?.status {
-                    case .draft?:
-                        PlanDraft(plan: plan!) { reviewing = plan }
-                    case .active?:
-                        PlanChecklist(plan: plan!, onRead: { reading = $0 })
-                    default:
-                        PlanEmpty { adding = .some($0) }
+                    AppHeader(title: "Plan", caption: caption)
+                    VStack(alignment: .leading, spacing: 0) {
+                        switch plan?.status {
+                        case .draft?:
+                            PlanDraft(plan: plan!) { reviewing = plan }
+                        case .active?:
+                            PlanList(plan: plan!)
+                        default:
+                            PlanEmpty { adding = .some($0) }
+                        }
+                        PlanMore(onAdd: plan?.status == .active ? { adding = .some(nil) } : nil)
+                            .padding(.top, Spacing.section)
                     }
-                    PlanMore()
-                        .padding(.top, Spacing.section)
-                    if plan?.status == .active {
-                        footer.padding(.top, Spacing.x5)
-                    }
+                    .padding(.horizontal, Spacing.margin)
                 }
-                .padding(.horizontal, Spacing.margin)
                 .padding(.bottom, BottomBar.clearance)
             }
             .paperBackground()
             .statusBarBackground()
+            .navigationTitle("Plan")
             .toolbar(.hidden, for: .navigationBar)
             .task { await model.load() }
             .task(id: loadKey) { await load() }
@@ -52,27 +50,13 @@ struct PlanTab: View {
             .sheet(item: $reviewing, onDismiss: { Task { await refresh() } }) { draft in
                 PlanReviewView(plan: draft).nightAwarePalette()
             }
-            .sheet(isPresented: $showingAbout, onDismiss: { Task { await refresh() } }) {
-                if let plan { AboutPlanView(plan: plan).nightAwarePalette() }
-            }
-            .sheet(item: $reading) { item in
-                PlanWordsSheet(item: item).nightAwarePalette()
-            }
         }
     }
 
-    /// "Cal's care plan, and what you use."
-    private var why: String {
-        "\(model.child.map { "\($0.name)\u{2019}s" } ?? "Your") care plan, and what you use."
-    }
-
-    private var footer: some View {
-        HStack(spacing: Spacing.x5) {
-            Button("About this plan") { showingAbout = true }
-                .buttonStyle(.textLink)
-            Button("Add a new plan") { adding = .some(nil) }
-                .buttonStyle(.textLink)
-        }
+    /// "What Dr. Rivera's plan says"
+    private var caption: String? {
+        guard plan?.status == .active, let plan else { return nil }
+        return plan.provider.isEmpty ? "What your provider\u{2019}s plan says" : "What \(plan.provider)\u{2019}s plan says"
     }
 
     /// Looks again when the child, the running plan, or the day's load changes.
@@ -183,295 +167,19 @@ private struct PlanDraft: View {
     }
 }
 
-// MARK: - Running plan
-
-/// A running plan: whose plan it is, the paper it came on, then each step
-/// with a switch for whether it's in To do.
-private struct PlanChecklist: View {
-    @Environment(\.palette) private var palette
-    @Environment(TodayModel.self) private var model
-    let plan: CarePlanInfo
-    let onRead: (PlanItemInfo) -> Void
-
-    private var use: PlanUse {
-        PlanUse(items: model.planItems.values.filter { $0.planID == plan.id }, steps: model.routineSteps)
-    }
-
-    var body: some View {
-        let use = use
-        VStack(alignment: .leading, spacing: 0) {
-            PlanStatement(title, line: use.total == 0 ? nil : use.line)
-            PlanPaperCard(plan: plan)
-            ForEach(PlanUse.Group.allCases, id: \.self) { group in
-                let rows = use.rows(in: group)
-                if !rows.isEmpty {
-                    HStack(alignment: .firstTextBaseline) {
-                        PlanHeading(group.title)
-                        Spacer(minLength: Spacing.x3)
-                        if rows.contains(where: { !$0.isInUse }) {
-                            Button("Use all") { save(use.changeAll(to: true, in: group)) }
-                                .buttonStyle(.textLink)
-                                .accessibilityLabel("Use all \(group.title.lowercased())")
-                        }
-                    }
-                    .padding(.top, Spacing.section)
-                    VStack(spacing: 0) {
-                        ForEach(rows) { row in
-                            PlanUseRow(row: row, onToggle: { save([PlanUse.change(row, to: $0)]) },
-                                       onRead: { onRead(row.item) })
-                        }
-                    }
-                    .padding(.top, Spacing.x2)
-                }
-            }
-        }
-        .sensoryFeedback(.selection, trigger: use.inUse)
-    }
-
-    /// "Dr. Rivera's plan, from Oct 5."
-    private var title: String {
-        let whose = plan.provider.isEmpty ? "Your provider\u{2019}s plan" : "\(plan.provider)\u{2019}s plan"
-        guard let date = plan.planDate ?? plan.startedAt else { return whose + "." }
-        return "\(whose), from \(date.formatted(.dateTime.month(.abbreviated).day()))."
-    }
-
-    private func save(_ changes: [PlanUse.Change]) {
-        Task {
-            do {
-                let container = try CaliCareModelContainer.shared()
-                try await PlanUseActions(routine: RoutineStore(modelContainer: container),
-                                         plans: CarePlanStore(modelContainer: container)).apply(changes)
-            } catch {
-                model.problem = "Couldn't save that just now. Please try again."
-            }
-            await model.load()
-        }
-    }
-}
-
-/// "Open the full plan": a small drawing of the page, and the original file
-/// (kept on this phone) in Quick Look. Hidden when there's no file.
-private struct PlanPaperCard: View {
-    @Environment(\.palette) private var palette
-    let plan: CarePlanInfo
-    @State private var preview: URL?
-
-    var body: some View {
-        if let url = fileURL {
-            Button { preview = url } label: {
-                HStack(spacing: Spacing.x4) {
-                    PaperPage()
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Open the full plan").textStyle(.label).foregroundStyle(palette.ink)
-                        Text(pages(url)).textStyle(.meta).foregroundStyle(palette.graphite)
-                    }
-                    Spacer(minLength: 0)
-                    Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(palette.graphite)
-                }
-                .padding(Spacing.x4)
-                .background(palette.oat, in: RoundedRectangle(cornerRadius: Corner.card))
-                .contentShape(RoundedRectangle(cornerRadius: Corner.card))
-            }
-            .buttonStyle(.plain)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Open the full plan")
-            .accessibilityHint(pages(url))
-            .padding(.top, Spacing.x5)
-            .quickLookPreview($preview)
-        }
-    }
-
-    private var fileURL: URL? {
-        guard let name = plan.sourceFileName else { return nil }
-        let url = PlanFiles.url(for: name)
-        return FileManager.default.fileExists(atPath: url.path) ? url : nil
-    }
-
-    /// "2 pages · kept on this phone"
-    private func pages(_ url: URL) -> String {
-        let count = PDFDocument(url: url)?.pageCount ?? 0
-        let pages = count == 1 ? "1 page" : count > 1 ? "\(count) pages" : "The file"
-        return "\(pages) · kept on this phone"
-    }
-}
-
-/// A plan page drawn small: a title line and a few lines of text.
-private struct PaperPage: View {
-    @Environment(\.palette) private var palette
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            // Paper is white in both palettes, so its ink stays the day ink.
-            Capsule().fill(Palette.day.ink.opacity(0.75)).frame(width: 40, height: 3)
-            ForEach([0.92, 0.76, 0.84, 0.6, 0.88, 0.7, 0.8], id: \.self) { width in
-                Capsule().fill(Palette.day.oat).frame(width: 64 * width, height: 3)
-            }
-        }
-        .padding(EdgeInsets(top: 12, leading: 9, bottom: 12, trailing: 9))
-        .frame(width: 84, height: 108, alignment: .topLeading)
-        .background(Color.white.opacity(palette.isNight ? 0.9 : 1))
-        .overlay(Rectangle().strokeBorder(Palette.day.hairline, lineWidth: Rule.width))
-        .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
-        .rotationEffect(.degrees(-2))
-        .accessibilityHidden(true)
-    }
-}
-
-/// A plan step: its name (with when, or the dose), one line of what it is,
-/// and a switch for whether it's in To do. The name opens the provider's words.
-private struct PlanUseRow: View {
-    @Environment(\.palette) private var palette
-    let row: PlanUse.Row
-    let onToggle: (Bool) -> Void
-    let onRead: () -> Void
-
-    var body: some View {
-        HStack(alignment: .top, spacing: Spacing.x4) {
-            Button(action: onRead) {
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack(alignment: .firstTextBaseline, spacing: Spacing.x2) {
-                        Text(row.name)
-                            .textStyle(.body)
-                            .foregroundStyle(row.isInUse ? palette.ink : palette.graphite)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        if let meta = row.meta {
-                            Text(meta).textStyle(.meta).foregroundStyle(palette.graphite).lineLimit(1)
-                        }
-                    }
-                    if let detail = row.detail {
-                        Text(detail).textStyle(.meta).foregroundStyle(palette.graphite).lineLimit(1)
-                    }
-                }
-                .fixedSize(horizontal: false, vertical: true)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityHint("Shows your provider's words.")
-
-            Toggle(row.name, isOn: Binding(get: { row.isInUse }, set: { onToggle($0) }))
-                .labelsHidden()
-                .tint(palette.accent)
-                .accessibilityValue(row.isInUse ? "In To do" : "Not in To do")
-        }
-        .padding(.vertical, Spacing.x3)
-        .frame(minHeight: 64)
-        .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
-    }
-}
-
-/// Plan › The rest of the plan: items that never go in To do, for reading.
-struct PlanReferenceScreen: View {
-    @Environment(\.palette) private var palette
-    let items: [PlanItemInfo]
-    @State private var reading: PlanItemInfo?
-
-    var body: some View {
-        PlanPage(title: "The rest of the plan") {
-            VStack(alignment: .leading, spacing: Spacing.x2) {
-                Text("Baths, food, everyday basics, and follow-ups. These don't go in To do.")
-                    .textStyle(.body)
-                    .foregroundStyle(palette.graphite)
-                    .fixedSize(horizontal: false, vertical: true)
-                VStack(spacing: 0) {
-                    ForEach(items) { item in
-                        PlanReferenceRow(item: item) { reading = item }
-                    }
-                }
-            }
-        }
-        .sheet(item: $reading) { item in
-            PlanWordsSheet(item: item).nightAwarePalette()
-        }
-    }
-}
-
-/// Something in the plan for reading: its kind and its words.
-private struct PlanReferenceRow: View {
-    @Environment(\.palette) private var palette
-    let item: PlanItemInfo
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: Spacing.x3) {
-                VStack(alignment: .leading, spacing: Spacing.x1) {
-                    Text(item.kind.title).textStyle(.meta).foregroundStyle(palette.graphite)
-                    Text(item.plainText ?? item.text)
-                        .textStyle(.body)
-                        .foregroundStyle(palette.ink)
-                        .lineLimit(2)
-                }
-                Spacer(minLength: 0)
-                Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(palette.graphite)
-                    .accessibilityHidden(true)
-            }
-            .padding(.vertical, Spacing.x3)
-            .frame(minHeight: 56)
-            .contentShape(Rectangle())
-            .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
-        }
-        .buttonStyle(.plain)
-        .accessibilityHint("Shows your provider's words.")
-    }
-}
-
-/// One plan item in full: the provider's words, as written.
-struct PlanWordsSheet: View {
-    @Environment(\.palette) private var palette
-    @Environment(\.dismiss) private var dismiss
-    let item: PlanItemInfo
-
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: Spacing.x2) {
-                    Text("Your provider's words")
-                        .textStyle(.label)
-                        .foregroundStyle(palette.ink)
-                        .accessibilityAddTraits(.isHeader)
-                    ProviderWords(item.providerWords)
-                    let details = [item.dose, item.frequency, item.timing, item.duration].compactMap { $0 }
-                    if !details.isEmpty {
-                        Text(details.joined(separator: " · "))
-                            .textStyle(.meta)
-                            .foregroundStyle(palette.graphite)
-                            .padding(.top, Spacing.x2)
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(Spacing.margin)
-            }
-            .paperBackground(.oat)
-            .navigationTitle(item.kind.title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
-            }
-        }
-        .tint(palette.accent)
-        .presentationDetents([.medium, .large])
-    }
-}
-
 // MARK: - The rest of the plan
 
-/// The plan's other pages: one row each.
+/// The plan's other pages, one row each, then "Add a new plan" last.
 private struct PlanMore: View {
+    @Environment(\.palette) private var palette
     @Environment(TodayModel.self) private var model
+    /// Shown with a running plan: opens the reader for a new one.
+    let onAdd: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            PlanHeading("Everything in the plan")
+            PlanHeading("More")
             VStack(spacing: 0) {
-                if !reference.isEmpty {
-                    PlanRow(title: "The rest of the plan", detail: "\(reference.count) more") {
-                        PlanReferenceScreen(items: reference)
-                    }
-                }
                 PlanRow(title: "Supplements", detail: supplementsDetail) { SupplementsScreen() }
                 if hasBaths {
                     PlanRow(title: "Baths", detail: nil) { BathsScreen() }
@@ -480,15 +188,15 @@ private struct PlanMore: View {
                 PlanRow(title: "Visits and journal", detail: visitsDetail) { VisitsScreen() }
                 PlanRow(title: "Food", detail: foodDetail) { FoodListView() }
                 PlanRow(title: "Products", detail: productsDetail) { ProductListView() }
+                if let onAdd {
+                    Button(action: onAdd) {
+                        PlanListRow(label: "Add a new plan", meta: "Scan it, or add the PDF")
+                    }
+                    .buttonStyle(.plain)
+                }
             }
             .padding(.top, Spacing.x2)
         }
-    }
-
-    /// The running plan's items that never go in To do.
-    private var reference: [PlanItemInfo] {
-        guard let plan = model.activePlan else { return [] }
-        return PlanUse(items: model.planItems.values.filter { $0.planID == plan.id }, steps: model.routineSteps).reference
     }
 
     private var hasBaths: Bool {

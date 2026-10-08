@@ -385,6 +385,11 @@ final class TodayModel {
         }
     }
 
+    /// The running plan, read first, for the Plan tab and its item pages.
+    var planEntries: PlanEntries {
+        PlanEntries(items: Array(planItems.values), steps: routineSteps, logs: supplementLogs, calendar: calendar)
+    }
+
     /// The running plan's baths and this week's count.
     var bathWeek: BathWeek {
         BathWeek(items: Array(planItems.values).sorted { $0.order < $1.order }, logs: weekLogs, now: .now, calendar: calendar)

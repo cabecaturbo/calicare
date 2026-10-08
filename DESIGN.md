@@ -238,6 +238,30 @@ with paper text at night) and a log pill with the palm and "Log" plus
 Texture: a very faint paper grain over paper and oat. Never in widgets or
 shared report cards.
 
+## 5a. One star per screen
+Every screen has exactly one visual focal point, at the top: its star. It
+answers the screen's question at a glance and is soft.
+- **The card:** surface color (oat), 18pt corners (`Corner.star`), no
+  border, no shadow.
+- **Inside:** one serif number or phrase (the statement style, Newsreader
+  400, 40/46), and at most two short lines under it (body, graphite). A
+  thin progress line is allowed when it says the same thing.
+- **Nothing else** on the screen may match the star's size or weight. The
+  tab title (display, 34/40 medium) and section titles stay smaller and
+  quieter; tiles and rows never use the statement style.
+
+Each tab's star:
+
+| Tab | The star |
+|---|---|
+| Today | Last night, in one sentence |
+| To do | The current time block and how much is done |
+| Plan | Where you are in the plan ("Week 2 of 12") and the next visit |
+| Progress | The week at a glance |
+
+Plan follows this from v4 (October 7, 2026). Today, To do, and Progress
+keep their current look until each is restyled, one screen at a time.
+
 ## 6. Icons, logo, and imagery
 - Icons: SF Symbols, regular weight only, ink or muted, used only
   where a word alone is unclear. Never in colored containers.

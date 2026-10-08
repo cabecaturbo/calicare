@@ -1,11 +1,21 @@
 import Foundation
 import SwiftData
 
-/// To do + Info: the V6 models are copied unchanged except new optional
-/// fields on PlanItem (isGiving, givingTimesRaw, plainText, sourceParagraph),
-/// so the migration from V6 is lightweight. Nothing existing changes.
-public enum SchemaV7: VersionedSchema {
-    public static var versionIdentifier: Schema.Version { Schema.Version(7, 0, 0) }
+// Current model names always point at the latest schema version.
+public typealias Child = SchemaV8.Child
+public typealias LogEvent = SchemaV8.LogEvent
+public typealias RoutineStep = SchemaV8.RoutineStep
+public typealias CarePlan = SchemaV8.CarePlan
+public typealias PlanItem = SchemaV8.PlanItem
+public typealias Visit = SchemaV8.Visit
+public typealias Food = SchemaV8.Food
+public typealias Product = SchemaV8.Product
+
+/// Plan v4: the V7 models are copied unchanged except two new optional
+/// fields: CarePlan.lengthWeeks and PlanItem.doseStepsRaw. The migration
+/// from V7 is lightweight. Nothing existing changes.
+public enum SchemaV8: VersionedSchema {
+    public static var versionIdentifier: Schema.Version { Schema.Version(8, 0, 0) }
 
     public static var models: [any PersistentModel.Type] {
         [Child.self, LogEvent.self, RoutineStep.self, CarePlan.self, PlanItem.self, Visit.self, Food.self, Product.self]
@@ -199,6 +209,8 @@ public enum SchemaV7: VersionedSchema {
         public var statusRaw: String
         public var startedAt: Date?
         public var endedAt: Date?
+        /// How long the plan runs, in weeks, when the parent set it.
+        public var lengthWeeks: Int?
 
         public init(id: UUID = UUID(), childID: UUID, provider: String, planDate: Date? = nil,
                     sourceFileName: String? = nil, now: Date = .now) {
@@ -257,6 +269,8 @@ public enum SchemaV7: VersionedSchema {
         /// The provider's whole paragraph from the saved original, when the
         /// quoted line turned out to be cut short.
         public var sourceParagraph: String?
+        /// Supplements: the parent's dose steps, JSON `[DoseStep]` ({amount, startDate}).
+        public var doseStepsRaw: String?
 
         public init(id: UUID = UUID(), planID: UUID, childID: UUID, kind: PlanItemKind, text: String,
                     dose: String? = nil, frequency: String? = nil, timing: String? = nil, duration: String? = nil,

@@ -122,6 +122,19 @@ enum DesignReviewLaunch {
             _ = try? await foods.add(name: "Eggs", status: .paused, decidedBy: .plan, child: cal.id)
             _ = try? await foods.add(name: "Strawberries", status: .testing, decidedBy: .parent, child: cal.id)
             _ = try? await plans.addVisit(child: cal.id, date: .now.addingTimeInterval(-86_400 * 12), provider: "Dr. Rivera")
+            // Plan v4's star and Coming up: a set length, the parent's dose steps, and a visit ahead.
+            if let plan = try? await plans.activePlan(child: cal.id) {
+                try? await plans.setLength(plan.id, weeks: 12)
+                let day = Calendar.current.startOfDay(for: .now)
+                if let herbal = (try? await plans.items(plan: plan.id))?.first(where: { $0.text.contains("Herbal Drops") }) {
+                    try? await plans.setDoseSteps(herbal.id, [
+                        DoseStep(amount: "4 drops", startDate: day.addingTimeInterval(-86_400 * 3)),
+                        DoseStep(amount: "6 drops", startDate: day.addingTimeInterval(86_400 * 4)),
+                        DoseStep(amount: "8 drops", startDate: day.addingTimeInterval(86_400 * 11)),
+                    ])
+                }
+            }
+            _ = try? await plans.addVisit(child: cal.id, date: .now.addingTimeInterval(86_400 * 19), provider: "Dr. Rivera")
             await LogChanges.didChange()
             return
         }

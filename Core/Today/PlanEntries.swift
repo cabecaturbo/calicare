@@ -84,7 +84,8 @@ public struct PlanEntries: Equatable, Sendable {
     ///   - items: the running plan's items.
     ///   - steps: the child's routine steps, paused ones included.
     ///   - logs: the child's supplement logs (for "since" and "Stopped" dates).
-    public init(items: [PlanItemInfo], steps: [RoutineStepInfo], logs: [LogEntry], calendar: Calendar = .autoupdatingCurrent) {
+    public init(items: [PlanItemInfo], steps: [RoutineStepInfo], logs: [LogEntry], now: Date = .now,
+                calendar: Calendar = .autoupdatingCurrent) {
         let parents = Set(items.compactMap(\.parentItemID))
         let ordered = items.filter { !parents.contains($0.id) }.sorted { $0.order < $1.order }
         // The plan's skin frequency ("3-4x per day") lives in a note line; every skin step shares it.
@@ -137,10 +138,11 @@ public struct PlanEntries: Equatable, Sendable {
                 let when = PlanWords.blocks(blocks)
                 bySection[.supplements, default: []].append(Entry(
                     item: item, section: .supplements, kind: .supplement, label: "Give \(display.name)",
-                    meta: Self.meta(status, calendar: calendar, active: [item.dose, when].compactMap { $0 }.joined(separator: " · ")),
+                    meta: Self.meta(status, calendar: calendar,
+                                    active: [item.dose(on: now, calendar: calendar), when].compactMap { $0 }.joined(separator: " · ")),
                     status: status,
                     times: TodoBlock.allCases.map { Entry.Time(block: $0, isOn: blocks.contains($0)) },
-                    amount: item.dose, words: words, stepIDs: [:]
+                    amount: item.dose(on: now, calendar: calendar), words: words, stepIDs: [:]
                 ))
             case .bath:
                 bySection[.baths, default: []].append(Self.reading(item, section: .baths))
@@ -291,6 +293,19 @@ public struct PlanEntryActions: Sendable {
         case .reading:
             break
         }
+    }
+
+    /// A dose step the parent set: this amount from this day on.
+    public func addDoseStep(_ entry: PlanEntries.Entry, amount: String, from date: Date) async throws {
+        let trimmed = amount.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        var steps = entry.item.doseSteps.filter { $0.startDate != date }
+        steps.append(DoseStep(amount: String(trimmed.prefix(80)), startDate: date))
+        try await plans.setDoseSteps(entry.item.id, steps)
+    }
+
+    public func removeDoseStep(_ entry: PlanEntries.Entry, _ step: DoseStep) async throws {
+        try await plans.setDoseSteps(entry.item.id, entry.item.doseSteps.filter { $0 != step })
     }
 
     private func setStep(_ entry: PlanEntries.Entry, _ time: RoutineTime, on: Bool) async throws {

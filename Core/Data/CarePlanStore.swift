@@ -180,6 +180,19 @@ public actor CarePlanStore: ModelActor {
         try changeItem(itemID) { $0.isGiving = isGiving }
     }
 
+    /// The parent's dose steps for a supplement. An empty list clears them.
+    public func setDoseSteps(_ itemID: UUID, _ steps: [DoseStep]) async throws {
+        try changeItem(itemID) { $0.doseStepsRaw = DoseStep.encode(steps) }
+    }
+
+    /// How long the plan runs, in weeks; nil when the parent clears it.
+    public func setLength(_ planID: UUID, weeks: Int?) async throws {
+        let plan = try fetchPlan(planID)
+        plan.lengthWeeks = weeks.map { min(max($0, 1), 104) }
+        touch(plan, at: now())
+        try modelContext.save()
+    }
+
     /// When a supplement is given. An empty list keeps the plan's default.
     public func setGivingTimes(_ itemID: UUID, _ blocks: [TodoBlock]) async throws {
         try changeItem(itemID) { $0.givingTimesRaw = blocks.isEmpty ? nil : TodoBlock.raw(blocks) }

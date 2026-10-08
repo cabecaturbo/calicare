@@ -375,6 +375,7 @@ extension SyncEngine {
         plan.statusRaw = remote.status
         plan.startedAt = remote.startedAt
         plan.endedAt = remote.endedAt
+        plan.lengthWeeks = remote.lengthWeeks
         plan.createdAt = remote.createdAt
         plan.updatedAt = remote.updatedAt
         plan.deletedAt = remote.deletedAt
@@ -411,6 +412,7 @@ extension SyncEngine {
         item.givingTimesRaw = remote.givingTimes
         item.plainText = remote.plainText
         item.sourceParagraph = remote.sourceParagraph
+        item.doseStepsRaw = remote.doseSteps
         item.order = remote.sortOrder
         item.isConfirmed = true
         item.createdAt = remote.createdAt
@@ -524,6 +526,7 @@ extension RemoteCarePlan {
             planDate: plan.planDate, status: plan.statusRaw, startedAt: plan.startedAt, endedAt: plan.endedAt,
             createdAt: plan.createdAt, updatedAt: plan.updatedAt, deletedAt: plan.deletedAt
         )
+        lengthWeeks = plan.lengthWeeks
     }
 }
 
@@ -543,6 +546,7 @@ extension RemotePlanItem {
         givingTimes = item.givingTimesRaw
         plainText = item.plainText
         sourceParagraph = item.sourceParagraph
+        doseSteps = item.doseStepsRaw
     }
 }
 

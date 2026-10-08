@@ -24,12 +24,14 @@ struct PlanTab: View {
                         case .draft?:
                             PlanDraft(plan: plan!) { reviewing = plan }
                         case .active?:
-                            PlanList(plan: plan!)
+                            PlanV4View(plan: plan!) { adding = .some(nil) }
                         default:
                             PlanEmpty { adding = .some($0) }
                         }
-                        PlanMore(onAdd: plan?.status == .active ? { adding = .some(nil) } : nil)
-                            .padding(.top, Spacing.section)
+                        if plan?.status != .active {
+                            PlanMore(onAdd: nil)
+                                .padding(.top, Spacing.section)
+                        }
                     }
                     .padding(.horizontal, Spacing.margin)
                 }
@@ -53,10 +55,10 @@ struct PlanTab: View {
         }
     }
 
-    /// "What Dr. Rivera's plan says"
+    /// "From Dr. Rivera"
     private var caption: String? {
         guard plan?.status == .active, let plan else { return nil }
-        return plan.provider.isEmpty ? "What your provider\u{2019}s plan says" : "What \(plan.provider)\u{2019}s plan says"
+        return plan.provider.isEmpty ? "From your provider" : "From \(plan.provider)"
     }
 
     /// Looks again when the child, the running plan, or the day's load changes.
@@ -85,84 +87,100 @@ struct PlanTab: View {
 
 // MARK: - No plan yet
 
-/// "Bring in your care plan." with the three ways in.
+/// No plan yet: the star says so, then three quiet ways in.
 private struct PlanEmpty: View {
     @Environment(\.palette) private var palette
     let onAdd: (AddPlanSheet.Source) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            PlanStatement("Bring in your care plan.",
-                          line: "Take a photo of the plan from your provider, or add the PDF. Cali Care turns it into your daily list, in their words.")
-            VStack(spacing: Spacing.x3) {
-                PlanSourceCard(title: "Scan the paper", detail: "A page or a few", symbol: "camera.viewfinder") { onAdd(.scan) }
-                PlanSourceCard(title: "Add a PDF", detail: "From Mail or Files", symbol: "doc") { onAdd(.file) }
-                PlanSourceCard(title: "Choose a photo", detail: "One you've already taken", symbol: "photo.on.rectangle") { onAdd(.photos) }
+            PlanSoftStar(title: "Bring in your care plan",
+                         line: "Scan it or add the PDF. You check every step before it starts.")
+                .padding(.top, Spacing.x4)
+            VStack(spacing: 0) {
+                SourceRow(title: "Scan the paper", symbol: "camera.viewfinder") { onAdd(.scan) }
+                SourceRow(title: "Add a PDF", symbol: "doc") { onAdd(.file) }
+                SourceRow(title: "Choose a photo", symbol: "photo.on.rectangle") { onAdd(.photos) }
             }
-            .padding(.top, Spacing.x6)
+            .padding(.top, Spacing.x5)
             Text("Reading a plan needs you to sign in. The file stays on your phone.")
                 .textStyle(.meta)
                 .foregroundStyle(palette.graphite)
                 .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, Spacing.x4)
+                .padding(.top, Spacing.x3)
         }
     }
 }
 
-/// One way to bring the plan in: an icon in a circle, a name, a short line.
-private struct PlanSourceCard: View {
+/// A quiet way in: a small icon, a name, a light chevron. No card.
+private struct SourceRow: View {
     @Environment(\.palette) private var palette
     let title: String
-    let detail: String
     let symbol: String
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: Spacing.x4) {
+            HStack(spacing: Spacing.x3) {
                 Image(systemName: symbol)
-                    .font(.system(size: 20, weight: .regular))
-                    .foregroundStyle(palette.accent)
-                    .frame(width: 48, height: 48)
-                    .background(palette.paper, in: Circle())
-                    .overlay(Circle().strokeBorder(palette.hairline, lineWidth: Rule.width))
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title).textStyle(.label).foregroundStyle(palette.ink)
-                    Text(detail).textStyle(.meta).foregroundStyle(palette.graphite)
-                }
+                    .font(.system(size: 17, weight: .regular))
+                    .foregroundStyle(palette.graphite)
+                    .frame(width: 24)
+                Text(title).textStyle(.body).foregroundStyle(palette.ink)
                 Spacer(minLength: 0)
                 Image(systemName: "chevron.right")
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(palette.graphite)
+                    .foregroundStyle(palette.graphite.opacity(0.7))
             }
-            .padding(.horizontal, Spacing.x4)
-            .frame(maxWidth: .infinity, minHeight: 84)
-            .background(palette.oat, in: RoundedRectangle(cornerRadius: Corner.tight))
-            .overlay(RoundedRectangle(cornerRadius: Corner.tight).strokeBorder(palette.hairline, lineWidth: Rule.width))
-            .contentShape(RoundedRectangle(cornerRadius: Corner.tight))
+            .frame(minHeight: 56)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(title)
-        .accessibilityHint(detail)
         .accessibilityAddTraits(.isButton)
+    }
+}
+
+/// The star without a plan: one serif phrase and up to two short lines.
+private struct PlanSoftStar: View {
+    @Environment(\.palette) private var palette
+    let title: String
+    let line: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.x2) {
+            Text(title)
+                .textStyle(.statement)
+                .foregroundStyle(palette.ink)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityAddTraits(.isHeader)
+            Text(line)
+                .textStyle(.body)
+                .foregroundStyle(palette.graphite)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(Spacing.x5)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(palette.oat, in: RoundedRectangle(cornerRadius: Corner.star))
     }
 }
 
 // MARK: - Draft
 
-/// "Check your plan." while a read plan waits to start.
+/// "Check your plan" while a read plan waits to start.
 private struct PlanDraft: View {
     let plan: CarePlanInfo
     let onCheck: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            PlanStatement("Check your plan.",
-                          line: "Keep the steps you'll use. Nothing shows in To do until you start it.")
+            PlanSoftStar(title: "Check your plan",
+                         line: "Keep the steps you'll use. Nothing shows in To do until you start it.")
+                .padding(.top, Spacing.x4)
             Button("Finish checking", action: onCheck)
                 .buttonStyle(.primary)
-                .padding(.top, Spacing.x6)
+                .padding(.top, Spacing.x5)
         }
     }
 }
@@ -230,35 +248,6 @@ private struct PlanMore: View {
 }
 
 // MARK: - Shared
-
-/// The tab's one big line and the line under it, like To do's.
-private struct PlanStatement: View {
-    @Environment(\.palette) private var palette
-    let text: String
-    let line: String?
-
-    init(_ text: String, line: String?) {
-        self.text = text
-        self.line = line
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.x2) {
-            Text(text)
-                .textStyle(.statement)
-                .foregroundStyle(palette.ink)
-                .fixedSize(horizontal: false, vertical: true)
-                .accessibilityAddTraits(.isHeader)
-            if let line {
-                Text(line)
-                    .textStyle(.body)
-                    .foregroundStyle(palette.graphite)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-        .padding(.top, Spacing.x6)
-    }
-}
 
 private struct PlanHeading: View {
     @Environment(\.palette) private var palette

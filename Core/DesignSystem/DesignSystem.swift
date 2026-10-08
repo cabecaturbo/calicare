@@ -99,6 +99,8 @@ public struct Palette: Sendable, Equatable {
 
     public var paper: Color { color(.paper) }
     public var oat: Color { color(.oat) }
+    /// Plan's supplement tiles: white by day, the surface at night (white would glare).
+    public var tile: Color { isNight ? color(.oat) : .white }
     public var ink: Color { color(.ink) }
     public var graphite: Color { color(.graphite) }
     public var hairline: Color { color(.hairline) }
@@ -277,6 +279,10 @@ public enum Corner {
     public static let tight: CGFloat = 4
     /// DESIGN.md §5: buttons, cards, inputs, and widget tiles (the new rule; screens move to it in U3–U5).
     public static let card: CGFloat = 12
+    /// DESIGN.md "One star per screen": the soft star card, and Plan's skin care card.
+    public static let star: CGFloat = 18
+    /// Plan's supplement tiles.
+    public static let tile: CGFloat = 16
 }
 
 public enum Rule {

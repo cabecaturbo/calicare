@@ -18,7 +18,7 @@ Where CaliCare stands. `PROGRESS.md` has the step-by-step checklist, and `docs/0
   - **No paywall: version 1 is free during beta** (October 4, 2026).
 
 ## In progress
-- **Plan tab (replaces Info):** PR #84 (v2) and branch plan-v3 (read-first list + item pages, Settings › Appearance). Installed; needs a phone check before merging.
+- **Plan tab (replaces Info):** PR #84 (v2) → #85 (v3, item pages, Settings › Appearance) → branch plan-v4 (the star, Coming up, tiles, dose steps; SchemaV8). Needs a phone check before merging.
 
 ## To finish before TestFlight
 1. **Phone checks (owner):**

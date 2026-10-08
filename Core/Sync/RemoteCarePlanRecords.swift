@@ -11,6 +11,8 @@ public struct RemoteCarePlan: Codable, Equatable, Sendable {
     public var status: String
     public var startedAt: Date?
     public var endedAt: Date?
+    /// Plan v4 (SchemaV8).
+    public var lengthWeeks: Int?
     public var createdAt: Date
     public var updatedAt: Date
     public var deletedAt: Date?
@@ -18,6 +20,7 @@ public struct RemoteCarePlan: Codable, Equatable, Sendable {
 
     enum CodingKeys: String, CodingKey {
         case id, provider, status
+        case lengthWeeks = "length_weeks"
         case householdID = "household_id"
         case childID = "child_id"
         case planDate = "plan_date"
@@ -57,6 +60,7 @@ public struct RemoteCarePlan: Codable, Equatable, Sendable {
         try c.encode(status, forKey: .status)
         try c.encode(startedAt, forKey: .startedAt)
         try c.encode(endedAt, forKey: .endedAt)
+        try c.encode(lengthWeeks, forKey: .lengthWeeks)
         try c.encode(createdAt, forKey: .createdAt)
         try c.encode(updatedAt, forKey: .updatedAt)
         try c.encode(deletedAt, forKey: .deletedAt)
@@ -88,6 +92,8 @@ public struct RemotePlanItem: Codable, Equatable, Sendable {
     public var givingTimes: String?
     public var plainText: String?
     public var sourceParagraph: String?
+    /// Plan v4 (SchemaV8): the parent's dose steps, JSON text.
+    public var doseSteps: String?
     public var createdAt: Date
     public var updatedAt: Date
     public var deletedAt: Date?
@@ -100,6 +106,7 @@ public struct RemotePlanItem: Codable, Equatable, Sendable {
         case givingTimes = "giving_times"
         case plainText = "plain_text"
         case sourceParagraph = "source_paragraph"
+        case doseSteps = "dose_steps"
         case householdID = "household_id"
         case planID = "plan_id"
         case childID = "child_id"
@@ -158,6 +165,7 @@ public struct RemotePlanItem: Codable, Equatable, Sendable {
         try c.encode(givingTimes, forKey: .givingTimes)
         try c.encode(plainText, forKey: .plainText)
         try c.encode(sourceParagraph, forKey: .sourceParagraph)
+        try c.encode(doseSteps, forKey: .doseSteps)
         try c.encode(createdAt, forKey: .createdAt)
         try c.encode(updatedAt, forKey: .updatedAt)
         try c.encode(deletedAt, forKey: .deletedAt)

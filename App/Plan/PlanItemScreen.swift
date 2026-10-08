@@ -7,7 +7,9 @@ import SwiftUI
 struct PlanItemScreen: View {
     @Environment(\.palette) private var palette
     @Environment(TodayModel.self) private var model
+    @Environment(\.dismiss) private var dismiss
     let id: UUID
+    @State private var addingStep = false
     /// The times "Start" will use, before it's in the daily list.
     @State private var chosen: Set<TodoBlock>?
     @State private var confirmingStop = false
@@ -32,6 +34,9 @@ struct PlanItemScreen: View {
                         action(entry).padding(.top, Spacing.x5)
                         times(entry).padding(.top, Spacing.x6)
                     }
+                    if entry.kind == .supplement {
+                        doseSteps(entry).padding(.top, Spacing.x6)
+                    }
                     words(entry).padding(.top, Spacing.x6)
                 }
                 .padding(.horizontal, Spacing.margin)
@@ -49,6 +54,23 @@ struct PlanItemScreen: View {
         .solidNavigationBar(.paper)
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button { dismiss() } label: {
+                    Label("Plan", systemImage: "chevron.left").labelStyle(.titleAndIcon)
+                }
+                .tint(palette.accent)
+            }
+        }
+        .sheet(isPresented: $addingStep) {
+            if let entry = model.planEntries.entry(id) {
+                DoseStepSheet { amount, date in
+                    Task { await change { try await $0.addDoseStep(entry, amount: amount, from: date) } }
+                }
+                .nightAwarePalette()
+            }
+        }
     }
 
     // MARK: - Start or stop
@@ -128,6 +150,42 @@ struct PlanItemScreen: View {
         return Set(entry.times.filter(\.isOn).map(\.block))
     }
 
+    // MARK: - Dose steps
+
+    /// The parent's own steps ("From Oct 12, 4 drops"). Never made up from the plan's words.
+    private func doseSteps(_ entry: PlanEntries.Entry) -> some View {
+        VStack(alignment: .leading, spacing: Spacing.x2) {
+            Text("Dose steps")
+                .textStyle(.label)
+                .foregroundStyle(palette.ink)
+                .accessibilityAddTraits(.isHeader)
+            if entry.item.doseSteps.isEmpty {
+                Text("If the plan says to work up slowly, add each step here. To do shows the right amount each day.")
+                    .textStyle(.meta)
+                    .foregroundStyle(palette.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            VStack(spacing: 0) {
+                ForEach(entry.item.doseSteps, id: \.self) { step in
+                    HStack {
+                        Text("From \(PlanWords.day(step.startDate))").textStyle(.body).foregroundStyle(palette.ink)
+                        Spacer(minLength: Spacing.x3)
+                        Text(step.amount).textStyle(.body).foregroundStyle(palette.graphite)
+                    }
+                    .frame(minHeight: 52)
+                    .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
+                    .contextMenu {
+                        Button("Remove this step", systemImage: "trash", role: .destructive) {
+                            Task { await change { try await $0.removeDoseStep(entry, step) } }
+                        }
+                    }
+                }
+            }
+            Button("Add a step") { addingStep = true }
+                .buttonStyle(.textLink)
+        }
+    }
+
     // MARK: - What the plan says
 
     private func words(_ entry: PlanEntries.Entry) -> some View {
@@ -183,5 +241,46 @@ struct PlanItemScreen: View {
 
     private func stopButton(_ entry: PlanEntries.Entry) -> String {
         entry.kind == .supplement ? "Stop giving it" : "Remove from daily list"
+    }
+}
+
+/// "Add a step": an amount, in the parent's words, and the day it starts.
+private struct DoseStepSheet: View {
+    @Environment(\.palette) private var palette
+    @Environment(\.dismiss) private var dismiss
+    let onSave: (String, Date) -> Void
+    @State private var amount = ""
+    @State private var date = Calendar.current.startOfDay(for: .now).addingTimeInterval(86_400)
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("Amount, like 4 drops", text: $amount)
+                        .textStyle(.body)
+                    DatePicker("Starts", selection: $date, displayedComponents: .date)
+                        .tint(palette.accent)
+                } footer: {
+                    Text("Use the amount your provider gave you. To do shows it from this day on.")
+                        .textStyle(.meta)
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .paperBackground(.oat)
+            .navigationTitle("Add a step")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        onSave(amount.trimmingCharacters(in: .whitespacesAndNewlines), Calendar.current.startOfDay(for: date))
+                        dismiss()
+                    }
+                    .disabled(amount.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+        }
+        .tint(palette.accent)
+        .presentationDetents([.medium])
     }
 }

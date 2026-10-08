@@ -2,46 +2,6 @@ import Core
 import PDFKit
 import SwiftUI
 
-/// A running plan, read first (canvas "Plan v3"): "Open the full plan",
-/// then the plan by section. Every row opens its own page; nothing on this
-/// list changes anything.
-struct PlanList: View {
-    @Environment(\.palette) private var palette
-    @Environment(TodayModel.self) private var model
-    let plan: CarePlanInfo
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            NavigationLink { PlanDocumentScreen(plan: plan) } label: {
-                PlanListRow(label: "Open the full plan", meta: PlanDocument.meta(plan), minHeight: 80) {
-                    PlanThumbnail()
-                }
-            }
-            .buttonStyle(.plain)
-            .overlay(alignment: .top) { palette.hairline.frame(height: Rule.width) }
-
-            ForEach(model.planEntries.sections, id: \.section) { section, entries in
-                Text(section.title)
-                    .textStyle(.section)
-                    .foregroundStyle(palette.ink)
-                    .accessibilityAddTraits(.isHeader)
-                    .padding(.top, Spacing.x6)
-                    .padding(.bottom, Spacing.x2)
-                VStack(spacing: 0) {
-                    ForEach(entries) { entry in
-                        NavigationLink { PlanItemScreen(id: entry.id) } label: {
-                            PlanListRow(label: entry.label, meta: entry.meta)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-                .overlay(alignment: .top) { palette.hairline.frame(height: Rule.width) }
-            }
-        }
-        .padding(.top, Spacing.x5)
-    }
-}
-
 /// One list row: a label in ink, one meta line, a chevron. The whole row is
 /// the tap target; VoiceOver reads "label, meta, button".
 struct PlanListRow<Leading: View>: View {
@@ -82,23 +42,6 @@ extension PlanListRow where Leading == EmptyView {
     }
 }
 
-/// A plan page drawn small. Paper is white in both palettes, so it keeps the day ink.
-private struct PlanThumbnail: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Rectangle().fill(Palette.day.ink).frame(width: 25, height: 3)
-            ForEach([1.0, 0.7, 1.0, 0.6], id: \.self) { width in
-                Rectangle().fill(Palette.day.hairline).frame(width: 31 * width, height: 2)
-            }
-        }
-        .padding(EdgeInsets(top: 7, leading: 6, bottom: 7, trailing: 6))
-        .frame(width: 44, height: 56, alignment: .topLeading)
-        .background(Color.white)
-        .overlay(Rectangle().strokeBorder(Palette.day.hairline, lineWidth: 1))
-        .accessibilityHidden(true)
-    }
-}
-
 /// The original plan file, kept on this phone.
 enum PlanDocument {
     static func url(_ plan: CarePlanInfo) -> URL? {
@@ -120,6 +63,7 @@ enum PlanDocument {
 /// Plan › Open the full plan: the original document, with "About this plan".
 struct PlanDocumentScreen: View {
     @Environment(\.palette) private var palette
+    @Environment(TodayModel.self) private var model
     let plan: CarePlanInfo
     @State private var showingAbout = false
 
@@ -152,7 +96,7 @@ struct PlanDocumentScreen: View {
                 Button("About this plan") { showingAbout = true }
             }
         }
-        .sheet(isPresented: $showingAbout) {
+        .sheet(isPresented: $showingAbout, onDismiss: { Task { await model.load() } }) {
             AboutPlanView(plan: plan).nightAwarePalette()
         }
     }

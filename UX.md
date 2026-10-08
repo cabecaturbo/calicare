@@ -162,33 +162,30 @@ Night layout (8 PM – 7 AM):
    ticks the whole block without opening the app. Off by default:
    Settings › Reminders › Morning list, Afternoon list, Bedtime list.
 
-### Plan: "What does the plan say?" (v3, October 6, 2026)
-A read-first reference (canvas "Plan v3" and "Plan item detail"). Nothing
-on the list changes data; changes happen on an item's own page.
-1. No plan: "Bring in your care plan." and Scan the paper, Add a PDF,
-   Choose a photo. A plan being checked: "Check your plan." and "Finish
-   checking".
-2. Running plan: header "Plan", caption "What Dr. Rivera's plan says".
-   First row "Open the full plan" (page thumbnail, "From Oct 5 · 2 pages"):
-   the original document on this phone, with "About this plan" in its bar.
-3. Sections in this order, only when they have items: Skin care,
-   Supplements, Baths, Food, Home, Plan notes. Each row: verb-first label
-   in ink (never grayed), one meta line, chevron; the whole row is one
-   64pt target; VoiceOver reads "label, meta, button".
-   Meta: "1 teaspoon · Morning and bedtime" (active), "Step 1 · 3 to 4
-   times a day" (skin), "Not started yet", "Stopped Sep 30".
-4. Then "More" (Supplements, Baths, Patch tests, Visits and journal,
-   Food, Products) and, last, "Add a new plan".
-5. Item page (pushed): back "Plan", the label as the title, a status line
-   ("In your daily list since Sep 12" / "Not started yet" / "Stopped Sep
-   30"), one primary button ("Start giving it" / "Stop giving it" for
-   supplements, "Add to daily list" / "Remove from daily list" for other
-   tasks) with a caption saying what happens. Stopping asks first and
-   keeps all history. "How much and when": the amount, then a switch per
-   time (Morning, Afternoon, Bedtime for supplements; Morning and Bedtime
-   for routine steps). "What the plan says": the provider's whole words
-   in the serif with a left rule, never cut. Notes, baths, food, and home
-   show only the words. Status changes are announced to VoiceOver.
+### Plan: "Where am I in the plan, and what's next?" (v4, October 7, 2026)
+Built around one star (DESIGN.md §5a), from the canvas "Plan v4", softer.
+1. Header "Plan", caption "From Dr. Rivera".
+2. The star: a soft card. "Week 2 of 12" (or "Week 2" with no length), a
+   thin 4pt line for weeks done (only with a length), "Next visit Oct 26,
+   in 3 weeks" (only when one is scheduled), and "Full plan" (the original
+   document; About this plan is in its bar, with the plan's length).
+3. Coming up: at most 3 dated items (month small, day in serif, one line,
+   a muted reason when the plan gives one), then "See all". Only stored
+   dates: the parent's dose steps, starts the plan's own rules date ("2
+   weeks after Coptis"), and visits. Never a made-up dose, increase, or
+   date; hidden when there's nothing.
+4. Supplements: 2-column tiles (name, today's amount, small sun or moon
+   for when); not started is dashed with "Not started yet". "5 giving".
+5. Skin care: one soft card, steps numbered, "3 to 4 times a day" once.
+6. Rows: Baths, Food, Home, Plan notes (each its own page), Visits and
+   journal, Patch tests, Products, then "Add a new plan".
+7. Every tile, step, and Coming up item opens the item page (v3): status,
+   one button, times as switches, "Dose steps" for supplements (the
+   parent adds each step: amount and start day; To do shows that amount
+   from that day), and "What the plan says" in full. Back reads "‹ Plan".
+8. No plan: the star reads "Bring in your care plan", then Scan the paper,
+   Add a PDF, Choose a photo as quiet rows. A plan being checked: "Check
+   your plan" and "Finish checking".
 
 ### Words
 All app-written words read at grade 6 or easier (ReadingGradeTests).

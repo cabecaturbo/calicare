@@ -131,17 +131,10 @@ private struct StepRow: View {
         .padding(.horizontal, -Spacing.x3)
     }
 
-    @ViewBuilder private var circle: some View {
-        if item.isDone {
-            Circle().fill(palette.accent)
-                .overlay(Image(systemName: "checkmark").font(.footnote.weight(.bold)).foregroundStyle(palette.paper))
-                .frame(width: 28, height: 28)
-        } else {
-            Circle()
-                .fill(isNext ? palette.oat : palette.paper)
-                .overlay(Circle().strokeBorder(isNext ? palette.accent : palette.ink, lineWidth: isNext ? 2 : 1.5))
-                .frame(width: 28, height: 28)
-        }
+    /// Done: the same fill and drawn check as logging (Motion's DoneMark).
+    private var circle: some View {
+        DoneMark(isDone: item.isDone, size: 28, ring: isNext ? palette.accent : palette.ink,
+                 ringWidth: isNext ? 2 : 1.5, fill: isNext ? palette.oat : palette.paper)
     }
 
     /// Two halves: from the step above to this one, and on to the next.

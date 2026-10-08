@@ -21,8 +21,8 @@ struct PlanV4View: View {
             if !comingUp.all.isEmpty {
                 PlanSectionTitle("Coming up").padding(.top, Spacing.section)
                 VStack(alignment: .leading, spacing: Spacing.x4) {
-                    ForEach(comingUp.shown) { item in
-                        ComingUpLink(item: item)
+                    ForEach(Array(comingUp.shown.enumerated()), id: \.element.id) { index, item in
+                        ComingUpLink(item: item).arrive(index: index)
                     }
                     if comingUp.hasMore {
                         NavigationLink { ComingUpScreen() } label: {
@@ -49,9 +49,10 @@ struct PlanV4View: View {
                 }
                 .padding(.top, Spacing.section)
                 LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
-                    ForEach(supplements) { entry in
+                    ForEach(Array(supplements.enumerated()), id: \.element.id) { index, entry in
                         NavigationLink { PlanItemScreen(id: entry.id) } label: { SupplementTile(entry: entry) }
-                            .buttonStyle(.plain)
+                            .buttonStyle(.pressable)
+                            .arrive(index: index)
                     }
                 }
                 .padding(.top, Spacing.x4)
@@ -294,6 +295,7 @@ private struct SkinCareCard: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    .arrive(index: index)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel("Step \(index + 1), \(entry.label)")
                     .accessibilityAddTraits(.isButton)

@@ -8,6 +8,8 @@ struct WeekGrid: View {
     @Environment(\.palette) private var palette
     @Environment(\.dynamicTypeSize) private var typeSize
     let days: [WeekDay]
+    /// Arrive: the bars rise once (the first time Progress opens each day).
+    var arrives = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.x2) {
@@ -27,7 +29,7 @@ struct WeekGrid: View {
             Grid(horizontalSpacing: Spacing.x2, verticalSpacing: Spacing.x2) {
                 GridRow(alignment: .bottom) {
                     Text("Skin").textStyle(.meta).foregroundStyle(palette.graphite).gridColumnAlignment(.leading)
-                    ForEach(days) { day in
+                    ForEach(Array(days.enumerated()), id: \.element.id) { index, day in
                         Group {
                             if let skin = day.skin {
                                 RoundedRectangle(cornerRadius: 3)
@@ -38,6 +40,7 @@ struct WeekGrid: View {
                                 Capsule().fill(palette.graphite).frame(width: 12, height: 2)
                             }
                         }
+                        .arrive(index: index, enabled: arrives)
                         .frame(maxWidth: .infinity, minHeight: 72, alignment: .bottom)
                     }
                 }

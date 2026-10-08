@@ -177,11 +177,7 @@ struct SetupGuide: View {
     }
 
     private var transition: AnyTransition {
-        if reduceMotion { return .opacity }
-        return .asymmetric(
-            insertion: .move(edge: forward ? .trailing : .leading).combined(with: .opacity),
-            removal: .opacity
-        )
+        Motion.stepTransition(forward: forward, reduceMotion: reduceMotion)
     }
 
     private var swipe: some Gesture {
@@ -194,7 +190,7 @@ struct SetupGuide: View {
     private func go(to next: Int) {
         guard (0...steps.count).contains(next), next != index else { return }
         forward = next > index
-        withAnimation(.easeOut(duration: 0.25)) { index = next }
+        withMotion(.standard) { index = next }
     }
 }
 

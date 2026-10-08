@@ -22,9 +22,9 @@ public struct PrimaryButtonStyle: ButtonStyle {
                 .padding(.vertical, Spacing.x4)
                 .frame(maxWidth: .infinity, minHeight: Size.button(isNight: palette.isNight))
                 .background(palette.ink, in: RoundedRectangle(cornerRadius: Corner.control))
-                .opacity(isEnabled ? (configuration.isPressed ? 0.85 : 1) : 0.4)
+                .opacity(isEnabled ? 1 : 0.4)
                 .contentShape(RoundedRectangle(cornerRadius: Corner.control))
-                .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
+                .pressable(configuration.isPressed)
         }
     }
 }
@@ -53,7 +53,7 @@ public struct SecondaryButtonStyle: ButtonStyle {
                 .background(configuration.isPressed ? palette.oat : .clear, in: shape)
                 .overlay(shape.strokeBorder(palette.ink, lineWidth: Rule.width))
                 .contentShape(shape)
-                .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
+                .pressable(configuration.isPressed)
         }
     }
 }

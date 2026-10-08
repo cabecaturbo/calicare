@@ -351,14 +351,43 @@ Capturing the assets
 - Real device only (the human records these): Action Button, Siri.
 - Blur or remove any personal content in captures.
 
-## 8. Motion and feedback
-- Illustrations draw themselves in (about 1 second) every time their
-  screen appears or the app comes back to the front, then stop. They never
-  loop; only onboarding may keep a gentle hand-drawn wobble.
-- Logging: a light haptic and the confirmation line slides up: "Logged,
-  2:14 AM · Undo." It disappears after 4 seconds.
-- Transitions are short (200–300ms) and ease-out. No springs with bounce.
-- Reduce Motion on: no animation at all; drawings appear complete.
+## 8. Motion
+One system, in `Core/DesignSystem/Motion.swift`. Every animation in the app
+uses its tokens and modifiers; no screen picks its own duration or curve.
+
+**Durations:** quick 0.2s, standard 0.35s, gentle 0.6s. At night (8 PM to
+7 AM) every duration is 1.3× longer.
+
+**One curve:** `timingCurve(0.3, 0, 0.2, 1)`: a soft start and a long,
+calm settle. The website uses `cubic-bezier(0.3, 0, 0.2, 1)` with the same
+durations.
+
+**Five moves:**
+| Move | What it does | Speed | In code |
+|---|---|---|---|
+| Press | A held control shrinks to 0.96 | quick | `.pressable()`, `.buttonStyle(.pressable)`, built into the button styles |
+| Done | The circle fills and the check draws itself; one light haptic | standard | `DoneMark(isDone:)`, `.doneMark(isDone:)` |
+| Arrive | Fades in and rises 8pt, 60ms apart, at most six waiting | gentle | `.arrive(index:)` |
+| Move | One thing travels to its new place | standard | `matchedGeometryEffect` |
+| Sheets and navigation | The system's own | system | — |
+
+Where they're used: log buttons and the bottom bar's Log (Press, and the
+"Logged" line arrives with its check drawing: Done). To do check-offs
+(Done, the same as logging). Plan's Coming up, tiles, and skin steps, and
+Today's list (Arrive, on first appear). Progress's week bars (Arrive, only
+the first time Progress opens each day). Widgets and the Lock Screen card:
+counts change with `.contentTransition(.numericText())`, and "Logged"
+appears with an opacity change only; the system times both.
+
+**Never:** bounce or overshoot, confetti or celebrations, parallax, or
+endless loops (the setup guides may loop, with Pause).
+
+**Reduce Motion:** every move becomes a crossfade with the same meaning:
+Press fades a little instead of shrinking, Done's check appears whole,
+Arrive fades without rising, and step changes crossfade.
+
+**Haptics:** one helper, `Motion.haptic(.done | .select)`, and Done's own
+light tap. No other haptic code.
 
 ## 9. Voice (unchanged, restated)
 Plain, warm, short. Like a friend who's been through it. Honest about

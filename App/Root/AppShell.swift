@@ -15,7 +15,6 @@ struct AppShell: View {
     var body: some View {
         @Bindable var shell = shell
         tabs
-        .sensoryFeedback(.impact(weight: .light), trigger: model.confirmation?.id) { _, new in new != nil }
         .sheet(isPresented: $shell.showingSettings, onDismiss: reload) {
             SettingsView()
                 .environment(reminders)

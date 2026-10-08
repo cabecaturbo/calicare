@@ -34,7 +34,7 @@ struct TodoView: View {
                         .padding(.top, Spacing.x6)
 
                         DayParts(blocks: todo.blocks, shown: shown(in: todo)) { block in
-                            withAnimation { picked = block }
+                            withMotion(.standard) { picked = block }
                         }
                         .padding(.top, Spacing.x5)
 

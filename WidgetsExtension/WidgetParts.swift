@@ -141,6 +141,7 @@ struct LoggedLabel: View {
                 .minimumScaleFactor(0.8)
         }
         .accessibilityElement(children: .combine)
+        .transition(Motion.loggedTransition)
     }
 }
 

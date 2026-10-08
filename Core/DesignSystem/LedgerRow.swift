@@ -48,18 +48,21 @@ public struct LedgerButtonStyle: ButtonStyle {
     }
 
     public func makeBody(configuration: Configuration) -> some View {
-        Filled(label: configuration.label, isFilled: configuration.isPressed || isSelected)
+        Filled(label: configuration.label, isFilled: configuration.isPressed || isSelected,
+               isPressed: configuration.isPressed)
     }
 
     private struct Filled<Content: View>: View {
         @Environment(\.palette) private var palette
         let label: Content
         let isFilled: Bool
+        let isPressed: Bool
 
         var body: some View {
             label
                 .background(isFilled ? palette.oat : .clear)
-                .animation(.easeOut(duration: 0.2), value: isFilled)
+                .motion(.quick, value: isFilled)
+                .pressable(isPressed)
         }
     }
 }

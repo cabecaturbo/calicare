@@ -9,9 +9,12 @@ struct LoggedBanner: View {
     var onAddWhere: (() -> Void)?
     let onUndo: () -> Void
     let onDismiss: () -> Void
+    /// Done: the check draws as the banner arrives.
+    @State private var marked = false
 
     var body: some View {
-        HStack(alignment: .center, spacing: Spacing.x4) {
+        HStack(alignment: .center, spacing: Spacing.x3) {
+            DoneMark(isDone: marked, size: 22)
             Text(confirmation.text)
                 .textStyle(.body)
                 .foregroundStyle(palette.ink)
@@ -32,6 +35,9 @@ struct LoggedBanner: View {
         .paperBackground(.oat)
         .clipShape(RoundedRectangle(cornerRadius: Corner.control))
         .task(id: confirmation.id) {
+            marked = false
+            try? await Task.sleep(for: .milliseconds(1))
+            marked = true
             AccessibilityNotification.Announcement(confirmation.text).post()
             // A little longer when there's "Add where" to reach.
             try? await Task.sleep(for: .seconds(onAddWhere == nil ? 4 : 6))

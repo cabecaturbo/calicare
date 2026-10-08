@@ -97,13 +97,14 @@ button, a, input { font: inherit; color: inherit; }
 
 /* Hand-drawn ink illustrations: draw once, about a second, then stop. */
 .ink { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1s ease-out forwards; }
+/* Motion (DESIGN.md §8): three speeds, one curve, the same as the app. */
+:root { --quick: 0.2s; --standard: 0.35s; --gentle: 0.6s; --curve: cubic-bezier(0.3, 0, 0.2, 1); }
+/* Hand-drawn ink illustrations: draw once, then stop. */
+.draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw var(--gentle) var(--curve) forwards; }
 @keyframes draw { to { stroke-dashoffset: 0; } }
-/* Onboarding only: a gentle hand-drawn wobble. */
-.loop { transform-origin: center; animation: boil 1.8s steps(1) infinite; }
-@keyframes boil { 0% { transform: rotate(-0.6deg); } 33% { transform: rotate(0.4deg) translate(0.4px, -0.3px); } 66% { transform: rotate(0) translate(-0.3px, 0.4px); } }
-.rise { animation: rise 0.6s ease-out both; }
-@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+/* Arrive: fade in and rise 8px. */
+.rise { animation: rise var(--gentle) var(--curve) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -199,13 +200,14 @@ button, a, input { font: inherit; color: inherit; }
 /* Guide markers: a highlight ring and a finger tap. */
 .guide-ring { position: absolute; border: 3px solid var(--ring); border-radius: var(--r-pill); box-sizing: border-box; pointer-events: none; }
 .guide-tap { position: absolute; width: 64px; height: 64px; margin: -32px 0 0 -32px; border: 3px solid var(--ring); border-radius: var(--r-pill); box-sizing: border-box; pointer-events: none; }
-/* The widget loop: tap, "Logged", back to normal. */
-.loop-normal { animation: loop-a 5s linear 1s infinite; }
-.loop-logged { animation: loop-b 5s linear 1s infinite; opacity: 0; }
-.loop-press { animation: loop-press 5s ease-out 1s infinite; }
-@keyframes loop-a { 0%, 20% { opacity: 1; } 24%, 90% { opacity: 0; } 94%, 100% { opacity: 1; } }
-@keyframes loop-b { 0%, 20% { opacity: 0; } 24%, 90% { opacity: 1; } 94%, 100% { opacity: 0; } }
-@keyframes loop-press { 0%, 16% { transform: scale(1); } 20% { transform: scale(0.95); } 26%, 100% { transform: scale(1); } }
+/* The widget, played once: a press, "Logged", then back to normal. No loop. */
+.loop-normal { animation: fade-out var(--standard) var(--curve) 1.4s both, fade-in var(--standard) var(--curve) 4.4s forwards; }
+.loop-logged { opacity: 0; animation: fade-in var(--standard) var(--curve) 1.4s both, fade-out var(--standard) var(--curve) 4.4s forwards; }
+.loop-press { animation: press var(--quick) var(--curve) 1s 2 alternate both; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes press { to { transform: scale(0.96); } }
 @media (prefers-reduced-motion: reduce) {
   .loop-normal { opacity: 1; } .loop-logged { opacity: 0; }
 }
+

@@ -23,6 +23,9 @@ struct ProgressTab: View {
     @State private var monthReport: MonthlyReport?
     @State private var file: URL?
     @State private var problem: String?
+    /// Motion: the week's bars rise only the first time Progress opens each day.
+    @AppStorage("motion.progressArrivedOn") private var arrivedOn = ""
+    @State private var barsArrive: Bool?
 
     var body: some View {
         NavigationStack {
@@ -71,7 +74,7 @@ struct ProgressTab: View {
                         .padding(.horizontal, Spacing.margin)
                         .padding(.top, Spacing.x5)
 
-                        WeekGrid(days: report.days)
+                        WeekGrid(days: report.days, arrives: barsArrive ?? false)
                             .padding(.horizontal, Spacing.margin)
                             .padding(.top, Spacing.x7)
                     }
@@ -129,6 +132,11 @@ struct ProgressTab: View {
                     }
                 }
                 .padding(.bottom, BottomBar.clearance)
+            }
+            .onAppear {
+                guard barsArrive == nil else { return }
+                barsArrive = Motion.shouldArrive(lastShown: arrivedOn, now: .now)
+                arrivedOn = Motion.dayKey(.now)
             }
             .paperBackground()
             .statusBarBackground()

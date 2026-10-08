@@ -23,7 +23,7 @@ struct BottomBar: View {
                 } onDismiss: {
                     model.confirmation = nil
                 }
-                .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
+                .transition(Motion.arriveTransition(reduceMotion: reduceMotion))
             }
             HStack(spacing: Spacing.x4) {
                 TabPill()
@@ -41,7 +41,7 @@ struct BottomBar: View {
             .ignoresSafeArea()
             .allowsHitTesting(false)
         }
-        .animation(.easeOut(duration: 0.25), value: model.confirmation)
+        .motion(.standard, value: model.confirmation)
     }
 
     /// "Add where" for a flare just logged.
@@ -123,7 +123,7 @@ private struct LogPill: View {
                     .background(palette.paper, in: Capsule())
                     .overlay(Capsule().strokeBorder(palette.hairline, lineWidth: 1))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.pressable)
                 .accessibilityLabel("Log itching")
             }
             MoreLogMenu {

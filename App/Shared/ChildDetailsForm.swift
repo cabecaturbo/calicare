@@ -67,7 +67,7 @@ struct ChildDetailsForm: View {
             }
 
             LedgerRow {
-                Toggle(isOn: $details.hasBirthDate.animation(.easeOut(duration: 0.2))) {
+                Toggle(isOn: $details.hasBirthDate.motion(.quick)) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Birth date")
                             .textStyle(.control)

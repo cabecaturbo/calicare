@@ -39,6 +39,7 @@ struct QuickLogWidgetView: View {
             HStack(spacing: Spacing.x2) {
                 VStack(alignment: .leading, spacing: Spacing.x2) {
                     Text(WidgetText.wakeUps(snapshot.nightWakeUps, isNight: snapshot.isNight))
+                        .contentTransition(.numericText())
                         .font(TypeStyle.control.font)
                         .foregroundStyle(palette.ink)
                         .lineLimit(1)

@@ -117,7 +117,7 @@ struct TodayView: View {
                 .padding(.horizontal, Spacing.x5)
                 .background(palette.button, in: RoundedRectangle(cornerRadius: Corner.card))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.pressable)
             .accessibilityLabel("Log itching")
             .padding(.horizontal, Spacing.margin)
             .padding(.top, Spacing.x4)
@@ -320,7 +320,7 @@ private struct TodaySoFar: View {
                     .padding(.horizontal, Spacing.margin)
             } else {
                 VStack(spacing: 0) {
-                    ForEach(entries) { entry in
+                    ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
                         SwipeToDelete { Task { await model.deleteWithUndo(entry) } } content: {
                         Button { onEdit(entry) } label: {
                             HStack {
@@ -339,6 +339,7 @@ private struct TodaySoFar: View {
                         .buttonStyle(.plain)
                         .accessibilityHint("Edit, or swipe left to delete")
                         }
+                        .arrive(index: index)
                     }
                 }
                 .padding(.horizontal, Spacing.margin)

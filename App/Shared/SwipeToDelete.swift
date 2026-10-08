@@ -38,7 +38,7 @@ struct SwipeToDelete<Content: View>: View {
                     // Tapping an open row closes it.
                     if offset != 0, !dragging {
                         Color.clear.contentShape(Rectangle()).padding(.trailing, -revealed)
-                            .onTapGesture { withAnimation(.easeOut(duration: 0.2)) { offset = 0; resting = 0 } }
+                            .onTapGesture { withMotion(.quick) { offset = 0; resting = 0 } }
                     }
                 }
         }
@@ -55,7 +55,7 @@ struct SwipeToDelete<Content: View>: View {
                 offset = min(0, resting + value.translation.width)
             }
             .onEnded { value in
-                withAnimation(.easeOut(duration: 0.2)) {
+                withMotion(.quick) {
                     if offset < fullSwipe {
                         delete()
                     } else {

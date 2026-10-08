@@ -73,16 +73,12 @@ struct OnboardingView: View {
     }
 
     private var transition: AnyTransition {
-        if reduceMotion { return .opacity }
-        return .asymmetric(
-            insertion: .move(edge: forward ? .trailing : .leading).combined(with: .opacity),
-            removal: .opacity
-        )
+        Motion.stepTransition(forward: forward, reduceMotion: reduceMotion)
     }
 
     private func go(to next: Step) {
         forward = next.rawValue > step.rawValue
-        withAnimation(.easeOut(duration: 0.3)) { step = next }
+        withMotion(.standard) { step = next }
     }
 
     private func saveChild() async {

@@ -96,18 +96,6 @@ def update_phone(s=1.0):
     return f'<div role="img" aria-label="A text to Dad with last night\'s wake-ups, and an email to the provider with the Cali Care report attached">{phone(screen, s)}</div>'
 
 
-def two_up(sc, desk):
-    """Plan and To do side by side (screens from the app canvas)."""
-    pair = sc * (0.78 if desk else 0.48)
-    def cap(label, html):
-        return (f'<figure style="margin:0;display:flex;flex-direction:column;align-items:center;gap:var(--s3)">{html}'
-                f'<figcaption class="t-caption muted">{label}</figcaption></figure>')
-    return (f'<div style="display:flex;justify-content:center;align-items:flex-start;gap:var(--s5)">'
-            + cap('Plan', shot('plan-day.jpg', 'Cali Care’s Plan screen: week 2 of 12, the next visit, and what’s coming up', pair))
-            + cap('To do', shot('todo-day.jpg', 'Cali Care’s To do screen: the care plan as a list for the morning, with the next step highlighted', pair))
-            + '</div>')
-
-
 def shot(src, alt, s=1.0):
     return f'''<div style="width:{int(414*s)}px;height:{int(868*s)}px;box-sizing:border-box;padding:{int(12*s)}px;border-radius:{int(58*s)}px;background:var(--mock-frame)">
 <div style="width:100%;height:100%;border-radius:{int(46*s)}px;overflow:hidden"><img src="shots/{src}" alt="{alt}" style="width:100%;height:100%;display:block;object-fit:cover;object-position:top"></div>
@@ -161,7 +149,6 @@ def build(desk):
 <a href="#top" class="t-title" style="color:var(--ink);text-decoration:none">Cali Care</a>
 <nav aria-label="Main" style="display:flex;align-items:center;gap:var(--s6)">
 <a href="#plan" class="t-label" style="color:var(--ink);text-decoration:none">Care plan</a>
-<a href="#log" class="t-label" style="color:var(--ink);text-decoration:none">Quick Log</a>
 <a href="#updates" class="t-label" style="color:var(--ink);text-decoration:none">Updates</a>
 <a href="{BETA}" class="t-label" style="height:44px;display:flex;align-items:center;padding:0 20px;border-radius:var(--r-btn);background:var(--ink);color:var(--bg);text-decoration:none">Join the beta</a>
 </nav></header>''')
@@ -188,30 +175,18 @@ def build(desk):
     else:
         out.append(f'<section id="top-m" style="box-sizing:border-box;padding:48px var(--gutter) 56px;display:flex;flex-direction:column;gap:var(--s6)">{hero_text}{hero_vis}</section>')
 
-    # 2. Care plan to-do list
+    # 2. Care plan: bring it in (Plan)
     plan_text = (verify('plan-import', P('Take a photo of the care plan from your doctor or practitioner, or add it as a PDF. Cali Care turns it into a short list for the morning, afternoon, and bedtime, with your provider’s exact words a tap away.'))
-                 + P('It counts skin-care rounds and shows which supplements to give when, so you don’t have to keep it all in your head.')
                  + small('Importing a plan requires signing in.'))
-    out.append(feature('plan', 'Care plan', 'Your care plan, as a to-do list.', plan_text,
-                       two_up(sc, desk),
+    out.append(feature('plan', 'Care plan', 'Bring in your care plan.', plan_text,
+                       shot('plan-day.jpg', 'Cali Care’s Plan screen: week 2 of 12, the next visit, and what’s coming up', sc),
                        bg='var(--surface)'))
 
-    # 3. Quick Log on the Lock Screen
-    log_text = (P('When your child wakes up itching, tap Log on the Quick Log card on your Lock Screen. Your iPhone checks it’s you with Face ID, and the log is saved without opening the app. It works day and night, and offline.')
-                + P('You can also log from the Home Screen widget, or add flares, foods, baths, and notes in the app.'))
-    def labeled(label, html):
-        return (f'<figure style="margin:0;display:flex;flex-direction:column;align-items:center;gap:var(--s3)">{html}'
-                f'<figcaption class="t-caption muted">{label}</figcaption></figure>')
-    # The owner's own recording of Quick Log on the Lock Screen: plays once, with controls.
-    vw = int(300 * (1.0 if desk else 0.85))
-    lock_video = (f'<video src="shots/lockscreen.mp4" poster="shots/lockscreen.jpg" width="{vw}" muted playsinline controls '
-                  f'preload="metadata" style="display:block;border-radius:28px" '
-                  f'aria-label="Tapping Log on the Quick Log card on the Lock Screen, then Logged"></video>')
-    log_vis = (f'<div style="display:flex;flex-direction:column;align-items:center;gap:var(--s6)">'
-               + labeled('On your Lock Screen', lock_video)
-               + labeled('On your Home Screen', picture('widget_desk', 'The Cali Care Home Screen widget with a Log button', w=158, h=158))
-               + '</div>')
-    out.append(feature('log', 'Quick Log', 'Log from your Lock Screen.', log_text, log_vis, flip=True))
+    # 3. To do
+    todo_text = P('It counts skin-care rounds and shows which supplements to give when, so you don’t have to keep it all in your head.')
+    out.append(feature('todo', 'To do', 'Your care plan, as a to-do list.', todo_text,
+                       shot('todo-day.jpg', 'Cali Care’s To do screen: the care plan as a list for the morning, with the next step highlighted', sc),
+                       flip=True))
 
     # 4. Quick updates
     upd_text = (P('Keep your doctor and anyone who helps in the loop. Text last night’s wake-ups to your partner, or send a weekly summary card to family.')

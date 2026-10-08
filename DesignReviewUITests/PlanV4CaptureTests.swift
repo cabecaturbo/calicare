@@ -48,7 +48,7 @@ final class PlanV4CaptureTests: XCTestCase {
     }
 
     func testNoPlan() {
-        _ = launch(seed: nil)
+        _ = launch(seed: "EMPTY")
         Capture.screen("plan-none-\(variant)")
     }
 }

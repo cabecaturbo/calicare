@@ -108,7 +108,7 @@ struct PlanItemScreen: View {
                 HStack {
                     Text("Amount").textStyle(.body).foregroundStyle(palette.ink)
                     Spacer(minLength: Spacing.x3)
-                    Text(entry.amount ?? "No amount in the plan")
+                    Text(entry.amount ?? "No amount in plan. Follow the label.")
                         .textStyle(.body)
                         .foregroundStyle(palette.graphite)
                         .multilineTextAlignment(.trailing)
@@ -161,7 +161,7 @@ struct PlanItemScreen: View {
                 .accessibilityAddTraits(.isHeader)
             if entry.item.doseSteps.isEmpty {
                 Text(entry.amount == nil
-                     ? "The plan doesn't give an amount. Add the one your provider told you, and To do will show it."
+                     ? "The plan doesn't give an amount, so follow the label. If your provider told you one, add it here and To do will show it."
                      : "If the plan says to work up slowly, add each step here. To do shows the right amount each day.")
                     .textStyle(.meta)
                     .foregroundStyle(palette.graphite)

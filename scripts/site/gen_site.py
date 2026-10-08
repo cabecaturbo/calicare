@@ -180,19 +180,18 @@ def build(desk):
                  + small('Importing a plan requires signing in.'))
     out.append(feature('plan', 'Care plan', 'Bring in your care plan.', plan_text,
                        shot('plan-day.jpg', 'Cali Care’s Plan screen: week 2 of 12, the next visit, and what’s coming up', sc),
-                       bg='var(--surface)'))
+                       flip=True, bg='var(--surface)'))
 
     # 3. To do
     todo_text = P('It counts skin-care rounds and shows which supplements to give when, so you don’t have to keep it all in your head.')
     out.append(feature('todo', 'To do', 'Your care plan, as a to-do list.', todo_text,
-                       shot('todo-day.jpg', 'Cali Care’s To do screen: the care plan as a list for the morning, with the next step highlighted', sc),
-                       flip=True))
+                       shot('todo-day.jpg', 'Cali Care’s To do screen: the care plan as a list for the morning, with the next step highlighted', sc)))
 
     # 4. Quick updates
     upd_text = (P('Keep your doctor and anyone who helps in the loop. Text last night’s wake-ups to your partner, or send a weekly summary card to family.')
                 + verify('doctor-pdf', P('Before a visit, email your provider a PDF report with charts, a day-by-day view, and your notes. They don’t need the app.'))
                 + P('A one-page card gives a babysitter or grandparent what they need to know.'))
-    out.append(feature('updates', 'Updates', 'Send a quick update.', upd_text, update_phone(sc), bg='var(--surface)'))
+    out.append(feature('updates', 'Updates', 'Send a quick update.', upd_text, update_phone(sc), flip=True, bg='var(--surface)'))
 
     # 5. Story
     out.append(f'''<section id="story{m}" style="box-sizing:border-box;padding:{sec_pad};display:flex;flex-direction:column;gap:var(--s5);{'align-items:center;text-align:center' if desk else ''}">

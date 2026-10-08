@@ -160,7 +160,7 @@ private struct Paragraph: View {
 }
 
 /// The provider's words as written, in quotes, selectable.
-private struct ProviderWords: View {
+struct ProviderWords: View {
     @Environment(\.palette) private var palette
     let text: String
     init(_ text: String) { self.text = text }

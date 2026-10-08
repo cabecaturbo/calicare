@@ -56,12 +56,12 @@ screen that doesn't serve it.
 | Today | Log, and see how last night and today are going | sun.horizon |
 | To do | "What do I do right now?" | checklist |
 | Progress | See whether things are getting better, and share it | chart.line.uptrend.xyaxis |
-| Info | "What does the plan say?" | book.closed |
+| Plan | "What's in my plan, and which steps do I use?" | heart.text.clipboard |
 
 On every tab (DESIGN.md §5)
 - Header: the child switcher ("Cal ▾") on the left, the Settings gear on
   the right (Settings opens as a large sheet). Below it the tab name as the
-  title: "Today", "To do", "Progress", "Info". Today shows the date under it by day.
+  title: "Today", "To do", "Progress", "Plan". Today shows the date under it by day.
 - A bottom bar the app draws itself (the system tab bar is hidden): the
   tab pill, and next to it the log control, "Itchy" (one tap) and "•••"
   (a menu: Flare, Bowel movement, Note). Flare and Bowel movement log right
@@ -131,7 +131,7 @@ Night layout (8 PM – 7 AM):
    Log button stays in the bar too.
 4. Tonight so far.
 
-## 5. To do and Info (replaced Plan, October 3, 2026)
+## 5. To do and Plan (Plan replaced Info, October 5, 2026)
 
 ### To do: "What do I do right now?"
 1. Header: "To do", with "Edit" (the routine editor) beside the gear. Edit
@@ -154,21 +154,35 @@ Night layout (8 PM – 7 AM):
    sheet lists the steps, numbered.
 6. Supplements show in the blocks they're given in, as "Give [name]" with
    the dose as meta. Default times: 1x (or nothing) morning; 2x morning and
-   bedtime; 3x adds afternoon. Changed in Info › Supplements.
+   bedtime; 3x adds afternoon. Changed in Plan › Supplements.
 7. "Which of these are you giving now?" asks once per plan (after import,
-   and once for a plan read before this). Unchecked ones wait in Info ›
+   and once for a plan read before this). Unchecked ones wait in Plan ›
    Supplements under "Not giving yet".
 8. Reminders: one per block ("Bedtime: 5 things") with "All done", which
    ticks the whole block without opening the app. Off by default:
    Settings › Reminders › Morning list, Afternoon list, Bedtime list.
 
-### Info: "What does the plan say?"
-Rows only, each opening its own screen: Care plan (add, review, About this
-plan, baths), Supplements (giving now with times and How to give, Not
-giving yet with "Add to To do", the plan's rules, "Your provider
-mentioned"), Patch tests ("What to do", "Your provider's words", one
-"Start a patch test" button, your tests), Visits and journal, Food,
-Products.
+### Plan: "What's in my plan, and which steps do I use?"
+A core screen: bringing the plan in, and choosing which of its steps go in
+To do. One big statement at the top, like To do.
+1. No plan: "Bring in your care plan." and three cards: Scan the paper,
+   Add a PDF, Choose a photo. Each opens the reader straight to that
+   source. Reading needs sign-in; the file stays on the phone.
+2. A plan being checked: "Check your plan." and "Finish checking" (the
+   review screen).
+3. A running plan (canvas "Plan v2"): To do's compact header, then "Dr.
+   Rivera's plan, from Oct 5." with "8 of 9 steps are in To do." under it,
+   then "Open the full plan" (a small page drawing; the original file in
+   Quick Look). Steps are grouped as Skin care, Routine, Supplements: the
+   name with "AM · PM" (or the dose) beside it, one line of what it is, and
+   a switch for whether it's in To do. Switches, not circles, so they never
+   look like To do's done checks. "Use all" sits by a group's heading when
+   something in it is off. The name opens "Your provider's words".
+4. "The rest of the plan": items that never go in To do (baths, food,
+   basics, follow-ups, rules, mentions), for reading.
+5. "Everything in the plan": The rest of the plan, Supplements (times and How to give), Baths,
+   Patch tests, Visits and journal, Food, Products.
+6. "About this plan" and "Add a new plan" at the bottom.
 
 ### Words
 All app-written words read at grade 6 or easier (ReadingGradeTests).

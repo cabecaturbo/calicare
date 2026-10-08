@@ -612,3 +612,13 @@ The owner saw the v2 redesign on the phone and asked for it to be reverted. The 
 - A widget's stale child falls back to the current child only when there's exactly one child; with two or more it never guesses.
 - Confirmed on the owner's phone (October 5, 2026): a Lock Screen tap asks for Face ID first, as Apple's docs say. The site uses the Home Screen widget wording and doesn't mention the Lock Screen (`TONIGHT_CONFIRMED = False` in `scripts/site/gen_day.py`). Tonight still saves without opening the app after Face ID.
 
+
+## Plan tab replaces Info (October 5, 2026)
+- The owner asked for the Info tab to become Plan, a core screen for bringing in the care plan and choosing which steps to use (all or some). Icon: `heart.text.clipboard`.
+- No new data: a step's check is the routine's existing pause switch (`RoutineStep.isActive`, all of an item's times together), and a supplement's is `PlanItem.isGiving`. Both already sync and To do already reads them (`PlanUse` in Core).
+- Only routine and skin steps with To do rows, and supplements that aren't mentions, can be checked; everything else in the plan is "Also in your plan", for reading.
+- Info's rows move under "More from the plan"; Baths gets its own row now that the Care plan row is gone.
+
+## First TestFlight build (October 5, 2026)
+- App record "Cali Care" (6819521789, SKU calicare), version 1.0. Build 1 was rejected (ITMS 90649: no iMessage icons) because XcodeGen built the Messages extension as a plain app extension; `type: app-extension.messages` fixed it (build 2).
+- Groups: Team (internal, all builds) and Beta parents (public link https://testflight.apple.com/join/ABXetDtE, 100 people, after beta review).

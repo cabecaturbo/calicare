@@ -31,7 +31,7 @@ final class ReviewTourTests: XCTestCase {
             }
         }
 
-        for tab in ["To do", "Progress", "Info"] {
+        for tab in ["To do", "Progress", "Plan"] {
             app.buttons[tab].tap()
             sleep(2)
             Capture.screen("review-\(tab.lowercased())-\(variant)")

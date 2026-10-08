@@ -30,19 +30,27 @@ public struct SupplementPlan: Equatable, Sendable {
     /// "Consider adding…" and "…may be indicated" lines: shown muted, with no actions.
     public let mentioned: [PlanItemInfo]
 
+    /// "Consider adding…" with no dose or schedule: a mention, not something to give.
+    public static func isMention(_ item: PlanItemInfo) -> Bool {
+        item.dose == nil && item.frequency == nil && SupplementDisplay.isMention(item.text)
+    }
+
+    /// Something to give: a dose or schedule, a split item, or an "ADD X" or
+    /// "Transition to X" line. Other supplement lines are the plan's rules
+    /// ("one at a time, 3–5 days apart").
+    public static func isProduct(_ item: PlanItemInfo) -> Bool {
+        !isMention(item)
+            && (item.dose != nil || item.frequency != nil || item.parentItemID != nil || SupplementDisplay.isDirective(item.text))
+    }
+
     public init(items: [PlanItemInfo], logs: [LogEntry], now: Date, calendar: Calendar = .autoupdatingCurrent) {
         let all = items.filter { $0.kind == .supplement }.sorted { $0.order < $1.order }
         // A list split into its own items ("Continue A, B") shows as those items.
         let parents = Set(all.compactMap(\.parentItemID))
         let supplements = all.filter { !parents.contains($0.id) }
-        mentioned = supplements.filter { $0.dose == nil && $0.frequency == nil && SupplementDisplay.isMention($0.text) }
+        mentioned = supplements.filter(Self.isMention)
         let mentionIDs = Set(mentioned.map(\.id))
-        // Items with a dose or schedule, split items, and "ADD X" or "Transition
-        // to X" lines are supplements; the rest are rules ("one at a time, 3–5 days apart").
-        let products = supplements.filter {
-            !mentionIDs.contains($0.id)
-                && ($0.dose != nil || $0.frequency != nil || $0.parentItemID != nil || SupplementDisplay.isDirective($0.text))
-        }
+        let products = supplements.filter(Self.isProduct)
         let productIDs = Set(products.map(\.id))
         let ruleItems = supplements.filter { !productIDs.contains($0.id) && !mentionIDs.contains($0.id) }
         rules = ruleItems.map(\.text)

@@ -127,7 +127,7 @@ Two families.
 
 | Style (code name) | Font | Size/Line | Use on the phone |
 |---|---|---|---|
-| display | Newsreader Display, weight 500 | 34/40 | The tab title ("Today", "Plan", "Progress") |
+| display | Newsreader Display, weight 500 | 34/40 | The tab title ("Today", "To do", "Progress", "Plan") |
 | title (also lede) | Newsreader Display, weight 500 | 24/30 | Summary card titles ("A good night"), the skin question, the night Itchy button |
 | section | Newsreader Display, weight 500 | 20/26 (title3) | Section headers ("Evening", "Supplements", "This week", Settings groups) |
 | label | SF Pro semibold | 15/20 | The child switcher, step numbers, outlined button labels ("Share with provider") |
@@ -142,7 +142,8 @@ label is SF Pro 13 semibold.
   (section, serif), row (body), meta (footnote, graphite). The serif is for
   those titles and headers, card titles, and the skin question; everything
   else is SF Pro.
-- One focal point per screen, at the top: Today and Plan, the summary card;
+- One focal point per screen, at the top: Today, the summary card; To do
+  and Plan, the statement;
   Food, the food counts ("6 safe foods"). Nothing else matches it in size.
 - Shared cards and PDFs (weekly card, caregiver card, journal) keep SF Pro
   semibold (label) for their headings, since they're fixed-size pages.
@@ -212,8 +213,8 @@ type, and "Last at 1:52 AM" under it.
 show the palm (hand.raised.fill) and "Log"; VoiceOver says "Log itching".
 Logs, reports, and sentences still say "itchy wake-up".
 
-**Bottom bar (iOS 26.1 and later):** Apple's glass tab bar: Today, Plan,
-Progress (system symbols and labels, the active tab tinted indigo; it
+**Bottom bar (iOS 26.1 and later):** Apple's glass tab bar: Today, To do, Progress, Plan
+(system symbols and labels, the active tab tinted with the accent; it
 follows day and night through the color scheme), and, set apart on the
 right, the round **Log** button: the palm with "Log" under it (the `.search`
 role on iOS 26, `.prominent` on iOS 27). One tap logs itching and stays on

@@ -7,6 +7,7 @@ import SwiftUI
 /// the page. The "Logged · Undo" line sits just above it.
 struct BottomBar: View {
     @Environment(\.palette) private var palette
+    @Environment(\.nightLayout) private var nightLayout
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(TodayModel.self) private var model
     @Environment(Shell.self) private var shell
@@ -26,7 +27,7 @@ struct BottomBar: View {
             }
             HStack(spacing: Spacing.x4) {
                 TabPill()
-                LogPill(showsItchy: !(shell.tab == .today && NightMode.isLayoutActive()))
+                LogPill(showsItchy: !(shell.tab == .today && nightLayout))
             }
         }
         .padding(.horizontal, Spacing.margin)

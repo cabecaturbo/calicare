@@ -27,11 +27,22 @@ struct AppearanceModeTests {
         AppGroup.defaults.set("sideways", forKey: AppearanceMode.key)
         #expect(AppearanceMode.current == .automatic)
     }
+
+    @Test func theOldButtonsChoiceIsClearedOnceThenSettingsWins() {
+        let defaults = UserDefaults(suiteName: "test.\(UUID().uuidString)")!
+        defaults.set(AppearanceMode.night.rawValue, forKey: AppearanceMode.key)
+        AppearanceMode.resetOldButtonChoice(defaults)
+        #expect(defaults.string(forKey: AppearanceMode.key) == AppearanceMode.automatic.rawValue)
+        // Picked in Settings afterwards: kept on the next launch.
+        defaults.set(AppearanceMode.day.rawValue, forKey: AppearanceMode.key)
+        AppearanceMode.resetOldButtonChoice(defaults)
+        #expect(defaults.string(forKey: AppearanceMode.key) == AppearanceMode.day.rawValue)
+    }
 }
 
-/// Debug design-review runs can pin day or night, which wins over the toggle.
 enum DesignReviewForced {
     static var isSet: Bool {
         AppGroup.defaults.object(forKey: "designReview.forcedNight") != nil
     }
+
 }

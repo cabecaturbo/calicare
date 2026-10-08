@@ -33,6 +33,7 @@ private struct NightAwarePaletteModifier: ViewModifier {
             let palette = Palette.current(at: context.date)
             content
                 .environment(\.palette, palette)
+                .environment(\.nightLayout, NightMode.isLayoutActive(at: context.date))
                 .preferredColorScheme(palette.isNight ? .dark : .light)
         }
     }

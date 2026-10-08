@@ -15,6 +15,8 @@ struct CaliCareApp: App {
         _account = State(initialValue: account)
         _sync = State(initialValue: SyncController(account: account))
         FontRegistry.registerAll()
+        // The old sun/moon button pinned day or night; follow the clock again (once).
+        AppearanceMode.resetOldButtonChoice()
         #if DEBUG
         DesignReviewLaunch.apply()
         #endif

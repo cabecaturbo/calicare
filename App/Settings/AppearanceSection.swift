@@ -10,20 +10,22 @@ struct AppearanceSection: View {
 
     var body: some View {
         SettingsSection("Appearance", footnote: "Time of day uses night colors from 8 PM to 7 AM.") {
-            Picker(selection: Binding(get: { AppearanceMode(rawValue: raw) ?? .automatic }, set: set)) {
-                Text("Time of day").tag(AppearanceMode.automatic)
-                Text("Day").tag(AppearanceMode.day)
-                Text("Night").tag(AppearanceMode.night)
+            // Bound straight to the stored value: Xcode 26's compiler crashed on a
+            // custom Binding whose setter was a method here.
+            Picker(selection: $raw) {
+                Text("Time of day").tag(AppearanceMode.automatic.rawValue)
+                Text("Day").tag(AppearanceMode.day.rawValue)
+                Text("Night").tag(AppearanceMode.night.rawValue)
             } label: {
                 SettingsLabel("Colors")
             }
             .tint(palette.accent)
+            .onChange(of: raw) { _, _ in refresh() }
         }
     }
 
-    private func set(_ mode: AppearanceMode) {
-        AppearanceMode.current = mode
-        raw = mode.rawValue
+    /// Widgets and the Lock Screen card follow the new colors.
+    private func refresh() {
         WidgetCenter.shared.reloadAllTimelines()
         Task { await QuickLogCard.refresh() }
     }

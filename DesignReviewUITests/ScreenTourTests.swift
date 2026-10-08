@@ -25,20 +25,14 @@ final class ScreenTourTests: XCTestCase {
         Capture.screen("02-onboarding-add-child")
         tapButton(app, "Continue")
         sleep(1)
-        Capture.screen("03-onboarding-home-screen-widget")
-        tapButton(app, "Done")
-        Capture.screen("04-onboarding-lock-screen-widget")
-        tapButton(app, "Done")
-        Capture.screen("05-onboarding-siri")
-        tapButton(app, "Done")
-        Capture.screen("06-onboarding-action-button")
-        // Builds with accounts end on the share offer.
-        if app.buttons["Done, go to Today"].exists {
-            tapButton(app, "Done, go to Today")
-        } else {
-            tapButton(app, "Done")
-            tapButton(app, "Not now, go to Today")
-        }
+        Capture.screen("03-onboarding-care-plan")
+        tapButton(app, "Skip for now")
+        sleep(1)
+        Capture.screen("04-onboarding-reminders")
+        tapButton(app, "Skip for now")
+        sleep(1)
+        Capture.screen("05-onboarding-log-anywhere")
+        tapButton(app, "Skip for now")
         sleep(1)
         Capture.screen("07-today-empty")
 

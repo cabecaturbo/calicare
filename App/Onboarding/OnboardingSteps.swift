@@ -101,7 +101,7 @@ struct LogAnywhereStep: View {
         OnboardingPage {
             OnboardingHeading(
                 title: "Log from anywhere",
-                detail: "One tap from your Home Screen, Lock Screen, or Control Center. The app never opens."
+                detail: "One tap from your Home Screen or Control Center. On the Lock Screen, your iPhone checks it's you first."
             )
             VStack(spacing: Spacing.x5) {
                 Picker("Where", selection: $path) {
@@ -110,6 +110,7 @@ struct LogAnywhereStep: View {
                     Text("Control Center").tag(GuidePath.controlCenter)
                 }
                 .pickerStyle(.segmented)
+                .tint(palette.accent)
                 GuideScreenshot(asset: path.doneAsset, tap: nil)
                     .frame(height: 380)
                     .id(path)

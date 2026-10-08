@@ -163,25 +163,33 @@ def build(desk):
     hero_text = f'''<div style="display:flex;flex-direction:column;gap:var(--s5)">
 <span class="t-label muted">For parents of kids with eczema</span>
 <h1 style="margin:0;font-family:var(--serif);font-weight:500;{h1};letter-spacing:-0.5px">You focus on your child. Cali Care keeps track.</h1>
-<p class="t-lede" style="margin:0;max-width:560px;{'' if desk else 'font-size:20px;line-height:28px'}">Turn your care plan into a daily checklist, log from your Lock Screen, and send a quick update to your doctor or sitter.</p>
+<p class="t-lede" style="margin:0;max-width:560px;{'' if desk else 'font-size:20px;line-height:28px'}">Bring in the care plan from your provider. Cali Care shows where you are in it, what’s coming up, and turns it into a daily list.</p>
 <div style="display:flex;{'align-items:center' if desk else 'flex-direction:column;align-items:stretch'};gap:var(--s4);margin-top:var(--s2)">
 <a href="{BETA}" class="t-label" style="height:56px;display:flex;align-items:center;justify-content:center;padding:0 28px;border-radius:var(--r-btn);background:var(--ink);color:var(--bg);text-decoration:none">Join the beta</a>
 <a href="#plan{m}" class="t-label" style="min-height:44px;display:flex;align-items:center;justify-content:center;text-decoration:none">See how it works</a>
 </div>
 <span class="t-caption muted">Free on iPhone during the beta. No account needed.</span>
 </div>'''
-    hero_vis = f'<div style="display:flex;justify-content:center">{lock_phone(sc)}</div>'
+    hero_vis = (f'<div style="display:flex;justify-content:center">'
+                + shot('plan-day.jpg', 'Cali Care’s Plan screen: Week 1 of 12, the next visit, and what’s coming up', sc) + '</div>')
     if desk:
         out.append(f'<section id="top" style="box-sizing:border-box;padding:96px 120px;display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:80px;align-items:center">{hero_text}{hero_vis}</section>')
     else:
         out.append(f'<section id="top-m" style="box-sizing:border-box;padding:48px var(--gutter) 56px;display:flex;flex-direction:column;gap:var(--s6)">{hero_text}{hero_vis}</section>')
 
     # 2. Care plan to-do list
-    plan_text = (verify('plan-import', P('Take a photo of the care plan from your doctor or practitioner, or add it as a PDF. Cali Care turns it into a short list for the morning, afternoon, and bedtime, with your provider’s exact words a tap away.'))
+    plan_text = (verify('plan-import', P('Take a photo of the care plan from your doctor or practitioner, or add it as a PDF. Cali Care shows where you are in the plan and what’s coming up, and turns it into a short list for the morning, afternoon, and bedtime, with your provider’s exact words a tap away.'))
                  + P('It counts skin-care rounds and shows which supplements to give when, so you don’t have to keep it all in your head.')
                  + small('Importing a plan requires signing in.'))
-    out.append(feature('plan', 'Care plan', 'Your care plan, as a to-do list.', plan_text,
-                       shot('todo-day.jpg', 'Cali Care’s To do screen: the care plan as a list for the morning, with the next step highlighted', sc),
+    def captioned(label, html):
+        return (f'<figure style="margin:0;display:flex;flex-direction:column;align-items:center;gap:var(--s3)">{html}'
+                f'<figcaption class="t-caption muted">{label}</figcaption></figure>')
+    pair = sc * (0.78 if desk else 0.48)
+    plan_vis = (f'<div style="display:flex;justify-content:center;align-items:flex-start;gap:var(--s5)">'
+                + captioned('Plan', shot('plan-day.jpg', 'Cali Care’s Plan screen: Week 1 of 12, the next visit, and what’s coming up', pair))
+                + captioned('To do', shot('todo-day.jpg', 'Cali Care’s To do screen: the care plan as a list for the morning, with the next step highlighted', pair))
+                + '</div>')
+    out.append(feature('plan', 'Care plan', 'Your care plan, as a to-do list.', plan_text, plan_vis,
                        bg='var(--surface)'))
 
     # 3. Quick Log on the Lock Screen
@@ -190,10 +198,20 @@ def build(desk):
     def labeled(label, html):
         return (f'<figure style="margin:0;display:flex;flex-direction:column;align-items:center;gap:var(--s3)">{html}'
                 f'<figcaption class="t-caption muted">{label}</figcaption></figure>')
-    log_vis = (f'<div style="display:flex;flex-direction:column;align-items:center;gap:var(--s6)">'
-               + labeled('On your Lock Screen', quick_log_card(1.0 if desk else 0.9))
-               + labeled('On your Home Screen', picture('widget_desk', 'The Cali Care Home Screen widget with a Log button', w=158, h=158))
-               + '</div>')
+    # The owner's own screen recording of Quick Log on the Lock Screen, once it's
+    # in web/shots/lockscreen.mp4: plays once, with controls (no endless loop).
+    video = os.path.join(HERE, '..', '..', 'web', 'shots', 'lockscreen.mp4')
+    if os.path.exists(video):
+        vw = int(320 * sc)
+        log_vis = (f'<div style="display:flex;justify-content:center">'
+                   + labeled('On a real iPhone', f'<video src="shots/lockscreen.mp4" poster="shots/lockscreen.jpg" width="{vw}" '
+                             f'muted playsinline controls preload="metadata" style="border-radius:{int(40*sc)}px;display:block" '
+                             f'aria-label="Tapping Log on the Quick Log card on the Lock Screen, Face ID, then Logged"></video>')
+                   + '</div>')
+    else:
+        log_vis = (f'<div style="display:flex;justify-content:center">'
+                   + labeled('On your Lock Screen', quick_log_card(1.0 if desk else 0.9))
+                   + '</div>')
     out.append(feature('log', 'Quick Log', 'Log from your Lock Screen.', log_text, log_vis, flip=True))
 
     # 4. Quick updates

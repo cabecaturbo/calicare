@@ -38,8 +38,8 @@ enum GuidePath: String, Identifiable, CaseIterable {
 
     var doneSentence: String {
         switch self {
-        case .homeScreen: "Tap Log on your Home Screen whenever it itches. The app never opens."
-        case .lockScreen: "Log an itch or see last night without unlocking."
+        case .homeScreen: "Tap Log on your Home Screen whenever it itches."
+        case .lockScreen: "Tap Log on your Lock Screen. Your iPhone checks it's you, then it's saved."
         case .controlCenter: "Swipe down and tap the hand to log an itch."
         }
     }
@@ -248,7 +248,7 @@ struct GuideScreenshot: View {
             .clipShape(Circle())
             .overlay(TapRing())
             .overlay(Circle().strokeBorder(palette.paper, lineWidth: 3))
-            .shadow(color: .black.opacity(0.18), radius: 10, y: 4)
+            .overlay(Circle().strokeBorder(palette.hairline, lineWidth: Rule.width))
             .position(x: x, y: y)
     }
 }

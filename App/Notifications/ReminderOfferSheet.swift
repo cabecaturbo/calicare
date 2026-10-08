@@ -15,7 +15,7 @@ struct ReminderOfferSheet: View {
                     .textStyle(.title)
                     .foregroundStyle(palette.ink)
                     .accessibilityAddTraits(.isHeader)
-                Text("CaliCare can ask how last night went, and remind you about morning and evening routines. Answer right from the notification. No need to open the app.")
+                Text("Cali Care can ask how last night went, and remind you about morning and evening routines. Answer right from the notification. No need to open the app.")
                     .textStyle(.body)
                     .foregroundStyle(palette.ink)
                     .padding(.top, Spacing.titleToLede)

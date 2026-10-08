@@ -15,7 +15,10 @@ struct AddPlanSheet: View {
     }
 
     /// Where the plan comes from, when the Plan tab already asked.
-    enum Source { case scan, file, photos }
+    enum Source: Identifiable {
+        case scan, file, photos
+        var id: Self { self }
+    }
 
     @Environment(\.palette) private var palette
     @Environment(\.dismiss) private var dismiss

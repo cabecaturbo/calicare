@@ -126,7 +126,7 @@ private struct SummaryPage: View {
         VStack(alignment: .leading, spacing: 0) {
             PageTitle(
                 title: "Care log for \(report.child.name)",
-                detail: "\(report.dateRange). Counts of what a parent logged in CaliCare. Skin is the parent's daily answer: calm, a little itchy, flaring, or very rough."
+                detail: "\(report.dateRange). Counts of what a parent logged in Cali Care. Skin is the parent's daily answer: calm, a little itchy, flaring, or very rough."
             )
             VStack(spacing: 0) {
                 stat("Days with logs", "\(report.daysWithLogs) of \(report.days.count)")

@@ -1,10 +1,11 @@
 import Core
 import SwiftUI
 
-/// Full screen, no account: Welcome → Your child → Reminders → Log from anywhere → Today.
+/// Full screen, no account: Welcome → Your child → Care plan (optional) →
+/// Reminders → Log from anywhere → Today.
 struct OnboardingView: View {
     enum Step: Int, CaseIterable {
-        case welcome, child, reminders, logAnywhere
+        case welcome, child, plan, reminders, logAnywhere
     }
 
     @Environment(\.palette) private var palette
@@ -32,6 +33,8 @@ struct OnboardingView: View {
                     WelcomeStep { go(to: .child) }
                 case .child:
                     ChildStep(details: $details, error: saveError) { Task { await saveChild() } }
+                case .plan:
+                    PlanStep(child: child) { go(to: .reminders) }
                 case .reminders:
                     RemindersStep(childName: child?.name) { go(to: .logAnywhere) }
                 case .logAnywhere:
@@ -45,7 +48,7 @@ struct OnboardingView: View {
         .task { await loadChild() }
     }
 
-    /// Back, and a thin progress line for the three steps after Welcome.
+    /// Back, and a thin progress line for the steps after Welcome.
     private var topBar: some View {
         HStack(spacing: Spacing.x4) {
             Button {
@@ -88,7 +91,7 @@ struct OnboardingView: View {
         do {
             child = try await details.save(updating: child?.id)
             saveError = nil
-            go(to: .reminders)
+            go(to: .plan)
         } catch {
             saveError = "Couldn't save that just now. Please try again."
         }
@@ -116,9 +119,12 @@ private struct WelcomeStep: View {
                 Illustration(kind: .sun, size: CGSize(width: 168, height: 160))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, Spacing.section)
-                Text("A calm place to follow your child’s care plan and log how their skin and nights are going, in one tap.")
+                Text("Follow your child’s care plan, and log their skin and nights in one tap.")
                     .textStyle(.lede)
                     .foregroundStyle(palette.ink)
+                    .padding(Spacing.x5)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(palette.oat, in: RoundedRectangle(cornerRadius: Corner.star))
             }
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, Spacing.margin)
@@ -176,25 +182,67 @@ private struct ChildStep: View {
     }
 }
 
-/// Title and one line, with the margin, for the steps after Welcome.
+/// Each step's star (DESIGN.md §5a): the title in the serif and one line,
+/// on a soft card, with the margin, for the steps after Welcome.
 struct OnboardingHeading: View {
-    @Environment(\.palette) private var palette
     let title: String
     let detail: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.titleToLede) {
-            Text(title)
-                .textStyle(.title)
-                .foregroundStyle(palette.ink)
-                .accessibilityAddTraits(.isHeader)
-            Text(detail)
-                .textStyle(.body)
-                .foregroundStyle(palette.graphite)
+        SoftStar(title: title, line: detail)
+            .padding(.horizontal, Spacing.margin)
+            .padding(.bottom, Spacing.x5)
+    }
+}
+
+/// Optional: bring in the care plan now. It's read into a draft that waits
+/// on the Plan tab as "Check your plan". Skip moves on.
+private struct PlanStep: View {
+    @Environment(\.palette) private var palette
+    let child: ChildInfo?
+    let onContinue: () -> Void
+    @State private var adding: AddPlanSheet.Source?
+    @State private var added = false
+
+    var body: some View {
+        OnboardingPage {
+            OnboardingHeading(title: "Bring in your care plan",
+                              detail: "Scan it or add the PDF. You check every step before it starts.")
+            if added {
+                Text("Got it. It's waiting for you on the Plan tab.")
+                    .textStyle(.body)
+                    .foregroundStyle(palette.ink)
+                    .padding(.horizontal, Spacing.margin)
+                    .transition(Motion.fade)
+            } else {
+                VStack(spacing: 0) {
+                    SourceRow(title: "Scan the paper", symbol: "camera.viewfinder") { adding = .scan }
+                    SourceRow(title: "Add a PDF", symbol: "doc") { adding = .file }
+                    SourceRow(title: "Choose a photo", symbol: "photo.on.rectangle") { adding = .photos }
+                }
+                .padding(.horizontal, Spacing.margin)
+                Text("Reading a plan needs you to sign in. The file stays on your phone.")
+                    .textStyle(.meta)
+                    .foregroundStyle(palette.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, Spacing.margin)
+                    .padding(.top, Spacing.x3)
+            }
+        } footer: {
+            if added {
+                Button("Continue", action: onContinue)
+                    .buttonStyle(.primary)
+            } else {
+                Button("Skip for now", action: onContinue)
+                    .buttonStyle(.textLink)
+            }
         }
-        .fixedSize(horizontal: false, vertical: true)
-        .padding(.horizontal, Spacing.margin)
-        .padding(.bottom, Spacing.ledeToSection)
+        .sheet(item: $adding) { source in
+            if let child {
+                AddPlanSheet(child: child, source: source) { _ in withMotion(.standard) { added = true } }
+                    .nightAwarePalette()
+            }
+        }
     }
 }
 

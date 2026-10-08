@@ -214,7 +214,7 @@ private struct SupplementTile: View {
                     .fontWeight(.medium)
                     .foregroundStyle(palette.ink)
                     .lineLimit(2)
-                Text(notStarted ? (entry.meta ?? "Not started yet") : (entry.amount ?? "As the plan says"))
+                Text(notStarted ? (entry.meta ?? "Not started yet") : (entry.amount ?? "No amount in the plan"))
                     .textStyle(.meta)
                     .foregroundStyle(palette.graphite)
                     .lineLimit(2)

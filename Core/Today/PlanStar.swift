@@ -7,12 +7,15 @@ public struct PlanStar: Equatable, Sendable {
     /// 1-based, capped at the length.
     public let week: Int
     public let lengthWeeks: Int?
+    /// Days into the plan, counting today (day 1 is the start day).
+    public let day: Int
     /// "Next visit Oct 26, in 3 weeks", or nil when none is scheduled.
     public let nextVisit: String?
 
     public init(plan: CarePlanInfo, visits: [VisitInfo], now: Date, calendar: Calendar = .autoupdatingCurrent) {
         let start = calendar.startOfDay(for: plan.startedAt ?? now)
         let days = calendar.dateComponents([.day], from: start, to: calendar.startOfDay(for: now)).day ?? 0
+        day = max(days, 0) + 1
         var week = max(days, 0) / 7 + 1
         if let length = plan.lengthWeeks { week = min(week, length) }
         self.week = week
@@ -27,10 +30,11 @@ public struct PlanStar: Equatable, Sendable {
         lengthWeeks.map { "Week \(week) of \($0)" } ?? "Week \(week)"
     }
 
-    /// Weeks done out of the length (week 2 of 12 → 1/12), nil without a length.
+    /// How far into the plan, by days (today counts), nil without a length.
+    /// Day 1 of a 12-week plan already shows a sliver, so the line never looks empty.
     public var progress: Double? {
         guard let length = lengthWeeks, length > 0 else { return nil }
-        return Double(week - 1) / Double(length)
+        return min(Double(day) / Double(length * 7), 1)
     }
 
     /// The plan's longest stated duration in weeks ("3 months" → 13,

@@ -14,7 +14,9 @@ struct LoggedBanner: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: Spacing.x3) {
-            DoneMark(isDone: marked, size: 22)
+            if !confirmation.wasDeleted {
+                DoneMark(isDone: marked, size: 22)
+            }
             Text(confirmation.text)
                 .textStyle(.body)
                 .foregroundStyle(palette.ink)

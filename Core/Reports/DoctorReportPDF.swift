@@ -153,7 +153,7 @@ private struct SummaryPage: View {
             .frame(height: 120)
             .padding(.top, Spacing.x2)
 
-            Text("Night rating (lower is calmer)")
+            Text("Night rating (lower is better)")
                 .font(TypeStyle.control.font)
                 .foregroundStyle(palette.ink)
                 .padding(.top, Spacing.x4)
@@ -165,7 +165,7 @@ private struct SummaryPage: View {
             .chartYAxis {
                 AxisMarks(values: [0, 1, 2]) { value in
                     AxisGridLine()
-                    AxisValueLabel { Text(["Calm", "Medium", "Hard"][value.as(Int.self) ?? 0]) }
+                    AxisValueLabel { Text(["Good", "Okay", "Rough"][value.as(Int.self) ?? 0]) }
                 }
             }
             .frame(height: 90)
@@ -206,9 +206,9 @@ private struct DaysPage: View {
 
     static func words(_ level: CareLevel?) -> String {
         switch level {
-        case .low?: "calm"
-        case .medium?: "medium"
-        case .high?: "hard"
+        case .low?: "good"
+        case .medium?: "okay"
+        case .high?: "rough"
         case nil: "not logged"
         }
     }

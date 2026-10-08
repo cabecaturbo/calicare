@@ -38,7 +38,7 @@ struct PlanStarTests {
     @Test func weekOfTheLengthWithProgress() {
         let star = PlanStar(plan: plan(started: TestTime.date(2026, 9, 29, 9), length: 12), visits: [], now: now, calendar: calendar)
         #expect(star.title == "Week 2 of 12")
-        #expect(star.progress == 1.0 / 12)
+        #expect(star.progress == 9.0 / 84) // Sep 29 to Oct 7: day 9 of 84
         #expect(star.nextVisit == nil)
     }
 

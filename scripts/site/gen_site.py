@@ -179,7 +179,7 @@ def build(desk):
     plan_text = (verify('plan-import', P('Take a photo of the care plan from your doctor or practitioner, or add it as a PDF. Cali Care turns it into a short list for the morning, afternoon, and bedtime, with your provider’s exact words a tap away.'))
                  + small('Importing a plan requires signing in.'))
     out.append(feature('plan', 'Care plan', 'Bring in your care plan.', plan_text,
-                       shot('plan-day.jpg', 'Cali Care’s Plan screen: week 2 of 12, the next visit, and what’s coming up', sc),
+                       shot('plan-day.jpg', 'Cali Care’s Plan screen: week 1 of 12, the next visit, and what’s coming up', sc),
                        flip=True, bg='var(--surface)'))
 
     # 3. To do

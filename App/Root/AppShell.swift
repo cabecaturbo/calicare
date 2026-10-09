@@ -106,7 +106,8 @@ struct AppShell: View {
             }
             if !pills {
                 Tab(value: AppTab.logItchy, role: circleRole) {
-                    Color.clear
+                    // Never really shown, but some iOS versions flash it: paper, not white.
+                    Color.clear.paperBackground()
                 } label: {
                     Label { Text("Log") } icon: { Image(uiImage: LogTabIcon.image) }
                 }
@@ -141,6 +142,11 @@ struct AppShell: View {
             set: { new in
                 if new == .logItchy {
                     Task { await model.log(.itchEpisode) }
+                    // Some iOS versions switch to the Log tab anyway; put the
+                    // tab the parent was on back right away.
+                    let current = shell.tab
+                    shell.tab = .logItchy
+                    DispatchQueue.main.async { shell.tab = current }
                 } else {
                     shell.tab = new
                 }

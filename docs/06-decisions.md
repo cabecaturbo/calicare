@@ -635,3 +635,13 @@ The owner saw the v2 redesign on the phone and asked for it to be reverted. The 
 - Data (additive, SchemaV8, lightweight): `CarePlan.lengthWeeks` (set by the parent in About this plan; the plan's longest stated duration is offered, never saved for them) and `PlanItem.doseStepsRaw` (the parent's dose steps, JSON text). Plan start uses the existing `startedAt`, so no new start field. Supabase: `care_plans.length_weeks`, `plan_items.dose_steps` (text, not jsonb, to match how the app stores it). Pushed October 7, 2026.
 - Coming up has exactly three sources: dose steps, starts the plan's own rules date (`SupplementPlan.startReason`), and visits. To do shows the current dose step's amount.
 - The star uses the statement style (Newsreader 400, 40) like To do's; the tab title stays display 34.
+
+## Site back to the old layout (October 7, 2026)
+- The owner preferred the site and wording from before October 7; the generator was restored from 5d1c701.
+- The Quick Log section was removed. Plan and To do each have their own section, pictures alternating sides (left after the hero). The pictures are screenshots of the current app (build 3).
+- The founder story opens with "I know what it's like…".
+
+## Version numbers and the Log button (October 8, 2026)
+- Every target's Info.plist now reads `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` from project.yml (they had 1.0 (1) hard-coded, so every upload was build 1).
+- The glass tab bar's Log is a hidden tab that only logs. Some iOS versions switched to it anyway (a blank white screen); the current tab is now put back right away and the placeholder uses the paper background.
+- CI runs Xcode 26.6, whose compiler crashed on a custom Binding with a method as its setter (Settings › Appearance). Keep pickers bound to stored values.

@@ -248,18 +248,19 @@ A grouped list, in this order:
    (each opens the full-screen setup guide), Siri, and "Send the weekly
    card automatically" (four numbered steps for a Shortcuts automation
    with "Get Weekly Card", and Apple's Shortcuts button).
-5. Your data: "Export and what's stored where": every log as a
+5. Quick Log: "Show Quick Log on the Lock Screen" (Face ID before it logs).
+   Appearance: Colors (Time of day, Day, Night); time of day uses night
+   colors from 8 PM to 7 AM. There's no day/night button on the tabs.
+6. Your data: "Export and what's stored where": every log as a
    spreadsheet (CSV, one row per log), the care log PDF for any dates, and
    what's stored on the phone, what's shared with family, and that photos
    never leave the phone.
-6. Account (signed in only): Shown as, Sign out, Delete account.
-7. About: "How Cali Care works" (what each log means, how Progress
+7. Account (signed in only): Shown as, Sign out, Delete account.
+8. About: "How Cali Care works" (what each log means, how Progress
    compares, the 7 PM day), "Contact support" (opens Mail), Version, and "Not medical advice" under it.
-8. Debug (debug builds only): Recent logs, Try a notification.
+9. Debug (debug builds only): Recent logs, Try a notification.
 
 Not built yet:
-- The privacy policy link in About (the policy comes
-  with the landing page, Phase 7).
 - Removing a child in a shared family (needs the owner check).
 - The Action Button guide (until it's recorded on a real iPhone).
 

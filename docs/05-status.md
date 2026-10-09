@@ -1,26 +1,25 @@
-# Status (October 4, 2026)
+# Status (October 8, 2026)
 
 Where CaliCare stands. `PROGRESS.md` has the step-by-step checklist, and `docs/06-decisions.md` has the reasons behind each choice.
 
 ## Where things are
 - **Base branch:** `claude/inspiring-lamport-rmzneg`. Each step gets its own branch off it and merges back through a PR once CI passes. GitHub's default `main` is behind, at PR #47.
-- **Built:**
-  - Phases 1–5.
-  - 6.1 photos and 6.2 product diary.
-  - The UX rebuild.
-  - V1.0 hierarchy and wording.
-  - V1.0b To do + Info (SchemaV7).
-- **On the owner's iPhone:** the app as of PR #52. The "plain and obvious" redesign (PR #53) was reverted in PR #54 at the owner's request.
+- **Built and merged (through PR #92):**
+  - Phases 1–5, 6.1 photos, 6.2 product diary, the UX rebuild, V1.0 hierarchy and wording.
+  - Tabs: Today, To do, Progress, **Plan** (v4: the star card with week and next visit, Coming up, supplement tiles, Skin care card, item pages with dose steps). SchemaV8 adds `CarePlan.lengthWeeks` and `PlanItem.doseStepsRaw` (Supabase columns pushed).
+  - One motion system (`Core/DesignSystem/Motion.swift`, DESIGN.md §8). One star per screen (DESIGN.md §5a).
+  - Onboarding matches the app and offers "Bring in your care plan".
+  - Night colors follow the clock; Settings › Appearance overrides.
+- **On the owner's iPhone:** the Release build 1.0 (4).
+- **TestFlight:** builds 3 and 4 submitted for beta review (build 2 is approved and live on the public link).
+- **Site:** https://calicare.vercel.app, the owner's preferred old layout and wording, with Plan and To do as their own sections showing the current app.
 - **Version 1 is slim on purpose:**
   - Food extras are hidden (`Features.foodExtras`).
   - Out of version 1: 6.3–6.5, 7.2 and 7.4.
   - The Watch comes after launch.
   - **No paywall: version 1 is free during beta** (October 4, 2026).
 
-## In progress
-- **Plan tab (replaces Info):** PR #84 (v2) → #85 (v3, item pages, Settings › Appearance) → branch plan-v4 (the star, Coming up, tiles, dose steps; SchemaV8). Needs a phone check before merging.
-
-## To finish before TestFlight
+## Left for the owner
 1. **Phone checks (owner):**
    - a real care plan import
    - the doctor PDF in Files and Mail
@@ -30,8 +29,8 @@ Where CaliCare stands. `PROGRESS.md` has the step-by-step checklist, and `docs/0
 2. **Two-phone test (owner):** join with an invite code (2.4) and "by Dad" names (2.5).
 3. **Apple sign-in token removal on account deletion:** code merged (PR #57). Manual: create a Sign in with Apple key on developer.apple.com, then set the APPLE_* Supabase secrets and deploy `delete-account`.
 4. **7.6 TestFlight:**
-   - Done October 5, 2026: app record created, build 1.0 (2) uploaded, in beta review. Owner is in the Team group.
-   - Public link (works after beta review): https://testflight.apple.com/join/ABXetDtE
+   - App record created October 5, 2026; builds 2 (approved), 3 and 4 (in review). Owner is in the Team group.
+   - Public link: https://testflight.apple.com/join/ABXetDtE
    - Invite 5–10 eczema parents.
    - Ideally, a pediatric dermatologist reviews the reports and wording.
 

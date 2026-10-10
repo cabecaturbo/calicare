@@ -36,7 +36,7 @@ public struct QuickLogCardAttributes: ActivityAttributes {
     }
 }
 
-/// Settings › "Show Quick Log on the Lock Screen". On unless turned off.
+/// Settings › "Allow the Log card". On unless turned off.
 public struct QuickLogCardSettings: Sendable {
     private static let key = "quickLogCard.enabled"
 

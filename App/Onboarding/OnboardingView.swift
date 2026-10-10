@@ -131,7 +131,7 @@ private struct WelcomeStep: View {
         } footer: {
             Button("Add your child", action: onContinue)
                 .buttonStyle(.primary)
-            Text("No ads. Photos never leave your phone.")
+            Text("No ads. Photos of your child never leave your phone.")
                 .textStyle(.meta)
                 .foregroundStyle(palette.graphite)
         }
@@ -206,8 +206,7 @@ private struct PlanStep: View {
 
     var body: some View {
         OnboardingPage {
-            OnboardingHeading(title: "Bring in your care plan",
-                              detail: "Scan it or add the PDF. You check every step before it starts.")
+            OnboardingHeading(title: PlanSourceChoices.title, detail: PlanSourceChoices.line)
             if added {
                 Text("Got it. It's waiting for you on the Plan tab.")
                     .textStyle(.body)
@@ -215,18 +214,8 @@ private struct PlanStep: View {
                     .padding(.horizontal, Spacing.margin)
                     .transition(Motion.fade)
             } else {
-                VStack(spacing: 0) {
-                    SourceRow(title: "Scan the paper", symbol: "camera.viewfinder") { adding = .scan }
-                    SourceRow(title: "Add a PDF", symbol: "doc") { adding = .file }
-                    SourceRow(title: "Choose a photo", symbol: "photo.on.rectangle") { adding = .photos }
-                }
-                .padding(.horizontal, Spacing.margin)
-                Text("Reading a plan needs you to sign in. The file stays on your phone.")
-                    .textStyle(.meta)
-                    .foregroundStyle(palette.graphite)
-                    .fixedSize(horizontal: false, vertical: true)
+                PlanSourceChoices { adding = $0 }
                     .padding(.horizontal, Spacing.margin)
-                    .padding(.top, Spacing.x3)
             }
         } footer: {
             if added {

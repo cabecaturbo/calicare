@@ -19,7 +19,12 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         didReceive response: UNNotificationResponse
     ) async {
         let actionIdentifier = response.actionIdentifier
-        let payload = ReminderPayload(userInfo: response.notification.request.content.userInfo)
+        let userInfo = response.notification.request.content.userInfo
+        if let link = LockWidgetReminder.link(in: userInfo) {
+            await MainActor.run { UIApplication.shared.open(link) }
+            return
+        }
+        let payload = ReminderPayload(userInfo: userInfo)
         if payload?.kind == .tonight, actionIdentifier == UNNotificationDefaultActionIdentifier {
             await MainActor.run { UIApplication.shared.open(DeepLink.quickLog) }
             return

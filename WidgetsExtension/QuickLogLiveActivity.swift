@@ -4,7 +4,7 @@ import Core
 import SwiftUI
 import WidgetKit
 
-/// The Quick Log card on the Lock Screen and in the Dynamic Island: a big Log
+/// The Log card on the Lock Screen and in the Dynamic Island: a big Log
 /// button and only a count and times (the Lock Screen is public). When its
 /// period ends it shows a short summary and Log keeps working; if its 8 hours
 /// run out first, it says so instead of quietly going away.
@@ -18,7 +18,7 @@ struct QuickLogLiveActivity: Widget {
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    Text("Quick Log").font(TypeStyle.label.font)
+                    Text("Log card").font(TypeStyle.label.font)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     Text("\(context.state.itches.count)")
@@ -30,7 +30,7 @@ struct QuickLogLiveActivity: Widget {
                     CardLogButton(childID: context.attributes.childID, palette: Palette.night, wide: true)
                 }
             } compactLeading: {
-                Image(systemName: "hand.raised.fill").accessibilityLabel("Quick Log")
+                Image(systemName: "hand.raised.fill").accessibilityLabel("Log card")
             } compactTrailing: {
                 Text("\(context.state.itches.count)")
                     .contentTransition(.numericText())
@@ -61,7 +61,7 @@ private struct QuickLogCardView: View {
     var body: some View {
         HStack(alignment: .center, spacing: Spacing.x4) {
             VStack(alignment: .leading, spacing: Spacing.x1) {
-                Text("Quick Log")
+                Text("Log card")
                     .font(TypeStyle.title.font)
                     .foregroundStyle(palette.ink)
                 status

@@ -12,7 +12,7 @@ struct ItchWidget: Widget {
             ItchWidgetView(entry: entry)
         }
         .configurationDisplayName("Log")
-        .description("One tap logs an itchy moment.")
+        .description("One tap logs an itch.")
         .supportedFamilies([.systemSmall, .accessoryCircular])
     }
 }

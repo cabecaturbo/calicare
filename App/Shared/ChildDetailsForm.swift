@@ -97,9 +97,10 @@ struct ChildDetailsForm: View {
                     Text("Color")
                         .textStyle(.control)
                         .foregroundStyle(palette.ink)
-                    Text("You can skip this. It helps tell kids apart.")
+                    Text("Optional. Marks their name when you have more than one child.")
                         .textStyle(.meta)
                         .foregroundStyle(palette.graphite)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             } trailing: {
                 colorChoices

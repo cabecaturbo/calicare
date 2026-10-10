@@ -15,6 +15,6 @@ struct LogItchControl: ControlWidget {
         }
         // Found by searching "Cali Care" in Control Center; the guide says "tap Log".
         .displayName("Log")
-        .description("Logs an itchy moment for your current child.")
+        .description("Logs an itch for your current child.")
     }
 }

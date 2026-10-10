@@ -3,7 +3,7 @@ import AppIntents
 /// One-tap itch log for Siri, the Action Button, and Control Center.
 public struct LogItchIntent: AppIntent {
     public static let title: LocalizedStringResource = "Log Itching"
-    public static let description = IntentDescription("Logs an itchy moment for your child without opening Cali Care.")
+    public static let description = IntentDescription("Logs an itch for your child without opening Cali Care.")
     public static let openAppWhenRun = false
 
     @Parameter(title: "Child")

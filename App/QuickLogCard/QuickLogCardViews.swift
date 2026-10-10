@@ -1,8 +1,8 @@
 import Core
 import SwiftUI
 
-/// Today: "Put Quick Log on the Lock Screen" (or, when it's there, a line
-/// saying so with Remove). Picks the child first when there's more than one.
+/// Settings: "Show the Log card now" (or, when it's there, a line saying so
+/// with Remove). Picks the child first when there's more than one.
 struct QuickLogCardRow: View {
     @Environment(\.palette) private var palette
     @Environment(Shell.self) private var shell
@@ -12,7 +12,7 @@ struct QuickLogCardRow: View {
         Group {
             if running {
                 HStack {
-                    Text("Quick Log is on your Lock Screen.")
+                    Text("The Log card is on your Lock Screen.")
                         .textStyle(.body)
                         .foregroundStyle(palette.ink)
                     Spacer(minLength: Spacing.x2)
@@ -27,13 +27,11 @@ struct QuickLogCardRow: View {
                 }
             } else {
                 Button {
+                    // The dialog and any problem show from the shell, so close Settings first.
+                    shell.showingSettings = false
                     shell.startingQuickLog = true
                 } label: {
-                    Label("Put Quick Log on the Lock Screen", systemImage: "hand.raised")
-                        .font(TypeStyle.label.font)
-                        .foregroundStyle(palette.ink)
-                        .frame(maxWidth: .infinity, minHeight: 52)
-                        .overlay(RoundedRectangle(cornerRadius: Corner.card).strokeBorder(palette.ink, lineWidth: 1))
+                    SettingsLabel("Show the Log card now")
                 }
                 .accessibilityHint("Adds a Log button and today's or tonight's count to the Lock Screen.")
             }
@@ -42,7 +40,6 @@ struct QuickLogCardRow: View {
         .onChange(of: shell.quickLogVersion) { _, _ in running = QuickLogCard.isRunning }
     }
 
-    static var shows: Bool { QuickLogCardSettings().isEnabled }
 }
 
 /// Starts the card from the app (the Today button, the reminder, or the card
@@ -62,7 +59,7 @@ struct QuickLogCardStarter: ViewModifier {
                     start(nil)
                 }
             }
-            .confirmationDialog("Quick Log for…", isPresented: $shell.pickingQuickLogChild, titleVisibility: .visible) {
+            .confirmationDialog("Log card for…", isPresented: $shell.pickingQuickLogChild, titleVisibility: .visible) {
                 ForEach(model.children) { child in
                     Button(child.name) { start(child.id) }
                 }
@@ -80,9 +77,9 @@ struct QuickLogCardStarter: ViewModifier {
             } catch QuickLogCardError.activitiesOff {
                 model.problem = "Live Activities are off for Cali Care. You can turn them on in the Settings app, under Cali Care."
             } catch QuickLogCardError.turnedOff {
-                model.problem = "Quick Log is turned off in Settings."
+                model.problem = "The Log card is turned off in Settings."
             } catch {
-                model.problem = "Couldn't add Quick Log. Please try again."
+                model.problem = "Couldn't show the Log card. Please try again."
             }
             shell.quickLogVersion += 1
         }
@@ -175,23 +172,27 @@ enum LastNightLoader {
     }
 }
 
-/// Settings › Quick Log: one switch. Turning it off takes the card off the Lock Screen.
+/// Settings › Log card for tonight: one switch, and the card itself. Turning it
+/// off takes the card off the Lock Screen.
 struct QuickLogCardSettingsSection: View {
     @Environment(\.palette) private var palette
     @State private var isOn = QuickLogCardSettings().isEnabled
 
     var body: some View {
         SettingsSection(
-            "Quick Log",
-            footnote: "A Log button on your Lock Screen, day or night. Your iPhone asks for Face ID before it logs. It shows only how many times, never your child's name, and lasts up to 8 hours after your last tap."
+            "Log card for tonight",
+            footnote: "A Log button on your Lock Screen for the night, with no setup. Your iPhone asks for Face ID before it logs. It shows only how many times, never your child's name, and lasts up to 8 hours after your last tap."
         ) {
             Toggle(isOn: $isOn) {
-                SettingsLabel("Show Quick Log on the Lock Screen")
+                SettingsLabel("Allow the Log card")
             }
             .tint(palette.accent)
             .onChange(of: isOn) { _, on in
                 QuickLogCardSettings().isEnabled = on
                 if !on { Task { await QuickLogCard.endAll() } }
+            }
+            if isOn {
+                QuickLogCardRow()
             }
         }
     }

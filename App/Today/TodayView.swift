@@ -64,23 +64,20 @@ struct TodayView: View {
             .padding(.top, Spacing.x7)
         }
 
-        summary
-            .padding(.horizontal, Spacing.margin)
-            .padding(.top, asksSkin ? Spacing.x7 : Spacing.x5)
-
-        if QuickLogCardRow.shows {
-            QuickLogCardRow()
-                .padding(.horizontal, Spacing.margin)
-                .padding(.top, Spacing.x4)
-        }
-
-        if !night, model.isDaytime, let report = model.lastNight, report.rating == nil, !report.isTonight {
-            NightRatingChoices { rating in
+        if asksNightRating {
+            NightRatingChoices(caption: wakeUpLine) { rating in
                 Task { await model.log(.nightRating, value: .night(rating)) }
             }
             .padding(.horizontal, Spacing.margin)
-            .padding(.top, Spacing.x4)
+            .padding(.top, asksSkin ? Spacing.x7 : Spacing.x5)
+        } else {
+            summary
+                .padding(.horizontal, Spacing.margin)
+                .padding(.top, asksSkin ? Spacing.x7 : Spacing.x5)
         }
+
+        LockWidgetRow()
+            .padding(.horizontal, Spacing.margin)
 
         if !night, let skin, !changingSkin {
             HStack {
@@ -125,6 +122,22 @@ struct TodayView: View {
 
         TodaySoFar(entries: model.entries, isNight: night) { editing = $0 }
             .padding(.top, Spacing.x7)
+    }
+
+    /// By day, until last night is rated, one prompt takes the card's place.
+    private var asksNightRating: Bool {
+        guard !nightLayout, model.isDaytime, let report = model.lastNight else { return false }
+        return report.rating == nil && !report.isTonight
+    }
+
+    /// Last night's itchy wake-ups, or nil when there were none.
+    private var wakeUpLine: String? {
+        let wakeUps = model.lastNight?.itchyWakeUps ?? 0
+        guard wakeUps > 0 else { return nil }
+        let times = model.entries
+            .filter { $0.type == .itchEpisode && CareDay.containing($0.timestamp).nightInterval().contains($0.timestamp) }
+            .map { model.time($0.timestamp) }
+        return "\(wakeUps == 1 ? "One itchy wake-up" : "\(wakeUps) itchy wake-ups")\(times.isEmpty ? "" : ", at \(times.reversed().joined(separator: " and "))")"
     }
 
     /// "Last night: A good night" by day; "So far tonight: Two wake-ups" at night.
@@ -235,18 +248,25 @@ struct SkinCheckIn: View {
     }
 }
 
-/// Good / Okay / Rough under the Last night card while last night isn't rated.
-/// Same cards as the skin check-in; one tap logs it.
+/// "How was last night?" with Good / Okay / Rough, in place of the Last night
+/// card until it's rated, with any wake-ups under it. One tap logs it.
 struct NightRatingChoices: View {
     @Environment(\.palette) private var palette
     @Environment(\.dynamicTypeSize) private var typeSize
+    var caption: String?
     let onRate: (NightRating) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.x2) {
-            Text("How was the night?")
-                .textStyle(.meta)
-                .foregroundStyle(palette.graphite)
+            Text("How was last night?")
+                .textStyle(.section)
+                .foregroundStyle(palette.ink)
+                .accessibilityAddTraits(.isHeader)
+            if let caption {
+                Text(caption)
+                    .textStyle(.meta)
+                    .foregroundStyle(palette.graphite)
+            }
             let layout = typeSize.isAccessibilitySize
                 ? AnyLayout(VStackLayout(spacing: Spacing.x2))
                 : AnyLayout(HStackLayout(spacing: Spacing.x2))
@@ -314,7 +334,7 @@ private struct TodaySoFar: View {
             }
             .padding(.horizontal, Spacing.margin)
             if entries.isEmpty {
-                Text(isNight ? "Nothing logged yet tonight." : "Nothing logged yet today. Tap Log whenever it itches.")
+                Text(isNight ? "Nothing logged yet tonight." : "Nothing logged yet today.")
                     .textStyle(.body)
                     .foregroundStyle(palette.graphite)
                     .padding(.horizontal, Spacing.margin)

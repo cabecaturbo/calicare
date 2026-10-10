@@ -23,10 +23,10 @@ struct CaliCareShortcuts: AppShortcutsProvider {
         AppShortcut(
             intent: StartQuickLogIntent(),
             phrases: [
-                "Start Quick Log in \(.applicationName)",
-                "Put Quick Log on the Lock Screen in \(.applicationName)",
+                "Show the Log card in \(.applicationName)",
+                "Put the Log card on the Lock Screen in \(.applicationName)",
             ],
-            shortTitle: "Start Quick Log",
+            shortTitle: "Show Log Card",
             systemImageName: "hand.raised"
         )
         AppShortcut(

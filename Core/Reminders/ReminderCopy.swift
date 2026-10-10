@@ -11,7 +11,7 @@ public enum ReminderCopy {
             let block = kind.todoBlock?.title ?? ""
             guard let things, things > 0 else { return "\(block) list for \(childName)" }
             return "\(block): \(things) thing\(things == 1 ? "" : "s")"
-        case .tonight: return "Put Quick Log on your Lock Screen?"
+        case .tonight: return "Show the Log card for tonight?"
         }
     }
 
@@ -20,7 +20,7 @@ public enum ReminderCopy {
         case .checkIn, .skinCheckIn: "One tap is enough."
         case .morningRoutine, .afternoonRoutine, .eveningRoutine:
             childName.isEmpty ? "Tap All done when it's all done." : "For \(childName). Tap All done when it's all done."
-        case .tonight: "Tap to add the Log button to your Lock Screen."
+        case .tonight: "Tap to put Log on your Lock Screen for the night."
         }
     }
 
@@ -32,7 +32,11 @@ public enum ReminderCopy {
         case .morningRoutine: "Morning list"
         case .afternoonRoutine: "Afternoon list"
         case .eveningRoutine: "Bedtime list"
-        case .tonight: "Quick Log reminder"
+        case .tonight: "Log card reminder"
         }
     }
+
+    /// "Remind me later" from the Lock Screen widget guide: one notification, once.
+    public static let lockWidgetTitle = "Add the Log widget to your Lock Screen?"
+    public static let lockWidgetBody = "Tap to see the steps again."
 }

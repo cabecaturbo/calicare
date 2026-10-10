@@ -15,7 +15,7 @@ public enum TodayPrompts {
     /// The one line under the header until the first log for any child.
     public static func firstRunHint(hasEverLogged: Bool, isNight: Bool, asksSkin: Bool, childName: String) -> String? {
         guard !hasEverLogged else { return nil }
-        if isNight { return "Tap Log whenever \(childName) wakes up itchy." }
-        return asksSkin ? "Start here: one tap for today’s skin." : "Start here: tap Log whenever \(childName) scratches."
+        if isNight { return "Tap Log whenever \(childName) wakes up with an itch." }
+        return asksSkin ? "Start here: one tap for today’s skin." : "Start here: tap Log whenever \(childName) itches."
     }
 }

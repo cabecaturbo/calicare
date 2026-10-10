@@ -23,9 +23,9 @@ struct TodayPromptsTests {
         #expect(TodayPrompts.firstRunHint(hasEverLogged: false, isNight: false, asksSkin: true, childName: "Cal")
             == "Start here: one tap for today’s skin.")
         #expect(TodayPrompts.firstRunHint(hasEverLogged: false, isNight: false, asksSkin: false, childName: "Cal")
-            == "Start here: tap Log whenever Cal scratches.")
+            == "Start here: tap Log whenever Cal itches.")
         #expect(TodayPrompts.firstRunHint(hasEverLogged: false, isNight: true, asksSkin: false, childName: "Cal")
-            == "Tap Log whenever Cal wakes up itchy.")
+            == "Tap Log whenever Cal wakes up with an itch.")
         #expect(TodayPrompts.firstRunHint(hasEverLogged: true, isNight: false, asksSkin: true, childName: "Cal") == nil)
     }
 

@@ -70,7 +70,7 @@ extension View {
     }
 }
 
-/// A setup guide on its own page, pushed from Settings → Quick logging.
+/// A setup guide on its own page, pushed from Settings → Widgets and Siri.
 struct GuidePage<Content: View>: View {
     private let title: String
     private let content: Content

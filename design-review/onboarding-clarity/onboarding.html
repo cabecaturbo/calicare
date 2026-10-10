@@ -1,0 +1,93 @@
+<title>Cali Care Onboarding</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+<style>
+/* Layout: the flow in order, one phone per stop, wrapping into rows. */
+:root {
+  --bg: #F6EEE2; --surface: #ECDFCC; --ink: #261C14; --muted: #67584A; --line: #DECDB6;
+  --serif: Newsreader, 'New York', Georgia, serif;
+  --sans: -apple-system, 'SF Pro Text', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #201712; --surface: #2C2019; --ink: #F2E5D6; --muted: #BBA792; --line: #3B2C22; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #201712; --surface: #2C2019; --ink: #F2E5D6; --muted: #BBA792; --line: #3B2C22; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 16px/1.5 var(--sans); }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 20px; padding-block: 36px 64px; display: flex; flex-direction: column; gap: 36px; }
+h1, h2 { font-family: var(--serif); font-weight: 500; margin: 0; text-wrap: balance; }
+h1 { font-size: 38px; line-height: 1.12; }
+h2 { font-size: 24px; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+.row { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tag { font-size: 12px; color: var(--muted); }
+figure { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+figure img { width: 100%; height: auto; border-radius: 24px; border: 1px solid var(--line); display: block; }
+figcaption { font-size: 14px; color: var(--muted); }
+figcaption b { color: var(--ink); font-weight: 600; display: block; }
+section { display: flex; flex-direction: column; gap: 16px; }
+</style>
+<div class="wrap">
+  <header style="display:flex;flex-direction:column;gap:10px">
+    <h1>Onboarding fixes</h1>
+    <p class="muted">Every screen after the October 10 fixes, day on the left and night on the right. Simulator, iPhone 17.</p>
+  </header>
+  <section>
+    <h2>Onboarding</h2>
+    <div class="row">
+      <figure><div class="pair"><img src="shots/onb-1-welcome-day.jpg" alt="1. Welcome, day" loading="lazy"><img src="shots/onb-1-welcome-night.jpg" alt="1. Welcome, night" loading="lazy"></div><figcaption><b>1. Welcome</b>Photos of your child never leave your phone</figcaption></figure>
+      <figure><div class="pair"><img src="shots/onb-2-child-day.jpg" alt="2. Your child, day" loading="lazy"><img src="shots/onb-2-child-night.jpg" alt="2. Your child, night" loading="lazy"></div><figcaption><b>2. Your child</b>Keyboard up</figcaption></figure>
+      <figure><div class="pair"><img src="shots/onb-2-child-color-day.jpg" alt="2. Your child, day" loading="lazy"><img src="shots/onb-2-child-color-night.jpg" alt="2. Your child, night" loading="lazy"></div><figcaption><b>2. Your child</b>Color row; hint sits under the keyboard</figcaption></figure>
+      <figure><div class="pair"><img src="shots/onb-3-plan-day.jpg" alt="3. Care plan, day" loading="lazy"><img src="shots/onb-3-plan-night.jpg" alt="3. Care plan, night" loading="lazy"></div><figcaption><b>3. Care plan</b>Three ways in, true privacy line</figcaption></figure>
+      <figure><div class="pair"><img src="shots/onb-4-reminders-day.jpg" alt="4. Reminders, day" loading="lazy"><img src="shots/onb-4-reminders-night.jpg" alt="4. Reminders, night" loading="lazy"></div><figcaption><b>4. Reminders</b>Off: Continue disabled, Skip</figcaption></figure>
+      <figure><div class="pair"><img src="shots/onb-4-reminders-on-day.jpg" alt="4. Reminders, one on, day" loading="lazy"><img src="shots/onb-4-reminders-on-night.jpg" alt="4. Reminders, one on, night" loading="lazy"></div><figcaption><b>4. Reminders, one on</b>Day: allowed, with time. Night: refused, with note</figcaption></figure>
+      <figure><div class="pair"><img src="shots/onb-5-log-lock-day.jpg" alt="5. Log in one tap, day" loading="lazy"><img src="shots/onb-5-log-lock-night.jpg" alt="5. Log in one tap, night" loading="lazy"></div><figcaption><b>5. Log in one tap</b>Lock Screen</figcaption></figure>
+      <figure><div class="pair"><img src="shots/onb-5-log-home-day.jpg" alt="5. Log in one tap, day" loading="lazy"><img src="shots/onb-5-log-home-night.jpg" alt="5. Log in one tap, night" loading="lazy"></div><figcaption><b>5. Log in one tap</b>Home Screen</figcaption></figure>
+      <figure><div class="pair"><img src="shots/onb-5-log-cc-day.jpg" alt="5. Log in one tap, day" loading="lazy"><img src="shots/onb-5-log-cc-night.jpg" alt="5. Log in one tap, night" loading="lazy"></div><figcaption><b>5. Log in one tap</b>Control Center</figcaption></figure>
+    </div>
+  </section>
+  <section>
+    <h2>Lock Screen guide</h2>
+    <p class="muted">Recaptured with only the Log widget, on an empty account.</p>
+    <div class="row">
+      <figure><div class="pair"><img src="shots/guide-lock-1-day.jpg" alt="Step 1, day" loading="lazy"><img src="shots/guide-lock-1-night.jpg" alt="Step 1, night" loading="lazy"></div><figcaption><b>Step 1</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-lock-2-day.jpg" alt="Step 2, day" loading="lazy"><img src="shots/guide-lock-2-night.jpg" alt="Step 2, night" loading="lazy"></div><figcaption><b>Step 2</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-lock-3-day.jpg" alt="Step 3, day" loading="lazy"><img src="shots/guide-lock-3-night.jpg" alt="Step 3, night" loading="lazy"></div><figcaption><b>Step 3</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-lock-4-day.jpg" alt="Step 4, day" loading="lazy"><img src="shots/guide-lock-4-night.jpg" alt="Step 4, night" loading="lazy"></div><figcaption><b>Step 4</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-lock-5-day.jpg" alt="Step 5, day" loading="lazy"><img src="shots/guide-lock-5-night.jpg" alt="Step 5, night" loading="lazy"></div><figcaption><b>Step 5</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-lock-6-day.jpg" alt="Step 6, day" loading="lazy"><img src="shots/guide-lock-6-night.jpg" alt="Step 6, night" loading="lazy"></div><figcaption><b>Step 6</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-lock-done-day.jpg" alt="You're set, day" loading="lazy"><img src="shots/guide-lock-done-night.jpg" alt="You're set, night" loading="lazy"></div><figcaption><b>You're set</b>Remind me later</figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-lock-reminded-day.jpg" alt="After Remind me later, day" loading="lazy"><img src="shots/guide-lock-reminded-night.jpg" alt="After Remind me later, night" loading="lazy"></div><figcaption><b>After Remind me later</b>Day: scheduled. Night: notifications off</figcaption></figure>
+    </div>
+  </section>
+  <section>
+    <h2>Home Screen guide</h2>
+    <div class="row">
+      <figure><div class="pair"><img src="shots/guide-home-1-day.jpg" alt="Step 1, day" loading="lazy"><img src="shots/guide-home-1-night.jpg" alt="Step 1, night" loading="lazy"></div><figcaption><b>Step 1</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-home-2-day.jpg" alt="Step 2, day" loading="lazy"><img src="shots/guide-home-2-night.jpg" alt="Step 2, night" loading="lazy"></div><figcaption><b>Step 2</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-home-3-day.jpg" alt="Step 3, day" loading="lazy"><img src="shots/guide-home-3-night.jpg" alt="Step 3, night" loading="lazy"></div><figcaption><b>Step 3</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-home-4-day.jpg" alt="Step 4, day" loading="lazy"><img src="shots/guide-home-4-night.jpg" alt="Step 4, night" loading="lazy"></div><figcaption><b>Step 4</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-home-5-day.jpg" alt="Step 5, day" loading="lazy"><img src="shots/guide-home-5-night.jpg" alt="Step 5, night" loading="lazy"></div><figcaption><b>Step 5</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-home-6-day.jpg" alt="Step 6, day" loading="lazy"><img src="shots/guide-home-6-night.jpg" alt="Step 6, night" loading="lazy"></div><figcaption><b>Step 6</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-home-done-day.jpg" alt="You're set, day" loading="lazy"><img src="shots/guide-home-done-night.jpg" alt="You're set, night" loading="lazy"></div><figcaption><b>You're set</b></figcaption></figure>
+    </div>
+  </section>
+  <section>
+    <h2>Control Center guide</h2>
+    <div class="row">
+      <figure><div class="pair"><img src="shots/guide-cc-1-day.jpg" alt="Step 1, day" loading="lazy"><img src="shots/guide-cc-1-night.jpg" alt="Step 1, night" loading="lazy"></div><figcaption><b>Step 1</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-cc-2-day.jpg" alt="Step 2, day" loading="lazy"><img src="shots/guide-cc-2-night.jpg" alt="Step 2, night" loading="lazy"></div><figcaption><b>Step 2</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-cc-3-day.jpg" alt="Step 3, day" loading="lazy"><img src="shots/guide-cc-3-night.jpg" alt="Step 3, night" loading="lazy"></div><figcaption><b>Step 3</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-cc-4-day.jpg" alt="Step 4, day" loading="lazy"><img src="shots/guide-cc-4-night.jpg" alt="Step 4, night" loading="lazy"></div><figcaption><b>Step 4</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-cc-5-day.jpg" alt="Step 5, day" loading="lazy"><img src="shots/guide-cc-5-night.jpg" alt="Step 5, night" loading="lazy"></div><figcaption><b>Step 5</b></figcaption></figure>
+      <figure><div class="pair"><img src="shots/guide-cc-done-day.jpg" alt="You're set, day" loading="lazy"><img src="shots/guide-cc-done-night.jpg" alt="You're set, night" loading="lazy"></div><figcaption><b>You're set</b></figcaption></figure>
+    </div>
+  </section>
+  <section>
+    <h2>Today</h2>
+    <p class="muted">Night colors use the night layout, so the rating prompt only shows by day.</p>
+    <div class="row">
+      <figure><div class="pair"><img src="shots/onb-6-today-day.jpg" alt="Right after onboarding, day" loading="lazy"><img src="shots/onb-6-today-night.jpg" alt="Right after onboarding, night" loading="lazy"></div><figcaption><b>Right after onboarding</b>Nothing logged yet</figcaption></figure>
+      <figure><div class="pair"><img src="shots/today-unrated-day.jpg" alt="Morning after two wake-ups, day" loading="lazy"><img src="shots/today-unrated-night.jpg" alt="Morning after two wake-ups, night" loading="lazy"></div><figcaption><b>Morning after two wake-ups</b>Not rated yet</figcaption></figure>
+    </div>
+  </section>
+</div>

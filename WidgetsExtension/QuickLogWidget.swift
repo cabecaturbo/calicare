@@ -10,7 +10,7 @@ struct QuickLogWidget: Widget {
         AppIntentConfiguration(kind: Self.kind, intent: SelectChildIntent.self, provider: CareProvider()) { entry in
             QuickLogWidgetView(entry: entry)
         }
-        .configurationDisplayName("Log and note")
+        .configurationDisplayName("Quick log")
         .description("One tap for itching or a flare, and a quick way to a note.")
         .supportedFamilies([.systemMedium])
     }

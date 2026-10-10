@@ -76,8 +76,12 @@ struct TodayView: View {
                 .padding(.top, asksSkin ? Spacing.x7 : Spacing.x5)
         }
 
-        LockWidgetRow()
-            .padding(.horizontal, Spacing.margin)
+        // Quick Log logs from the Lock Screen without Face ID; the widget asks for it.
+        if QuickLogCardRow.shows {
+            QuickLogCardRow()
+                .padding(.horizontal, Spacing.margin)
+                .padding(.top, Spacing.x4)
+        }
 
         if !night, let skin, !changingSkin {
             HStack {

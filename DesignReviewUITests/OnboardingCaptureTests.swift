@@ -39,15 +39,15 @@ final class OnboardingCaptureTests: XCTestCase {
         Capture.screen("onb-4-reminders-\(variant)")
         tap(app.buttons["Skip for now"])
 
-        Capture.screen("onb-5-anywhere-home-\(variant)")
-        tap(app.buttons["Lock"])
         Capture.screen("onb-5-anywhere-lock-\(variant)")
+        tap(app.buttons["Home"])
+        Capture.screen("onb-5-anywhere-home-\(variant)")
         tap(app.buttons["Control Center"])
         Capture.screen("onb-5-anywhere-cc-\(variant)")
 
-        for (segment, key, count) in [("Home", "home", 6), ("Lock", "lock", 6), ("Control Center", "cc", 5)] {
+        for (segment, key, count) in [("Lock Screen", "lock", 6), ("Home", "home", 6), ("Control Center", "cc", 5)] {
             tap(app.buttons[segment])
-            tap(app.buttons["Show me how"])
+            tap(app.buttons[segment == "Lock Screen" ? "Add it to my Lock Screen" : "Show me how"])
             for step in 1...count {
                 Capture.screen("guide-\(key)-\(step)-\(variant)")
                 tap(app.buttons["Next"])

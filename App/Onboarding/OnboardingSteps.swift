@@ -88,11 +88,11 @@ struct RemindersStep: View {
     }
 }
 
-/// Home Screen, Lock Screen, or Control Center: a real screenshot of the
-/// finished setup, "Show me how", and "Skip for now".
+/// Lock Screen first (then Home Screen or Control Center): a real screenshot
+/// of the finished setup, a button into the step-by-step guide, and "Skip for now".
 struct LogAnywhereStep: View {
     @Environment(\.palette) private var palette
-    @State private var path: GuidePath = .homeScreen
+    @State private var path: GuidePath = .lockScreen
     @State private var showing: GuidePath?
     @State private var watchedOne = false
     let onFinish: () -> Void
@@ -101,12 +101,12 @@ struct LogAnywhereStep: View {
         OnboardingPage {
             OnboardingHeading(
                 title: "Log from anywhere",
-                detail: "One tap from your Home Screen or Control Center. On the Lock Screen, your iPhone checks it's you first."
+                detail: "Put a Log button on your Lock Screen. Your iPhone checks it's you, then it's saved. The Home Screen and Control Center work too."
             )
             VStack(spacing: Spacing.x5) {
                 Picker("Where", selection: $path) {
+                    Text("Lock Screen").tag(GuidePath.lockScreen)
                     Text("Home").tag(GuidePath.homeScreen)
-                    Text("Lock").tag(GuidePath.lockScreen)
                     Text("Control Center").tag(GuidePath.controlCenter)
                 }
                 .pickerStyle(.segmented)
@@ -123,7 +123,7 @@ struct LogAnywhereStep: View {
             .padding(.horizontal, Spacing.margin)
             .motion(.quick, value: path)
         } footer: {
-            Button("Show me how") { showing = path }
+            Button(path == .lockScreen ? "Add it to my Lock Screen" : "Show me how") { showing = path }
                 .buttonStyle(.primary)
             Button(watchedOne ? "Go to Today" : "Skip for now", action: onFinish)
                 .buttonStyle(.textLink)

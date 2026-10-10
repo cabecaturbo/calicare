@@ -2,7 +2,7 @@ import AppIntents
 import Core
 import SwiftUI
 
-/// Settings › Quick logging › "Send the weekly card on its own": how to set
+/// Settings › Widgets and Siri › "Send the weekly card on its own": how to set
 /// up a Shortcuts automation with "Get Weekly Card". Numbered steps until the
 /// screens are recorded on a real iPhone; iOS's own Shortcuts button opens the app.
 struct AutoSendGuide: View {

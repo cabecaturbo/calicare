@@ -1,4 +1,4 @@
-# Status (October 8, 2026)
+# Status (October 10, 2026)
 
 Where CaliCare stands. `PROGRESS.md` has the step-by-step checklist, and `docs/06-decisions.md` has the reasons behind each choice.
 
@@ -8,10 +8,10 @@ Where CaliCare stands. `PROGRESS.md` has the step-by-step checklist, and `docs/0
   - Phases 1–5, 6.1 photos, 6.2 product diary, the UX rebuild, V1.0 hierarchy and wording.
   - Tabs: Today, To do, Progress, **Plan** (v4: the star card with week and next visit, Coming up, supplement tiles, Skin care card, item pages with dose steps). SchemaV8 adds `CarePlan.lengthWeeks` and `PlanItem.doseStepsRaw` (Supabase columns pushed).
   - One motion system (`Core/DesignSystem/Motion.swift`, DESIGN.md §8). One star per screen (DESIGN.md §5a).
-  - Onboarding matches the app and offers "Bring in your care plan".
+  - Onboarding matches the app and offers "Bring in your care plan". October 10 onboarding pass: accurate privacy copy, Reminders with Continue and times, "Log in one tap" with the widget in place, the Lock Screen guide's "Remind me later", Today's widget row only when needed, and one set of terms (no "Quick Log").
   - Night colors follow the clock; Settings › Appearance overrides.
 - **On the owner's iPhone:** the Release build 1.0 (4).
-- **TestFlight:** builds 3 and 4 submitted for beta review (build 2 is approved and live on the public link).
+- **TestFlight:** builds 3, 4 and 5 submitted for beta review (build 2 is approved and live on the public link).
 - **Site:** https://calicare.vercel.app, the owner's preferred old layout and wording, with Plan and To do as their own sections showing the current app.
 - **Version 1 is slim on purpose:**
   - Food extras are hidden (`Features.foodExtras`).

@@ -85,7 +85,7 @@ struct SettingsView: View {
     }
 
     private var quickLoggingSection: some View {
-        SettingsSection("Quick logging", footnote: "Log without opening the app.") {
+        SettingsSection("Widgets and Siri", footnote: "Log without opening the app.") {
             ForEach(GuidePath.allCases) { path in
                 Button { guide = path } label: {
                     HStack {

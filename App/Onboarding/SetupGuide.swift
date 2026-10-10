@@ -38,9 +38,18 @@ enum GuidePath: String, Identifiable, CaseIterable {
 
     var doneSentence: String {
         switch self {
-        case .homeScreen: "Tap Log on your Home Screen whenever it itches."
-        case .lockScreen: "Tap Log on your Lock Screen. Your iPhone checks it's you, then it's saved."
-        case .controlCenter: "Swipe down and tap the hand to log an itch."
+        case .homeScreen: "Tap Log on your Home Screen whenever it itches. It’s saved right away."
+        case .lockScreen: "Tap Log on your Lock Screen whenever it itches. Unlock with Face ID and it’s saved."
+        case .controlCenter: "Swipe down and tap Log whenever it itches."
+        }
+    }
+
+    /// A line above the first step: the parent has to leave the app to do it.
+    var intro: String {
+        switch self {
+        case .homeScreen: "Look through the steps, then try it on your Home Screen."
+        case .lockScreen: "Look through the steps, then try it on your Lock Screen."
+        case .controlCenter: "Look through the steps, then try it in Control Center."
         }
     }
 
@@ -49,17 +58,17 @@ enum GuidePath: String, Identifiable, CaseIterable {
         case .homeScreen: [
             GuideStep(asset: "widgetHome_ios27_step1", sentence: "Touch and hold an empty area of your Home Screen until the apps jiggle.", tap: UnitPoint(x: 0.500, y: 0.680)),
             GuideStep(asset: "widgetHome_ios27_step2", sentence: "Tap Edit in the top-left corner.", tap: UnitPoint(x: 0.172, y: 0.038)),
-            GuideStep(asset: "widgetHome_ios27_step3", sentence: "Tap Add Widget.", tap: UnitPoint(x: 0.393, y: 0.106)),
+            GuideStep(asset: "widgetHome_ios27_step3", sentence: "Tap Add Widget.", tap: UnitPoint(x: 0.391, y: 0.106)),
             GuideStep(asset: "widgetHome_ios27_step4", sentence: "Search for Cali Care and tap it.", tap: UnitPoint(x: 0.500, y: 0.291)),
             GuideStep(asset: "widgetHome_ios27_step5", sentence: "Swipe to pick a size, then tap Add Widget.", tap: UnitPoint(x: 0.500, y: 0.905)),
             GuideStep(asset: "widgetHome_ios27_step6", sentence: "Tap the checkmark in the top-right corner.", tap: UnitPoint(x: 0.828, y: 0.038)),
         ]
         case .lockScreen: [
-            GuideStep(asset: "widgetLock_ios27_step1", sentence: "Touch and hold your Lock Screen.", tap: UnitPoint(x: 0.500, y: 0.450)),
+            GuideStep(asset: "widgetLock_ios27_step1", sentence: "Touch and hold your Lock Screen. iOS may ask for Face ID before it shows Customize.", tap: UnitPoint(x: 0.500, y: 0.450)),
             GuideStep(asset: "widgetLock_ios27_step2", sentence: "Tap Customize.", tap: UnitPoint(x: 0.500, y: 0.930)),
             GuideStep(asset: "widgetLock_ios27_step3", sentence: "Tap Add Widgets under the clock.", tap: UnitPoint(x: 0.500, y: 0.788)),
             GuideStep(asset: "widgetLock_ios27_step4", sentence: "Tap Cali Care in the list.", tap: UnitPoint(x: 0.500, y: 0.724)),
-            GuideStep(asset: "widgetLock_ios27_step5", sentence: "Tap Log to add it. Swipe for Last night.", tap: UnitPoint(x: 0.500, y: 0.710)),
+            GuideStep(asset: "widgetLock_ios27_step5", sentence: "Tap Log to add it. Swipe to also add Last night (optional).", tap: UnitPoint(x: 0.500, y: 0.710)),
             GuideStep(asset: "widgetLock_ios27_step6", sentence: "Tap Done.", tap: UnitPoint(x: 0.818, y: 0.038)),
         ]
         case .controlCenter: [
@@ -77,11 +86,15 @@ enum GuidePath: String, Identifiable, CaseIterable {
 /// zoomed circle of that spot, one sentence, Back and Next, then "You're set."
 struct SetupGuide: View {
     @Environment(\.palette) private var palette
+    @Environment(ReminderController.self) private var reminders
+    @AppStorage(LockWidgetStatus.guideFinishedKey) private var lockGuideFinished = false
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let path: GuidePath
     @State private var index = 0
     @State private var forward = true
+    /// After "Remind me later": the line that replaces the button.
+    @State private var reminderNote: String?
 
     private var steps: [GuideStep] { path.steps }
     private var isDone: Bool { index == steps.count }
@@ -91,9 +104,10 @@ struct SetupGuide: View {
             topBar
             Group {
                 if isDone {
-                    page(asset: path.doneAsset, tap: nil, heading: "You’re set.", sentence: path.doneSentence)
+                    page(asset: path.doneAsset, tap: nil, heading: "You’re set.", intro: nil, sentence: path.doneSentence)
                 } else {
-                    page(asset: steps[index].asset, tap: steps[index].tap, heading: nil, sentence: steps[index].sentence)
+                    page(asset: steps[index].asset, tap: steps[index].tap, heading: nil,
+                         intro: index == 0 ? path.intro : nil, sentence: steps[index].sentence)
                 }
             }
             .id(index)
@@ -137,8 +151,16 @@ struct SetupGuide: View {
         .padding(.top, Spacing.x2)
     }
 
-    private func page(asset: String, tap: UnitPoint?, heading: String?, sentence: String) -> some View {
+    private func page(asset: String, tap: UnitPoint?, heading: String?, intro: String?, sentence: String) -> some View {
         VStack(spacing: Spacing.x4) {
+            if let intro {
+                Text(intro)
+                    .textStyle(.meta)
+                    .foregroundStyle(palette.graphite)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: 320)
+            }
             if let heading {
                 Text(heading)
                     .textStyle(.title)
@@ -161,19 +183,53 @@ struct SetupGuide: View {
     }
 
     private var footer: some View {
-        HStack(spacing: Spacing.x4) {
-            if index > 0 {
-                Button("Back") { go(to: index - 1) }
-                    .buttonStyle(.textLink)
+        VStack(spacing: Spacing.x2) {
+            HStack(spacing: Spacing.x4) {
+                if index > 0 {
+                    Button("Back") { go(to: index - 1) }
+                        .buttonStyle(.textLink)
+                }
+                Button(isDone ? "Done" : "Next") {
+                    if isDone { finish() } else { go(to: index + 1) }
+                }
+                .buttonStyle(.primary)
             }
-            Button(isDone ? "Done" : "Next") {
-                if isDone { dismiss() } else { go(to: index + 1) }
+            if isDone, path == .lockScreen {
+                if let reminderNote {
+                    Text(reminderNote)
+                        .textStyle(.meta)
+                        .foregroundStyle(palette.graphite)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(minHeight: Size.touchTarget)
+                        .transition(Motion.fade)
+                } else {
+                    Button("Remind me later") { remindLater() }
+                        .buttonStyle(.textLink)
+                }
             }
-            .buttonStyle(.primary)
         }
         .padding(.horizontal, Spacing.margin)
         .padding(.top, Spacing.x4)
         .padding(.bottom, Spacing.x2)
+    }
+
+    private func finish() {
+        if path == .lockScreen { lockGuideFinished = true }
+        dismiss()
+    }
+
+    /// iOS can't open the Lock Screen editor for us, so a notification in an
+    /// hour brings the guide back when the parent has a free minute.
+    private func remindLater() {
+        Task {
+            let sent = await LockWidgetReminder.schedule(using: reminders)
+            withMotion(.quick) {
+                reminderNote = sent
+                    ? "We’ll remind you in an hour."
+                    : "Notifications are off for Cali Care, so we can’t remind you. The steps are in Settings any time."
+            }
+        }
     }
 
     private var transition: AnyTransition {
@@ -262,5 +318,35 @@ private struct TapRing: View {
             Circle().strokeBorder(palette.accent, lineWidth: 3).frame(width: 40, height: 40)
             Circle().fill(palette.accent.opacity(0.85)).frame(width: 12, height: 12)
         }
+    }
+}
+
+/// A horizontal slice of a guide screenshot, full width, with the phone's
+/// rounded edge: enough to show where Log sits without the whole screen.
+struct GuideBand: View {
+    @Environment(\.palette) private var palette
+    let asset: String
+    let band: ClosedRange<CGFloat>
+
+    /// The captures are 402 × 874 points.
+    private let aspect: CGFloat = 402.0 / 874.0
+
+    var body: some View {
+        let share = band.upperBound - band.lowerBound
+        Color.clear
+            .aspectRatio(aspect / share, contentMode: .fit)
+            .overlay(alignment: .top) {
+                GeometryReader { proxy in
+                    let full = proxy.size.width / aspect
+                    Image(asset)
+                        .resizable()
+                        .frame(width: proxy.size.width, height: full)
+                        .offset(y: -band.lowerBound * full)
+                }
+                // Clipping doesn't stop hits: the hidden part would cover the picker above.
+                .allowsHitTesting(false)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: Corner.star))
+            .overlay(RoundedRectangle(cornerRadius: Corner.star).strokeBorder(palette.hairline, lineWidth: 1))
     }
 }

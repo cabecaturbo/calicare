@@ -64,7 +64,7 @@ struct AddPlanSheet: View {
                         }
                     }
 
-                    Text("The file stays on your phone. Not medical advice.")
+                    Text("The file stays on your phone. Only its words are sent, to be read by AI. Not medical advice.")
                         .textStyle(.meta)
                         .foregroundStyle(palette.graphite)
                         .fixedSize(horizontal: false, vertical: true)

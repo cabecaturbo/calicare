@@ -94,20 +94,10 @@ private struct PlanEmpty: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            SoftStar(title: "Bring in your care plan",
-                         line: "Scan it or add the PDF. You check every step before it starts.")
+            SoftStar(title: PlanSourceChoices.title, line: PlanSourceChoices.line)
                 .padding(.top, Spacing.x4)
-            VStack(spacing: 0) {
-                SourceRow(title: "Scan the paper", symbol: "camera.viewfinder") { onAdd(.scan) }
-                SourceRow(title: "Add a PDF", symbol: "doc") { onAdd(.file) }
-                SourceRow(title: "Choose a photo", symbol: "photo.on.rectangle") { onAdd(.photos) }
-            }
-            .padding(.top, Spacing.x5)
-            Text("Reading a plan needs you to sign in. The file stays on your phone.")
-                .textStyle(.meta)
-                .foregroundStyle(palette.graphite)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, Spacing.x3)
+            PlanSourceChoices(onAdd: onAdd)
+                .padding(.top, Spacing.x5)
         }
     }
 }

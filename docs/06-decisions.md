@@ -648,3 +648,24 @@ The owner saw the v2 redesign on the phone and asked for it to be reverted. The 
 
 ## Tighter sizes (October 10, 2026)
 - The owner felt the app looked zoomed in. Statement 40 → 32, display 34 → 30, screen margins 24 → 20, sections 40 → 32, rows about 8pt shorter (Size.row 48 day / 64 night). Body text stays at 17 (Apple's standard).
+
+## Onboarding clarity (October 10, 2026)
+- **Privacy copy follows the code:**
+  - A plan is read on the phone (PDFKit or Vision). Only its text goes to the `parse-care-plan` Edge Function, which sends it to Anthropic to find the steps. The file never leaves the phone.
+  - Steps the parent starts sync to their account.
+  - Welcome now says "Photos of your child never leave your phone".
+  - One shared view (`PlanSourceChoices`) holds the three ways in and the privacy line, for both onboarding and the empty Plan tab.
+- **"Quick Log" is gone as a name:**
+  - The Lock Screen widget is the main path. Today shows "Add the Log widget to your Lock Screen" only while no Cali Care widget is on the Lock Screen (`WidgetCenter.currentConfigurations`).
+  - The Live Activity is now "Log card for tonight", in Settings › Log card for tonight. Its Siri phrases changed with it ("Show the Log card in Cali Care").
+  - The gallery's "Quick log" widget is "Log and note".
+  - Internal names and keys are unchanged.
+- **Terms:**
+  - "Log" is the button and the action. "Lock Screen widget" is the widget. "Itch" replaces "itchy moment" and "scratches" on onboarding, the guide, the widget gallery, Today and notifications.
+  - "Itchy wake-ups" stays, because it counts something different (nights). Reports and the caregiver card ("If Cal is scratching") were left as they are.
+- **Lock Screen guide:**
+  - iOS gives apps no way to open the Lock Screen editor. So "You're set" offers "Remind me later", one notification an hour later that opens the guide (`calicare://lockguide`).
+  - Last night is optional. The guide's pictures now show only the Log widget, on an empty account, so no made-up times.
+- **Reminders step:** Continue and Skip both show. Times use the existing defaults: 7:00 AM and 6:30 PM.
+- **Today:** while last night isn't rated, "How was last night?" (with any wake-ups under it) takes the card's place.
+- **Debug only:** `-designReviewNotifications allow|deny` answers the notification prompt for screenshots, because the iOS 27 simulator doesn't show it under UI tests.

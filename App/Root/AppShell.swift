@@ -17,6 +17,7 @@ struct AppShell: View {
         tabs
         .sheet(isPresented: $shell.showingSettings, onDismiss: reload) {
             SettingsView()
+                .environment(shell)
                 .environment(reminders)
                 .environment(account)
                 .environment(sync)
@@ -35,10 +36,18 @@ struct AppShell: View {
             if DeepLink.isNote(url) { shell.showingNote = true }
             if DeepLink.isProgress(url) { shell.tab = .progress }
             if DeepLink.isNight(url) { shell.showingNight = true }
+            if DeepLink.isLockGuide(url) {
+                shell.tab = .today
+                shell.showingLockGuide = true
+            }
             if DeepLink.isQuickLog(url) {
                 shell.tab = .today
                 if !QuickLogCard.isRunning { shell.startingQuickLog = true }
             }
+        }
+        .fullScreenCover(isPresented: $shell.showingLockGuide) {
+            SetupGuide(path: .lockScreen)
+                .nightAwarePalette()
         }
         .sheet(isPresented: $shell.showingNight) {
             NightSummarySheet()

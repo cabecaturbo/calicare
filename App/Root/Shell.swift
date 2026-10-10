@@ -21,7 +21,9 @@ final class Shell {
     var choosing: LogChoice?
     /// A flare getting "Add where".
     var addingWhere: LogEntry?
-    /// Put Quick Log on the Lock Screen (asks which child first when there's more than one).
+    /// The Lock Screen widget guide (Today's row, or the "Remind me later" notification).
+    var showingLockGuide = false
+    /// Show the Log card on the Lock Screen (asks which child first when there's more than one).
     var startingQuickLog = false
     var pickingQuickLogChild = false
     /// Bumped when the card is added or removed, so rows showing it refresh.

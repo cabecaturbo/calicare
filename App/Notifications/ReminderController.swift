@@ -38,14 +38,22 @@ final class ReminderController {
     }
 
     /// Onboarding: asks for permission right away if it's undecided, then turns it on.
-    func turnOnAsking(_ kind: ReminderKind) async {
-        if status == .notDetermined {
-            _ = await NotificationPermission.request()
-            status = await NotificationPermission.status()
-        }
-        guard status == .authorized || status == .provisional || status == .ephemeral else { return }
+    /// Returns false when notifications aren't allowed, so the switch stays off.
+    @discardableResult
+    func turnOnAsking(_ kind: ReminderKind) async -> Bool {
+        guard await ensureAllowed() else { return false }
         settings[kind].isOn = true
         save()
+        return true
+    }
+
+    /// Asks once if undecided. True when notifications can be shown.
+    func ensureAllowed() async -> Bool {
+        if status == .notDetermined {
+            _ = await NotificationPermission.request()
+        }
+        status = await NotificationPermission.status()
+        return status == .authorized || status == .provisional || status == .ephemeral
     }
 
     func setTime(_ date: Date, for kind: ReminderKind) {

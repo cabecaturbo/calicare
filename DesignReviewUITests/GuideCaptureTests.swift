@@ -12,7 +12,7 @@ final class GuideCaptureTests: XCTestCase {
     /// Starts from a known family (debug seed): Cal, onboarded, a few logs.
     func testSeed() {
         let app = XCUIApplication()
-        app.launchArguments = ["-designReviewSeed", "YES", "-designReviewNight", "NO"]
+        app.launchArguments = ["-designReviewSeed", "EMPTY", "-designReviewNight", "NO"]
         app.launch()
         sleep(6)
         XCUIDevice.shared.press(.home)
@@ -32,10 +32,10 @@ final class GuideCaptureTests: XCTestCase {
         board.addHomeWidget(page: 1)
     }
 
-    /// Lock Screen path, then the Lock Screen with both widgets.
+    /// Lock Screen path, then the Lock Screen with the Log widget (Last night is optional).
     func testLockGuide() {
         let board = Springboard()
-        board.addLockWidgets(pages: [0, 1], captureAs: "lock")
+        board.addLockWidgets(pages: [0], captureAs: "lock")
         board.showLockScreen()
         sleep(2)
         Capture.screen("lock_done")

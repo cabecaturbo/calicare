@@ -669,3 +669,7 @@ The owner saw the v2 redesign on the phone and asked for it to be reverted. The 
 - **Reminders step:** Continue and Skip both show. Times use the existing defaults: 7:00 AM and 6:30 PM.
 - **Today:** while last night isn't rated, "How was last night?" (with any wake-ups under it) takes the card's place.
 - **Debug only:** `-designReviewNotifications allow|deny` answers the notification prompt for screenshots, because the iOS 27 simulator doesn't show it under UI tests.
+
+## Quick Log back on Today (October 10, 2026)
+- The owner wants the old Today button back. Quick Log (the Live Activity) logs from the Lock Screen with no Face ID; the Lock Screen widget always asks for Face ID. So Today shows "Put Quick Log on the Lock Screen" again, and the Quick Log name, Siri phrases and Settings section are restored. The widget guide stays in onboarding and Settings › Widgets and Siri.
+- Lesson: when a choice changes how a log works (Face ID or not), say so before asking.

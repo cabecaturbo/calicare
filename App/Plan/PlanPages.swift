@@ -19,7 +19,7 @@ struct PlanRow<Destination: View>: View {
                 Image(systemName: "chevron.right").font(.footnote).foregroundStyle(palette.graphite)
                     .accessibilityHidden(true)
             }
-            .frame(minHeight: 56)
+            .frame(minHeight: 50)
             .contentShape(Rectangle())
             .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
         }

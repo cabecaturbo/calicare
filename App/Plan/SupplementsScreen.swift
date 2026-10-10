@@ -34,7 +34,7 @@ struct SupplementsScreen: View {
                             Button("Add to To do") { Task { await setGiving(row.item, true) } }
                                 .buttonStyle(.textLink)
                         }
-                        .frame(minHeight: 56)
+                        .frame(minHeight: 50)
                         .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
                     }
                 }

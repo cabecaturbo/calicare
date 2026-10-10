@@ -21,7 +21,7 @@ struct SourceRow: View {
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(palette.graphite.opacity(0.7))
             }
-            .frame(minHeight: 56)
+            .frame(minHeight: 50)
             .contentShape(Rectangle())
         }
         .buttonStyle(.pressable)

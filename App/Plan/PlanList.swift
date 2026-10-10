@@ -8,7 +8,7 @@ struct PlanListRow<Leading: View>: View {
     @Environment(\.palette) private var palette
     let label: String
     let meta: String?
-    var minHeight: CGFloat = 64
+    var minHeight: CGFloat = 56
     @ViewBuilder var leading: () -> Leading
 
     var body: some View {
@@ -37,7 +37,7 @@ struct PlanListRow<Leading: View>: View {
 }
 
 extension PlanListRow where Leading == EmptyView {
-    init(label: String, meta: String?, minHeight: CGFloat = 64) {
+    init(label: String, meta: String?, minHeight: CGFloat = 56) {
         self.init(label: label, meta: meta, minHeight: minHeight) { EmptyView() }
     }
 }

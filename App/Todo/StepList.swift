@@ -119,7 +119,7 @@ private struct StepRow: View {
                     }
                 }
                 .padding(.vertical, Spacing.x3)
-                .frame(minHeight: 64)
+                .frame(minHeight: 56)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)

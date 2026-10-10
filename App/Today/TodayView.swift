@@ -208,7 +208,7 @@ struct SkinCheckIn: View {
                             Spacer(minLength: 0)
                         }
                         .padding(.horizontal, Spacing.x4)
-                        .frame(minHeight: 64)
+                        .frame(minHeight: 56)
                         .background(isSelected ? palette.oat : palette.paper, in: RoundedRectangle(cornerRadius: Corner.card))
                         .overlay(
                             RoundedRectangle(cornerRadius: Corner.card)
@@ -258,7 +258,7 @@ struct NightRatingChoices: View {
                             .foregroundStyle(palette.ink)
                             .lineLimit(1)
                             .minimumScaleFactor(0.85)
-                            .frame(maxWidth: .infinity, minHeight: 56)
+                            .frame(maxWidth: .infinity, minHeight: 50)
                             .background(palette.paper, in: RoundedRectangle(cornerRadius: Corner.card))
                             .overlay(RoundedRectangle(cornerRadius: Corner.card).strokeBorder(palette.hairline, lineWidth: 1))
                     }

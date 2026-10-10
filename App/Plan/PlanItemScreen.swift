@@ -113,14 +113,14 @@ struct PlanItemScreen: View {
                         .foregroundStyle(palette.graphite)
                         .multilineTextAlignment(.trailing)
                 }
-                .frame(minHeight: 56)
+                .frame(minHeight: 50)
                 .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
                 ForEach(entry.times) { time in
                     Toggle(isOn: binding(entry, time.block)) {
                         Text(time.block.title).textStyle(.body).foregroundStyle(palette.ink)
                     }
                     .tint(palette.accent)
-                    .frame(minHeight: 56)
+                    .frame(minHeight: 50)
                     .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
                     .disabled(working)
                 }

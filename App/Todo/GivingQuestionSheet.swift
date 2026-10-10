@@ -37,7 +37,7 @@ struct GivingQuestionSheet: View {
                                     }
                                 }
                             }
-                            .frame(minHeight: 56)
+                            .frame(minHeight: 50)
                             .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)

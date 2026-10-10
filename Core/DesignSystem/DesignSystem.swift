@@ -163,7 +163,7 @@ extension Color {
 /// control = body, meta = caption.
 /// Call `FontRegistry.registerAll()` once per process before use.
 public enum TypeStyle: CaseIterable, Sendable {
-    /// Newsreader 500, 34/40: the screen title ("Today"), the Welcome headline.
+    /// Newsreader 500, 30/36: the screen title ("Today"), the Welcome headline.
     case display
     /// Newsreader 500, 24/30: summary card titles, the skin question, hero words.
     case title
@@ -179,44 +179,44 @@ public enum TypeStyle: CaseIterable, Sendable {
     case control
     /// SF Pro 400, 13/18: times, eyebrows, footnotes.
     case meta
-    /// Newsreader 400, 40/46: the one big statement at the top of To do
+    /// Newsreader 400, 32/38: the one big statement at the top of To do
     /// ("3 things left for bedtime.") and its step sheet.
     case statement
 
     public var font: Font {
         switch self {
-        case .display: .custom(Self.displayCut, size: 34, relativeTo: .largeTitle)
+        case .display: .custom(Self.displayCut, size: 30, relativeTo: .largeTitle)
         case .title, .lede: .custom(Self.displayCut, size: 24, relativeTo: .title2)
         case .section: .custom(Self.displayCut, size: 20, relativeTo: .title3)
         case .label: .system(.subheadline, weight: .semibold)
         case .body, .control: .system(.body)
         case .meta: .system(.footnote)
-        case .statement: .custom(Self.statementCut, size: 40, relativeTo: .largeTitle)
+        case .statement: .custom(Self.statementCut, size: 32, relativeTo: .largeTitle)
         }
     }
 
     /// Point size and line height from DESIGN.md, before Dynamic Type scaling.
     public var size: CGFloat {
         switch self {
-        case .display: 34
+        case .display: 30
         case .title, .lede: 24
         case .section: 20
         case .label: 15
         case .body, .control: 17
         case .meta: 13
-        case .statement: 40
+        case .statement: 32
         }
     }
 
     public var lineHeight: CGFloat {
         switch self {
-        case .display: 40
+        case .display: 36
         case .title, .lede: 30
         case .section: 26
         case .label: 20
         case .body, .control: 24
         case .meta: 18
-        case .statement: 46
+        case .statement: 38
         }
     }
 
@@ -254,13 +254,13 @@ public enum Spacing {
     public static let x5: CGFloat = 24
     public static let x6: CGFloat = 32
     /// Between sections.
-    public static let x7: CGFloat = 40
+    public static let x7: CGFloat = 32
     /// Screen margins.
-    public static let margin: CGFloat = 24
+    public static let margin: CGFloat = 20
     public static let titleToLede: CGFloat = 8
-    public static let ledeToSection: CGFloat = 40
+    public static let ledeToSection: CGFloat = 32
     /// Between sections (DESIGN.md §5).
-    public static let section: CGFloat = 40
+    public static let section: CGFloat = 32
 }
 
 /// Shared cards and PDFs (weekly card, caregiver card) are fixed-size
@@ -294,8 +294,8 @@ public enum Size {
     public static let touchTarget: CGFloat = 44
 
     /// Ledger rows: roomier at night for one-handed, half-asleep taps.
-    public static func row(isNight: Bool) -> CGFloat { isNight ? 72 : 56 }
+    public static func row(isNight: Bool) -> CGFloat { isNight ? 64 : 48 }
 
     /// Primary and secondary buttons.
-    public static func button(isNight: Bool) -> CGFloat { isNight ? 64 : 56 }
+    public static func button(isNight: Bool) -> CGFloat { isNight ? 60 : 52 }
 }

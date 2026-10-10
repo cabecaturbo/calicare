@@ -325,7 +325,7 @@ private struct QuietRow: View {
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(palette.graphite.opacity(0.7))
         }
-        .frame(minHeight: 56)
+        .frame(minHeight: 50)
         .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel([title, detail].compactMap { $0 }.joined(separator: ", "))

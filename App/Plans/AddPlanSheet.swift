@@ -250,7 +250,7 @@ private struct ChoiceLabel: View {
             Spacer()
         }
         .padding(.horizontal, Spacing.x4)
-        .frame(minHeight: 56)
+        .frame(minHeight: 50)
         .background(palette.paper, in: RoundedRectangle(cornerRadius: Corner.card))
         .overlay(RoundedRectangle(cornerRadius: Corner.card).strokeBorder(palette.hairline, lineWidth: 1))
     }

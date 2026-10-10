@@ -645,3 +645,6 @@ The owner saw the v2 redesign on the phone and asked for it to be reverted. The 
 - Every target's Info.plist now reads `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` from project.yml (they had 1.0 (1) hard-coded, so every upload was build 1).
 - The glass tab bar's Log is a hidden tab that only logs. Some iOS versions switched to it anyway (a blank white screen); the current tab is now put back right away and the placeholder uses the paper background.
 - CI runs Xcode 26.6, whose compiler crashed on a custom Binding with a method as its setter (Settings › Appearance). Keep pickers bound to stored values.
+
+## Tighter sizes (October 10, 2026)
+- The owner felt the app looked zoomed in. Statement 40 → 32, display 34 → 30, screen margins 24 → 20, sections 40 → 32, rows about 8pt shorter (Size.row 48 day / 64 night). Body text stays at 17 (Apple's standard).

@@ -244,7 +244,7 @@ answers the screen's question at a glance and is soft.
 - **The card:** surface color (oat), 18pt corners (`Corner.star`), no
   border, no shadow.
 - **Inside:** one serif number or phrase (the statement style, Newsreader
-  400, 40/46), and at most two short lines under it (body, graphite). A
+  400, 32/38), and at most two short lines under it (body, graphite). A
   thin progress line is allowed when it says the same thing.
 - **Nothing else** on the screen may match the star's size or weight. The
   tab title (display, 34/40 medium) and section titles stay smaller and
@@ -442,3 +442,4 @@ monochrome on dark glass.
   Type size, saved to /design-review/<task>/ and listed in your report.
 - Contrast test passes.
 - VoiceOver reads every control with a clear label.
+

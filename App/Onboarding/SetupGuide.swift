@@ -76,7 +76,7 @@ enum GuidePath: String, Identifiable, CaseIterable {
             GuideStep(asset: "controlCenter_ios27_step2", sentence: "Touch and hold an empty area.", tap: UnitPoint(x: 0.500, y: 0.880)),
             GuideStep(asset: "controlCenter_ios27_step3", sentence: "Tap Add a Control.", tap: UnitPoint(x: 0.500, y: 0.916)),
             GuideStep(asset: "controlCenter_ios27_step4", sentence: "Search for Cali Care, then tap Log.", tap: UnitPoint(x: 0.144, y: 0.302)),
-            GuideStep(asset: "controlCenter_ios27_step5", sentence: "Tap an empty area to finish.", tap: UnitPoint(x: 0.5, y: 0.9)),
+            GuideStep(asset: "controlCenter_ios27_step5", sentence: "Tap an empty area to finish.", tap: UnitPoint(x: 0.5, y: 0.75)),
         ]
         }
     }

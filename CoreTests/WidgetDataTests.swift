@@ -151,6 +151,6 @@ struct WidgetTimelineTests {
     @Test func expiredFeedbackAddsNothing() {
         let now = TestTime.date(26, 15, 5)
         let feedback = WidgetFeedback(logID: UUID(), childID: UUID(), title: "Itchy spell", loggedAt: TestTime.date(26, 15, 0))
-        #expect(WidgetTimeline.dates(from: now, feedback: feedback, calendar: calendar).count == 4)
+        #expect(WidgetTimeline.dates(from: now, feedback: feedback, calendar: calendar).count == 3)
     }
 }

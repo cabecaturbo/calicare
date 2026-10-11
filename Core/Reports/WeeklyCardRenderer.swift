@@ -34,6 +34,25 @@ public enum WeeklyCardRenderer {
         return url
     }
 
+    /// The "Share this week" picture: 1800 × 1740 pixels.
+    @MainActor
+    public static func shareImage(_ card: WeekShareCard) -> UIImage? {
+        render(WeekShareCardView(card: card))
+    }
+
+    /// Writes the share picture to a temporary file named like "Cal's week Sep 21–27.png".
+    /// It stays on the phone until the parent sends it.
+    @MainActor
+    public static func shareFile(_ card: WeekShareCard) throws -> URL {
+        guard let data = shareImage(card)?.pngData() else {
+            throw CocoaError(.fileWriteUnknown)
+        }
+        let name = "\(card.childName)'s week \(card.rangeLabel)".replacingOccurrences(of: "/", with: "-")
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(name).png")
+        try data.write(to: url, options: .atomic)
+        return url
+    }
+
     @MainActor
     private static func render(_ view: some View) -> UIImage? {
         FontRegistry.registerAll()

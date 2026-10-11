@@ -10,7 +10,7 @@ Where CaliCare stands. `PROGRESS.md` has the step-by-step checklist, and `docs/0
   - One motion system (`Core/DesignSystem/Motion.swift`, DESIGN.md §8). One star per screen (DESIGN.md §5a).
   - Onboarding matches the app and offers "Bring in your care plan". October 10 onboarding pass: accurate privacy copy, Reminders with Continue and times, "Log in one tap" with the widget in place, the Lock Screen guide's "Remind me later", Today's widget row only when needed, and one set of terms (no "Quick Log").
   - Night colors follow the clock; Settings › Appearance overrides.
-- **On the owner's iPhone:** the Release build 1.0 (4).
+- **On the owner's iPhone:** the latest Release build, with "Share this week" (October 11).
 - **TestFlight:** builds 3, 4 and 5 submitted for beta review (build 2 is approved and live on the public link).
 - **Site:** https://calicare.vercel.app, the owner's preferred old layout and wording, with Plan and To do as their own sections showing the current app.
 - **Version 1 is slim on purpose:**

@@ -8,6 +8,7 @@ struct ProviderSection: View {
     @Environment(TodayModel.self) private var model
     let tracker: ProviderTracker
     @State private var addingVisit = false
+    @State private var askingFor: VisitInfo?
 
     private let day = Date.FormatStyle.dateTime.month(.abbreviated).day()
 
@@ -19,7 +20,12 @@ struct ProviderSection: View {
                 .accessibilityAddTraits(.isHeader)
             VStack(spacing: 0) {
                 if let next = tracker.nextVisit {
-                    row("Next visit", next.date.formatted(day))
+                    // Tap to write down questions; they go on the doctor report.
+                    Button { askingFor = next } label: {
+                        row("Next visit", next.date.formatted(day) + (next.questions == nil ? "" : " · questions"))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityHint("Questions for the visit.")
                 } else if let window = tracker.followUp {
                     row("Follow-up visit", "\(window.from.formatted(day)) – \(window.to.formatted(day))")
                 }
@@ -44,6 +50,10 @@ struct ProviderSection: View {
                 }
                 .frame(minHeight: Size.touchTarget)
             }
+        }
+        .sheet(item: $askingFor) { visit in
+            VisitQuestionsSheet(visit: visit)
+                .nightAwarePalette()
         }
         .sheet(isPresented: $addingVisit) {
             AddVisitSheet(provider: model.activePlan?.provider ?? tracker.lastVisit?.provider ?? "")
@@ -71,6 +81,7 @@ private struct AddVisitSheet: View {
     @State private var date = Date.now
     @State private var provider: String
     @State private var notes = ""
+    @State private var questions = ""
 
     init(provider: String) {
         _provider = State(initialValue: provider)
@@ -97,6 +108,14 @@ private struct AddVisitSheet: View {
                 } header: {
                     FormHeader("Note")
                 }
+                Section {
+                    TextField("Optional", text: $questions, axis: .vertical)
+                        .textStyle(.body)
+                } header: {
+                    FormHeader("Questions for the visit")
+                } footer: {
+                    Text("They show on the doctor report.").textStyle(.meta)
+                }
             }
             .scrollContentBackground(.hidden)
             .paperBackground(.oat)
@@ -107,9 +126,56 @@ private struct AddVisitSheet: View {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        let (date, provider, notes) = (date, provider, notes)
+                        let (date, provider, notes, questions) = (date, provider, notes, questions)
                         dismiss()
-                        Task { await model.addVisit(date: date, provider: provider, notes: notes) }
+                        Task { await model.addVisit(date: date, provider: provider, notes: notes, questions: questions) }
+                    }
+                }
+            }
+        }
+        .tint(palette.accent)
+        .presentationDetents([.medium, .large])
+    }
+}
+
+/// The next visit's "Questions for the visit", for the doctor report.
+private struct VisitQuestionsSheet: View {
+    @Environment(\.palette) private var palette
+    @Environment(\.dismiss) private var dismiss
+    @Environment(TodayModel.self) private var model
+    let visit: VisitInfo
+    @State private var questions: String
+
+    init(visit: VisitInfo) {
+        self.visit = visit
+        _questions = State(initialValue: visit.questions ?? "")
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("What do you want to ask?", text: $questions, axis: .vertical)
+                        .textStyle(.body)
+                        .lineLimit(3...8)
+                } header: {
+                    FormHeader("Questions for the visit")
+                } footer: {
+                    Text("They show on the doctor report.").textStyle(.meta)
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .paperBackground(.oat)
+            .solidNavigationBar()
+            .navigationTitle(visit.date.formatted(.dateTime.month(.abbreviated).day()))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        let text = questions
+                        dismiss()
+                        Task { await model.setQuestions(text, visit: visit.id) }
                     }
                 }
             }

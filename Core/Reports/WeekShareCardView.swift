@@ -2,8 +2,8 @@ import SwiftUI
 
 /// The "Share this week" picture: 600 × 580 pt, rendered at 3x for a text.
 /// In Messages it shows about 250 pt wide, so nothing is smaller than 22 pt.
-/// Always the day look, even at night. The skin squares use their own blue
-/// scale, made to read at that size (an exception to the olive scale; see DESIGN.md).
+/// Always the day look, even at night. The squares use the olive skin scale,
+/// each with a 2pt muted border so Calm shows on the paper.
 public struct WeekShareCardView: View {
     public static let size = CGSize(width: 600, height: 580)
 
@@ -14,22 +14,22 @@ public struct WeekShareCardView: View {
     }
 
     enum Ink {
-        static let background = Color(hex: 0xF6F1E8)
-        static let strong = Color(hex: 0x1E1B18)
-        static let soft = Color(hex: 0x5C554D)
+        static let background = Color(hex: 0xF6EEE2)
+        static let strong = Color(hex: 0x261C14)
+        static let soft = Color(hex: 0x67584A)
     }
 
     /// Calm, A little itchy, Flaring, Very rough.
     static func fill(_ skin: SkinToday) -> Color {
         switch skin {
-        case .calm: Color(hex: 0xE3E7EE)
-        case .littleItchy: Color(hex: 0xC2CBDB)
-        case .flaring: Color(hex: 0x56698F)
-        case .veryRough: Color(hex: 0x2E3E5E)
+        case .calm: Color(hex: 0xECECD8)
+        case .littleItchy: Color(hex: 0xCFD0A6)
+        case .flaring: Color(hex: 0x8F9156)
+        case .veryRough: Color(hex: 0x55582C)
         }
     }
 
-    /// Nights: good, okay, rough, on the same blues.
+    /// Nights: good, okay, rough, on the same olive scale.
     static func fill(_ night: CareLevel) -> Color {
         switch night {
         case .low: fill(.calm)

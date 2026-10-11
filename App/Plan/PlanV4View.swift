@@ -10,6 +10,7 @@ struct PlanV4View: View {
     @Environment(TodayModel.self) private var model
     let plan: CarePlanInfo
     let onAdd: () -> Void
+    @State private var showingCaregiverCard = false
 
     var body: some View {
         let entries = model.planEntries
@@ -75,6 +76,10 @@ struct PlanV4View: View {
                              detail: model.providerTracker.lastVisit.map { "Last visit \(PlanWords.day($0.date))" })
                 }
                 .buttonStyle(.plain)
+                Button { showingCaregiverCard = true } label: {
+                    QuietRow(title: "Caregiver card", detail: "For a sitter or grandparent")
+                }
+                .buttonStyle(.plain)
                 NavigationLink { PatchTestsScreen() } label: { QuietRow(title: "Patch tests", detail: nil) }
                     .buttonStyle(.plain)
                 NavigationLink { ProductListView() } label: { QuietRow(title: "Products", detail: nil) }
@@ -83,6 +88,12 @@ struct PlanV4View: View {
                     .buttonStyle(.plain)
             }
             .padding(.top, Spacing.x6)
+            .sheet(isPresented: $showingCaregiverCard) {
+                if let child = model.child {
+                    CaregiverCardSheet(child: child)
+                        .nightAwarePalette()
+                }
+            }
         }
     }
 

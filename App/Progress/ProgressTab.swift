@@ -14,7 +14,6 @@ struct ProgressTab: View {
     @Environment(TodayModel.self) private var model
     private var weekEnding: CareDay { CareDay.containing(.now) }
     @State private var span: Span = .week
-    @State private var showingCaregiverCard = false
     @State private var changes: [CareChange] = []
     @State private var lastVisit: VisitInfo?
     @State private var sinceVisitDays: [WeekDay] = []
@@ -105,23 +104,14 @@ struct ProgressTab: View {
                                 .accessibilityLabel("Share \(child.name)’s week as a picture")
                             }
                             NavigationLink {
-                                DoctorReportView(child: child, range: shareRange)
+                                DoctorReportView(child: child, lastVisit: lastVisit?.date)
                             } label: {
-                                Text("Share with provider")
+                                Text("Share with \(child.name)’s doctor")
                                     .font(TypeStyle.button.font)
                                     .foregroundStyle(palette.ink)
                                     .frame(maxWidth: .infinity, minHeight: 52)
                                     .overlay(RoundedRectangle(cornerRadius: Corner.card).strokeBorder(palette.ink, lineWidth: 1))
                             }
-                            Button {
-                                showingCaregiverCard = true
-                            } label: {
-                                Text("Caregiver card")
-                                    .textStyle(.body)
-                                    .foregroundStyle(palette.accent)
-                                    .frame(minHeight: Size.touchTarget)
-                            }
-                            .accessibilityHint("A card for a sitter or grandparent, in your words.")
                             ShareLastNightLink(child: child.id)
                         }
                         .padding(.horizontal, Spacing.margin)
@@ -146,24 +136,6 @@ struct ProgressTab: View {
             .toolbar(.hidden, for: .navigationBar)
         }
         .task(id: "\(model.child?.id.uuidString ?? "")-\(weekEnding)") { await build() }
-        .sheet(isPresented: $showingCaregiverCard) {
-            if let child = model.child {
-                CaregiverCardSheet(
-                    child: child,
-                    eveningSteps: model.routineSteps.filter { $0.time == .evening && $0.isActive }.map(\.name)
-                )
-                .nightAwarePalette()
-            }
-        }
-    }
-
-    /// The doctor report covers what's on screen: this week or this month.
-    private var shareRange: DoctorReport.Range? {
-        switch span {
-        case .week: report.map { DoctorReport.Range(first: $0.weekEnding.adding(days: -6), last: $0.weekEnding) }
-        case .month: monthReport?.range
-        case .sinceVisit: lastVisit.map { DoctorReport.Range(first: CareDay.containing($0.date), last: CareDay.containing(.now)) }
-        }
     }
 
     /// Care changes (plans, supplements, patch tests) and whether the last

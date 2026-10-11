@@ -1,16 +1,6 @@
 import Foundation
 import SwiftData
 
-// Current model names always point at the latest schema version.
-public typealias Child = SchemaV8.Child
-public typealias LogEvent = SchemaV8.LogEvent
-public typealias RoutineStep = SchemaV8.RoutineStep
-public typealias CarePlan = SchemaV8.CarePlan
-public typealias PlanItem = SchemaV8.PlanItem
-public typealias Visit = SchemaV8.Visit
-public typealias Food = SchemaV8.Food
-public typealias Product = SchemaV8.Product
-
 /// Plan v4: the V7 models are copied unchanged except two new optional
 /// fields: CarePlan.lengthWeeks and PlanItem.doseStepsRaw. The migration
 /// from V7 is lightweight. Nothing existing changes.

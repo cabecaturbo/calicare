@@ -315,8 +315,10 @@ public actor CarePlanStore: ModelActor {
     // MARK: - Visits
 
     @discardableResult
-    public func addVisit(child childID: UUID, date: Date, provider: String, notes: String? = nil) async throws -> VisitInfo {
-        let visit = Visit(childID: childID, date: date, provider: Self.clean(provider) ?? "", notes: Self.clean(notes), now: now())
+    public func addVisit(child childID: UUID, date: Date, provider: String, notes: String? = nil,
+                         questions: String? = nil) async throws -> VisitInfo {
+        let visit = Visit(childID: childID, date: date, provider: Self.clean(provider) ?? "", notes: Self.clean(notes),
+                          questions: Self.clean(questions), now: now())
         modelContext.insert(visit)
         try modelContext.save()
         return VisitInfo(visit)
@@ -335,6 +337,16 @@ public actor CarePlanStore: ModelActor {
     public func lastVisit(child childID: UUID) async throws -> VisitInfo? {
         let current = now()
         return try await visits(child: childID).first { $0.date <= current }
+    }
+
+    /// Sets a visit's "Questions for the visit" (empty clears it).
+    public func setQuestions(_ questions: String?, visit id: UUID) async throws {
+        var descriptor = FetchDescriptor<Visit>(predicate: #Predicate { $0.id == id && $0.deletedAt == nil })
+        descriptor.fetchLimit = 1
+        guard let visit = try modelContext.fetch(descriptor).first else { return }
+        visit.questions = Self.clean(questions)
+        touch(visit, at: now())
+        try modelContext.save()
     }
 
     public func deleteVisit(_ id: UUID) async throws {

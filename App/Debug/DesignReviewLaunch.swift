@@ -26,6 +26,7 @@ enum DesignReviewLaunch {
         if UserDefaults.standard.bool(forKey: "restoreOwnSteps") {
             Task { await restoreOwnSteps() }
         }
+        if UserDefaults.standard.bool(forKey: "fillSampleData") { Task { await fillSampleDataOnce() } }
         if let kind = UserDefaults.standard.string(forKey: "designReviewSeed"), ["YES", "UNRATED", "EMPTY", "MONTHS", "TWO", "SAMPLE", "PLAN", "PLANSTARTED", "LEGACYPLAN"].contains(kind) {
             UserDefaults.standard.set(true, forKey: OnboardingFlag.key)
             Task { await seed(kind) }
@@ -175,6 +176,29 @@ enum DesignReviewLaunch {
             _ = try? await logs.log(.nightRating, value: .night(.okay), child: cal.id, source: .notification, at: at(7, 5))
         }
         _ = try? await logs.log(.bowelMovement, child: cal.id, source: .app, at: at(9, 10))
+        await LogChanges.didChange()
+    }
+}
+extension DesignReviewLaunch {
+    /// A test phone (launched with `-fillSampleData YES`): the same eight weeks
+    /// as Settings › Debug › Fill with sample data, once, for the current child.
+    /// Skipped while signed in, so sample logs never sync. Remove them from
+    /// Settings › Debug.
+    @MainActor
+    static func fillSampleDataOnce() async {
+        let doneKey = "sampleDataFilledByLaunch"
+        guard !UserDefaults.standard.bool(forKey: doneKey) else { return }
+        guard Backend.client?.auth.currentSession == nil else {
+            print("fillSampleData: signed in, skipped")
+            return
+        }
+        guard let container = try? CaliCareModelContainer.shared(),
+              let child = try? await ChildStore(modelContainer: container).currentChild(),
+              let steps = try? await SampleData.fill(child: child.id, container: container)
+        else { return }
+        let saved = (UserDefaults.standard.stringArray(forKey: SampleDataSection.stepsKey) ?? []) + steps.map(\.uuidString)
+        UserDefaults.standard.set(saved, forKey: SampleDataSection.stepsKey)
+        UserDefaults.standard.set(true, forKey: doneKey)
         await LogChanges.didChange()
     }
 }

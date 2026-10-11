@@ -25,6 +25,8 @@ struct TodoItemSheet: View {
                     .padding(.bottom, Spacing.x7)
                 }
                 .paperBackground(.oat)
+                // A solid header, so the big statement doesn't show through it when scrolled.
+                .solidNavigationBar()
                 .navigationTitle(item.label)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {

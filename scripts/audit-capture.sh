@@ -10,7 +10,7 @@ mkdir -p "$OUT"
 DD=$PWD/build/audit-dd
 RAW=$(mktemp -d)
 
-# Each entry runs on a freshly erased simulator (seeds only apply once).
+# Each entry runs on a clean app (seeds only apply once).
 TESTS=(
   OnboardingCaptureTests/testOnboardingAndGuides
   OnboardingCaptureTests/testTodayUnrated
@@ -41,7 +41,7 @@ sim() { # name, device type
   echo $id
 }
 
-fresh() {
+setup() {
   xcrun simctl shutdown $1 2>/dev/null; xcrun simctl erase $1; xcrun simctl boot $1
   xcrun simctl bootstatus $1 >/dev/null 2>&1
   xcrun simctl status_bar $1 override --time 9:41 --batteryState discharging --batteryLevel 100 --wifiBars 3 --cellularMode active --cellularBars 4
@@ -50,8 +50,18 @@ fresh() {
   sleep 3
 }
 
+# A clean app (seeds only apply to an empty store): removing the app also
+# removes its App Group data, and is much faster than erasing the simulator.
+fresh() {
+  xcrun simctl terminate $1 com.cursorkittens.calicare 2>/dev/null
+  xcrun simctl uninstall $1 com.cursorkittens.calicare 2>/dev/null
+  xcrun simctl uninstall $1 com.cursorkittens.calicare.designreview.xctrunner 2>/dev/null
+  sleep 1
+}
+
 device() { # udid, short name
   local udid=$1 dev=$2
+  setup $udid
   for variant in day night xxxl night-xxxl; do
     local folder=$RAW/$dev-$variant
     for t in $TESTS; do

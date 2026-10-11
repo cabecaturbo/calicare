@@ -112,8 +112,12 @@ private struct PlanStarCard: View {
                     .accessibilityAddTraits(.isHeader)
                 Spacer(minLength: Spacing.x3)
                 NavigationLink { PlanDocumentScreen(plan: plan) } label: {
-                    Text("Full plan").textStyle(.meta).fontWeight(.medium).foregroundStyle(palette.accent)
-                        .frame(minHeight: Size.touchTarget)
+                    HStack(spacing: Spacing.x1) {
+                        Text("Full plan").textStyle(.button)
+                        Image(systemName: "chevron.right").font(.footnote.weight(.semibold))
+                    }
+                    .foregroundStyle(palette.accent)
+                    .frame(minHeight: Size.touchTarget)
                 }
                 .buttonStyle(.plain)
             }
@@ -215,7 +219,7 @@ private struct SupplementTile: View {
                     .fontWeight(.medium)
                     .foregroundStyle(palette.ink)
                     .lineLimit(2)
-                Text(notStarted ? (entry.meta ?? "Not started yet") : (entry.amount ?? "Not in plan. Refer to label."))
+                Text(notStarted ? (entry.meta ?? "Not started yet") : (entry.amount ?? "Dose: see the label."))
                     .textStyle(.meta)
                     .foregroundStyle(palette.graphite)
                     .lineLimit(2)

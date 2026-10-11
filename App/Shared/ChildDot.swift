@@ -1,7 +1,7 @@
 import Core
 import SwiftUI
 
-/// A child's color tag as a small dot with a hairline outline, so oat shows on paper.
+/// A child's color tag as a small dot with a graphite outline, so oat shows on paper.
 struct ChildDot: View {
     @Environment(\.palette) private var palette
     let color: ChildColor
@@ -10,7 +10,7 @@ struct ChildDot: View {
     var body: some View {
         Circle()
             .fill(color.color(in: palette))
-            .overlay(Circle().strokeBorder(palette.graphite.opacity(0.5), lineWidth: Rule.width))
+            .overlay(Circle().strokeBorder(palette.graphite, lineWidth: size >= 20 ? 1 : Rule.width))
             .frame(width: size, height: size)
             .accessibilityHidden(true)
     }

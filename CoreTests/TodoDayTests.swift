@@ -52,7 +52,7 @@ struct TodoDayTests {
         #expect(day.blocks[2].items.map(\.label) == ["Give a bath", "Put on pajamas", "Give Drops", "Give Powder"])
         #expect(day.open == .morning)
         #expect(day.blocks[0].items.first { $0.label == "Give Drops" }?.meta == "8 drops")
-        #expect(day.skin?.meta == "0 of 3-4 today")
+        #expect(day.skin?.meta == "0 of 3–4 today")
     }
 
     @Test func splitListsAndMentionsStayOff() {
@@ -122,7 +122,7 @@ struct TodoDayTests {
         let two = [log(.routineDone, .routine(.morning), step: skin[0].id, at: at), log(.routineDone, .routine(.evening), step: skin[1].id, at: at)]
         let day = TodoDay(steps: steps, items: items, logs: two, times: TodoDay.defaultTimes, now: at, calendar: calendar)
         #expect(day.skin?.rounds == 2)
-        #expect(day.skin?.meta == "2 of 3-4 today")
+        #expect(day.skin?.meta == "2 of 3–4 today")
         #expect(day.skin?.isDone == false)
         #expect(day.skin?.steps.count == 1)
     }

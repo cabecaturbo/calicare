@@ -34,6 +34,7 @@ private struct NightAwarePaletteModifier: ViewModifier {
             content
                 .environment(\.palette, palette)
                 .environment(\.nightLayout, NightMode.isLayoutActive(at: context.date))
+                .toggleStyle(CaliToggleStyle())
                 .preferredColorScheme(palette.isNight ? .dark : .light)
         }
     }

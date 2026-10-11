@@ -31,13 +31,13 @@ final class PlanV3CaptureTests: XCTestCase {
 
     func testActiveItem() {
         let app = launch()
-        open(app, "Herbal Drops by Brand F")
+        open(app, "Calendula Herbal Drops")
         Capture.screen("item-active-\(variant)")
     }
 
     func testNotStartedItem() {
         let app = launch()
-        open(app, "Brand J Chewables")
+        open(app, "Kids Multivitamin Chewables")
         Capture.screen("item-not-started-\(variant)")
     }
 

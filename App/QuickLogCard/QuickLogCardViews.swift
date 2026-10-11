@@ -30,7 +30,7 @@ struct QuickLogCardRow: View {
                     shell.startingQuickLog = true
                 } label: {
                     Label("Put Quick Log on the Lock Screen", systemImage: "hand.raised")
-                        .font(TypeStyle.label.font)
+                        .font(TypeStyle.button.font)
                         .foregroundStyle(palette.ink)
                         .frame(maxWidth: .infinity, minHeight: 52)
                         .overlay(RoundedRectangle(cornerRadius: Corner.card).strokeBorder(palette.ink, lineWidth: 1))
@@ -121,7 +121,7 @@ struct NightSummarySheet: View {
                     }
                     ShareLink(item: words.shareText { CardClock.time($0) }) {
                         Label("Share last night", systemImage: "square.and.arrow.up")
-                            .font(TypeStyle.label.font)
+                            .font(TypeStyle.button.font)
                             .foregroundStyle(palette.ink)
                             .frame(maxWidth: .infinity, minHeight: 52)
                             .overlay(RoundedRectangle(cornerRadius: Corner.card).strokeBorder(palette.ink, lineWidth: 1))

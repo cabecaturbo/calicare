@@ -39,6 +39,17 @@ struct WeekShareCardTests {
         #expect(card.days.map(\.label) == ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"])
     }
 
+    @Test func aWeekWithOnlyNightsShowsNights() {
+        let nightsOnly = (20...26).map { entry(.nightRating, .night($0 == 22 ? .good : .rough), day: $0, hour: 8) }
+            + [entry(.itchEpisode, day: 23, hour: 2)]
+        let card = card(nightsOnly)
+        #expect(card.squares == .nights)
+        #expect(card.days.map(\.night) == [.high, .high, .low, .high, .high, .high, .high])
+
+        let withSkin = self.card(nightsOnly + [skin(.calm, 24)])
+        #expect(withSkin.squares == .skin, "any skin answer keeps the squares on skin")
+    }
+
     @Test func theWeekLabel() {
         #expect(WeekShareCard.rangeLabel(ending: weekEnding, calendar: calendar, locale: locale) == "Sep 20–26")
         let crossing = CareDay(year: 2026, month: 10, day: 5)
@@ -68,6 +79,9 @@ struct WeekShareCardTests {
             ("rough", .sample(headline: "A harder week", skins: [.flaring, .veryRough, .veryRough, .flaring, .flaring, .littleItchy, .veryRough],
                               nights: "1 of 7 good nights.", watch: "Itchy wake-ups went up.")),
             ("two-unanswered", .sample(headline: "About the same as last week", skins: [.calm, nil, .littleItchy, nil, .calm, .littleItchy, .calm], watch: nil)),
+            ("nights-only", .sample(headline: "About the same as last week", skins: Array(repeating: nil, count: 7),
+                                    nightLevels: [.medium, .high, .low, .medium, .high, .medium, .medium],
+                                    nights: "1 of 7 good nights.", watch: "Itchy wake-ups went up.")),
             ("long-name", .sample(name: "Maximilian Alexander", headline: "Not enough logs yet for a summary",
                                   skins: [nil, nil, nil, nil, .calm, .littleItchy, .calm], nights: nil, watch: nil)),
             ("real-week", card((13...19).map { entry(.nightRating, .night(.okay), day: $0, hour: 8) }

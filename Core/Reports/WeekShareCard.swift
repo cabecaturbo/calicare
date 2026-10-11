@@ -11,8 +11,23 @@ public struct WeekShareCard: Equatable, Sendable {
         public let label: String
         /// The roughest answer that day; nil when skin wasn't answered.
         public let skin: SkinToday?
+        /// The night: its rating, or how many itchy wake-ups (same as Progress).
+        public let night: CareLevel?
 
         public var id: CareDay { day }
+
+        public init(day: CareDay, label: String, skin: SkinToday?, night: CareLevel? = nil) {
+            self.day = day
+            self.label = label
+            self.skin = skin
+            self.night = night
+        }
+    }
+
+    /// What the seven squares show. Skin when any day this week has a skin
+    /// answer; otherwise nights, so a week logged only at night isn't blank.
+    public enum Squares: Equatable, Sendable {
+        case skin, nights
     }
 
     public let childName: String
@@ -21,6 +36,9 @@ public struct WeekShareCard: Equatable, Sendable {
     public let headline: String
     /// Oldest first.
     public let days: [Day]
+    public var squares: Squares {
+        days.contains { $0.skin != nil } || !days.contains { $0.night != nil } ? .skin : .nights
+    }
     /// "4 of 7 good nights." Nil when no night was rated.
     public let nightsLine: String?
     /// The short worth-watching line, if any.
@@ -64,7 +82,8 @@ public struct WeekShareCard: Equatable, Sendable {
                 Day(
                     day: day.day,
                     label: weekday.string(from: day.day.noon(calendar: calendar)),
-                    skin: Self.roughest(on: day.day, in: mine, calendar: calendar)
+                    skin: Self.roughest(on: day.day, in: mine, calendar: calendar),
+                    night: day.night
                 )
             },
             nightsLine: report.ratedNights > 0 ? "\(report.goodNights) of 7 good nights." : nil,

@@ -29,6 +29,15 @@ public struct WeekShareCardView: View {
         }
     }
 
+    /// Nights: good, okay, rough, on the same blues.
+    static func fill(_ night: CareLevel) -> Color {
+        switch night {
+        case .low: fill(.calm)
+        case .medium: fill(.flaring)
+        case .high: fill(.veryRough)
+        }
+    }
+
     private static let serif = "NewsreaderDisplay-Medium"
 
     public var body: some View {
@@ -42,8 +51,12 @@ public struct WeekShareCardView: View {
                 .minimumScaleFactor(0.74)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 14)
+            Text(card.squares == .skin ? "Skin each day" : "Nights")
+                .font(.system(size: 24, weight: .medium))
+                .foregroundStyle(Ink.soft)
+                .padding(.top, 28)
             squares
-                .padding(.top, 36)
+                .padding(.top, 8)
             legend
                 .padding(.top, 12)
             Spacer(minLength: 16)
@@ -90,7 +103,7 @@ public struct WeekShareCardView: View {
         VStack(spacing: 10) {
             HStack(spacing: 10) {
                 ForEach(card.days) { day in
-                    square(day.skin)
+                    square(card.squares == .skin ? day.skin.map(Self.fill) : day.night.map(Self.fill))
                 }
             }
             HStack(spacing: 10) {
@@ -106,11 +119,11 @@ public struct WeekShareCardView: View {
         }
     }
 
-    private func square(_ skin: SkinToday?) -> some View {
+    private func square(_ color: Color?) -> some View {
         let shape = RoundedRectangle(cornerRadius: 6)
         return Group {
-            if let skin {
-                shape.fill(Self.fill(skin))
+            if let color {
+                shape.fill(color)
                     .overlay(shape.strokeBorder(Ink.soft, lineWidth: 2))
             } else {
                 shape.strokeBorder(Ink.soft, style: StrokeStyle(lineWidth: 2, dash: [6, 5]))
@@ -121,11 +134,14 @@ public struct WeekShareCardView: View {
     }
 
     private var legend: some View {
-        HStack(spacing: 8) {
-            Text("Calm")
-            ForEach(SkinToday.allCases, id: \.self) { skin in
+        let colors = card.squares == .skin
+            ? SkinToday.allCases.map(Self.fill)
+            : CareLevel.allCases.map(Self.fill)
+        return HStack(spacing: 8) {
+            Text(card.squares == .skin ? "Calm" : "Good")
+            ForEach(colors.indices, id: \.self) { index in
                 RoundedRectangle(cornerRadius: 4)
-                    .fill(Self.fill(skin))
+                    .fill(colors[index])
                     .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(Ink.soft, lineWidth: 2))
                     .frame(width: 24, height: 24)
             }
@@ -145,6 +161,7 @@ extension WeekShareCard {
         name: String = "Cal",
         headline: String = "A calmer week",
         skins: [SkinToday?],
+        nightLevels: [CareLevel?] = Array(repeating: nil, count: 7),
         nights: String? = "4 of 7 good nights.",
         watch: String? = "More flares."
     ) -> WeekShareCard {
@@ -154,7 +171,7 @@ extension WeekShareCard {
             rangeLabel: "Sep 20–26",
             headline: headline,
             days: skins.enumerated().map { index, skin in
-                Day(day: CareDay(year: 2026, month: 9, day: 20 + index), label: labels[index], skin: skin)
+                Day(day: CareDay(year: 2026, month: 9, day: 20 + index), label: labels[index], skin: skin, night: nightLevels[index])
             },
             nightsLine: nights,
             worthWatching: watch
@@ -176,6 +193,12 @@ extension WeekShareCard {
 
 #Preview("Two days unanswered", traits: .sizeThatFitsLayout) {
     WeekShareCardView(card: .sample(headline: "About the same as last week", skins: [.calm, nil, .littleItchy, nil, .calm, .littleItchy, .calm], watch: nil))
+}
+
+#Preview("Nights only", traits: .sizeThatFitsLayout) {
+    WeekShareCardView(card: .sample(headline: "About the same as last week", skins: Array(repeating: nil, count: 7),
+                                    nightLevels: [.medium, .high, .low, .medium, .high, .medium, .medium],
+                                    nights: "1 of 7 good nights.", watch: "Itchy wake-ups went up."))
 }
 
 #Preview("Long name", traits: .sizeThatFitsLayout) {

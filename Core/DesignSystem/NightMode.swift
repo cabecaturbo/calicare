@@ -1,8 +1,10 @@
 import SwiftUI
 
 public enum NightMode {
-    public static let startHour = 20
-    public static let endHour = 7
+    /// The same 7 PM to 7 AM night as the care day, so colors, layout and
+    /// "Tonight" all switch together.
+    public static let startHour = CareDay.nightStartHour
+    public static let endHour = CareDay.morningHour
 
     /// The night layout (bigger Log button, "Tonight so far") follows the
     /// clock, whatever colors the parent picked with the day/night toggle.
@@ -79,7 +81,7 @@ public enum DesignReview {
 }
 #endif
 
-/// The day/night toggle: automatic (night colors 8 PM – 7 AM), or pinned to
+/// The day/night toggle: automatic (night colors 7 PM – 7 AM), or pinned to
 /// day or night colors. Shared through the App Group so widgets follow.
 public enum AppearanceMode: String, CaseIterable, Sendable {
     case automatic, day, night

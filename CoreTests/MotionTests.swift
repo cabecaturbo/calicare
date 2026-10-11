@@ -17,10 +17,10 @@ struct MotionTests {
 
     @Test func nightFollowsTheClockAtTheEdges() {
         let calendar = TestTime.calendar
-        #expect(NightMode.isActive(at: TestTime.date(26, 20, 0), calendar: calendar))
+        #expect(NightMode.isActive(at: TestTime.date(26, 19, 0), calendar: calendar))
         #expect(NightMode.isActive(at: TestTime.date(27, 6, 59), calendar: calendar))
         #expect(!NightMode.isActive(at: TestTime.date(27, 7, 0), calendar: calendar))
-        #expect(!NightMode.isActive(at: TestTime.date(26, 19, 59), calendar: calendar))
+        #expect(!NightMode.isActive(at: TestTime.date(26, 18, 59), calendar: calendar))
     }
 
     @Test func oneCurveWithNoOvershoot() {

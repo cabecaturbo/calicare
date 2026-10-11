@@ -3,7 +3,7 @@ import Foundation
 /// When widgets need a fresh entry.
 public enum WidgetTimeline {
     /// Now, when "Logged" should go away, and the next 7 AM (morning, night
-    /// palette off), 7 PM (new care day), and 8 PM (night palette on).
+    /// palette off) and 7 PM (new care day, night palette on).
     public static func dates(
         from now: Date,
         feedback: WidgetFeedback?,

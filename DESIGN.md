@@ -76,7 +76,7 @@ Day
 | button (greige) | #665B52 | The Log buttons' fill; text on it is paper (onButton #F6EEE2) |
 | ochre | #8A6320 | "Worth watching" text only, on paper |
 
-Night (8 PM – 7 AM, every tab, or pinned in Settings › Appearance): a soft, warm night
+Night (7 PM – 7 AM, every tab, or pinned in Settings › Appearance): a soft, warm night
 | Token | Hex |
 |---|---|
 | paper | #201712 |
@@ -116,7 +116,7 @@ grey with a touch of brown) is the accent and the Log button fill. The skin
 scale is olive and can't be confused with skin or blood; greige is never a
 severity. The night stays soft and warm: brown-black, not blue-black.
 
-Night colors come on automatically (8 PM to 7 AM). Settings › Appearance
+Night colors come on automatically (7 PM to 7 AM). Settings › Appearance
 can pin Day or Night instead; there's no button on the tabs. Only the
 colors change: the night layout (bigger Log button, "Tonight so far")
 follows the clock. Widgets and the Quick Log card follow the setting too.
@@ -355,7 +355,7 @@ Capturing the assets
 One system, in `Core/DesignSystem/Motion.swift`. Every animation in the app
 uses its tokens and modifiers; no screen picks its own duration or curve.
 
-**Durations:** quick 0.2s, standard 0.35s, gentle 0.6s. At night (8 PM to
+**Durations:** quick 0.2s, standard 0.35s, gentle 0.6s. At night (7 PM to
 7 AM) every duration is 1.3× longer.
 
 **One curve:** `timingCurve(0.3, 0, 0.2, 1)`: a soft start and a long,

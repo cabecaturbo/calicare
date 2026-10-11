@@ -10,8 +10,8 @@ struct TodayPromptsTests {
         #expect(!TodayPrompts.asksSkin(at: TestTime.date(26, 9), answered: false, calendar: calendar))
         #expect(!TodayPrompts.asksSkin(at: TestTime.date(26, 15, 59), answered: false, calendar: calendar))
         #expect(TodayPrompts.asksSkin(at: TestTime.date(26, 16), answered: false, calendar: calendar))
-        #expect(TodayPrompts.asksSkin(at: TestTime.date(26, 19, 30), answered: false, calendar: calendar))
-        #expect(!TodayPrompts.asksSkin(at: TestTime.date(26, 20), answered: false, calendar: calendar))
+        #expect(TodayPrompts.asksSkin(at: TestTime.date(26, 18, 30), answered: false, calendar: calendar))
+        #expect(!TodayPrompts.asksSkin(at: TestTime.date(26, 19), answered: false, calendar: calendar))
         #expect(!TodayPrompts.asksSkin(at: TestTime.date(27, 3), answered: false, calendar: calendar))
     }
 

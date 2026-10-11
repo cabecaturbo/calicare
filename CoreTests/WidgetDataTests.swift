@@ -131,14 +131,14 @@ struct WidgetDataTests {
 struct WidgetTimelineTests {
     private let calendar = TestTime.calendar
 
-    @Test func afternoonRefreshesAtSevenAndEightPMAndSevenAM() {
+    @Test func afternoonRefreshesAtSevenPMAndSevenAM() {
         let dates = WidgetTimeline.dates(from: TestTime.date(26, 15, 5), feedback: nil, calendar: calendar)
-        #expect(dates == [TestTime.date(26, 15, 5), TestTime.date(26, 19), TestTime.date(26, 20), TestTime.date(27, 7)])
+        #expect(dates == [TestTime.date(26, 15, 5), TestTime.date(26, 19), TestTime.date(27, 7)])
     }
 
     @Test func lateEveningRollsToTomorrow() {
         let dates = WidgetTimeline.dates(from: TestTime.date(26, 22), feedback: nil, calendar: calendar)
-        #expect(dates == [TestTime.date(26, 22), TestTime.date(27, 7), TestTime.date(27, 19), TestTime.date(27, 20)])
+        #expect(dates == [TestTime.date(26, 22), TestTime.date(27, 7), TestTime.date(27, 19)])
     }
 
     @Test func loggedStateEndsAfterAMinute() {

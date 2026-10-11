@@ -252,14 +252,32 @@ struct OnboardingPage<Content: View, Footer: View>: View {
             .padding(.bottom, Spacing.margin)
         }
         .scrollBounceBehavior(.basedOnSize)
-        .safeAreaInset(edge: .bottom) {
-            VStack(spacing: Spacing.x2) {
-                footer
+        // With the keyboard up, the form scrolls above it; a drag puts it away.
+        .scrollDismissesKeyboard(.interactively)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            VStack(spacing: 0) {
+                // Rows scroll softly under the buttons instead of being sliced.
+                FooterFade()
+                VStack(spacing: Spacing.x2) {
+                    footer
+                }
+                .padding(.horizontal, Spacing.margin)
+                .padding(.top, Spacing.x2)
+                .padding(.bottom, Spacing.x2)
+                .paperBackground()
             }
-            .padding(.horizontal, Spacing.margin)
-            .padding(.top, Spacing.x4)
-            .padding(.bottom, Spacing.x2)
-            .paperBackground()
         }
+    }
+}
+
+/// A short paper fade above pinned buttons.
+private struct FooterFade: View {
+    @Environment(\.palette) private var palette
+
+    var body: some View {
+        LinearGradient(colors: [palette.paper.opacity(0), palette.paper], startPoint: .top, endPoint: .bottom)
+            .frame(height: Spacing.x5)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
     }
 }

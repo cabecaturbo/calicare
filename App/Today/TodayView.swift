@@ -124,7 +124,7 @@ struct TodayView: View {
             .padding(.top, Spacing.x4)
         }
 
-        TodaySoFar(entries: model.entries, isNight: night) { editing = $0 }
+        TodaySoFar(groups: TodayGroups(entries: model.entries, day: CareDay.containing(.now), now: .now)) { editing = $0 }
             .padding(.top, Spacing.x7)
     }
 
@@ -309,19 +309,19 @@ struct SkinSwatch: View {
     }
 }
 
-/// Today's (or tonight's) logs, newest first, with 0.5pt dividers. Tap to
-/// edit; swipe left to delete (Undo in the Logged line).
+/// Today's logs, newest first, grouped by one 7 PM–7 AM boundary: by day
+/// "Today" and then "Last night"; at night "Tonight". Tap to edit; swipe
+/// left to delete (Undo in the Logged line).
 private struct TodaySoFar: View {
     @Environment(\.palette) private var palette
     @Environment(TodayModel.self) private var model
-    let entries: [LogEntry]
-    let isNight: Bool
+    let groups: TodayGroups
     let onEdit: (LogEntry) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.x2) {
             HStack {
-                Text(isNight ? "Tonight so far" : "Today so far")
+                Text(groups.currentTitle)
                     .textStyle(.section)
                     .foregroundStyle(palette.ink)
                     .accessibilityAddTraits(.isHeader)
@@ -337,37 +337,50 @@ private struct TodaySoFar: View {
                 }
             }
             .padding(.horizontal, Spacing.margin)
-            if entries.isEmpty {
-                Text(isNight ? "Nothing logged yet tonight." : "Nothing logged yet today.")
+            if groups.current.isEmpty {
+                Text(groups.isNight ? "Nothing logged yet tonight." : "Nothing logged yet today.")
                     .textStyle(.body)
                     .foregroundStyle(palette.graphite)
                     .padding(.horizontal, Spacing.margin)
             } else {
-                VStack(spacing: 0) {
-                    ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
-                        SwipeToDelete { Task { await model.deleteWithUndo(entry) } } content: {
-                        Button { onEdit(entry) } label: {
-                            HStack {
-                                Text(model.title(for: entry))
-                                    .textStyle(.body)
-                                    .foregroundStyle(palette.ink)
-                                Spacer()
-                                Text([model.time(entry.timestamp), model.byline(for: entry)].compactMap { $0 }.joined(separator: " · "))
-                                    .textStyle(.meta)
-                                    .foregroundStyle(palette.graphite)
-                            }
-                            .frame(minHeight: 52)
-                            .contentShape(Rectangle())
-                            .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityHint("Edit, or swipe left to delete")
-                        }
-                        .arrive(index: index)
-                    }
-                }
-                .padding(.horizontal, Spacing.margin)
+                rows(groups.current, from: 0)
+            }
+            if !groups.lastNight.isEmpty {
+                Text("Last night")
+                    .textStyle(.section)
+                    .foregroundStyle(palette.ink)
+                    .accessibilityAddTraits(.isHeader)
+                    .padding(.horizontal, Spacing.margin)
+                    .padding(.top, Spacing.x5)
+                rows(groups.lastNight, from: groups.current.count)
             }
         }
+    }
+
+    private func rows(_ entries: [LogEntry], from start: Int) -> some View {
+        VStack(spacing: 0) {
+            ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
+                SwipeToDelete { Task { await model.deleteWithUndo(entry) } } content: {
+                    Button { onEdit(entry) } label: {
+                        HStack {
+                            Text(model.title(for: entry))
+                                .textStyle(.body)
+                                .foregroundStyle(palette.ink)
+                            Spacer()
+                            Text([model.time(entry.timestamp), model.byline(for: entry)].compactMap { $0 }.joined(separator: " · "))
+                                .textStyle(.meta)
+                                .foregroundStyle(palette.graphite)
+                        }
+                        .frame(minHeight: 52)
+                        .contentShape(Rectangle())
+                        .overlay(alignment: .bottom) { palette.hairline.frame(height: Rule.width) }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityHint("Edit, or swipe left to delete")
+                }
+                .arrive(index: start + index)
+            }
+        }
+        .padding(.horizontal, Spacing.margin)
     }
 }

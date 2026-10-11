@@ -84,8 +84,9 @@ device() { # udid, short name
 }
 
 xcodebuild -scheme DesignReview -destination 'generic/platform=iOS Simulator' -derivedDataPath $DD build-for-testing 2>&1 | grep -E "error:|BUILD" | tail -1
-SE=$(sim "Audit SE" com.apple.CoreSimulator.SimDeviceType.iPhone-SE-3rd-generation)
-MAX=$(sim "Audit Max" com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro-Max)
+PREFIX=${SIM_PREFIX:-Audit}
+SE=$(sim "$PREFIX SE" com.apple.CoreSimulator.SimDeviceType.iPhone-SE-3rd-generation)
+MAX=$(sim "$PREFIX Max" com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro-Max)
 device $SE se &
 device $MAX max &
 wait

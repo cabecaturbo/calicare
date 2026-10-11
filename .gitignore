@@ -40,3 +40,6 @@ MessagesExtension/MessagesExtension.entitlements
 
 # Supabase URL and key for this Mac (see Config/Supabase.example.xcconfig)
 Config/Supabase.local.xcconfig
+
+# Visual audit captures (large; the report links them)
+screenshots/audit/

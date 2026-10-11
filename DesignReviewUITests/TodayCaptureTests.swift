@@ -21,7 +21,7 @@ final class TodayCaptureTests: XCTestCase {
         let app = launch(seed: "UNRATED")
         sleep(2)
         Capture.screen("today-\(variant)")
-        guard variant != "night" else { return }
+        guard !ScreenTourTests.isNight else { return }
 
         // Rating last night is only offered before 7 PM.
         if app.buttons["Last night was okay"].exists {

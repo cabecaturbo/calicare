@@ -91,15 +91,16 @@ final class ScreenTourTests: XCTestCase {
         ProcessInfo.processInfo.environment["DESIGN_VARIANT"] ?? "day"
     }
 
+    /// "night" or "night-xxxl": night colors and layout.
+    static var isNight: Bool { variant.hasPrefix("night") }
+
+    /// Day or night, at default size or the largest accessibility size (AX5):
+    /// "day", "night", "xxxl" (day at AX5) and "night-xxxl".
     static var launchArguments: [String] {
-        switch variant {
-        case "night":
-            ["-designReviewNight", "YES"]
-        case "xxxl":
-            ["-designReviewNight", "NO",
-             "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
-        default:
-            ["-designReviewNight", "NO"]
+        var args = ["-designReviewNight", isNight ? "YES" : "NO"]
+        if variant.hasSuffix("xxxl") {
+            args += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
         }
+        return args
     }
 }

@@ -96,6 +96,14 @@ struct AddPlanSheet: View {
         }
         .photosPicker(isPresented: $pickingPhotos, selection: $photos, maxSelectionCount: 20, matching: .images)
         .task(id: isSignedIn) { openSource() }
+        #if DEBUG
+        // Screenshots only (`-designReviewOffline YES`): the no-connection message.
+        .onAppear {
+            if UserDefaults.standard.bool(forKey: "designReviewOffline") {
+                stage = .failed("Couldn’t read the plan just now. Check your connection and try again.")
+            }
+        }
+        #endif
         .onChange(of: photos) { _, picked in
             guard !picked.isEmpty else { return }
             Task { await read(photos: picked) }

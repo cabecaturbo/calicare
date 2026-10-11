@@ -673,3 +673,13 @@ The owner saw the v2 redesign on the phone and asked for it to be reverted. The 
 ## Quick Log back on Today (October 10, 2026)
 - The owner wants the old Today button back. Quick Log (the Live Activity) logs from the Lock Screen with no Face ID; the Lock Screen widget always asks for Face ID. So Today shows "Put Quick Log on the Lock Screen" again, and the Quick Log name, Siri phrases and Settings section are restored. The widget guide stays in onboarding and Settings › Widgets and Siri.
 - Lesson: when a choice changes how a log works (Face ID or not), say so before asking.
+
+## Share this week (October 11, 2026)
+- A one-tap "Share this week" on Progress (Week view) sends a 600×580pt picture of the week, rendered at 3x on the phone, with "Here's {name}'s week." Nothing is uploaded.
+- **Built on what's there:**
+  - The headline is `WeeklyReport.headline`.
+  - The bottom line is the same worth-watching rule in a short form.
+  - The squares show the roughest skin answer each day.
+- **Its own blue skin scale and no "Not medical advice" line:** the owner's choice for a picture read about 250pt wide (see DESIGN.md §10).
+- **Which week:** the Week view is a rolling 7 days ending today, so the day labels are the real weekdays in order, not always Mon–Sun.
+- **What it replaced:** the button replaced the "Share this week's card" text link. The older 600×750 card is still sent by the Messages app and the Shortcuts weekly auto-send.

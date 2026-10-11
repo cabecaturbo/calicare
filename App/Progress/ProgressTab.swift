@@ -93,6 +93,17 @@ struct ProgressTab: View {
 
                     if let child = model.child {
                         VStack(spacing: Spacing.x2) {
+                            // One picture of the week, for a text. Made on the phone; nothing is uploaded.
+                            if span == .week, let file {
+                                ShareLink(item: file, message: Text("Here’s \(child.name)’s week.")) {
+                                    Text("Share this week")
+                                        .font(TypeStyle.label.font)
+                                        .foregroundStyle(palette.ink)
+                                        .frame(maxWidth: .infinity, minHeight: 52)
+                                        .overlay(RoundedRectangle(cornerRadius: Corner.card).strokeBorder(palette.ink, lineWidth: 1))
+                                }
+                                .accessibilityLabel("Share \(child.name)’s week as a picture")
+                            }
                             NavigationLink {
                                 DoctorReportView(child: child, range: shareRange)
                             } label: {
@@ -112,14 +123,6 @@ struct ProgressTab: View {
                             }
                             .accessibilityHint("A card for a sitter or grandparent, in your words.")
                             ShareLastNightLink(child: child.id)
-                            if span == .week, let file {
-                                ShareLink(item: file) {
-                                    Text("Share this week’s card")
-                                        .textStyle(.body)
-                                        .foregroundStyle(palette.accent)
-                                        .frame(minHeight: Size.touchTarget)
-                                }
-                            }
                         }
                         .padding(.horizontal, Spacing.margin)
                         .padding(.top, Spacing.x7)
@@ -209,18 +212,19 @@ struct ProgressTab: View {
             monthReport = try await MonthlyReport.load(child: child, year: today.year, month: today.month, container: container)
             await loadChanges(child: child, container: container, today: today)
             problem = nil
-            file = await cardFile(for: report)
+            file = await shareFile(child: child, container: container)
         } catch {
             problem = "Couldn't load this week just now. Try again in a moment."
         }
     }
 
-    /// The shareable card. Rendering can fail for a moment right as the app
-    /// opens, so try a few times; if it still fails, only the card's Share
+    /// The "Share this week" picture. Rendering can fail for a moment right as
+    /// the app opens, so try a few times; if it still fails, only the Share
     /// button is missing, and everything else on the page still shows.
-    private func cardFile(for report: WeeklyReport) async -> URL? {
+    private func shareFile(child: ChildInfo, container: ModelContainer) async -> URL? {
+        guard let card = try? await WeekShareCard.load(child: child, weekEnding: weekEnding, container: container) else { return nil }
         for attempt in 0..<3 {
-            if let url = try? WeeklyCardRenderer.file(for: report) { return url }
+            if let url = try? WeeklyCardRenderer.shareFile(card) { return url }
             try? await Task.sleep(for: .milliseconds(400 * (attempt + 1)))
         }
         return nil

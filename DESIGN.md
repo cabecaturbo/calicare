@@ -407,6 +407,15 @@ a page from a small magazine.
 - One "worth watching" line in muted text, no box around it.
 - Footer in meta: "Cali Care · Not medical advice."
 
+**The texted card ("Share this week", Progress) is the exception.** It's read
+at about 250pt wide in Messages, so it's simpler and bigger: 600×580pt,
+nothing under 22pt, no stats rows and no footer.
+- Its skin squares use their own blue scale, chosen to read at that size:
+  Calm #E3E7EE, A little itchy #C2CBDB, Flaring #56698F, Very rough #2E3E5E.
+  This is the only place skin isn't olive.
+- Ground #F6F1E8, ink #1E1B18, soft ink #5C554D. Always the day look.
+- No "Not medical advice" line: it only restates what was logged (owner's call, October 11, 2026).
+
 ## 11. Widgets
 Sizes at true point size for a 393-pt-wide iPhone. Inside the system's
 shape: our tokens, sans throughout, 12pt inner corners.

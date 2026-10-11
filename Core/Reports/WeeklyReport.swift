@@ -33,6 +33,8 @@ public struct WeeklyReport: Equatable, Sendable {
     public let headline: Headline
     /// One line, only when something clearly changed. Notices; never explains.
     public let worthWatching: String?
+    /// The same line, shorter, for the texted card ("More flares.").
+    public let worthWatchingShort: String?
 
     /// Below this many logged days, there's no summary.
     public static let minimumDays = 3
@@ -87,15 +89,18 @@ extension WeeklyReport {
         if this.logged.count < Self.minimumDays {
             headline = .notEnoughLogs
             worthWatching = nil
+            worthWatchingShort = nil
         } else if !comparable {
             headline = .firstWeek
             worthWatching = nil
+            worthWatchingShort = nil
         } else {
-            let line = Self.worthWatching(this, last)
+            let watch = Self.watch(this, last)
             let compared = Self.compare(this, with: last)
             // Never "a calmer week" above a line saying something got worse.
-            headline = compared == .calmer && line != nil ? .aboutTheSame : compared
-            worthWatching = line
+            headline = compared == .calmer && watch != nil ? .aboutTheSame : compared
+            worthWatching = watch?.text
+            worthWatchingShort = watch?.short
         }
     }
 
@@ -121,12 +126,33 @@ extension WeeklyReport {
         return .aboutTheSame
     }
 
-    /// The first clear change, in plain words. Nil when nothing clearly changed.
-    static func worthWatching(_ this: Week, _ last: Week) -> String? {
-        if this.itchyWakeUps - last.itchyWakeUps >= 3 { return "Itchy wake-ups went up this week." }
-        if this.roughNights - last.roughNights >= 2 { return "More rough nights this week." }
-        if this.flares - last.flares >= 2 { return "More flares this week." }
+    /// The first clear change. Nil when nothing clearly changed.
+    static func watch(_ this: Week, _ last: Week) -> Watch? {
+        if this.itchyWakeUps - last.itchyWakeUps >= 3 { return .wakeUps }
+        if this.roughNights - last.roughNights >= 2 { return .roughNights }
+        if this.flares - last.flares >= 2 { return .flares }
         return nil
+    }
+
+    /// What clearly changed, in plain words: the full line and a short one.
+    enum Watch {
+        case wakeUps, roughNights, flares
+
+        var text: String {
+            switch self {
+            case .wakeUps: "Itchy wake-ups went up this week."
+            case .roughNights: "More rough nights this week."
+            case .flares: "More flares this week."
+            }
+        }
+
+        var short: String {
+            switch self {
+            case .wakeUps: "Itchy wake-ups went up."
+            case .roughNights: "More rough nights."
+            case .flares: "More flares."
+            }
+        }
     }
 }
 

@@ -24,8 +24,9 @@ xcrun simctl erase "$UDID"
 xcrun simctl boot "$UDID"
 xcrun simctl bootstatus "$UDID" >/dev/null 2>&1
 xcrun simctl ui "$UDID" appearance light
-# 9:41 with a full battery, and no keyboard tip over the steps.
-xcrun simctl status_bar "$UDID" override --time "2026-10-11T09:41:00-07:00" --batteryState discharging --batteryLevel 100 --wifiBars 3
+# A full battery and no keyboard tip over the steps. The clock stays real:
+# the simulator shows a fixed date with the wrong weekday.
+xcrun simctl status_bar "$UDID" override --batteryState discharging --batteryLevel 100 --wifiBars 3
 xcrun simctl spawn "$UDID" defaults write com.apple.keyboard.preferences DidShowContinuousPathIntroduction -bool true
 sleep 5
 

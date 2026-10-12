@@ -4,8 +4,12 @@ Before and after captures of every screen, day and night, on iPhone SE (3rd gen)
 
 - **Before:** `screenshots/audit/2026-10-11-before/`
 - **After:** `screenshots/audit/2026-10-11-after/`
-- **File names:** `<screen>-<day|night>-<se|max>-<default|ax5>.png`. Long screens are numbered by scroll position (`plan-day-3-…`). Both folders are local only (gitignored, about 1 GB). The before/after page is linked in the PR.
-- **Re-run:** `scripts/audit-capture.sh screenshots/audit/<date>` (about 4 hours for both phones).
+- **File names:** `<screen>-<day|night>-<se|max>-<default|ax5>.png`. Long screens are numbered by scroll position (`plan-day-3-…`). Both folders are local only (gitignored, about 1 GB). Before/after page: https://claude.ai/artifact/EqpxfEobtAtymzYKMdKeyE (source in `design-review/visual-audit/`).
+- **Re-run:** `scripts/audit-capture.sh screenshots/audit/<date>`. Both phones together take about 4 hours. Set `SIM_PREFIX` to run two at once.
+- **Counts:** 953 before and 939+ after.
+- **Gaps:**
+  - In the night, largest-text runs, the extra audit captures (Since visit, Progress empty, plan import offline, Settings pieces) failed to find their buttons, in both runs, so those screens are missing for that size.
+  - One "after" Onboarding run on Pro Max failed to launch; it was re-run.
 - **Branches:** four stacked PRs, none merged.
   - Blockers: `audit/blockers`
   - Polish: `audit/polish`
@@ -128,9 +132,13 @@ Before and after captures of every screen, day and night, on iPhone SE (3rd gen)
 ### Release checks (`audit/release`)
 - [x] **App icon:** dark and tinted variants added (made from the "c" mark).
 - [~] **Launch screen:** it now matches the paper (#F6EEE2 by day, #201712 in dark mode). The app's night follows the clock, not the phone's dark mode, so a phone in dark mode at noon still flashes dark for a moment. That can't be fixed with a launch color.
-- [x] **No clipped text at AX5; works on iPhone SE:**
-  - The audit flagged "Afternoon" in To do on SE; it now shrinks slightly instead of clipping.
-  - Remaining flags: a few "Dynamic Type partially supported" notes on custom-font headings, and Settings' "Done" button.
+- [x] **No clipped text at AX5; works on iPhone SE.** The AX5 captures showed words broken mid-word, now fixed:
+  - Supplement tiles go to one column.
+  - The Logged banner puts Undo under its words.
+  - Coming up dates sit above the words instead of stacking letter by letter.
+  - The Supplements header stacks.
+  - To do's "Afternoon" shrinks slightly on SE.
+  - Remaining audit notes: "Dynamic Type partially supported" on a few custom-font headings, and Settings' system "Done".
 - [x] **Contrast:**
   - Token pairs, measured:
 
@@ -162,3 +170,5 @@ Before and after captures of every screen, day and night, on iPhone SE (3rd gen)
 5. **Notification banners couldn't be captured** in the simulator. Worth a look on the phone.
 6. **Home guide step 3 shows the keyboard** (iOS 27 behaviour on the simulator). A real-phone capture would avoid it.
 7. **Fixed after the before shots:** in the To do step sheet, the big statement showed through the sheet's header when scrolled. The header is now solid.
+8. **Guide clocks read "Sat Jan 1, 9:41".** The simulator's 9:41 override carries no date, so the Lock Screen shows January 1. It's the same on every guide; recapturing with a real date is easy if you'd rather show "Sun Oct 11".
+9. **The "after" captures ran later in the day than the "before" ones.** So Today asks the 4 PM skin question in some after shots. That's the clock, not a change.

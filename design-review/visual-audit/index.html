@@ -1,0 +1,78 @@
+<title>Cali Care Visual Audit</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+<style>
+/* Layout: one row per fix, before and after side by side; share outputs and store shots below. */
+:root { --bg:#F6EEE2; --surface:#ECDFCC; --ink:#261C14; --muted:#67584A; --line:#DECDB6; --accent:#665B52;
+  --serif: Newsreader, 'New York', Georgia, serif; --sans: -apple-system, 'SF Pro Text', system-ui, sans-serif; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#201712; --surface:#2C2019; --ink:#F2E5D6; --muted:#BBA792; --line:#3B2C22; --accent:#D3C8BC; color-scheme: dark } }
+:root[data-theme="dark"] { --bg:#201712; --surface:#2C2019; --ink:#F2E5D6; --muted:#BBA792; --line:#3B2C22; --accent:#D3C8BC; color-scheme: dark }
+body { background:var(--bg); color:var(--ink); font:16px/1.5 var(--sans); }
+.wrap { max-width:1180px; margin:0 auto; padding-inline:20px; padding-block:36px 72px; display:flex; flex-direction:column; gap:40px; }
+h1,h2 { font-family:var(--serif); font-weight:500; margin:0; text-wrap:balance; }
+h1 { font-size:38px; line-height:1.12; } h2 { font-size:24px; }
+p { margin:0; } .muted { color:var(--muted); }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:28px 24px; }
+figure { margin:0; display:flex; flex-direction:column; gap:8px; min-width:0; }
+.pair { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.pair div { display:flex; flex-direction:column; gap:4px; min-width:0; }
+.tag { font-size:12px; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); }
+img { width:100%; height:auto; display:block; border-radius:14px; border:1px solid var(--line); }
+figcaption { font-size:14px; color:var(--muted); } figcaption b { color:var(--ink); font-weight:600; }
+.row { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; }
+section { display:flex; flex-direction:column; gap:16px; }
+</style>
+<div class="wrap">
+  <header style="display:flex;flex-direction:column;gap:10px">
+    <h1>Visual audit, before and after</h1>
+    <p class="muted">iPhone SE and iPhone 17 Pro Max, day and night, default and largest text. Every capture is in screenshots/audit; the checklist is docs/visual-audit.md. Four PRs, none merged.</p>
+  </header>
+  <section>
+    <h2>The fixes</h2>
+    <div class="grid">
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-onb-2-child-color-day-se-default.png.jpg" alt="Child step, keyboard put away, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-onb-2-child-color-day-se-default.png.jpg" alt="Child step, keyboard put away, after" loading="lazy"></div></div><figcaption><b>1.</b> Child step, keyboard put away</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-onb-2-child-day-se-default.png.jpg" alt="Child step, keyboard up, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-onb-2-child-day-se-default.png.jpg" alt="Child step, keyboard up, after" loading="lazy"></div></div><figcaption><b>1.</b> Child step, keyboard up</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-today-day-se-default.png.jpg" alt="Today by day: Today, then Last night, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-today-day-se-default.png.jpg" alt="Today by day: Today, then Last night, after" loading="lazy"></div></div><figcaption><b>2.</b> Today by day: Today, then Last night</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-today-night-se-default.png.jpg" alt="Today at night, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-today-night-se-default.png.jpg" alt="Today at night, after" loading="lazy"></div></div><figcaption><b>2.</b> Today at night</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-guide-home-2-day-se-default.png.jpg" alt="Home guide step 2: one ring, no zoom, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-guide-home-2-day-se-default.png.jpg" alt="Home guide step 2: one ring, no zoom, after" loading="lazy"></div></div><figcaption><b>3.</b> Home guide step 2: one ring, no zoom</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-guide-lock-1-day-se-default.png.jpg" alt="Lock guide step 1, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-guide-lock-1-day-se-default.png.jpg" alt="Lock guide step 1, after" loading="lazy"></div></div><figcaption><b>3.</b> Lock guide step 1</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-guide-cc-5-day-se-default.png.jpg" alt="Control Center step 5: a ring, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-guide-cc-5-day-se-default.png.jpg" alt="Control Center step 5: a ring, after" loading="lazy"></div></div><figcaption><b>3.</b> Control Center step 5: a ring</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-guide-lock-done-day-se-default.png.jpg" alt="Lock guide finished, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-guide-lock-done-day-se-default.png.jpg" alt="Lock guide finished, after" loading="lazy"></div></div><figcaption><b>4.</b> Lock guide finished</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-plan-day-2-day-se-default.png.jpg" alt="Plan scrolled under the tab bar, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-plan-day-2-day-se-default.png.jpg" alt="Plan scrolled under the tab bar, after" loading="lazy"></div></div><figcaption><b>5.</b> Plan scrolled under the tab bar</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-todo-morning-day-1-day-se-default.png.jpg" alt="To do header, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-todo-morning-day-1-day-se-default.png.jpg" alt="To do header, after" loading="lazy"></div></div><figcaption><b>6.</b> To do header</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-onb-4-reminders-on-day-se-default.png.jpg" alt="Buttons: Reminders, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-onb-4-reminders-on-day-se-default.png.jpg" alt="Buttons: Reminders, after" loading="lazy"></div></div><figcaption><b>7.</b> Buttons: Reminders</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-today-night-max-default.png.jpg" alt="Today at night: Log first, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-today-night-max-default.png.jpg" alt="Today at night: Log first, after" loading="lazy"></div></div><figcaption><b>8.</b> Today at night: Log first</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-settings-1-day-se-default.png.jpg" alt="Switches, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-settings-1-day-se-default.png.jpg" alt="Switches, after" loading="lazy"></div></div><figcaption><b>9.</b> Switches</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-onb-2-child-color-day-max-default.png.jpg" alt="Color dots, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-onb-2-child-color-day-max-default.png.jpg" alt="Color dots, after" loading="lazy"></div></div><figcaption><b>10.</b> Color dots</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-plan-length-day-1-day-max-default.png.jpg" alt="Plan card and supplements, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-plan-length-day-1-day-max-default.png.jpg" alt="Plan card and supplements, after" loading="lazy"></div></div><figcaption><b>11, 13.</b> Plan card and supplements</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-plan-length-day-2-day-max-default.png.jpg" alt="Supplement tiles, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-plan-length-day-2-day-max-default.png.jpg" alt="Supplement tiles, after" loading="lazy"></div></div><figcaption><b>11.</b> Supplement tiles</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-guide-lock-3-night-se-default.png.jpg" alt="Guide at night, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-guide-lock-3-night-se-default.png.jpg" alt="Guide at night, after" loading="lazy"></div></div><figcaption><b>14.</b> Guide at night</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-onb-5-log-lock-day-se-default.png.jpg" alt="Log in one tap, Lock Screen, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-onb-5-log-lock-day-se-default.png.jpg" alt="Log in one tap, Lock Screen, after" loading="lazy"></div></div><figcaption><b>15.</b> Log in one tap, Lock Screen</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-guide-lock-reminded-day-se-default.png.jpg" alt="Remind me later, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-guide-lock-reminded-day-se-default.png.jpg" alt="Remind me later, after" loading="lazy"></div></div><figcaption><b>17.</b> Remind me later</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-log-banner-day-se-ax5.png.jpg" alt="Logged banner, largest text, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-log-banner-day-se-ax5.png.jpg" alt="Logged banner, largest text, after" loading="lazy"></div></div><figcaption><b>AX5.</b> Logged banner, largest text</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-plan-length-xxxl-2-day-se-ax5.png.jpg" alt="Plan, largest text, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-plan-length-xxxl-2-day-se-ax5.png.jpg" alt="Plan, largest text, after" loading="lazy"></div></div><figcaption><b>AX5.</b> Plan, largest text</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-todo-morning-xxxl-1-day-se-ax5.png.jpg" alt="To do, largest text, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-todo-morning-xxxl-1-day-se-ax5.png.jpg" alt="To do, largest text, after" loading="lazy"></div></div><figcaption><b>AX5.</b> To do, largest text</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-caregiver-card-day-max-default.png.jpg" alt="Caregiver card, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-caregiver-card-day-max-default.png.jpg" alt="Caregiver card, after" loading="lazy"></div></div><figcaption><b>C.</b> Caregiver card</figcaption></figure>
+      <figure><div class="pair"><div><span class="tag">Before</span><img src="shots/before-progress-week-day-max-default.png.jpg" alt="Doctor report screen, before" loading="lazy"></div><div><span class="tag">After</span><img src="shots/after-progress-week-day-max-default.png.jpg" alt="Doctor report screen, after" loading="lazy"></div></div><figcaption><b>B.</b> Doctor report screen</figcaption></figure>
+    </div>
+  </section>
+  <section>
+    <h2>Share outputs</h2>
+    <div class="row">
+      <figure><img src="shots/share-week-share-rough.jpg" alt="Weekly card, a rough week"><figcaption><b>A.</b> Weekly card, olive</figcaption></figure>
+      <figure><img src="shots/share-week-share-nights-only.jpg" alt="Weekly card, nights only"><figcaption><b>A.</b> A week with only nights</figcaption></figure>
+      <figure><img src="shots/share-visit-report-4-weeks-page1.jpg" alt="Doctor report, one page"><figcaption><b>B.</b> Doctor report, one page</figcaption></figure>
+      <figure><img src="shots/share-caregiver-card.jpg" alt="Caregiver card"><figcaption><b>C.</b> Caregiver card</figcaption></figure>
+    </div>
+  </section>
+  <section>
+    <h2>App Store screenshots</h2>
+    <p class="muted">6.9-inch, 1320 × 2868, with the demo plan's plain product names.</p>
+    <div class="row">
+      <figure><img src="shots/store-1-plan-day.jpg" alt="App Store screenshot 1-plan-day" loading="lazy"></figure>
+      <figure><img src="shots/store-2-todo-day.jpg" alt="App Store screenshot 2-todo-day" loading="lazy"></figure>
+      <figure><img src="shots/store-3-today-day.jpg" alt="App Store screenshot 3-today-day" loading="lazy"></figure>
+      <figure><img src="shots/store-4-progress-day.jpg" alt="App Store screenshot 4-progress-day" loading="lazy"></figure>
+      <figure><img src="shots/store-5-todo-night.jpg" alt="App Store screenshot 5-todo-night" loading="lazy"></figure>
+    </div>
+  </section>
+</div>

@@ -1,6 +1,6 @@
 home_step1 0.500 0.680
 home_step2 0.172 0.038
-home_step3 0.391 0.106
+home_step3 0.392 0.106
 home_step4 0.500 0.291
 home_step5 0.500 0.905
 home_step6 0.828 0.038

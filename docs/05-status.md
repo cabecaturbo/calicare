@@ -1,17 +1,18 @@
-# Status (October 10, 2026)
+# Status (October 12, 2026)
 
 Where CaliCare stands. `PROGRESS.md` has the step-by-step checklist, and `docs/06-decisions.md` has the reasons behind each choice.
 
 ## Where things are
 - **Base branch:** `claude/inspiring-lamport-rmzneg`. Each step gets its own branch off it and merges back through a PR once CI passes. GitHub's default `main` is behind, at PR #47.
-- **Built and merged (through PR #92):**
+- **Built and merged (through PR #108):**
   - Phases 1–5, 6.1 photos, 6.2 product diary, the UX rebuild, V1.0 hierarchy and wording.
   - Tabs: Today, To do, Progress, **Plan** (v4: the star card with week and next visit, Coming up, supplement tiles, Skin care card, item pages with dose steps). SchemaV8 adds `CarePlan.lengthWeeks` and `PlanItem.doseStepsRaw` (Supabase columns pushed).
   - One motion system (`Core/DesignSystem/Motion.swift`, DESIGN.md §8). One star per screen (DESIGN.md §5a).
-  - Onboarding matches the app and offers "Bring in your care plan". October 10 onboarding pass: accurate privacy copy, Reminders with Continue and times, "Log in one tap" with the widget in place, the Lock Screen guide's "Remind me later", Today's widget row only when needed, and one set of terms (no "Quick Log").
+  - Onboarding matches the app and offers "Bring in your care plan". October 10 onboarding pass: accurate privacy copy, Reminders with Continue and times, "Log in one tap" with the widget in place, the Lock Screen guide's "Remind me later", Today's widget row only when needed, and one set of terms. Quick Log stays on Today (it logs without Face ID).
+  - Visual audit (PRs #104–#107, `docs/visual-audit.md`): night is 7 PM–7 AM everywhere; one header on every tab; semibold buttons; 3:1 switches; guides with one ring per step; tab bar fade; largest-text fixes. Share outputs: "Share this week" card (olive), one-page doctor report with "Questions for the visit" (SchemaV9; Supabase column pushed October 12), phone-sized caregiver card from Plan. Dark and tinted icons; App Store screenshots in `screenshots/appstore/`.
   - Night colors follow the clock; Settings › Appearance overrides.
-- **On the owner's iPhone:** the latest Release build, with "Share this week" (October 11).
-- **TestFlight:** builds 3, 4 and 5 submitted for beta review (build 2 is approved and live on the public link).
+- **On the owner's iPhone:** the Release build of c88df17 (everything through the visual audit), October 12.
+- **TestFlight:** build 9 (the visual audit) submitted for beta review; builds 3–8 are older and can be ignored. Build 2 is approved and live on the public link.
 - **Site:** https://calicare.vercel.app, the owner's preferred old layout and wording, with Plan and To do as their own sections showing the current app.
 - **Version 1 is slim on purpose:**
   - Food extras are hidden (`Features.foodExtras`).

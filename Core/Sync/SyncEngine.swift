@@ -435,6 +435,7 @@ extension SyncEngine {
         visit.date = remote.date
         visit.provider = remote.provider
         visit.notes = remote.notes
+        visit.questions = remote.questions
         visit.createdAt = remote.createdAt
         visit.updatedAt = remote.updatedAt
         visit.deletedAt = remote.deletedAt
@@ -554,7 +555,8 @@ extension RemoteVisit {
     init(_ visit: Visit, household: UUID) {
         self.init(
             id: visit.id, householdID: household, childID: visit.childID, date: visit.date, provider: visit.provider,
-            notes: visit.notes, createdAt: visit.createdAt, updatedAt: visit.updatedAt, deletedAt: visit.deletedAt
+            notes: visit.notes, questions: visit.questions, createdAt: visit.createdAt, updatedAt: visit.updatedAt,
+            deletedAt: visit.deletedAt
         )
     }
 }

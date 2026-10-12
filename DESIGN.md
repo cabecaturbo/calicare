@@ -410,10 +410,9 @@ a page from a small magazine.
 **The texted card ("Share this week", Progress) is the exception.** It's read
 at about 250pt wide in Messages, so it's simpler and bigger: 600×580pt,
 nothing under 22pt, no stats rows and no footer.
-- Its skin squares use their own blue scale, chosen to read at that size:
-  Calm #E3E7EE, A little itchy #C2CBDB, Flaring #56698F, Very rough #2E3E5E.
-  This is the only place skin isn't olive.
-- Ground #F6F1E8, ink #1E1B18, soft ink #5C554D. Always the day look.
+- Day tokens always; the olive skin scale (Calm #ECECD8, A little itchy #CFD0A6,
+  Flaring #8F9156, Very rough #55582C), each square with a 2pt #67584A border.
+- A week with no skin answers shows nights instead, labeled "Nights".
 - No "Not medical advice" line: it only restates what was logged (owner's call, October 11, 2026).
 
 ## 11. Widgets

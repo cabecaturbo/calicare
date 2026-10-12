@@ -180,13 +180,16 @@ public struct RemoteVisit: Codable, Equatable, Sendable {
     public var date: Date
     public var provider: String
     public var notes: String?
+    /// SchemaV9: "Questions for the visit". Sent only when set, so an older
+    /// table without the column still accepts visits without questions.
+    public var questions: String?
     public var createdAt: Date
     public var updatedAt: Date
     public var deletedAt: Date?
     public var serverUpdatedAt: Date?
 
     enum CodingKeys: String, CodingKey {
-        case id, date, provider, notes
+        case id, date, provider, notes, questions
         case householdID = "household_id"
         case childID = "child_id"
         case createdAt = "created_at"
@@ -196,13 +199,14 @@ public struct RemoteVisit: Codable, Equatable, Sendable {
     }
 
     public init(id: UUID, householdID: UUID, childID: UUID, date: Date, provider: String, notes: String?,
-                createdAt: Date, updatedAt: Date, deletedAt: Date?, serverUpdatedAt: Date? = nil) {
+                questions: String? = nil, createdAt: Date, updatedAt: Date, deletedAt: Date?, serverUpdatedAt: Date? = nil) {
         self.id = id
         self.householdID = householdID
         self.childID = childID
         self.date = date
         self.provider = provider
         self.notes = notes
+        self.questions = questions
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
@@ -217,6 +221,7 @@ public struct RemoteVisit: Codable, Equatable, Sendable {
         try c.encode(date, forKey: .date)
         try c.encode(provider, forKey: .provider)
         try c.encode(notes, forKey: .notes)
+        try c.encodeIfPresent(questions, forKey: .questions)
         try c.encode(createdAt, forKey: .createdAt)
         try c.encode(updatedAt, forKey: .updatedAt)
         try c.encode(deletedAt, forKey: .deletedAt)

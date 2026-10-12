@@ -345,15 +345,25 @@ final class TodayModel {
                         now: .now, calendar: calendar)
     }
 
+    func setQuestions(_ questions: String, visit: UUID) async {
+        do {
+            try await CarePlanStore(modelContainer: try CaliCareModelContainer.shared()).setQuestions(questions, visit: visit)
+            await load()
+            Task { await LogChanges.didChange() }
+        } catch {
+            problem = "Couldn't save the questions. Please try again."
+        }
+    }
+
     func logProviderMessage() async {
         await log(.providerMessage)
     }
 
-    func addVisit(date: Date, provider: String, notes: String?) async {
+    func addVisit(date: Date, provider: String, notes: String?, questions: String? = nil) async {
         guard let child else { return }
         do {
             try await CarePlanStore(modelContainer: try CaliCareModelContainer.shared())
-                .addVisit(child: child.id, date: date, provider: provider, notes: notes)
+                .addVisit(child: child.id, date: date, provider: provider, notes: notes, questions: questions)
             await load()
             Task { await LogChanges.didChange() }
         } catch {

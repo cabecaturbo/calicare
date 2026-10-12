@@ -279,19 +279,23 @@ public struct VisitInfo: Identifiable, Hashable, Sendable {
     public let date: Date
     public let provider: String
     public let notes: String?
+    /// "Questions for the visit", for the doctor report. Nil when there are none.
+    public let questions: String?
 
-    public init(id: UUID, childID: UUID, date: Date, provider: String, notes: String?) {
+    public init(id: UUID, childID: UUID, date: Date, provider: String, notes: String?, questions: String? = nil) {
         self.id = id
         self.childID = childID
         self.date = date
         self.provider = provider
         self.notes = notes
+        self.questions = questions
     }
 }
 
 extension VisitInfo {
     init(_ visit: Visit) {
-        self.init(id: visit.id, childID: visit.childID, date: visit.date, provider: visit.provider, notes: visit.notes)
+        self.init(id: visit.id, childID: visit.childID, date: visit.date, provider: visit.provider, notes: visit.notes,
+                  questions: visit.questions)
     }
 }
 

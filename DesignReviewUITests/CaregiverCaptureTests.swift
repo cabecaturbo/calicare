@@ -1,26 +1,25 @@
 import XCTest
 
-/// Progress › Caregiver card: the editor, filled in, and the card preview.
+/// Plan › Caregiver card: the editor, filled in, and the card preview.
 @MainActor
 final class CaregiverCaptureTests: XCTestCase {
     func testCaregiverCard() {
         let variant = ScreenTourTests.variant
         let app = XCUIApplication()
-        app.launchArguments = ScreenTourTests.launchArguments + ["-designReviewSeed", "SAMPLE"]
+        app.launchArguments = ScreenTourTests.launchArguments + ["-designReviewSeed", "LEGACYPLAN", "-todoClock", "10:00"]
         app.launch()
-        sleep(8)
-        app.terminate()
-        app.launch()
-        sleep(3)
-        app.buttons["Progress"].firstMatch.tap()
+        sleep(6)
+        app.buttons["Plan"].firstMatch.tap()
         sleep(2)
-        app.swipeUp()
-        app.buttons["Caregiver card"].firstMatch.tap()
+        let row = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Caregiver card")).firstMatch
+        for _ in 0..<8 where !row.isHittable { app.swipeUp() }
+        row.tap()
         sleep(2)
         Capture.screen("caregiver-editor-\(variant)")
 
-        type("Apple slices\nRice cakes", into: app.textFields["One per line"].firstMatch)
-        type("Cool cloth on the spot, then text us", into: app.textFields["What you'd like them to do"].firstMatch)
+        type("Grandma", into: app.textFields["Grandma, the sitter…"].firstMatch)
+        type("Cool cloth on the spot, then text us", into: app.textFields["What you’d like them to do"].firstMatch)
+        type("Wool blankets", into: app.textFields["One per line"].firstMatch)
         app.buttons["Add a contact"].tap()
         type("Mom", into: app.textFields["Name"].firstMatch)
         type("555 0100", into: app.textFields["Phone"].firstMatch)

@@ -13,24 +13,25 @@ struct NightModeTests {
         calendar.date(from: DateComponents(year: 2026, month: 9, day: 26, hour: hour, minute: minute))!
     }
 
-    @Test(arguments: [20, 23, 0, 2, 6])
+    @Test(arguments: [19, 20, 23, 0, 2, 6])
     func activeAtNight(hour: Int) {
         #expect(NightMode.isActive(at: date(hour: hour), calendar: calendar))
     }
 
-    @Test(arguments: [7, 12, 19])
+    @Test(arguments: [7, 12, 18])
     func inactiveDuringDay(hour: Int) {
         #expect(!NightMode.isActive(at: date(hour: hour), calendar: calendar))
     }
 
     @Test func edgesAreExact() {
-        #expect(!NightMode.isActive(at: date(hour: 19, minute: 59), calendar: calendar))
+        #expect(!NightMode.isActive(at: date(hour: 18, minute: 59), calendar: calendar))
+        #expect(NightMode.isActive(at: date(hour: 19), calendar: calendar))
         #expect(NightMode.isActive(at: date(hour: 6, minute: 59), calendar: calendar))
     }
 
-    @Test func nextChangeDuringDayIsEightPM() {
+    @Test func nextChangeDuringDayIsSevenPM() {
         let next = NightMode.nextChange(after: date(hour: 13, minute: 15), calendar: calendar)
-        #expect(next == date(hour: 20))
+        #expect(next == date(hour: 19))
     }
 
     @Test func nextChangeAtNightIsSevenAMNextDay() {

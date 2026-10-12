@@ -185,8 +185,28 @@ private struct TabChrome: ViewModifier {
             if pills {
                 content.toolbar(.hidden, for: .tabBar)
             } else {
-                content.modifier(LoggedBannerInset(isOn: true))
+                content
+                    .modifier(LoggedBannerInset(isOn: true))
+                    .overlay(alignment: .bottom) { TabBarFade() }
             }
         }
+    }
+}
+
+/// Paper fading up behind the floating glass tab bar, so rows scrolling
+/// under it don't show through the glass.
+private struct TabBarFade: View {
+    @Environment(\.palette) private var palette
+
+    var body: some View {
+        VStack(spacing: 0) {
+            LinearGradient(colors: [palette.paper.opacity(0), palette.paper.opacity(0.94)], startPoint: .top, endPoint: .bottom)
+                .frame(height: 56)
+            palette.paper.opacity(0.94)
+                .frame(height: 40)
+        }
+        .ignoresSafeArea(edges: .bottom)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }

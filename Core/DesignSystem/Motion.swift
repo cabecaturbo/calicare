@@ -4,7 +4,7 @@ import UIKit
 /// The one motion system (DESIGN.md §8). Every animation in the app uses
 /// these tokens and modifiers; nothing else picks a duration or a curve.
 /// Three speeds, one curve, five moves (Press, Done, Arrive, Move, and the
-/// system's own sheets and navigation). Night (8 PM to 7 AM) is 1.3× slower.
+/// system's own sheets and navigation). Night (7 PM to 7 AM) is 1.3× slower.
 /// Reduce Motion turns every move into a crossfade with the same meaning.
 public enum Motion {
     public enum Speed: Sendable, CaseIterable {

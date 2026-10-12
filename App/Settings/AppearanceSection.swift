@@ -2,14 +2,14 @@ import Core
 import SwiftUI
 import WidgetKit
 
-/// Settings › Appearance: night colors follow the clock (8 PM to 7 AM) unless
+/// Settings › Appearance: night colors follow the clock (7 PM to 7 AM) unless
 /// the parent picks day or night here.
 struct AppearanceSection: View {
     @Environment(\.palette) private var palette
     @AppStorage(AppearanceMode.key, store: AppGroup.defaults) private var raw = AppearanceMode.automatic.rawValue
 
     var body: some View {
-        SettingsSection("Appearance", footnote: "Time of day uses night colors from 8 PM to 7 AM.") {
+        SettingsSection("Appearance", footnote: "Time of day uses night colors from 7 PM to 7 AM.") {
             // Bound straight to the stored value: Xcode 26's compiler crashed on a
             // custom Binding whose setter was a method here.
             Picker(selection: $raw) {

@@ -14,7 +14,7 @@ final class OnboardingCaptureTests: XCTestCase {
         let app = XCUIApplication()
         // Day allows notifications and night says no, so both outcomes are captured.
         app.launchArguments = ScreenTourTests.launchArguments
-            + ["-designReviewNotifications", variant == "night" ? "deny" : "allow"]
+            + ["-designReviewNotifications", ScreenTourTests.isNight ? "deny" : "allow"]
         app.launch()
 
         sleep(2)

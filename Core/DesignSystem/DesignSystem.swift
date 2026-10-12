@@ -51,7 +51,7 @@ public struct Palette: Sendable, Equatable {
         severityScale: [0xECECD8, 0xCFD0A6, 0xB0B17E, 0x8F9156, 0x55582C]
     )
 
-    /// Night colors (8 PM – 7 AM, or pinned with the toggle): a soft, warm
+    /// Night colors (7 PM – 7 AM, or pinned with the toggle): a soft, warm
     /// night. Brown-black paper, warm text, a light greige accent; on the
     /// olive scale, brighter is rougher.
     public static let night = Palette(

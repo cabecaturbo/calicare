@@ -1,7 +1,7 @@
 import SwiftUI
 
 extension View {
-    /// Switches between the day and night palettes automatically (8 PM – 7 AM).
+    /// Switches between the day and night palettes automatically (7 PM – 7 AM).
     public func nightAwarePalette() -> some View {
         modifier(NightAwarePaletteModifier())
     }

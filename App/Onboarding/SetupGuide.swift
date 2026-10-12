@@ -57,11 +57,11 @@ enum GuidePath: String, Identifiable, CaseIterable {
         switch self {
         case .homeScreen: [
             GuideStep(asset: "widgetHome_ios27_step1", sentence: "Touch and hold an empty area of your Home Screen until the apps jiggle.", tap: UnitPoint(x: 0.500, y: 0.680)),
-            GuideStep(asset: "widgetHome_ios27_step2", sentence: "Tap Edit in the top-left corner.", tap: UnitPoint(x: 0.172, y: 0.038)),
+            GuideStep(asset: "widgetHome_ios27_step2", sentence: "Tap Edit in the top left corner.", tap: UnitPoint(x: 0.172, y: 0.038)),
             GuideStep(asset: "widgetHome_ios27_step3", sentence: "Tap Add Widget.", tap: UnitPoint(x: 0.391, y: 0.106)),
             GuideStep(asset: "widgetHome_ios27_step4", sentence: "Search for Cali Care and tap it.", tap: UnitPoint(x: 0.500, y: 0.291)),
             GuideStep(asset: "widgetHome_ios27_step5", sentence: "Swipe to pick a size, then tap Add Widget.", tap: UnitPoint(x: 0.500, y: 0.905)),
-            GuideStep(asset: "widgetHome_ios27_step6", sentence: "Tap the checkmark in the top-right corner.", tap: UnitPoint(x: 0.828, y: 0.038)),
+            GuideStep(asset: "widgetHome_ios27_step6", sentence: "Tap the checkmark in the top right corner.", tap: UnitPoint(x: 0.828, y: 0.038)),
         ]
         case .lockScreen: [
             GuideStep(asset: "widgetLock_ios27_step1", sentence: "Touch and hold your Lock Screen. iOS may ask for Face ID before it shows Customize.", tap: UnitPoint(x: 0.500, y: 0.450)),
@@ -72,18 +72,18 @@ enum GuidePath: String, Identifiable, CaseIterable {
             GuideStep(asset: "widgetLock_ios27_step6", sentence: "Tap Done.", tap: UnitPoint(x: 0.818, y: 0.038)),
         ]
         case .controlCenter: [
-            GuideStep(asset: "controlCenter_ios27_step1", sentence: "Swipe down from the top-right corner.", tap: UnitPoint(x: 0.900, y: 0.010)),
+            GuideStep(asset: "controlCenter_ios27_step1", sentence: "Swipe down from the top right corner.", tap: UnitPoint(x: 0.900, y: 0.010)),
             GuideStep(asset: "controlCenter_ios27_step2", sentence: "Touch and hold an empty area.", tap: UnitPoint(x: 0.500, y: 0.880)),
             GuideStep(asset: "controlCenter_ios27_step3", sentence: "Tap Add a Control.", tap: UnitPoint(x: 0.500, y: 0.916)),
             GuideStep(asset: "controlCenter_ios27_step4", sentence: "Search for Cali Care, then tap Log.", tap: UnitPoint(x: 0.144, y: 0.302)),
-            GuideStep(asset: "controlCenter_ios27_step5", sentence: "Tap an empty area to finish."),
+            GuideStep(asset: "controlCenter_ios27_step5", sentence: "Tap an empty area to finish.", tap: UnitPoint(x: 0.5, y: 0.75)),
         ]
         }
     }
 }
 
 /// A guide, one step per screen: the real screenshot with the spot ringed, a
-/// zoomed circle of that spot, one sentence, Back and Next, then "You're set."
+/// one sentence, Back and Next, then "You're set."
 struct SetupGuide: View {
     @Environment(\.palette) private var palette
     @Environment(ReminderController.self) private var reminders
@@ -250,8 +250,7 @@ struct SetupGuide: View {
     }
 }
 
-/// A real screenshot in a rounded phone shape, with the tap spot ringed and a
-/// zoomed circle of that spot beside it.
+/// A real screenshot in a rounded phone shape, with one ring on the spot to tap.
 struct GuideScreenshot: View {
     @Environment(\.palette) private var palette
     let asset: String
@@ -259,8 +258,6 @@ struct GuideScreenshot: View {
 
     /// The captures are 402 × 874 points.
     private let aspect: CGFloat = 402.0 / 874.0
-    private let calloutSize: CGFloat = 112
-    private let zoom: CGFloat = 2.4
 
     var body: some View {
         GeometryReader { proxy in
@@ -271,9 +268,9 @@ struct GuideScreenshot: View {
                     .clipShape(RoundedRectangle(cornerRadius: size.width * 0.11))
                     .overlay(RoundedRectangle(cornerRadius: size.width * 0.11).strokeBorder(palette.hairline, lineWidth: 1))
                 if let tap {
+                    // One ring, on the real thing to tap.
                     TapRing()
                         .position(x: tap.x * size.width, y: max(tap.y * size.height, 16))
-                    callout(tap, size)
                 }
             }
             .frame(width: size.width, height: size.height)
@@ -286,26 +283,6 @@ struct GuideScreenshot: View {
             .resizable()
             .aspectRatio(contentMode: .fill)
             .frame(width: size.width, height: size.height)
-    }
-
-    /// Sits over the phone's edge on the side away from the tap, at the tap's
-    /// height, reaching only a little past the phone so it stays on screen.
-    private func callout(_ tap: UnitPoint, _ size: CGSize) -> some View {
-        let big = CGSize(width: size.width * zoom, height: size.height * zoom)
-        let half = calloutSize / 2
-        let x = tap.x < 0.5 ? size.width - half * 0.55 : half * 0.55
-        // A tap near the middle would sit under the circle: move it up or down instead.
-        let central = abs(tap.x - 0.5) < 0.2
-        let shift = central ? (tap.y > 0.5 ? -calloutSize * 1.1 : calloutSize * 1.1) : 0
-        let y = min(max(tap.y * size.height + shift, half), size.height - half)
-        return shot(big)
-            .offset(x: (0.5 - tap.x) * big.width, y: (0.5 - tap.y) * big.height)
-            .frame(width: calloutSize, height: calloutSize)
-            .clipShape(Circle())
-            .overlay(TapRing())
-            .overlay(Circle().strokeBorder(palette.paper, lineWidth: 3))
-            .overlay(Circle().strokeBorder(palette.hairline, lineWidth: Rule.width))
-            .position(x: x, y: y)
     }
 }
 

@@ -7,6 +7,7 @@ import SwiftUI
 /// changes data.
 struct PlanV4View: View {
     @Environment(\.palette) private var palette
+    @Environment(\.dynamicTypeSize) private var typeSize
     @Environment(TodayModel.self) private var model
     let plan: CarePlanInfo
     let onAdd: () -> Void
@@ -49,7 +50,9 @@ struct PlanV4View: View {
                         .foregroundStyle(palette.graphite)
                 }
                 .padding(.top, Spacing.section)
-                LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+                // One column at the largest text sizes, so names don't break mid-word.
+                let columns = typeSize.isAccessibilitySize ? 1 : 2
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: columns), spacing: 10) {
                     ForEach(Array(supplements.enumerated()), id: \.element.id) { index, entry in
                         NavigationLink { PlanItemScreen(id: entry.id) } label: { SupplementTile(entry: entry) }
                             .buttonStyle(.pressable)

@@ -24,10 +24,10 @@ public struct GetWeeklyCardIntent: AppIntent {
     }
 }
 
-/// "Get Care Log": the doctor report PDF for the last few weeks.
+/// "Get Care Log": the one-page doctor report PDF for the last few weeks.
 public struct GetCareLogIntent: AppIntent {
     public static let title: LocalizedStringResource = "Get Care Log"
-    public static let description = IntentDescription("The care log PDF for a child's provider, covering the last few weeks. Not medical advice.")
+    public static let description = IntentDescription("The one-page report for a child's doctor, covering the last few weeks. Not medical advice.")
     public static let openAppWhenRun = false
 
     @Parameter(title: "Child", description: "Leave empty for the child you're logging for.")
@@ -44,8 +44,17 @@ public struct GetCareLogIntent: AppIntent {
         let info = try await QuickLog.live().child(child?.id)
         let today = CareDay.containing(.now)
         let range = DoctorReport.Range(first: today.adding(days: -(days - 1)), last: today)
-        let report = try await DoctorReport.load(child: info, range: range, container: container)
-        let url = try DoctorReportPDF.file(for: report)
+        let plans = CarePlanStore(modelContainer: container)
+        let events = try await LogStore(modelContainer: container).events(from: range.first, through: range.last, child: info.id)
+        let plan = try await plans.activePlan(child: info.id)
+        var items: [PlanItemInfo] = []
+        if let plan { items = try await plans.items(plan: plan.id) }
+        let report = VisitReport(
+            child: info, range: range, events: events, plan: plan, items: items,
+            steps: try await RoutineStore(modelContainer: container).steps(child: info.id),
+            visits: try await plans.visits(child: info.id), parentName: LoggedBy.current()
+        )
+        let url = try VisitReportPDF.file(for: report)
         return .result(value: IntentFile(fileURL: url, filename: url.lastPathComponent, type: .pdf))
     }
 }

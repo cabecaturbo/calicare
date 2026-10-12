@@ -7,6 +7,7 @@ import SwiftUI
 /// changes data.
 struct PlanV4View: View {
     @Environment(\.palette) private var palette
+    @Environment(\.dynamicTypeSize) private var typeSize
     @Environment(TodayModel.self) private var model
     let plan: CarePlanInfo
     let onAdd: () -> Void
@@ -41,15 +42,17 @@ struct PlanV4View: View {
 
             let supplements = entries.sections.first { $0.section == .supplements }?.entries ?? []
             if !supplements.isEmpty {
-                HStack(alignment: .firstTextBaseline) {
+                AdaptiveStack(alignment: .firstTextBaseline) {
                     PlanSectionTitle("Supplements")
-                    Spacer()
+                    Spacer(minLength: 0)
                     Text("\(supplements.filter(\.isActive).count) giving")
                         .textStyle(.meta)
                         .foregroundStyle(palette.graphite)
                 }
                 .padding(.top, Spacing.section)
-                LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+                // One column at the largest text sizes, so names don't break mid-word.
+                let columns = typeSize.isAccessibilitySize ? 1 : 2
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: columns), spacing: 10) {
                     ForEach(Array(supplements.enumerated()), id: \.element.id) { index, entry in
                         NavigationLink { PlanItemScreen(id: entry.id) } label: { SupplementTile(entry: entry) }
                             .buttonStyle(.pressable)
@@ -171,19 +174,30 @@ private struct ComingUpLink: View {
 
 struct ComingUpRow: View {
     @Environment(\.palette) private var palette
+    @Environment(\.dynamicTypeSize) private var typeSize
     let item: ComingUp.Item
 
     var body: some View {
-        HStack(alignment: .center, spacing: Spacing.x4) {
-            VStack(spacing: 0) {
-                Text(item.date.formatted(.dateTime.month(.abbreviated)).uppercased())
+        // At the largest text sizes the date sits above the words ("Oct 15"), not in a narrow column.
+        let layout = typeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: Spacing.x1))
+            : AnyLayout(HStackLayout(alignment: .center, spacing: Spacing.x4))
+        layout {
+            if typeSize.isAccessibilitySize {
+                Text(item.date.formatted(.dateTime.month(.abbreviated).day()))
                     .textStyle(.meta)
                     .foregroundStyle(palette.graphite)
-                Text(item.date.formatted(.dateTime.day()))
-                    .textStyle(.section)
-                    .foregroundStyle(palette.ink)
+            } else {
+                VStack(spacing: 0) {
+                    Text(item.date.formatted(.dateTime.month(.abbreviated)).uppercased())
+                        .textStyle(.meta)
+                        .foregroundStyle(palette.graphite)
+                    Text(item.date.formatted(.dateTime.day()))
+                        .textStyle(.section)
+                        .foregroundStyle(palette.ink)
+                }
+                .frame(width: 44)
             }
-            .frame(width: 44)
             VStack(alignment: .leading, spacing: 2) {
                 Text(item.text).textStyle(.body).foregroundStyle(palette.ink)
                 if let reason = item.reason {

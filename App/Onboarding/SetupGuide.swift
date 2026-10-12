@@ -223,12 +223,14 @@ struct SetupGuide: View {
     /// hour brings the guide back when the parent has a free minute.
     private func remindLater() {
         Task {
-            let sent = await LockWidgetReminder.schedule(using: reminders)
+            // Say so as soon as notifications are allowed; the scheduling itself follows.
+            let allowed = await reminders.ensureAllowed()
             withMotion(.quick) {
-                reminderNote = sent
+                reminderNote = allowed
                     ? "We’ll remind you at \((Date.now + LockWidgetReminder.delay).formatted(date: .omitted, time: .shortened))."
                     : "Notifications are off for Cali Care, so we can’t remind you. The steps are in Settings any time."
             }
+            if allowed { _ = await LockWidgetReminder.schedule(using: reminders) }
         }
     }
 

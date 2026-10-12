@@ -79,6 +79,10 @@ public struct CaregiverCardView: View {
             Text("Questions? Text \(parentName ?? "\(card.childName)’s parent") anytime.")
                 .font(.system(size: 17, weight: .semibold))
                 .foregroundStyle(palette.ink)
+            Text("From \(card.childName)’s family, in Cali Care. Not medical advice.")
+                .font(.system(size: 13))
+                .foregroundStyle(palette.graphite)
+                .padding(.top, Spacing.x1)
         }
         .padding(.top, 40)
         .padding(.horizontal, 28)

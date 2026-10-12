@@ -38,9 +38,12 @@ private struct DayPartCard: View {
                     .font(.system(size: 18, weight: .regular))
                     .foregroundStyle(isShown ? palette.accent : palette.graphite)
                     .frame(height: 20)
+                // "Afternoon" is the longest; on iPhone SE it shrinks a little instead of clipping.
                 Text(block.block.title)
                     .textStyle(.label)
                     .foregroundStyle(palette.ink)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
                 HStack(spacing: Spacing.x1) {
                     if block.isDone {
                         Image(systemName: "checkmark").font(.caption2.weight(.bold))

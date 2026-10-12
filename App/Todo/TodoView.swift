@@ -17,7 +17,14 @@ struct TodoView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    TodoHeader(why: why)
+                    // The header every tab shares, then To do's one why-line.
+                    AppHeader(title: "To do")
+                        .padding(.horizontal, -Spacing.margin)
+                    Text(why)
+                        .textStyle(.body)
+                        .foregroundStyle(palette.graphite)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, Spacing.x1)
                     if let todo = model.todo {
                         let summary = todo.summary(time: model.time)
                         VStack(alignment: .leading, spacing: Spacing.x1) {

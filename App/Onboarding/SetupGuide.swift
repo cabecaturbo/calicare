@@ -226,7 +226,7 @@ struct SetupGuide: View {
             let sent = await LockWidgetReminder.schedule(using: reminders)
             withMotion(.quick) {
                 reminderNote = sent
-                    ? "We’ll remind you in an hour."
+                    ? "We’ll remind you at \((Date.now + LockWidgetReminder.delay).formatted(date: .omitted, time: .shortened))."
                     : "Notifications are off for Cali Care, so we can’t remind you. The steps are in Settings any time."
             }
         }
@@ -283,6 +283,7 @@ struct GuideScreenshot: View {
             .resizable()
             .aspectRatio(contentMode: .fill)
             .frame(width: size.width, height: size.height)
+            .guideDimmedAtNight()
     }
 }
 
@@ -303,27 +304,45 @@ private struct TapRing: View {
 struct GuideBand: View {
     @Environment(\.palette) private var palette
     let asset: String
-    let band: ClosedRange<CGFloat>
+    /// The part to show, as fractions of the screenshot's width and height.
+    let crop: CGRect
 
     /// The captures are 402 × 874 points.
     private let aspect: CGFloat = 402.0 / 874.0
 
     var body: some View {
-        let share = band.upperBound - band.lowerBound
         Color.clear
-            .aspectRatio(aspect / share, contentMode: .fit)
-            .overlay(alignment: .top) {
+            .aspectRatio(aspect * crop.width / crop.height, contentMode: .fit)
+            .overlay(alignment: .topLeading) {
                 GeometryReader { proxy in
-                    let full = proxy.size.width / aspect
+                    let width = proxy.size.width / crop.width
+                    let height = width / aspect
                     Image(asset)
                         .resizable()
-                        .frame(width: proxy.size.width, height: full)
-                        .offset(y: -band.lowerBound * full)
+                        .frame(width: width, height: height)
+                        .offset(x: -crop.minX * width, y: -crop.minY * height)
+                        .guideDimmedAtNight()
                 }
                 // Clipping doesn't stop hits: the hidden part would cover the picker above.
                 .allowsHitTesting(false)
             }
             .clipShape(RoundedRectangle(cornerRadius: Corner.star))
             .overlay(RoundedRectangle(cornerRadius: Corner.star).strokeBorder(palette.hairline, lineWidth: 1))
+    }
+}
+
+extension View {
+    /// The guide pictures are bright day screenshots; at night they're dimmed
+    /// about 15% so they don't glare.
+    func guideDimmedAtNight() -> some View {
+        modifier(GuideNightDim())
+    }
+}
+
+private struct GuideNightDim: ViewModifier {
+    @Environment(\.palette) private var palette
+
+    func body(content: Content) -> some View {
+        content.overlay(palette.isNight ? Color.black.opacity(0.15) : .clear)
     }
 }

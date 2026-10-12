@@ -15,7 +15,7 @@ public struct PrimaryButtonStyle: ButtonStyle {
 
         var body: some View {
             configuration.label
-                .textStyle(.control)
+                .textStyle(.button)
                 .foregroundStyle(palette.paper)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, Spacing.x4)
@@ -44,7 +44,7 @@ public struct SecondaryButtonStyle: ButtonStyle {
         var body: some View {
             let shape = RoundedRectangle(cornerRadius: Corner.control)
             configuration.label
-                .textStyle(.control)
+                .textStyle(.button)
                 .foregroundStyle(palette.ink)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, Spacing.x4)
@@ -72,7 +72,7 @@ public struct TextLinkButtonStyle: ButtonStyle {
 
         var body: some View {
             configuration.label
-                .textStyle(.control)
+                .textStyle(.button)
                 .foregroundStyle(palette.accent)
                 .opacity(configuration.isPressed ? 0.6 : 1)
                 .frame(minWidth: Size.touchTarget, minHeight: Size.touchTarget)

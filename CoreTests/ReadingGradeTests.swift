@@ -82,7 +82,7 @@ struct ReadingGradeTests {
                         ReminderCopy.body(kind, childName: "Cal"), ReminderCopy.settingsTitle(kind)]
         }
         strings += ReminderAction.allCases.map(\.title)
-        strings += TodoBlock.allCases.map(\.title) + ["Do skin care", "2 of 3-4 today", "Done today", "3 of 5 done"]
+        strings += TodoBlock.allCases.map(\.title) + ["Do skin care", "2 of 3–4 today", "Done today", "3 of 5 done"]
         for text in strings where !ReadingGrade.isEasy(text) {
             Issue.record("\"\(text)\" grade \(String(format: "%.1f", ReadingGrade.grade(text)))")
         }

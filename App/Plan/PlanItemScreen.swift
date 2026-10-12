@@ -108,7 +108,7 @@ struct PlanItemScreen: View {
                 HStack {
                     Text("Amount").textStyle(.body).foregroundStyle(palette.ink)
                     Spacer(minLength: Spacing.x3)
-                    Text(entry.amount ?? "Not in plan. Refer to label.")
+                    Text(entry.amount ?? "Dose: see the label.")
                         .textStyle(.body)
                         .foregroundStyle(palette.graphite)
                         .multilineTextAlignment(.trailing)

@@ -121,7 +121,7 @@ struct LogAnywhereStep: View {
                 }
                 .pickerStyle(.segmented)
                 .tint(palette.accent)
-                GuideBand(asset: path.doneAsset, band: path.doneBand)
+                GuideBand(asset: path.doneAsset, crop: path.doneCrop)
                     .id(path)
                     .transition(Motion.fade)
                     .accessibilityLabel("\(path.title), finished")
@@ -162,13 +162,14 @@ extension GuidePath {
         }
     }
 
-    /// The part of the finished screenshot where Log sits, top to bottom as
-    /// fractions of its height, so onboarding shows the widget in place.
-    var doneBand: ClosedRange<CGFloat> {
+    /// The part of the finished screenshot where Log sits, as fractions of
+    /// its width and height, so onboarding shows the widget in place and big
+    /// enough to read (the Lock Screen is cropped close around the Log circle).
+    var doneCrop: CGRect {
         switch self {
-        case .lockScreen: 0.70...0.90
-        case .homeScreen: 0.07...0.32
-        case .controlCenter: 0.08...0.30
+        case .lockScreen: CGRect(x: 0.2, y: 0.72, width: 0.6, height: 0.18)
+        case .homeScreen: CGRect(x: 0, y: 0.07, width: 1, height: 0.25)
+        case .controlCenter: CGRect(x: 0, y: 0.08, width: 1, height: 0.22)
         }
     }
 }

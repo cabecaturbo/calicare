@@ -97,7 +97,7 @@ struct ProgressTab: View {
                             if span == .week, let file {
                                 ShareLink(item: file, message: Text("Here’s \(child.name)’s week.")) {
                                     Text("Share this week")
-                                        .font(TypeStyle.label.font)
+                                        .font(TypeStyle.button.font)
                                         .foregroundStyle(palette.ink)
                                         .frame(maxWidth: .infinity, minHeight: 52)
                                         .overlay(RoundedRectangle(cornerRadius: Corner.card).strokeBorder(palette.ink, lineWidth: 1))
@@ -108,7 +108,7 @@ struct ProgressTab: View {
                                 DoctorReportView(child: child, range: shareRange)
                             } label: {
                                 Text("Share with provider")
-                                    .font(TypeStyle.label.font)
+                                    .font(TypeStyle.button.font)
                                     .foregroundStyle(palette.ink)
                                     .frame(maxWidth: .infinity, minHeight: 52)
                                     .overlay(RoundedRectangle(cornerRadius: Corner.card).strokeBorder(palette.ink, lineWidth: 1))

@@ -49,10 +49,10 @@ public struct TodoDay: Equatable, Sendable {
         /// The plan's count, low and high ("3-4" → 3...4); nil when it gives none.
         public let target: ClosedRange<Int>?
         public var isDone: Bool { target.map { rounds >= $0.lowerBound } ?? (rounds > 0) }
-        /// "2 of 3-4 today", or "Done today" when the plan gives no count.
+        /// "2 of 3–4 today" (en dash), or "Done today" when the plan gives no count.
         public var meta: String {
             guard let target else { return rounds > 0 ? "Done today" : "Once today" }
-            let goal = target.lowerBound == target.upperBound ? "\(target.lowerBound)" : "\(target.lowerBound)-\(target.upperBound)"
+            let goal = target.lowerBound == target.upperBound ? "\(target.lowerBound)" : "\(target.lowerBound)–\(target.upperBound)"
             return "\(rounds) of \(goal) today"
         }
     }

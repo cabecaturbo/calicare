@@ -116,14 +116,16 @@ struct ChildDetailsForm: View {
                 Button {
                     details.color = selected ? nil : color
                 } label: {
-                    ChildDot(color: color, size: 20)
-                        .padding(3)
-                        .overlay(Circle().strokeBorder(selected ? palette.ink : .clear, lineWidth: 1))
-                        .frame(minWidth: Size.touchTarget, minHeight: Size.touchTarget)
+                    // 24pt dot; the chosen one gets a clear 2pt ink ring around it.
+                    ChildDot(color: color, size: 24)
+                        .padding(4)
+                        .overlay(Circle().strokeBorder(selected ? palette.ink : .clear, lineWidth: 2))
+                        .frame(width: Size.touchTarget, height: Size.touchTarget)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(color.name)
+                .accessibilityValue(selected ? "Chosen" : "")
                 .accessibilityAddTraits(selected ? .isSelected : [])
             }
         }

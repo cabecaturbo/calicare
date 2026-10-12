@@ -179,6 +179,8 @@ public enum TypeStyle: CaseIterable, Sendable {
     case control
     /// SF Pro 400, 13/18: times, eyebrows, footnotes.
     case meta
+    /// SF Pro 600, 17/24: every button label.
+    case button
     /// Newsreader 400, 32/38: the one big statement at the top of To do
     /// ("3 things left for bedtime.") and its step sheet.
     case statement
@@ -191,6 +193,7 @@ public enum TypeStyle: CaseIterable, Sendable {
         case .label: .system(.subheadline, weight: .semibold)
         case .body, .control: .system(.body)
         case .meta: .system(.footnote)
+        case .button: .system(.body, weight: .semibold)
         case .statement: .custom(Self.statementCut, size: 32, relativeTo: .largeTitle)
         }
     }
@@ -202,7 +205,7 @@ public enum TypeStyle: CaseIterable, Sendable {
         case .title, .lede: 24
         case .section: 20
         case .label: 15
-        case .body, .control: 17
+        case .body, .control, .button: 17
         case .meta: 13
         case .statement: 32
         }
@@ -214,7 +217,7 @@ public enum TypeStyle: CaseIterable, Sendable {
         case .title, .lede: 30
         case .section: 26
         case .label: 20
-        case .body, .control: 24
+        case .body, .control, .button: 24
         case .meta: 18
         case .statement: 38
         }
@@ -226,7 +229,7 @@ public enum TypeStyle: CaseIterable, Sendable {
         case .title, .lede: .title2
         case .section: .title3
         case .label: .subheadline
-        case .body, .control: .body
+        case .body, .control, .button: .body
         case .meta: .footnote
         case .statement: .largeTitle
         }

@@ -77,7 +77,8 @@ struct TodayView: View {
         }
 
         // Quick Log logs from the Lock Screen without Face ID; the widget asks for it.
-        if QuickLogCardRow.shows {
+        // At night, Log comes first and this sits under it.
+        if !night, QuickLogCardRow.shows {
             QuickLogCardRow()
                 .padding(.horizontal, Spacing.margin)
                 .padding(.top, Spacing.x4)
@@ -122,6 +123,12 @@ struct TodayView: View {
             .accessibilityLabel("Log itching")
             .padding(.horizontal, Spacing.margin)
             .padding(.top, Spacing.x4)
+        }
+
+        if night, QuickLogCardRow.shows {
+            QuickLogCardRow()
+                .padding(.horizontal, Spacing.margin)
+                .padding(.top, Spacing.x4)
         }
 
         TodaySoFar(groups: TodayGroups(entries: model.entries, day: CareDay.containing(.now), now: .now)) { editing = $0 }

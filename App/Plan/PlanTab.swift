@@ -90,7 +90,9 @@ struct PlanTab: View {
 /// No plan yet: the star says so, then three quiet ways in.
 private struct PlanEmpty: View {
     @Environment(\.palette) private var palette
+    @Environment(TodayModel.self) private var model
     let onAdd: (AddPlanSheet.Source) -> Void
+    @State private var showingCaregiverCard = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -98,6 +100,16 @@ private struct PlanEmpty: View {
                 .padding(.top, Spacing.x4)
             PlanSourceChoices(onAdd: onAdd)
                 .padding(.top, Spacing.x5)
+            // The caregiver card works without a plan too (the parent's own words).
+            Button("Caregiver card") { showingCaregiverCard = true }
+                .buttonStyle(.textLink)
+                .padding(.top, Spacing.x5)
+        }
+        .sheet(isPresented: $showingCaregiverCard) {
+            if let child = model.child {
+                CaregiverCardSheet(child: child)
+                    .nightAwarePalette()
+            }
         }
     }
 }

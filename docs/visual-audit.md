@@ -170,5 +170,5 @@ Before and after captures of every screen, day and night, on iPhone SE (3rd gen)
 5. **Notification banners couldn't be captured** in the simulator. Worth a look on the phone.
 6. **Home guide step 3 shows the keyboard** (iOS 27 behaviour on the simulator). A real-phone capture would avoid it.
 7. **Fixed after the before shots:** in the To do step sheet, the big statement showed through the sheet's header when scrolled. The header is now solid.
-8. **Guide clocks read "Sat Jan 1, 9:41".** The simulator's 9:41 override carries no date, so the Lock Screen shows January 1. It's the same on every guide; recapturing with a real date is easy if you'd rather show "Sun Oct 11".
+8. **Guide clocks (fixed October 12):** recaptured with the real clock, so every guide reads Mon Oct 12, 1:05–1:07. A fixed 9:41 showed "Sat Jan 1" or the wrong weekday.
 9. **The "after" captures ran later in the day than the "before" ones.** So Today asks the 4 PM skin question in some after shots. That's the clock, not a change.

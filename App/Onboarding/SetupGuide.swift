@@ -58,7 +58,7 @@ enum GuidePath: String, Identifiable, CaseIterable {
         case .homeScreen: [
             GuideStep(asset: "widgetHome_ios27_step1", sentence: "Touch and hold an empty area of your Home Screen until the apps jiggle.", tap: UnitPoint(x: 0.500, y: 0.680)),
             GuideStep(asset: "widgetHome_ios27_step2", sentence: "Tap Edit in the top left corner.", tap: UnitPoint(x: 0.172, y: 0.038)),
-            GuideStep(asset: "widgetHome_ios27_step3", sentence: "Tap Add Widget.", tap: UnitPoint(x: 0.391, y: 0.106)),
+            GuideStep(asset: "widgetHome_ios27_step3", sentence: "Tap Add Widget.", tap: UnitPoint(x: 0.392, y: 0.106)),
             GuideStep(asset: "widgetHome_ios27_step4", sentence: "Search for Cali Care and tap it.", tap: UnitPoint(x: 0.500, y: 0.291)),
             GuideStep(asset: "widgetHome_ios27_step5", sentence: "Swipe to pick a size, then tap Add Widget.", tap: UnitPoint(x: 0.500, y: 0.905)),
             GuideStep(asset: "widgetHome_ios27_step6", sentence: "Tap the checkmark in the top right corner.", tap: UnitPoint(x: 0.828, y: 0.038)),
